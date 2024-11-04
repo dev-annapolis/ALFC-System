@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.landing-app')
 @section('content')
 
 <style>
@@ -133,7 +133,7 @@
         </div>
 
         <div class="col-md-7 col-sm-10 mt-5 mb-5 d-flex justify-content-center">
-            <a href="#" class="btn btn-light mt-3 fw-bold bg-white fs-5 w-50 w-md-25" style="color: var(--primary-color-red)">
+            <a href="/login" class="btn btn-light mt-3 fw-bold bg-white fs-5 w-50 w-md-25" style="color: var(--primary-color-red)">
                  Get Started
             </a>
         </div>
