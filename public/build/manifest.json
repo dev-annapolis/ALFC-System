@@ -1,0 +1,28 @@
+{
+  "public/fonts/Poppins/Poppins-Regular.ttf": {
+    "file": "assets/Poppins-Regular-CTKNfV9P.ttf",
+    "src": "public/fonts/Poppins/Poppins-Regular.ttf"
+  },
+  "public/fonts/TimesRoman/Times-Roman-Italic.TTF": {
+    "file": "assets/Times-Roman-Italic-CVWNPw41.TTF",
+    "src": "public/fonts/TimesRoman/Times-Roman-Italic.TTF"
+  },
+  "public/fonts/TimesRoman/Times-Roman-Regular.TTF": {
+    "file": "assets/Times-Roman-Regular-BH0awosN.TTF",
+    "src": "public/fonts/TimesRoman/Times-Roman-Regular.TTF"
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-BXcEDsEw.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "css": [
+      "assets/app-zF1Fhn38.css"
+    ],
+    "assets": [
+      "assets/Poppins-Regular-CTKNfV9P.ttf",
+      "assets/Times-Roman-Regular-BH0awosN.TTF",
+      "assets/Times-Roman-Italic-CVWNPw41.TTF"
+    ]
+  }
+}
