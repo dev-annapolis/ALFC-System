@@ -13,10 +13,16 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->string('username')->unique();
+            $table->string('password');
+
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('viber_number')->nullable();
+            $table->string('role')->default('sales_processor');
+            $table->string('status')->default('unverified');
+            
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });
