@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('viber_number')->nullable();
-            $table->string('role')->default('sales_processor');
+            $table->foreignId('role_id')->constrained()->onDelete('cascade');
             $table->string('status')->default('unverified');
             
             $table->timestamp('email_verified_at')->nullable();
