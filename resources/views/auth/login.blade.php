@@ -17,6 +17,12 @@
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 </head>
 <body>
+    @if(session('success'))
+        <div class="alert alert-success floating-alert alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
     <div id="app" class="d-flex justify-content-center align-items-center min-vh-100">
         <div class="container row ">
             <div class="first-col shadow-lg p-0 d-none col-md-6 d-md-flex justify-content-center align-items-center">
@@ -31,15 +37,16 @@
                         @csrf
 
                         <div class="form-group mb-3">
-                            <label class="text-secondary" for="email">Username</label>
-                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
-
-                            @error('email')
+                            <label class="text-secondary" for="username">Username</label>
+                            <input id="username" type="text" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autocomplete="username" autofocus>
+                        
+                            @error('username')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror
                         </div>
+                        
                         <div class="form-group mb-3">
                             <label class="text-secondary" for="password">Password</label>
                             <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
@@ -64,5 +71,9 @@
             </div>
         </div>
     </div>
+
+    
+
+   
 </body>
 </html>
