@@ -1,77 +1,178 @@
-@extends('layouts.app')
+<!doctype html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Register') }}</div>
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-                <div class="card-body">
-                    <form method="POST" action="{{ route('register') }}">
+    <title>{{ config('app.name', 'Laravel') }}</title>
+
+    <!-- Fonts -->
+    <link rel="dns-prefetch" href="//fonts.bunny.net">
+    <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+
+    <!-- Scripts -->
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+</head>
+<body>
+    <div id="app" class="d-flex justify-content-center align-items-center min-vh-100">
+        <div class="container row ">
+            <div class="first-col shadow-lg p-0 d-none col-md-6 d-md-flex justify-content-center align-items-center">
+                <img src="{{ asset('images/frontend/alfc-logo.jpg') }}" alt="ALFC Logo Image">
+            </div>
+            <div class="second-col shadow-lg col-md-6 d-md-flex justify-content-center align-items-center">
+                <div class="w-100 col-12 col-md-9">
+                    <div class="d-flex justify-content-center align-items-center p-3">
+                        <img src="{{ asset('images/frontend/alfc-logo.jpg') }}" alt="ALFC Logo Image">
+                    </div>
+                    <form method="POST" action="{{ route('register') }}" style="margin-right:15px; margin-left:15px;">
                         @csrf
-
-                        <div class="row mb-3">
-                            <label for="name" class="col-md-4 col-form-label text-md-end">{{ __('Name') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" value="{{ old('name') }}" required autocomplete="name" autofocus>
-
-                                @error('name')
+                        <div class="row">
+                            <!-- Last Name -->
+                            <div class="form-group col-5 col-md-5 mb-3">
+                                <label class="text-secondary" for="last_name">Last Name</label>
+                                <input id="last_name" type="text" class="form-control @error('last_name') is-invalid @enderror" name="last_name" value="{{ old('last_name') }}" required autocomplete="family-name">
+                                
+                                @error('last_name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        
+                            <!-- First Name -->
+                            <div class="form-group col-5 col-md-5 mb-3">
+                                <label class="text-secondary" for="first_name">First Name</label>
+                                <input id="first_name" type="text" class="form-control @error('first_name') is-invalid @enderror" name="first_name" value="{{ old('first_name') }}" required autocomplete="given-name">
+                                
+                                @error('first_name')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                        
+                            <!-- Middle Initial -->
+                            <div class="form-group col-2 col-md-2 mb-3">
+                                <label class="text-secondary" for="middle_initial">M.I</label>
+                                <input id="middle_initial" type="text" class="form-control @error('middle_initial') is-invalid @enderror" name="middle_initial" value="{{ old('middle_initial') }}" required maxlength="1" pattern="[A-Za-z]" title="Only one letter is allowed" autocomplete="additional-name">
+                                
+                                @error('middle_initial')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
                             </div>
                         </div>
-
-                        <div class="row mb-3">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
-
-                            <div class="col-md-6">
+                        
+                        <div class="row">
+                            <div class="form-group col-6 col-md-6 mb-3">
+                                <label class="text-secondary" for="email">Email Address</label>
                                 <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
-
+                        
                                 @error('email')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
                             </div>
-                        </div>
 
-                        <div class="row mb-3">
-                            <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
-
-                                @error('password')
+                            <div class="form-group col-6 col-md-6 mb-3">
+                                <label class="text-secondary" for="viber_number">Viber Number</label>
+                                <input 
+                                    id="viber_number" 
+                                    type="number" 
+                                    class="form-control @error('viber_number') is-invalid @enderror" 
+                                    name="viber_number" 
+                                    value="{{ old('viber_number') }}" 
+                                    required 
+                                    autocomplete="tel" 
+                                   
+                                    maxlength="11" 
+                                    >
+                                
+                                @error('viber_number')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
                             </div>
                         </div>
-
-                        <div class="row mb-3">
-                            <label for="password-confirm" class="col-md-4 col-form-label text-md-end">{{ __('Confirm Password') }}</label>
-
-                            <div class="col-md-6">
-                                <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
-                            </div>
+                        
+                        <div class="form-group col-12 mb-3">
+                            <label class="text-secondary" for="role">Role</label>
+                            {{-- <select 
+                                id="role" 
+                                name="role" 
+                                class="form-control @error('role') is-invalid @enderror" 
+                                required>
+                                <option value="">Select Role</option>
+                                @foreach($roles as $role => $label)
+                                    <option value="{{ $role }}" {{ old('role') == $role ? 'selected' : '' }}>
+                                        {{ $role }}
+                                    </option>
+                                @endforeach
+                            </select> --}}
+                        
+                            @error('role')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
                         </div>
-
-                        <div class="row mb-0">
-                            <div class="col-md-6 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
-                                    {{ __('Register') }}
-                                </button>
-                            </div>
+                    
+                        <div class="form-group mb-3">
+                            <label class="text-secondary" for="password">Password</label>
+                            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
+                    
+                            @error('password')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                    
+                        <div class="form-group mb-3">
+                            <label class="text-secondary" for="password-confirm">Confirm Password</label>
+                            <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
+                        </div>
+                    
+                        <button type="submit" class="register_button btn w-100 fw-bold">Register</button>
+                    
+                        <!-- Additional section below the register button -->
+                        <div class="text-center mt-5 mb-4">
+                            <p>Already have an account? <a href="/login" class="text-decoration-underline text-danger">Login</a></p>
                         </div>
                     </form>
+                    
                 </div>
             </div>
         </div>
     </div>
-</div>
-@endsection
+
+    <script>
+        // Select the form element and the Viber Number input
+        const form = document.querySelector('form');
+        const viberInput = document.getElementById('viber_number');
+    
+        form.addEventListener('submit', function(event) {
+            // Check if the Viber Number field has exactly 11 digits
+            if (viberInput.value.length !== 11) {
+                event.preventDefault(); // Prevent form submission
+                alert('Please enter exactly 11 digits for the Viber Number.'); // Show alert
+            }
+        });
+    
+        // Prevent the user from entering more than 11 digits by using the "input" event
+        viberInput.addEventListener('input', function() {
+            if (viberInput.value.length > 11) {
+                viberInput.value = viberInput.value.slice(0, 11); // Trim to 11 digits
+            }
+        });
+    </script>
+</body>
+</html>
+
+
