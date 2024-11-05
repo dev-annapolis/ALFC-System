@@ -25,4 +25,9 @@ class HomeController extends Controller
     {
         return view('home');
     }
+
+    public function showForm()
+    {
+        return view('form.form'); // Adjust the path if necessary
+    }
 }

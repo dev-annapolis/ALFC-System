@@ -1,8 +1,58 @@
 @extends('layouts.app')
 
 @section('content')
+
+
 <div class="container">
-    <div class="row justify-content-center">
+    <div class="container p-5">
+        <div class="login-container row">
+            <div class="first-col col-md-6 p-0 d-none d-md-flex justify-content-center align-items-center">
+                <img src="{{ asset('images/frontend/alfc-logo.jpg') }}" alt="ALFC Logo Image">
+            </div>
+            <div class="second-col col-md-6 d-flex justify-content-center align-items-center">
+                <div class="w-100 col-12 col-md-9">
+                    <div class="d-flex justify-content-center align-items-center p-5">
+                        <img src="{{ asset('images/frontend/alfc-logo.jpg') }}" alt="ALFC Logo Image">
+                    </div>
+                    <form method="POST" action="{{ route('login') }}" style="margin-right:15px; margin-left:15px;" >
+                        @csrf
+
+                        <div class="form-group mb-3">
+                            <label class="text-secondary" for="email">Username</label>                               
+                            <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+
+                            @error('email')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="text-secondary" for="password">Password</label>
+                            <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
+
+                            @error('password')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                        <div class="d-flex justify-content-end mt-2 mb-3">
+                            <a href="/password/reset" class="text-decoration-underline text-danger ">Forgot Password?</a>
+                        </div>
+                        <button type="submit" class="login_button btn w-100 fw-bold">Login</button>
+
+                          <!-- Additional section below the login button -->
+                        <div class="text-center mt-5 mb-4">
+                            <p>Are you new? <a href="/register" class="text-decoration-underline text-danger">Create an Account</a></p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">{{ __('Login') }}</div>
@@ -68,6 +118,6 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 </div>
 @endsection
