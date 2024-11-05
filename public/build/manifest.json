@@ -12,17 +12,22 @@
     "src": "public/fonts/TimesRoman/Times-Roman-Regular.TTF"
   },
   "resources/js/app.js": {
-    "file": "assets/app-BXcEDsEw.js",
+    "file": "assets/app-Cn7m1Vsv.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app-zF1Fhn38.css"
+      "assets/app-xtJj9s5u.css"
     ],
     "assets": [
       "assets/Poppins-Regular-CTKNfV9P.ttf",
       "assets/Times-Roman-Regular-BH0awosN.TTF",
       "assets/Times-Roman-Italic-CVWNPw41.TTF"
     ]
+  },
+  "resources/sass/app.scss": {
+    "file": "assets/app-BaVMVknW.css",
+    "src": "resources/sass/app.scss",
+    "isEntry": true
   }
 }

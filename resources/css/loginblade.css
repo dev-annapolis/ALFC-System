@@ -1,7 +1,7 @@
 .first-col
 {
     background-color: var(--primary-color-red-bg); /* Red background with 50% opacity */
-    height:570px;
+    height:700px;
     border-top-left-radius: 20px; /* Top left corner radius */
     border-bottom-left-radius: 20px; /* Bottom left corner radius */
 }
@@ -12,8 +12,9 @@
 }
 .second-col {
     background-color: rgb(255, 255, 255); /* Red background with 50% opacity */
-    border-top-right-radius: 20px; /* Top right corner radius */
-    border-bottom-right-radius: 20px; /* Bottom right corner radius */
+    height:700px;
+    border-top-right-radius: 20px; /* Top left corner radius */
+    border-bottom-right-radius: 20px; /* Bottom left corner radius */
 }
 .second-col img {
     max-width: 25%; /* Ensure the image does not overflow */
