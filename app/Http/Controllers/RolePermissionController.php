@@ -30,7 +30,7 @@ class RolePermissionController extends Controller
             ],
             'insurance_details' => [
                 'issuance_code',
-                'assured_id', // Corrected spelling from 'asssured_id' to 'assured_id'
+                'assured_id', 
                 'sales_associate_id',
                 'sale_date',
                 'classification',
