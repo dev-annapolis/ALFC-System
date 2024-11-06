@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('role_permissions', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('role_id')->constrained()->onDelete('cascade');
+            $table->string('table_name');
+            $table->string('column_name'); 
+            $table->boolean('can_view')->default(false);
+            $table->boolean('can_edit')->default(false);
             $table->timestamps();
         });
     }

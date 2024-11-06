@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('assureds', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->foreignId('assured_detail_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

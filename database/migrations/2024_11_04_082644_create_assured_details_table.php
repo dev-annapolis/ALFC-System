@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('assured_details', function (Blueprint $table) {
             $table->id();
+            $table->string('address')->nullable();
+            $table->string('contact_number')->nullable();
+            $table->string('other_contact_number')->nullable();
+            $table->string('facebook_account')->nullable();
+            $table->string('viber_account')->nullable();
+            $table->string('nature_of_business')->nullable();
+            $table->string('other_assets')->nullable();
+            $table->string('remarks')->nullable();
             $table->timestamps();
         });
     }

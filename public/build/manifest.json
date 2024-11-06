@@ -12,12 +12,12 @@
     "src": "public/fonts/TimesRoman/Times-Roman-Regular.TTF"
   },
   "resources/js/app.js": {
-    "file": "assets/app-Cn7m1Vsv.js",
+    "file": "assets/app-m23gLso3.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app-xtJj9s5u.css"
+      "assets/app-xPH6E-QQ.css"
     ],
     "assets": [
       "assets/Poppins-Regular-CTKNfV9P.ttf",

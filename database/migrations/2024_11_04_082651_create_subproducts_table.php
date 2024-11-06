@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('subproducts', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('product_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->string('status')->default('active');
             $table->timestamps();
         });
     }
