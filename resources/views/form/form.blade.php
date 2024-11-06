@@ -247,43 +247,109 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="inputField1" class="form-label">Input Field 1</label>
-                                <input type="text" class="form-control" id="inputField1" placeholder="Enter field 1">
+                                <label for="lastName" class="form-label col-form-label-sm">Last Name</label>
+                                <input type="text" class="form-control" id="lastName" placeholder="Enter last name" required>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="inputField2" class="form-label">Input Field 2</label>
-                                <input type="text" class="form-control" id="inputField2" placeholder="Enter field 2">
+                                <label for="firstName" class="form-label col-form-label-sm">First Name</label>
+                                <input type="text" class="form-control" id="firstName" placeholder="Enter first name" required>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="inputField3" class="form-label">Input Field 3</label>
-                                <input type="text" class="form-control" id="inputField3" placeholder="Enter field 3">
+                                <label for="middleName" class="form-label col-form-label-sm">Middle Name</label>
+                                <input type="text" class="form-control" id="middleName" placeholder="Enter middle name">
                             </div>
                         </div>
                     </div>
                     <div class="row">
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="unitNo" class="form-label col-form-label-sm">Unit No.</label>
+                                <input type="text" class="form-control" id="unitNo" placeholder="Enter Unit No." required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="street" class="form-label col-form-label-sm">Street</label>
+                                <input type="text" class="form-control" id="street" placeholder="Enter Street" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="barangay" class="form-label col-form-label-sm">Barangay</label>
+                                <input type="text" class="form-control" id="barangay" placeholder="Enter Barangay" required>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="city" class="form-label col-form-label-sm">City</label>
+                                <input type="text" class="form-control" id="city" placeholder="Enter City" required>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="fullAddress" name="fullAddress">
+                    <div class="row">
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="inputField1" class="form-label">Input Field 1</label>
-                                <input type="text" class="form-control" id="inputField1" placeholder="Enter field 1">
+                                <label for="natureOfBusiness" class="form-label col-form-label-sm">Nature of Business</label>
+                                <input type="text" class="form-control" id="natureOfBusiness" placeholder="Enter Nature of Business" required>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3">
-                                <label for="inputField2" class="form-label">Input Field 2</label>
-                                <input type="text" class="form-control" id="inputField2" placeholder="Enter field 2">
+                                <label for="otherAsset" class="form-label col-form-label-sm">Other Asset</label>
+                                <input type="text" class="form-control" id="otherAsset" placeholder="Enter Other Asset" required>
                             </div>
                         </div>
-                        
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="phoneNumber" class="form-label col-form-label-sm">Phone Number</label>
+                                <input type="text" class="form-control" id="phoneNumber" placeholder="Enter Phone Number" 
+                                       pattern="\d{11}" title="Please enter exactly 11 digits" required maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="viberNumber" class="form-label col-form-label-sm">Viber Number</label>
+                                <input type="text" class="form-control" id="viberNumber" placeholder="Enter Viber Number" 
+                                       pattern="\d{11}" title="Please enter exactly 11 digits" required maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="otherContact" class="form-label col-form-label-sm">Other Contact Number</label>
+                                <input type="text" class="form-control" id="otherContact" placeholder="Enter Other Contact Number" 
+                                       oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="mb-3">
+                                <label for="facebookAccount" class="form-label col-form-label-sm">Facebook Account</label>
+                                <input type="text" class="form-control" id="facebookAccount" placeholder="Enter Facebook Account URL " 
+                                       title="Please enter your Facebook account link or username">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mb-3">
+                                <label for="remarks" class="form-label col-form-label-sm">Remarks</label>
+                                <textarea class="form-control" id="remarks" rows="5" placeholder="Enter your remarks here..." required></textarea>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="button-container">
                         <button type="button" class="next-button" onclick="nextStep()">Next</button>
                     </div>
                 </form>
+                
             </div>
 
             <!-- Step 2: Education -->
@@ -412,12 +478,34 @@
     }
 
     document.querySelectorAll('.step input[type="radio"]').forEach((radio, index) => {
-        radio.addEventListener('change', () => {
-            currentStep = index;
-            showStep(currentStep);
+            radio.addEventListener('change', () => {
+                currentStep = index;
+                showStep(currentStep);
+            });
         });
-    });
 
-    showStep(currentStep);
+        showStep(currentStep);
+
+        document.addEventListener('DOMContentLoaded', () => {
+        // Function to update the hidden input field
+        function updateFullAddress() {
+            const unitNo = document.getElementById('unitNo').value;
+            const street = document.getElementById('street').value;
+            const barangay = document.getElementById('barangay').value;
+            const city = document.getElementById('city').value;
+
+            // Concatenate the address
+            const fullAddress = `${unitNo}, ${street}, ${barangay}, ${city}`;
+            
+            // Update the hidden input field
+            document.getElementById('fullAddress').value = fullAddress;
+        }
+
+        // Add event listeners to update the full address when inputs change
+        document.getElementById('unitNo').addEventListener('input', updateFullAddress);
+        document.getElementById('street').addEventListener('input', updateFullAddress);
+        document.getElementById('barangay').addEventListener('input', updateFullAddress);
+        document.getElementById('city').addEventListener('input', updateFullAddress);
+    });
 </script>
 @endsection
