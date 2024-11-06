@@ -11,15 +11,17 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $fillable = [
-        'username',
-        'password',
-        'name',
-        'email',
-        'viber_number',
-        'role_id',
-        'status',
-    ];
+    protected $fillable = ['username', 'password', 'name', 'email', 'viber_number', 'role_id', 'status', 'email_verified_at'];
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    public function salesAssociates()
+    {
+        return $this->hasMany(SalesAssociate::class);
+    }
 
     protected $hidden = [
         'password',
@@ -32,10 +34,5 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    public function role()
-    {
-        return $this->belongsTo(Role::class);
     }
 }
