@@ -114,40 +114,17 @@
                                 @enderror
                             </div>
                             <div class="form-group col-6 col-md-6 mb-3">
-                                <label class="text-secondary" for="role">Role</label>
-                                <select 
-                                    id="role" 
-                                    name="role" 
-                                    class="form-control @error('role') is-invalid @enderror" 
-                                    required>
+                                <label class="text-secondary" for="role_id">Role</label>
+                                <select id="role_id" name="role_id" class="form-control" required>
                                     <option value="">Select Role</option>
-                                    <option value="sales_associate" {{ old('role') == 'sales_associate' ? 'selected' : '' }}>
-                                        Sales Associate
-                                    </option>
-                                    <option value="sales_marketing" {{ old('role') == 'sales_marketing' ? 'selected' : '' }}>
-                                        Sales Marketing
-                                    </option>
-                                    <option value="sales_processor" {{ old('role') == 'sales_processor' ? 'selected' : '' }}>
-                                        Sales Processor
-                                    </option>
-                                    <option value="revenue_assistant" {{ old('role') == 'revenue_assistant' ? 'selected' : '' }}>
-                                        Revenue Assistant
-                                    </option>
-                                    <option value="collection" {{ old('role') == 'collection' ? 'selected' : '' }}>
-                                        Collection
-                                    </option>
-                                    <option value="customer_care" {{ old('role') == 'customer_care' ? 'selected' : '' }}>
-                                        Customer Care
-                                    </option>
-                                    <option value="accounting" {{ old('role') == 'accounting' ? 'selected' : '' }}>
-                                        Accounting
-                                    </option>
-                                    <option value="database" {{ old('role') == 'database' ? 'selected' : '' }}>
-                                        Database
-                                    </option>
+                                    @foreach($roles as $role)
+                                        <option value="{{ $role->id }}" {{ old('role_id') == $role->id ? 'selected' : '' }}>
+                                            {{ $role->view_name }}
+                                        </option>
+                                    @endforeach
                                 </select>
                             
-                                @error('role')
+                                @error('role_id')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -219,7 +196,19 @@
             }
         });
 
+        document.addEventListener('DOMContentLoaded', function() {
+            // Select the role dropdown
+            const roleSelect = document.getElementById('role_id');
 
+            // Listen for changes to the role dropdown
+            roleSelect.addEventListener('change', function() {
+                // Get the selected value (role ID)
+                const selectedRoleId = roleSelect.value;
+
+                // Log the selected role ID to the console
+                console.log('Selected Role ID:', selectedRoleId);
+            });
+        });
         
     </script>
 </body>
