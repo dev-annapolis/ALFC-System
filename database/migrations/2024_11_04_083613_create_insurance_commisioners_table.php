@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('insurance_commisioners', function (Blueprint $table) {
-            $table->id();
+            $table->foreignId('insurance_detail_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('commisioner_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
