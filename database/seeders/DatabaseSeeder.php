@@ -55,7 +55,7 @@ class DatabaseSeeder extends Seeder
             [
                 // 'id' => 6
                 'name' => 'customer_care',
-                'view_name' => 'Customer_care',
+                'view_name' => 'Customer Care',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
