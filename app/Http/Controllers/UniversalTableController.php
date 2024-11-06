@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Auth;
+use DB;
+use App\Models\RolePermission;
 
 class UniversalTableController extends Controller
 {
@@ -122,21 +124,25 @@ class UniversalTableController extends Controller
             ],
         ];
 
+        // Get the logged-in user's role
         $user = Auth::user();
-        $role = $user->role;  // Assuming the role is available on the user model
+        $role = $user->role; // Assuming the role is available on the user model
 
-        // Fetch permissions for the logged-in user's role
-        $permissions = Permission::where('role_id', $role->id)->get();
+        // Fetch permissions for the user's role with `can_view` set to 1
+        $permissions = RolePermission::where('role_id', $role->id)
+            ->where('can_view', 1)
+            ->get();
 
-        // Structure the data for each table to show only allowed columns
+        // Filter records for each table based on permissions
         $data = [];
         foreach ($tables as $tableName => $columns) {
-            // Fetch records for each table
+            // Fetch all records from the table
             $records = \DB::table($tableName)->get();
 
-            // Filter columns based on permissions
+            // Get the allowed columns from the permissions
             $allowedColumns = $permissions->where('table_name', $tableName)->pluck('column_name')->toArray();
 
+            // Filter records to include only the permitted columns
             $filteredRecords = $records->map(function ($record) use ($allowedColumns) {
                 return collect($record)->only($allowedColumns);
             });
