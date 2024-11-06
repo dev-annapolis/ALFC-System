@@ -12,35 +12,28 @@
         <table class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Role</th>
-                    @foreach($tables as $table => $columns)
-                        <th colspan="{{ count($columns) * 2 }}">{{ ucfirst($table) }}</th>
+                    <th>Table / Column</th>
+                    @foreach($roles as $role)
+                        <th colspan="2">{{ $role->name }}</th>
                     @endforeach
                 </tr>
                 <tr>
                     <td></td>
-                    @foreach($tables as $columns)
-                        @foreach($columns as $column)
-                            <th colspan="2">{{ $column}}</th>
-                        @endforeach
-                    @endforeach
-                </tr>
-                <tr>
-                    <td></td>
-                    @foreach($tables as $columns)
-                        @foreach($columns as $column)
-                            <th>View</th>
-                            <th>Edit</th>
-                        @endforeach
+                    @foreach($roles as $role)
+                        <th>View</th>
+                        <th>Edit</th>
                     @endforeach
                 </tr>
             </thead>
             <tbody>
-                @foreach($roles as $role)
+                @foreach($tables as $table => $columns)
                     <tr>
-                        <td>{{ $role->name }}</td>
-                        @foreach($tables as $table => $columns)
-                            @foreach($columns as $column)
+                        <td colspan="{{ count($roles) * 2 }}">{{ ucfirst($table) }}</td>
+                    </tr>
+                    @foreach($columns as $column)
+                        <tr>
+                            <td>{{ $column }}</td>
+                            @foreach($roles as $role)
                                 <td>
                                     <input type="checkbox" name="permissions[{{ $role->id }}][{{ $table }}][{{ $column }}][view]"
                                            {{ $role->permissions->where('table_name', $table)->where('column_name', $column)->where('can_view', true)->isNotEmpty() ? 'checked' : '' }}>
@@ -50,8 +43,8 @@
                                            {{ $role->permissions->where('table_name', $table)->where('column_name', $column)->where('can_edit', true)->isNotEmpty() ? 'checked' : '' }}>
                                 </td>
                             @endforeach
-                        @endforeach
-                    </tr>
+                        </tr>
+                    @endforeach
                 @endforeach
             </tbody>
         </table>
