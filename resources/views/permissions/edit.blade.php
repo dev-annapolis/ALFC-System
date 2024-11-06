@@ -14,7 +14,7 @@
                 <tr>
                     <th>Table / Column</th>
                     @foreach($roles as $role)
-                        <th colspan="2">{{ $role->name }}</th>
+                        <th colspan="2">{{ ucwords(str_replace('_', ' ', $role->name)) }}</th>
                     @endforeach
                 </tr>
                 <tr>
@@ -28,11 +28,11 @@
             <tbody>
                 @foreach($tables as $table => $columns)
                     <tr>
-                        <td colspan="{{ count($roles) * 2 }}">{{ ucfirst($table) }}</td>
+                        <td colspan="{{ count($roles) * 2 }}">{{ ucwords(str_replace('_', ' ', $table)) }}</td>
                     </tr>
                     @foreach($columns as $column)
                         <tr>
-                            <td>{{ $column }}</td>
+                            <td>{{ ucwords(str_replace('_', ' ', $column)) }}</td>
                             @foreach($roles as $role)
                                 <td>
                                     <input type="checkbox" name="permissions[{{ $role->id }}][{{ $table }}][{{ $column }}][view]"
