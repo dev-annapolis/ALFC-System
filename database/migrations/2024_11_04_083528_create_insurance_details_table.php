@@ -55,8 +55,8 @@ return new class extends Migration
             $table->string('pid_completion_date')->nullable();
             $table->string('remarks')->nullable();
 
-            $table->string('mode_of_payment_id')->nullable();
-            $table->string('provider_id')->nullable();
+            $table->foreignId('mode_of_payment_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('provider_id')->nullable()->constrained()->onDelete('cascade');
 
             $table->timestamps();
         });
