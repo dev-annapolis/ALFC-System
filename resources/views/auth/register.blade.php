@@ -69,6 +69,16 @@
                         
                         <div class="row">
                             <div class="form-group col-6 col-md-6 mb-3">
+                                <label class="text-secondary" for="username">User Name</label>
+                                <input id="username" type="username" class="form-control @error('username') is-invalid @enderror" name="username" value="{{ old('username') }}" required autocomplete="email">
+                        
+                                @error('username')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="form-group col-6 col-md-6 mb-3">
                                 <label class="text-secondary" for="email">Email Address</label>
                                 <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email">
                         
@@ -79,6 +89,10 @@
                                 @enderror
                             </div>
 
+                            
+                        </div>
+
+                        <div class="row">
                             <div class="form-group col-6 col-md-6 mb-3">
                                 <label class="text-secondary" for="viber_number">Viber Number</label>
                                 <input 
@@ -99,29 +113,49 @@
                                     </span>
                                 @enderror
                             </div>
-                        </div>
-                        
-                        <div class="form-group col-12 mb-3">
-                            <label class="text-secondary" for="role">Role</label>
-                            {{-- <select 
-                                id="role" 
-                                name="role" 
-                                class="form-control @error('role') is-invalid @enderror" 
-                                required>
-                                <option value="">Select Role</option>
-                                @foreach($roles as $role => $label)
-                                    <option value="{{ $role }}" {{ old('role') == $role ? 'selected' : '' }}>
-                                        {{ $role }}
+                            <div class="form-group col-6 col-md-6 mb-3">
+                                <label class="text-secondary" for="role">Role</label>
+                                <select 
+                                    id="role" 
+                                    name="role" 
+                                    class="form-control @error('role') is-invalid @enderror" 
+                                    required>
+                                    <option value="">Select Role</option>
+                                    <option value="sales_associate" {{ old('role') == 'sales_associate' ? 'selected' : '' }}>
+                                        Sales Associate
                                     </option>
-                                @endforeach
-                            </select> --}}
-                        
-                            @error('role')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                                    <option value="sales_marketing" {{ old('role') == 'sales_marketing' ? 'selected' : '' }}>
+                                        Sales Marketing
+                                    </option>
+                                    <option value="sales_processor" {{ old('role') == 'sales_processor' ? 'selected' : '' }}>
+                                        Sales Processor
+                                    </option>
+                                    <option value="revenue_assistant" {{ old('role') == 'revenue_assistant' ? 'selected' : '' }}>
+                                        Revenue Assistant
+                                    </option>
+                                    <option value="collection" {{ old('role') == 'collection' ? 'selected' : '' }}>
+                                        Collection
+                                    </option>
+                                    <option value="customer_care" {{ old('role') == 'customer_care' ? 'selected' : '' }}>
+                                        Customer Care
+                                    </option>
+                                    <option value="accounting" {{ old('role') == 'accounting' ? 'selected' : '' }}>
+                                        Accounting
+                                    </option>
+                                    <option value="database" {{ old('role') == 'database' ? 'selected' : '' }}>
+                                        Database
+                                    </option>
+                                </select>
+                            
+                                @error('role')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
                         </div>
+                        
+                       
                     
                         <div class="form-group mb-3">
                             <label class="text-secondary" for="password">Password</label>
@@ -138,7 +172,8 @@
                             <label class="text-secondary" for="password-confirm">Confirm Password</label>
                             <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
                         </div>
-                    
+                        <input type="hidden" id="name" name="name" value="">
+
                         <button type="submit" class="register_button btn w-100 fw-bold">Register</button>
                     
                         <!-- Additional section below the register button -->
@@ -153,24 +188,39 @@
     </div>
 
     <script>
-        // Select the form element and the Viber Number input
+         // Select the form element and the inputs for Last Name, First Name, and Middle Initial
         const form = document.querySelector('form');
+        const lastNameInput = document.getElementById('last_name');
+        const firstNameInput = document.getElementById('first_name');
+        const middleInitialInput = document.getElementById('middle_initial');
+        const nameInput = document.getElementById('name');
         const viberInput = document.getElementById('viber_number');
-    
+
         form.addEventListener('submit', function(event) {
             // Check if the Viber Number field has exactly 11 digits
             if (viberInput.value.length !== 11) {
                 event.preventDefault(); // Prevent form submission
                 alert('Please enter exactly 11 digits for the Viber Number.'); // Show alert
             }
+
+            // Concatenate Last Name, First Name, and Middle Initial
+            const lastName = lastNameInput.value.trim();
+            const firstName = firstNameInput.value.trim();
+            const middleInitial = middleInitialInput.value.trim();
+            
+            // Create the full name format
+            nameInput.value = `${lastName}, ${firstName} ${middleInitial ? middleInitial + '.' : ''}`;
         });
-    
+
         // Prevent the user from entering more than 11 digits by using the "input" event
         viberInput.addEventListener('input', function() {
             if (viberInput.value.length > 11) {
                 viberInput.value = viberInput.value.slice(0, 11); // Trim to 11 digits
             }
         });
+
+
+        
     </script>
 </body>
 </html>

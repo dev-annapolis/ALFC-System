@@ -1,3 +1,21 @@
+.floating-alert {
+    position: fixed;
+    top: 40px;
+    right: 20px;
+    z-index: 1050; /* Ensures it appears on top of other elements */
+    width: auto;
+    max-width: 600px;
+    opacity: 0.95; /* Slight transparency */
+    font-size: 12px;
+}
+@media (max-width: 768px) {
+    .floating-alert {
+        left: 50%;
+        right: auto;
+        transform: translateX(-50%);
+        max-width: 100%; /* Make it more flexible on smaller screens */
+    }
+}
 .first-col
 {
     background-color: var(--primary-color-red-bg); /* Red background with 50% opacity */
