@@ -9,7 +9,7 @@
             <thead>
                 <tr>
                     @foreach($permissions->where('table_name', $tableName)->pluck('column_name') as $column)
-                        <th>{{ ucfirst($column) }}</th>
+                        <th>{{ ucwords(str_replace('_', ' ', $column)) }}</th>
                     @endforeach
                 </tr>
             </thead>
@@ -17,7 +17,7 @@
                 @foreach($records as $record)
                     <tr>
                         @foreach($permissions->where('table_name', $tableName)->pluck('column_name') as $column)
-                            <td>{{ $record->$column }}</td>
+                            <td>{{ $record->$column ?? '' }}</td>
                         @endforeach
                     </tr>
                 @endforeach
