@@ -6,5 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Team extends Model
 {
-    //
+    protected $fillable = ['name', 'status'];
+
+    public function salesAssociates()
+    {
+        return $this->hasMany(SalesAssociate::class);
+    }
+
 }
