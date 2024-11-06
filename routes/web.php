@@ -17,7 +17,7 @@ Route::get('/form', [HomeController::class, 'showForm'])->name('form.show');
 
 
 use App\Http\Controllers\UniversalTableController;
-Route::get('/universal-table', [UniversalTableController::class, 'showRecords'])->middleware('auth');
+Route::get('/universal-table', [UniversalTableController::class, 'showRecords'])->name('universal.table');
 
 use App\Http\Controllers\RolePermissionController;
 Route::get('/permissions/edit', [RolePermissionController::class, 'edit'])->name('permissions.edit');
