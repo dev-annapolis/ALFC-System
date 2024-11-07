@@ -9,7 +9,7 @@ use App\Models\RolePermission;
 
 class UniversalTableController extends Controller
 {
-    public function showRecords()
+    public function showRecordsS()
     {
         $tables = [
             'assured_details' => [
@@ -28,7 +28,7 @@ class UniversalTableController extends Controller
             ],
             'insurance_details' => [
                 'issuance_code',
-                'assured_id', 
+                'assured_id',
                 'sales_associate_id',
                 'sale_date',
                 'classification',
@@ -137,19 +137,139 @@ class UniversalTableController extends Controller
         $data = [];
         foreach ($tables as $tableName => $columns) {
             // Fetch all records from the table
-            $records = \DB::table($tableName)->get();
+            $records = \DB::table($tableName);
 
             // Get the allowed columns from the permissions
             $allowedColumns = $permissions->where('table_name', $tableName)->pluck('column_name')->toArray();
 
+            // If it's the insurance details table, join it with all related tables
+            if ($tableName == 'insurance_details') {
+                $records = $records
+                    ->join('assureds', 'insurance_details.assured_id', '=', 'assureds.id')
+                    ->join('sales_associates', 'insurance_details.sales_associate_id', '=', 'sales_associates.id')
+                    ->join('branch_managers', 'insurance_details.branch_manager_id', '=', 'branch_managers.id')
+                    ->join('products', 'insurance_details.product_id', '=', 'products.id')
+                    ->join('subproducts', 'insurance_details.subproduct_id', '=', 'subproducts.id')
+                    ->join('sources', 'insurance_details.source_id', '=', 'sources.id')
+                    ->join('source_branches', 'insurance_details.source_branch_id', '=', 'source_branches.id')
+                    ->join('if_gdfis', 'insurance_details.if_gdfi_id', '=', 'if_gdfis.id')
+                    ->join('areas', 'insurance_details.area_id', '=', 'areas.id')
+                    ->join('alfc_branches', 'insurance_details.alfc_branch_id', '=', 'alfc_branches.id')
+                    ->join('mode_of_payments', 'insurance_details.mode_of_payment_id', '=', 'mode_of_payments.id')
+                    ->join('providers', 'insurance_details.provider_id', '=', 'providers.id')
+                    ->leftJoin('insurance_commisioners', 'insurance_details.id', '=', 'insurance_commisioners.insurance_detail_id')
+                    ->leftJoin('commision_details', 'insurance_details.id', '=', 'commision_details.insurance_detail_id')
+                    ->select(
+                        'insurance_details.*',
+                        'assureds.*',
+                        'sales_associates.*',
+                        'branch_managers.*',
+                        'products.*',
+                        'subproducts.*',
+                        'sources.*',
+                        'source_branches.*',
+                        'if_gdfis.*',
+                        'areas.*',
+                        'alfc_branches.*',
+                        'mode_of_payments.*',
+                        'providers.*',
+                        'insurance_commisioners.*',
+                        'commision_details.*'
+                    );
+            }
+
             // Filter records to include only the permitted columns
-            $filteredRecords = $records->map(function ($record) use ($allowedColumns) {
-                return collect($record)->only($allowedColumns);
+            $filteredRecords = $records->get()->map(function ($record) use ($allowedColumns) {
+                return (object) collect($record)->only($allowedColumns)->toArray(); // Return as object
             });
 
+            // Assign the filtered records to the data array
             $data[$tableName] = $filteredRecords;
+        }
+        // Optionally, you can sort the results by a field, e.g., insurance details ID
+        if (isset($data['insurance_details'])) {
+            $data['insurance_details'] = $data['insurance_details']->sortBy('insurance_details.id');
         }
 
         return view('universal_table', compact('data', 'permissions'));
     }
+
+    public function showRecords()
+    {
+        $user = Auth::user();
+        $role = $user->role; // Assuming the role is available on the user model
+
+        // Fetch permissions for the user's role with `can_view` set to 1
+        $permissions = RolePermission::where('role_id', $role->id)
+            ->where('can_view', 1)
+            ->get();
+
+        // Filter records for each table based on permissions
+        $data = [];
+        $tables = [
+            'insurance_details',
+            'assureds',
+            'assured_details',
+            'sales_associates',
+            'branch_managers',
+            'products',
+            'subproducts',
+            'sources',
+            'source_branches',
+            'if_gdfis',
+            'areas',
+            'alfc_branches',
+            'mode_of_payments',
+            'providers',
+            'insurance_commisioners',
+            'commision_details',
+            'payment_details',
+        ];
+
+        // Loop over each table
+        foreach ($tables as $tableName) {
+            // Fetch the allowed columns for this table
+            $allowedColumns = $permissions->where('table_name', $tableName)
+                ->pluck('column_name')
+                ->toArray();
+
+            // If there are allowed columns, build the query for this table
+            if (count($allowedColumns) > 0) {
+                $records = DB::table($tableName);
+
+                // For 'insurance_details' table, join related tables
+                if ($tableName == 'insurance_details') {
+                    $records = DB::table('insurance_details')
+                        ->distinct() // Ensure no duplicates
+                        ->leftJoin('assureds', 'insurance_details.assured_id', '=', 'assureds.id')
+                        ->leftJoin('assured_details', 'assureds.assured_detail_id', '=', 'assured_details.id')
+                        ->leftJoin('sales_associates', 'insurance_details.sales_associate_id', '=', 'sales_associates.id')
+                        ->leftJoin('branch_managers', 'insurance_details.branch_manager_id', '=', 'branch_managers.id')
+                        ->leftJoin('products', 'insurance_details.product_id', '=', 'products.id')
+                        ->leftJoin('subproducts', 'insurance_details.subproduct_id', '=', 'subproducts.id')
+                        ->leftJoin('sources', 'insurance_details.source_id', '=', 'sources.id')
+                        ->leftJoin('source_branches', 'insurance_details.source_branch_id', '=', 'source_branches.id')
+                        ->leftJoin('if_gdfis', 'insurance_details.if_gdfi_id', '=', 'if_gdfis.id')
+                        ->leftJoin('areas', 'insurance_details.area_id', '=', 'areas.id')
+                        ->leftJoin('alfc_branches', 'insurance_details.alfc_branch_id', '=', 'alfc_branches.id')
+                        ->leftJoin('mode_of_payments', 'insurance_details.mode_of_payment_id', '=', 'mode_of_payments.id')
+                        ->leftJoin('providers', 'insurance_details.provider_id', '=', 'providers.id')
+                        ->leftJoin('insurance_commisioners', 'insurance_details.id', '=', 'insurance_commisioners.insurance_detail_id')
+                        ->leftJoin('commision_details', 'insurance_details.id', '=', 'commision_details.insurance_detail_id')
+                        ->leftJoin('payment_details', 'insurance_details.id', '=', 'payment_details.insurance_detail_id');
+                }
+
+                // Apply select to retrieve only allowed columns
+                $records = $records->select($allowedColumns);
+
+                // Fetch the records
+                $data[$tableName] = $records->get();
+                // dump($data);
+            }
+        }
+        // dd($data);
+        // Return the view with the data
+        return view('universal_table', compact('data', 'permissions'));
+    }
+
 }
