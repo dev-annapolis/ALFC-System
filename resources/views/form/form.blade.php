@@ -21,6 +21,10 @@
 
     }
 
+    .main-title{
+        font-family: "Poppins-Bold";
+    }
+
 
     /* Font size for md and above (768px and up) */
     @media (min-width: 768px) {
@@ -78,6 +82,18 @@
     .step.active {
         color: black;
         font-weight: bold;
+    }
+
+    .form-control:disabled {
+        background-color: #bdbdbd;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        margin: 0;
     }
 
     .step::before {
@@ -192,7 +208,7 @@
         color: #333;
         border: none;
         cursor: pointer;
-        font-size: 1em;
+        font-size: 1rem;
         width: 100px; /* Set desired width */
         height: 25px; /* Set desired height */
         display: flex; /* Add this to make it a flex container */
@@ -206,10 +222,10 @@
         border: none;
         padding: 10px 20px;
         border-radius: 15px; /* Custom border radius */
-        font-size: 1em;
+        font-size: 1rem;
         cursor: pointer;
-        width: 100px; /* Set desired width */
-        height: 25px; /* Set desired height */
+        width: 200px; /* Set desired width */
+        height: 35px; /* Set desired height */
         display: flex;
         align-items: center; /* Centers the text vertically */
         justify-content: center; /* Centers the text horizontally */
@@ -297,9 +313,13 @@
 
         <!-- Form content section -->
         <div class="col-md-9 col-12 form-content pt-md-5">
+
+
+
+
             <!-- Step 1: Personal Information -->
             <div class="form-step active px-2">
-                <h3 class="main-title fw-bolder fs-3 mt-md-5">Personal Details</h3>
+                <h3 class="main-title fw-bold fs-1 mt-md-5">Personal Details</h3>
                 <p class="sub-main-title text-muted mb-md-5">Enter assured personal details and information</p>
 
                 <form id="step1 mt-md-5">
@@ -309,21 +329,21 @@
                         <div class="col-md-4 ">
                             <div class="mb-3 mb-md-5 mb-sm-4">
                                 <label for="lastName" class="form-label fw-bold fw-bold">Last Name</label>
-                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="lastName" placeholder="Enter last name" required>
+                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="lastName" placeholder="Enter Last Name" required>
                             </div>
                         </div>
 
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-5 mb-sm-4">
                                 <label for="firstName" class="form-label fw-bold">First Name</label>
-                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="firstName" placeholder="Enter first name" required>
+                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="firstName" placeholder="Enter First Name" required>
                             </div>
                         </div>
 
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-5 mb-sm-4">
                                 <label for="middleName" class="form-label fw-bold">Middle Name</label>
-                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="middleName" placeholder="Enter middle name">
+                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="middleName" placeholder="Enter Middle Name (Optional)">
                             </div>
                         </div>
 
@@ -332,8 +352,8 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-3 mb-sm-4">
-                                <label for="unitNo" class="form-label fw-bold">Lot No.</label>
-                                <input type="text" class="form-control rounded-0 border-1 rounded-0 border-1" id="unitNo" placeholder="Enter Lot No." required>
+                                <label for="unitNo" class="form-label fw-bold">Lot Number</label>
+                                <input type="text" class="form-control rounded-0 border-1 rounded-0 border-1" id="unitNo" placeholder="Enter lot number or unit number" required>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -355,21 +375,24 @@
                             </div>
                         </div>
                     </div>
+
                     <input type="hidden" id="fullAddress" name="fullAddress">
+
                     <div class="row">
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-5 mb-sm-4">
-                                <label for="natureOfBusiness" class="form-label fw-bold">Nature of Business</label>
+                                <label for="natureOfBusinessLabel" class="form-label fw-bold">Nature of Business</label>
                                 <input type="text" class="form-control rounded-0 border-1" id="natureOfBusiness" placeholder="Enter Nature of Business" required>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-5 mb-sm-4">
-                                <label for="otherAsset" class="form-label fw-bold">Other Asset</label>
+                                <label for="otherAssetLabel" class="form-label fw-bold">Other Asset</label>
                                 <input type="text" class="form-control rounded-0 border-1" id="otherAsset" placeholder="Enter Other Asset" required>
                             </div>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-3 mb-sm-4">
@@ -395,7 +418,7 @@
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-5 mb-sm-4">
                                 <label for="facebookAccount" class="form-label fw-bold">Facebook Account</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="facebookAccount" placeholder="Enter Facebook Account URL "
+                                <input type="text" class="form-control rounded-0 border-1" id="facebookAccount" placeholder="Enter Facebook Profile Account URL "
                                        title="Please enter your Facebook account link or username">
                             </div>
                         </div>
@@ -404,59 +427,447 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="mb-3 mb-md-5 mb-sm-4">
-                                <label for="remarks" class="form-label fw-bold">Remarks</label>
-                                <textarea class="form-control rounded-0 border-1" id="remarks" rows="5" placeholder="Enter your remarks here..." required></textarea>
+                                <label for="remarksPersonalDetailsLabel" class="form-label fw-bold">Remarks</label>
+                                <textarea class="form-control rounded-0 border-1" id="remarksPersonalDetails" rows="5" placeholder="Enter your remarks here..." required></textarea>
                             </div>
                         </div>
                     </div>
 
+
+
+
                     <div class="button-container">
-                        <button type="button" class="next-button" onclick="nextStep()">Next</button>
+                        <button type="button " class="next-button" onclick="nextStep()">Next</button>
                     </div>
                 </form>
 
             </div>
 
-            <!-- Step 2: Education -->
-            <div class="form-step">
-                <h3>Insurance</h3>
-                <p class="text-muted">Enter assured personal details and information</p>
-                <form id="step2">
+            <!-- Step 2: Insurance -->
+            <div class="form-step px-2">
+                <h3 class="main-title fw-bold fs-1 mt-md-5">Insurance</h3>
+                <p class="sub-main-title text-muted mb-md-5">Enter Insurance Details and Information</p>
+
+                <form id="step2 mt-md-5">
 
                     <div class="row ">
-                        <div class="col-md-4">
-                            <div class="mb-3 ">
-                                <label for="inputField1" class="form-label fw-bold">Input Field 1</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="inputField1" placeholder="Enter field 1">
+
+                        <div class="col-md-4 ">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="sa-sm-label" class="form-label fw-bold fw-bold fs-6">SA/SM</label>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="sa-sm">
+                                    <option selected>Select SA or SM</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
                             </div>
                         </div>
+
                         <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="inputField2" class="form-label fw-bold">Input Field 2</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="inputField2" placeholder="Enter field 2">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="issuanceCodeLabel" class="form-label fw-bold">Issuance Code</label>
+                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="issuanceCode" placeholder="Enter the Issuance Code" required>
                             </div>
                         </div>
+
                         <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="inputField3" class="form-label fw-bold">Input Field 3</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="inputField3" placeholder="Enter field 3">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="salesDateLabel" class="form-label fw-bold">Sale Date</label>
+                                <input type="date" class="form-control rounded-0 border-1 rounded-0" id="salesDate" placeholder="Select the Sale Date">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row ">
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-5 mb-sm-4">
+                                <label for="classificationLabel" class="form-label fw-bold fw-bold fs-6">Classification</label>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="classification">
+                                    <option selected>Select Classification</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-5 mb-md-5 mb-sm-4">
+                                <label for="insuranceTypeLabel" class="form-label fw-bold">Insurance Type</label>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="insuranceType">
+                                    <option selected>Select Insurance Type</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-5 mb-md-5 mb-sm-4">
+                                <label for="salesStatusLabel" class="form-label fw-bold">Sale Status</label>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="salesStatus">
+                                    <option selected>Select Sale Status</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row ">
+
+                        <div class="col-md-4 ">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="branchManagerLabel" class="form-label fw-bold fw-bold fs-6">Branch Manager</label>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="branchManager">
+                                    <option selected>Select Branch Manager</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="collectionGmLabel" class="form-label fw-bold">Collection GM</label>
+                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="collectionGm" placeholder="Enter Collection GM Name" required>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+
+                    <div class="row ">
+
+                        <div class="col-md-4 ">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="legalRepLabel" class="form-label fw-bold fw-bold fs-6">Legal Representative</label>
+                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="legalRep" placeholder="Enter Legal Rep. Name">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="legalSupervisorLabel" class="form-label fw-bold">Legal Supervisor</label>
+                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="legalSupervisor" placeholder="Enter Legal Supervisor Name" required>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="row ">
+
+                        <div class="col-md-4 ">
+                            <div class="mb-3 mb-md-5 mb-sm-4">
+                                <label for="assignAtty1Label" class="form-label fw-bold fw-bold fs-6">Assigned Attorney (1)</label>
+                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="assignAtty1" placeholder="Enter Attorney's Name">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-5 mb-sm-4">
+                                <label for="assignAtty2Label" class="form-label fw-bold">Assigned Attorney (2)</label>
+                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="assignAtty2" placeholder="Enter Attorney's Name" required>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="button-container">
+                        <button type="button" class="prev-button" onclick="prevStep()">Back</button>
+                        <button type="button" class="next-button" onclick="nextStep()">Next</button>
+                    </div>
+                </form>
+            </div>
+
+
+            <!-- Step 3: Product -->
+            <div class="form-step px-2">
+                <h3 class="main-title fw-bold fs-1 mt-md-5">Product</h3>
+                <p class="sub-main-title text-muted mb-md-5">Enter product details and information</p>
+
+                <form id="step3 mt-md-5">
+
+                    <div class="row ">
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-5 mb-sm-4">
+                                <label for="providerlabel" class="form-label fw-bold fw-bold fs-6">Provider</label>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="provider">
+                                    <option selected>Select Provider</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
                             </div>
                         </div>
                     </div>
+
+                    <div class="row mt-md-3">
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4">
+                                <label for="productLabel" class="form-label fw-bold fw-bold fs-6">Product</label>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="product">
+                                    <option selected>Select Product</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4">
+                                <label for="subProductLabel" class="form-label fw-bold fw-bold fs-6">Sub-Product</label>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="subProduct">
+                                    <option selected>Select Sub-Product</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4">
+                                <label for="productTypeLabel" class="form-label fw-bold fw-bold fs-6">Product Type</label>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="productType">
+                                    <option selected>Select Product Type</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="row ">
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4">
+                                <label for="sourceLabel" class="form-label fw-bold fw-bold fs-6">Source</label>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="source">
+                                    <option selected>Select Source</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4">
+                                <label for="sourceBranchLabel" class="form-label fw-bold fw-bold fs-6">Source Branch</label>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="sourceBranch">
+                                    <option selected>Select Source Branch</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4">
+                                <label for="ifGdfiLabel" class="form-label fw-bold fw-bold fs-6">If GDFI</label>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="ifGdfi">
+                                    <option selected>Select If GDFI</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row ">
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-5 mb-sm-4">
+                                <label for="mortgageeLabel" class="form-label fw-bold fw-bold fs-6">Mortagee</label>
+                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="mortgagee" placeholder="Enter Mortgagee" required>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row mt-md-3">
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4">
+                                <label for="areaLabel" class="form-label fw-bold fw-bold fs-6">Area</label>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="area">
+                                    <option selected>Select Area</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4">
+                                <label for="alfcBranchLabel" class="form-label fw-bold fw-bold fs-6">ALFC Branch</label>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="alfcBranch">
+                                    <option selected>Select ALFC Branch</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="row ">
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4">
+                                <label for="policyNumberLabel" class="form-label fw-bold fw-bold fs-6">Policy Number</label>
+                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="policyNumber" placeholder="Enter Policy Number" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4">
+                                <label for="expiryDateLabel" class="form-label fw-bold fw-bold fs-6">Expiry Date</label>
+                                <input type="date" class="form-control rounded-0 rounded-0 border-1" id="expiryDate" placeholder="Enter Policy Number" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4">
+                                <label for="policyInsumptionLabel" class="form-label fw-bold fw-bold fs-6">Policy Insumption Date</label>
+                                <input type="date" class="form-control rounded-0 rounded-0 border-1" id="policyInsumption" placeholder="Enter Policy Inisu" required>
+                            </div>
+                        </div>
+
+                    </div>
+
+
                     <div class="row">
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="inputField1" class="form-label fw-bold">Input Field 1</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="inputField1" placeholder="Enter field 1">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3">
-                                <label for="inputField2" class="form-label fw-bold">Input Field 2</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="inputField2" placeholder="Enter field 2">
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4">
+                                <label for="plateConductionNumberLabel" class="form-label fw-bold fw-bold fs-6">Plate Conduction Number</label>
+                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="plateConductionNumber" placeholder="Enter Plate Conduction Number" required>
                             </div>
                         </div>
 
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4">
+                                <label for="descriptionLabel" class="form-label fw-bold fw-bold fs-6">Description</label>
+                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="description" placeholder="Enter Description" required>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-5 mb-sm-4">
+                                <label for="loanAmountLabel" class="form-label fw-bold fw-bold fs-6">Loan Amount</label>
+                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="loanAmount" placeholder="Enter Loan Amount" required>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-5 mb-sm-4">
+                                <label for="totalSumInsuredLabel" class="form-label fw-bold fw-bold fs-6">Total Sum Insured </label>
+                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="totalSumInsured" placeholder="Enter Total Sum Insured" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-5 mb-sm-4">
+                                <label for="mopLabel" class="form-label fw-bold fw-bold fs-6">Mode of Payment</label>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="mop">
+                                    <option selected>Select Mode of Payment</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="row mt-md-5">
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4">
+                                <label for="policyExpirationAgingLabel" class="form-label fw-bold fw-bold fs-6">Policy Expiration Aging</label>
+                                <input type="text" class="form-control rounded-0 rounded-0 border-1 disabled" id="policyExpirationAging" disabled value="test">
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4">
+                                <label for="bookNumberLabel" class="form-label fw-bold fw-bold fs-6">Book Number</label>
+                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="bookNumber" placeholder="Enter Book Number" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4">
+                                <label for="filingNumberLabel" class="form-label fw-bold fw-bold fs-6">Filing Number</label>
+                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="filingNumber" placeholder="Enter Filing Number" required>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="row mt-md-5">
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4">
+                                <label for="pidReceivedDateLabel" class="form-label fw-bold fw-bold fs-6">PID Received Date</label>
+                                <input type="date" class="form-control rounded-0 rounded-0 border-1" id="pidReceivedDate" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4">
+                                <label for="pidCompletionDateLabel" class="form-label fw-bold fw-bold fs-6">PID Completion Date</label>
+                                <input type="date" class="form-control rounded-0 rounded-0 border-1" id="pidCompletionDate" required>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+
+                    <div class="row mt-md-5">
+                        <div class="col-md-12">
+                            <div class="mb-3 mb-md-5 mb-sm-4">
+                                <label for="remarksProductsLabel" class="form-label fw-bold">Remarks</label>
+                                <textarea class="form-control rounded-0 border-1" id="remarksProducts" rows="5" placeholder="Enter your remarks here..." required></textarea>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="button-container">
@@ -466,43 +877,338 @@
                 </form>
             </div>
 
-            <!-- Step 3: Work Experience -->
-            <div class="form-step">
-                <h3>Product</h3>
-                <p>Enter assured personal details and information</p>
-                <form id="step3">
 
-                    <div class="button-container">
+            <!-- Step 4: Commission -->
+            <div class="form-step px-2">
+                <h3 class="main-title fw-bold fs-1 mt-md-5">Commision</h3>
+                <p class="sub-main-title text-muted mb-md-5">Enter Commission details and information</p>
+
+
+
+                <form id="step4 mt-md-5">
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-5 mb-sm-4">
+                                <label for="provisionReceiptLabel" class="form-label fw-bold">Provision Receipt</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="provisionReceipt" placeholder="Enter Provision Receipt" required>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="grossPremiumLabel" class="form-label fw-bold">Gross Premium</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="grossPremium" placeholder="Enter Gross Premium" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="discountLabel" class="form-label fw-bold">Discount</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="discount" placeholder="Enter Discount" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="netOfDiscountLabel" class="form-label fw-bold">Net of Discount</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="netOfDiscount"  disabled required>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="row">
+
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="amountDuetoProviderLabel" class="form-label fw-bold">Amount Due to Provider</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="amountDuetoProvider" placeholder="Enter Amount Due to Provider" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="fullCommissionLabel" class="form-label fw-bold">Full Commission</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="fullCommission"  disabled required>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="marketingFundLabel" class="form-label fw-bold">Marketing Fund</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="marketingFund" placeholder="Enter Marketing Fund" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="offsettingLabel" class="form-label fw-bold">Offsetting</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="offsetting" placeholder="Enter Offsetting" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="promoLabel" class="form-label fw-bold">Promo</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="promo" placeholder="Enter Promo Amount" required>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="row mt-md-5">
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="commissions" placeholder="Enter Name" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="commissionAmountLabel" class="form-label fw-bold">Amount</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="commissionAmount" placeholder="Enter Amount" required>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row mb-md-5">
+
+                        <div class="col-md-4 mb-5 mb-md-5 mb-sm-5">
+                            <button type="button" class="bg-secondary"  onclick="">ADD</button>
+                        </div>
+
+                    </div>
+
+                    <div class="row mt-md-5">
+
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="commDeductLabel" class="form-label fw-bold">Comm Deduct</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="commDeduct" placeholder="Enter Comm Deduct" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="totalCommissionLabel" class="form-label fw-bold">Total Commission</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="totalCommission" required disabled>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="row mt-md-3 mb-md-5">
+
+                        <div class="col-md-4">
+                            <div class="mb-5 mb-md-5 mb-sm-5">
+                                <label for="vatLabel" class="form-label fw-bold">VAT</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="vat" required disabled>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-5 mb-md-4 mb-sm-5">
+                                <label for="salesCreditLabel" class="form-label fw-bold">Sales Credit</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="salesCredit" required disabled>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-5 mb-md-5 mb-sm-5">
+                                <label for="salesCreditPercentLabel" class="form-label fw-bold">Sales Credit %</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="salesCreditPercent" required disabled>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+
+
+                    <div class="button-container mt-md-5">
                         <button type="button" class="prev-button" onclick="prevStep()">Back</button>
                         <button type="button" class="next-button" onclick="nextStep()">Next</button>
                     </div>
                 </form>
             </div>
 
-            <!-- Step 4: User Photo -->
-            <div class="form-step">
-                <h3>Commision</h3>
-                <p>Enter assured personal details and information</p>
-                <form id="step4">
 
-                    <div class="button-container">
-                        <button type="button" class="prev-button" onclick="prevStep()">Back</button>
-                        <button type="button" class="next-button" onclick="nextStep()">Next</button>
+            <!-- Step 5: Payment -->
+            <div class="form-step px-2">
+                <h3 class="main-title fw-bold fs-1 mt-md-5">Payment</h3>
+                <p class="sub-main-title text-muted mb-md-5">Enter Payment details and information</p>
+
+                <form id="step5 mt-md-5">
+
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-5 mb-sm-4">
+                                <label for="paymentTermsLabel" class="form-label fw-bold">Payment Terms</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="paymentTerms" placeholder="Enter Payment Terms" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-5 mb-sm-4">
+                                <label for="dueDateStartLabel" class="form-label fw-bold">Due Date Start</label>
+                                <input type="date" class="form-control rounded-0 border-1" id="dueDateStart" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-5 mb-sm-4">
+                                <label for="dueDateEndLabel" class="form-label fw-bold">Due Date End</label>
+                                <input type="date" class="form-control rounded-0 border-1" id="dueDateEnd" required>
+                            </div>
+                        </div>
+
                     </div>
-                </form>
-            </div>
 
-            <!-- Step 5: Summary -->
-            <div class="form-step">
-                <h3>Payment</h3>
-                <p>Enter assured personal details and information</p>
+                    <div class="row mb-md-3 mt-md-5">
+
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-3 mb-sm-4">
+                                <label for="ScheduleFirstPaymentLabel" class="form-label fw-bold">Schedule of 1st Payment</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="ScheduleFirstPayment" placeholder="Enter Schedule of 1st Payment" required>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="row mt-md-5">
+
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-3 mb-sm-4">
+                                <label for="ScheduleFirstPaymentLabel" class="form-label fw-bold">Schedule of 2nd Payment</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="ScheduleFirstPayment" required disabled>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-3 mb-sm-4">
+                                <label for="ScheduleFirstPaymentLabel" class="form-label fw-bold">Schedule of 3rd Payment</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="ScheduleFirstPayment" required disabled>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-3 mb-sm-4">
+                                <label for="ScheduleFirstPaymentLabel" class="form-label fw-bold">Schedule of 4th Payment</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="ScheduleFirstPayment" required disabled>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="row mb-md-5">
+
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-5 mb-sm-4">
+                                <label for="ScheduleFirstPaymentLabel" class="form-label fw-bold">Schedule of 5th Payment</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="ScheduleFirstPayment" required disabled>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-5 mb-sm-4">
+                                <label for="ScheduleFirstPaymentLabel" class="form-label fw-bold">Schedule of 6th Payment</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="ScheduleFirstPayment" required disabled>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+
+                    <div class="row mt-md-5">
+
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4">
+                                <label for="forBillingLabel" class="form-label fw-bold">For Billing</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="forBilling" placeholder="Enter For Billing" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4">
+                                <label for="overUnderPaymentLabel" class="form-label fw-bold">Over (Under) Payment</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="overUnderPayment" placeholder="Enter Over or Under Payment" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4">
+                                <label for="initialPaymentLabel" class="form-label fw-bold">Initial Payment</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="initialPayment" placeholder="Enter Initial Payment" required>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-5 mb-sm-4">
+                                <label for="dateGoodSalesLabel" class="form-label fw-bold">Date of Good as Sales</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="dateGoodSales" placeholder="Enter Date of Good as Sales" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-5 mb-sm-4">
+                                <label for="statusPaymentLabel" class="form-label fw-bold">Status</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="statusPayment" placeholder="Enter Status" required>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                </form>
+
+
                 <div class="button-container">
                     <button type="button" class="prev-button" onclick="prevStep()">Back</button>
                     <button type="submit" class="submit-button">Submit</button>
                 </div>
             </div>
 
+
+
+
         </div>
+
     </div>
 </div>
 
