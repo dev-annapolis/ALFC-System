@@ -8,7 +8,7 @@ class Product extends Model
 {
     protected $fillable = ['name', 'status'];
 
-    public function subproducts()
+    public function subproduct()
     {
         return $this->hasMany(Subproduct::class);
     }
