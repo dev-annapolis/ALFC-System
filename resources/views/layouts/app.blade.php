@@ -14,7 +14,9 @@
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
 
     <!-- Scripts -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @vite('resources/sass/app.scss')
+    @vite('resources/js/app.js')
+
 </head>
 <body>
     <div id="app">
@@ -72,8 +74,39 @@
             </div>
         </nav>
 
-        <main class="py-4">
+        <main>
             @yield('content')
+            <div id="viewport-info" style="
+            position: fixed;
+            top: 90%;
+            left: 50%;
+            z-index: 10000;
+            transform: translate(-50%, -50%);
+            background: rgba(247, 201, 241, 0.4);
+            padding: .5rem 1rem;
+            border-radius: 30px;
+        ">
+            <div id="xs" class="d-block d-sm-none"></div>
+            <div id="sm" class="d-none d-sm-block d-md-none"></div>
+            <div id="md" class="d-none d-md-block d-lg-none"></div>
+            <div id="lg" class="d-none d-lg-block d-xl-none"></div>
+            <div id="xl" class="d-none d-xl-block d-xxl-none"></div>
+            <div id="xxl" class="d-none d-xxl-block"></div>
+        </div>
+        <script>
+            function updateViewportDimensions() {
+                const width = window.innerWidth;
+                document.getElementById("xs").textContent = width < 576 ? `xs (<576px): ${width}px` : '';
+                document.getElementById("sm").textContent = width >= 576 && width < 768 ? `sm (≥576px): ${width}px` : '';
+                document.getElementById("md").textContent = width >= 768 && width < 992 ? `md (≥768px): ${width}px` : '';
+                document.getElementById("lg").textContent = width >= 992 && width < 1200 ? `lg (≥992px): ${width}px` : '';
+                document.getElementById("xl").textContent = width >= 1200 && width < 1400 ? `xl (≥1200px): ${width}px` : '';
+                document.getElementById("xxl").textContent = width >= 1400 ? `xxl (≥1400px): ${width}px` : '';
+            }
+
+            window.addEventListener('resize', updateViewportDimensions);
+            window.addEventListener('load', updateViewportDimensions);
+        </script>
         </main>
     </div>
 </body>
