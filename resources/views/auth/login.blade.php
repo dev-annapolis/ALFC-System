@@ -23,6 +23,15 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     @endif
+    {{-- @if ($errors->any())
+        <div class="alert alert-danger floating-alert alert-dismissible fade show">
+            
+                @foreach ($errors->all() as $error)
+                    {{ $error }}
+                @endforeach
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif --}}
     <div id="app" class="d-flex justify-content-center align-items-center min-vh-100">
         <div class="container row ">
             <div class="first-col shadow-lg p-0 d-none col-md-6 d-md-flex justify-content-center align-items-center">

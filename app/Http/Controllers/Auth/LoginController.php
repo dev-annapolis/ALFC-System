@@ -59,6 +59,9 @@ class LoginController extends Controller
                 ->withErrors(['username' => 'Your account is not verified.']);
         }
 
-        return parent::sendFailedLoginResponse($request);
+        // Default error response if credentials are incorrect
+        return redirect()->back()
+            ->withInput($request->only('username', 'remember'))
+            ->withErrors(['username' => trans('auth.failed')]);
     }
 }
