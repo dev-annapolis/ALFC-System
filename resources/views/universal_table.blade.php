@@ -1,72 +1,39 @@
-@extends('layouts.app')
+@extends('layouts.app')  <!-- Assuming you're using a layout -->
 
 @section('content')
-    <h2>Universal Data Table</h2>
+    <div class="container">
+        <h1>Records</h1>
 
-    <!-- Single Table for All Data -->
-    <div class="row">
-        <div class="col gx-0">
-            <!-- Table Structure for All Data -->
-            <table class="table table-bordered">
-                <thead>
-                    <!-- Table Names Row (Side by Side) -->
-                    <tr>
-                        @foreach($data as $tableName => $records)
-                            @php
-                                $viewableColumns = $permissions->where('table_name', $tableName)->where('can_view', 1)->pluck('column_name');
-                            @endphp
+        <!-- Loop through each table's records -->
+        @foreach($data as $tableName => $records)
+            <h2>{{ ucwords(str_replace('_', ' ', $tableName)) }}</h2> <!-- Table name in a human-readable format -->
 
-                            <!-- Only show table name if there are viewable columns -->
-                            @if ($viewableColumns->count() > 0)
-                                <th colspan="{{ $viewableColumns->count() }}" class="text-center">
-                                    <h4>{{ ucwords(str_replace('_', ' ', $tableName)) }}</h4>
-                                </th>
-                            @endif
-                        @endforeach
-                        <!-- Add the Action column header -->
-                        <th class="text-center"></th>
-                    </tr>
-
-                    <!-- Column Headers Row (Aligned to Table Names) -->
-                    <tr>
-                        @foreach($data as $tableName => $records)
-                            @php
-                                $viewableColumns = $permissions->where('table_name', $tableName)->where('can_view', 1)->pluck('column_name');
-                            @endphp
-
-                            <!-- Only show columns if they are viewable -->
-                            @foreach($viewableColumns as $column)
-                                <th>{{ ucwords(str_replace('_', ' ', $column)) }}</th>
-                            @endforeach
-                        @endforeach
-                        <!-- Add the Actions column header -->
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-
-                <tbody>
-                    <!-- Data Rows (Side by Side for Each Table) -->
-                    @foreach($records as $record)
+            <!-- Only display table if there are records -->
+            @if($records->isNotEmpty())
+                <table class="table table-bordered">
+                    <thead>
                         <tr>
-                            @foreach($data as $tableName => $records)
-                                @php
-                                    $viewableColumns = $permissions->where('table_name', $tableName)->where('can_view', 1)->pluck('column_name');
-                                @endphp
-
-                                <!-- Only show data for tables with viewable columns -->
-                                @foreach($viewableColumns as $column)
-                                    <td>{{ $record->$column ?? 'N/A' }}</td> <!-- Display Record Data -->
-                                @endforeach
+                            <!-- Dynamically generate headers based on the columns for this table -->
+                            @foreach($permissions->where('table_name', $tableName) as $permission)
+                                <th>{{ ucwords(str_replace('_', ' ', $permission->column_name)) }}</th>
                             @endforeach
-                            <!-- Add Action column with buttons (e.g., Edit, Delete) -->
-                            <td class="text-center">
-                                <a href="{{ route('edit.route', ['id' => $record->id]) }}" class="btn btn-primary btn-sm">Edit</a>
-                                <a href="{{ route('delete.route', ['id' => $record->id]) }}" class="btn btn-danger btn-sm">Delete</a>
-                            </td>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                    </thead>
+                    <tbody>
+                        <!-- Loop through each record and display the allowed columns -->
+                        @foreach($records as $record)
+                            <tr>
+                                @foreach($permissions->where('table_name', $tableName) as $permission)
+                                    <!-- Dynamically display only the columns the user has access to -->
+                                    <td>{{ $record->{$permission->column_name} }}</td>
+                                @endforeach
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            @else
+                <p>No records available for this table.</p>
+            @endif
+        @endforeach
     </div>
 @endsection
