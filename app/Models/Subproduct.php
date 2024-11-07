@@ -13,4 +13,9 @@ class Subproduct extends Model
         return $this->belongsTo(Product::class);
     }
 
+    public function insuranceDetail()
+    {
+        return $this->hasMany(InsuranceDetail::class);
+    }
+
 }
