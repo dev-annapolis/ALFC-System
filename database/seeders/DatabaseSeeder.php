@@ -223,7 +223,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'GMA AREA',
             ],
         ]);
-        
+
         DB::table('branch_managers')->insert([
             [
                 // 'id' => 1
@@ -236,7 +236,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // DB::table('assured_details')->insert([
-            
+
         // ]);
 
         DB::table('products')->insert([
@@ -347,8 +347,8 @@ class DatabaseSeeder extends Seeder
                 // 'id' => 20
                 'name' => 'OTHERS',
             ],
-        ]);       
-        
+        ]);
+
         DB::table('sources')->insert([
             [
                 // 'id' => 1
@@ -842,15 +842,15 @@ class DatabaseSeeder extends Seeder
         DB::table('if_gdfis')->insert([
             [
                 // 'id' => 1
-                'branch_division' => 'BRANCH DIVISION',
+                'name' => 'BRANCH DIVISION',
             ],
             [
                 // 'id' => 2
-                'branch_division' => 'TFD',
+                'name' => 'TFD',
             ],
             [
                 // 'id' => 3
-                'branch_division' => 'CFD',
+                'name' => 'CFD',
             ]
         ]);
 
@@ -879,7 +879,7 @@ class DatabaseSeeder extends Seeder
                 // 'id' => 6
                 'name' => 'HEAD OFFICE',
             ]
-        ]);        
+        ]);
 
         DB::table('alfc_branches')->insert([
             [
@@ -946,8 +946,8 @@ class DatabaseSeeder extends Seeder
                 // 'id' => 16
                 'name' => 'BAGUIO',
             ]
-        ]);        
-        
+        ]);
+
         DB::table('mode_of_payments')->insert([
             [
                 // 'id' => 1
@@ -1091,7 +1091,7 @@ class DatabaseSeeder extends Seeder
                 // 'id' => 16
                 'name' => 'Referral Fee Program',
             ]
-        ]);        
+        ]);
 
         DB::table('teles')->insert([
             [
@@ -1151,9 +1151,7 @@ class DatabaseSeeder extends Seeder
             ['username' => 'jonnalynnocossingcuenco', 'name' => 'JONNALYN NOCOS SINGCUENCO', 'email' => 'jonnalynnocossingcuenco@email.com'],
             ['username' => 'mariaangelaperalta', 'name' => 'MARIA ANGELA PERALTA', 'email' => 'mariaangelaperalta@email.com'],
             ['username' => 'alexanderaparejado', 'name' => 'ALEXANDER APAREJADO', 'email' => 'alexanderaparejado@email.com'],
-            ['username' => 'leonitoarroyo', 'name' => 'LEONITO ARROYO', 'email' => 'leonitoarroyo@email.com'],
             ['username' => 'rexmillan', 'name' => 'REX MILLAN', 'email' => 'rexmillan@email.com'],
-            ['username' => 'rylanjaycadalso', 'name' => 'RYLAN JAY CADALSO', 'email' => 'rylanjaycadalso@email.com'],
             ['username' => 'alexanderaparejado2', 'name' => 'ALEXANDER APAREJADO', 'email' => 'alexanderaparejado2@email.com'],
             ['username' => 'leonitoarroyo', 'name' => 'LEONITO ARROYO', 'email' => 'leonitoarroyo@email.com'],
             ['username' => 'rylanjaycadalso', 'name' => 'RYLAN JAY CADALSO', 'email' => 'rylanjaycadalso@email.com'],
@@ -1260,17 +1258,316 @@ class DatabaseSeeder extends Seeder
         ];
 
         $salesAssociates = [];
-        $userId = 8;
+        $userId = 8;  // Start from user_id 8
+
         foreach ($users as $index => $user) {
+            // Adding additional fields for each user
+            $users[$index] = array_merge($user, [
+                'password' => Hash::make('ALFCpassword'),
+                'viber_number' => '09123456789',  // Example Viber number for all users
+                'role_id' => 5,  // Assuming '5' is the role ID for sales associates
+                'status' => 'verified',  // Default status as 'verified'
+            ]);
+
+            // Prepare the sales associates data
             $salesAssociates[] = [
                 'name' => $user['name'],
-                'user_id' => $userId++, // Start from user_id 8
-                'team_id' => 1, // Assuming all are in team 1
+                'user_id' => $userId++,  // Increment user_id for each sales associate
+                'team_id' => 1,  // Assuming all are in team 1
             ];
         }
 
+        // Insert the users with the new fields into the 'users' table
         DB::table('users')->insert($users);
+
+        // Insert the sales associates into the 'sales_associates' table
         DB::table('sales_associates')->insert($salesAssociates);
-        
+
+        DB::table('assured_details')->insert([
+            [
+                'address' => '123 Main St, Springfield',
+                'contact_number' => '123-456-7890',
+                'other_contact_number' => '098-765-4321',
+                'facebook_account' => 'facebook.com/johndoe',
+                'viber_account' => 'viber.com/johndoe',
+                'nature_of_business' => 'Retail',
+                'other_assets' => 'Real estate properties',
+                'remarks' => 'Preferred contact during business hours',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+
+            [
+                'address' => '456 Elm St, Shelbyville',
+                'contact_number' => '234-567-8901',
+                'other_contact_number' => '876-543-2109',
+                'facebook_account' => 'facebook.com/janedoe',
+                'viber_account' => 'viber.com/janedoe',
+                'nature_of_business' => 'Wholesale',
+                'other_assets' => 'Vehicles, Machinery',
+                'remarks' => 'High-priority client',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            // Add more entries as needed
+        ]);
+
+        DB::table('assureds')->insert([
+            [
+                'name' => 'John Doe',
+                'assured_detail_id' => 1, // Assumes there's an assured_detail with ID 1
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'name' => 'Jane Smith',
+                'assured_detail_id' => 2, // Assumes there's an assured_detail with ID 2
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+
+            // Add more entries as needed
+        ]);
+
+
+        DB::table('insurance_details')->insert([
+            [
+                'issuance_code' => 'IC002',
+                'assured_id' => 2,
+                'sales_associate_id' => 2,
+                'sale_date' => '2023-03-01',
+                'classification' => 'Auto Insurance',
+                'insurance_type' => 'Full Coverage',
+                'sale_status' => 'Pending',
+                'branch_manager_id' => 2,
+                'legal_representative_name' => 'John Legal',
+                'legal_supervisor_name' => 'Mary Supervisor',
+                'assigned_atty_one' => 'Attorney X',
+                'assigned_atty_two' => 'Attorney Y',
+                'collection_gm' => 'GM Collection B',
+                'product_id' => 2,
+                'subproduct_id' => 2,
+                'product_type' => 'Comprehensive',
+                'source_id' => 2,
+                'source_branch_id' => 2,
+                'if_gdfi_id' => 2,
+                'mortgagee' => 'DEF Bank',
+                'area_id' => 2,
+                'alfc_branch_id' => 2,
+                'loan_amount' => '75000',
+                'total_sum_insured' => '150000',
+                'policy_number' => 'PN654321',
+                'policy_insumption_date' => '2023-04-01',
+                'expiry_date' => '2024-04-01',
+                'plate_conduction_number' => 'PL67890',
+                'description' => 'Auto insurance policy',
+                'policy_expiration_aging' => '1 year',
+                'book_number' => 'BN1234',
+                'filing_number' => 'FN5678',
+                'pid_received_date' => '2023-04-05',
+                'pid_completion_date' => '2023-04-10',
+                'remarks' => 'Policy pending approval',
+                'mode_of_payment_id' => 2,
+                'provider_id' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'issuance_code' => 'IC003',
+                'assured_id' => 2,
+                'sales_associate_id' => 2,
+                'sale_date' => '2023-05-01',
+                'classification' => 'Health Insurance',
+                'insurance_type' => 'Comprehensive Health',
+                'sale_status' => 'Approved',
+                'branch_manager_id' => 2,
+                'legal_representative_name' => 'Sarah Legal',
+                'legal_supervisor_name' => 'James Supervisor',
+                'assigned_atty_one' => 'Attorney A',
+                'assigned_atty_two' => 'Attorney B',
+                'collection_gm' => 'GM Collection C',
+                'product_id' => 2,
+                'subproduct_id' => 2,
+                'product_type' => 'Standard Health',
+                'source_id' => 2,
+                'source_branch_id' => 2,
+                'if_gdfi_id' => 2,
+                'mortgagee' => 'XYZ Financial',
+                'area_id' => 2,
+                'alfc_branch_id' => 2,
+                'loan_amount' => '100000',
+                'total_sum_insured' => '200000',
+                'policy_number' => 'PN789012',
+                'policy_insumption_date' => '2023-06-01',
+                'expiry_date' => '2024-06-01',
+                'plate_conduction_number' => 'PL34567',
+                'description' => 'Comprehensive health insurance',
+                'policy_expiration_aging' => '1 year',
+                'book_number' => 'BN7891',
+                'filing_number' => 'FN2345',
+                'pid_received_date' => '2023-06-05',
+                'pid_completion_date' => '2023-06-10',
+                'remarks' => 'Policy approved',
+                'mode_of_payment_id' => 2,
+                'provider_id' => 2,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+
+
+        DB::table('payment_details')->insert([
+            [
+                'admin_assistant_remarks' => 'No issues.',
+                'created_at' => now(),
+                'due_date' => '2023-01-10',
+                'for_billing' => 'Yes',
+                'good_as_sales_date' => '2023-01-05',
+                'initial_payment' => 1000,
+                'insurance_detail_id' => 1,
+                'over_under_payment' => 'None',
+                'payment_terms' => 'Monthly',
+                'policy_received_by' => 'John Doe',
+                'ra_comments' => 'All payments on time.',
+                'schedule_eight_payment' => '2023-08-10',
+                'schedule_fifth_payment' => '2023-05-10',
+                'schedule_first_payment' => '2023-01-10',
+                'schedule_fourth_payment' => '2023-04-10',
+                'schedule_second_payment' => '2023-02-10',
+                'schedule_seventh_payment' => '2023-07-10',
+                'schedule_sixth_payment' => '2023-06-10',
+                'schedule_third_payment' => '2023-03-10',
+                'status' => 'Active',
+                'tracking_number' => 'TN12345',
+                'updated_at' => now(),
+            ],
+            [
+                'admin_assistant_remarks' => 'Follow up needed.',
+                'created_at' => now(),
+                'due_date' => '2023-02-15',
+                'for_billing' => 'No',
+                'good_as_sales_date' => '2023-02-10',
+                'initial_payment' => 2000,
+                'insurance_detail_id' => 2,
+                'over_under_payment' => 'Under',
+                'payment_terms' => 'Quarterly',
+                'policy_received_by' => 'Jane Smith',
+                'ra_comments' => 'Awaiting second payment.',
+                'schedule_eight_payment' => '2023-02-15',
+                'schedule_fifth_payment' => '2023-11-15',
+                'schedule_first_payment' => '2023-05-15',
+                'schedule_fourth_payment' => '2023-08-15',
+                'schedule_second_payment' => '2023-02-10',
+                'schedule_seventh_payment' => '2023-07-10',
+                'schedule_sixth_payment' => '2023-03-10',
+                'schedule_third_payment' => '2023-06-10',
+                'status' => 'Pending',
+                'tracking_number' => 'TN67890',
+                'updated_at' => now(),
+            ]
+        ]);
+
+        DB::table('commision_details')->insert([
+            [
+                'insurance_detail_id' => 1, // Foreign key to insurance_detail
+                'provision_receipt' => 'PR12345',
+                'gross_premium' => '5000',
+                'discount' => '500',
+                'net_discounted' => '4500',
+                'amount_due_to_provider' => '4000',
+                'full_commission' => '1000',
+                'marketing_fund' => '200',
+                'offsetting' => '100',
+                'promo' => '50',
+                'total_commission' => '850',
+                'vat' => '12',
+                'sales_credit' => '900',
+                'sales_credit_percent' => '20',
+                'comm_deduct' => '10',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'insurance_detail_id' => 2, // Foreign key to insurance_detail
+                'provision_receipt' => 'PR67890',
+                'gross_premium' => '10000',
+                'discount' => '1000',
+                'net_discounted' => '9000',
+                'amount_due_to_provider' => '8500',
+                'full_commission' => '1500',
+                'marketing_fund' => '300',
+                'offsetting' => '150',
+                'promo' => '75',
+                'total_commission' => '1275',
+                'vat' => '12',
+                'sales_credit' => '1350',
+                'sales_credit_percent' => '25',
+                'comm_deduct' => '15',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            // Add more entries as needed
+        ]);
+
+        DB::table('insurance_commisioners')->insert([
+            [
+                'insurance_detail_id' => 1, // FK reference to an insurance_detail
+                'commisioner_id' => 1, // FK reference to a commissioner
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'insurance_detail_id' => 1, // Same insurance detail, different commissioner
+                'commisioner_id' => 2, // FK reference to a different commissioner
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'insurance_detail_id' => 2, // Different insurance detail
+                'commisioner_id' => 1, // Same commissioner as in the first entry
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+
+        DB::table('collection_details')->insert([
+            [
+                'insurance_detail_id' => 1, // FK reference to insurance_detail
+                'insurance_type' => 'Health Insurance',
+                'sale_status' => 'Active',
+                'tele_id' => 1, // FK reference to tele
+                'due_date' => '2023-12-10',
+                'paid_terms' => '1',
+                'payment_remarks' => 'First payment made',
+                'account_status' => 'Active',
+                'payment_ptp_declared' => 'No',
+                'payment_center' => 'Online Payment',
+                'reference_number' => 'REF12345',
+                'date_on_receipt_abstract' => '2023-11-15',
+                'contact_number_verification' => 'Verified',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'insurance_detail_id' => 2, // FK reference to insurance_detail
+                'insurance_type' => 'Auto Insurance',
+                'sale_status' => 'Pending',
+                'tele_id' => 2, // FK reference to tele
+                'due_date' => '2023-11-20',
+                'paid_terms' => '2',
+                'payment_remarks' => 'Awaiting payment',
+                'account_status' => 'Pending',
+                'payment_ptp_declared' => 'Yes',
+                'payment_center' => 'Bank Transfer',
+                'reference_number' => 'REF67890',
+                'date_on_receipt_abstract' => '2023-11-10',
+                'contact_number_verification' => 'Not Verified',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+        ]);
+
     }
+
+
 }
