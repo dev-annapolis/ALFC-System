@@ -1287,6 +1287,7 @@ class DatabaseSeeder extends Seeder
             [
                 'address' => '123 Main St, Springfield',
                 'contact_number' => '123-456-7890',
+                'email' => 'assured1@test.com',
                 'other_contact_number' => '098-765-4321',
                 'facebook_account' => 'facebook.com/johndoe',
                 'viber_account' => 'viber.com/johndoe',
@@ -1300,6 +1301,7 @@ class DatabaseSeeder extends Seeder
             [
                 'address' => '456 Elm St, Shelbyville',
                 'contact_number' => '234-567-8901',
+                'email' => 'assured2@test.com',
                 'other_contact_number' => '876-543-2109',
                 'facebook_account' => 'facebook.com/janedoe',
                 'viber_account' => 'viber.com/janedoe',
@@ -1357,7 +1359,7 @@ class DatabaseSeeder extends Seeder
                 'loan_amount' => '75000',
                 'total_sum_insured' => '150000',
                 'policy_number' => 'PN654321',
-                'policy_insumption_date' => '2023-04-01',
+                'policy_inception_date' => '2023-04-01',
                 'expiry_date' => '2024-04-01',
                 'plate_conduction_number' => 'PL67890',
                 'description' => 'Auto insurance policy',
@@ -1398,7 +1400,7 @@ class DatabaseSeeder extends Seeder
                 'loan_amount' => '100000',
                 'total_sum_insured' => '200000',
                 'policy_number' => 'PN789012',
-                'policy_insumption_date' => '2023-06-01',
+                'policy_inception_date' => '2023-06-01',
                 'expiry_date' => '2024-06-01',
                 'plate_conduction_number' => 'PL34567',
                 'description' => 'Comprehensive health insurance',
