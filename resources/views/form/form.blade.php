@@ -322,12 +322,9 @@
         <!-- Form content section -->
         <div class="col-md-9 col-12 form-content pt-md-5">
 
-
-
-
             <!-- Step 1: Personal Information -->
             <div class="form-step active px-2">
-                <h3 class="main-title fw-bold fs-1 mt-md-5">Personal Details</h3>
+                <h3 class="main-title fw-bold fs-1">Personal Details</h3>
                 <p class="sub-main-title text-muted mb-md-5">Enter assured personal details and information</p>
 
                 <form id="step1 mt-md-5">
@@ -1377,6 +1374,7 @@
             saveFormData(); // Save form data
             if (currentStep < formSteps.length - 1) {
                 currentStep++;
+                sessionStorage.setItem('currentStep', currentStep);
                 showStep(currentStep);
             }
         }
@@ -1387,6 +1385,7 @@
         saveFormData(); // Save form data
         if (currentStep > 0) {
             currentStep--;
+            sessionStorage.setItem('currentStep', currentStep);
             showStep(currentStep);
         }
     }
@@ -1395,12 +1394,17 @@
     document.querySelectorAll('.step input[type="radio"]').forEach((radio, index) => {
         radio.addEventListener('change', () => {
             currentStep = index;
+            sessionStorage.setItem('currentStep', currentStep);
             showStep(currentStep);
         });
     });
 
     // Initialize the form by showing the first step and loading form data from sessionStorage
     document.addEventListener('DOMContentLoaded', () => {
+        const savedStep = sessionStorage.getItem('currentStep');
+        if (savedStep) {
+            currentStep = parseInt(savedStep, 10);
+        }
         loadFormData();
         showStep(currentStep);
     });
