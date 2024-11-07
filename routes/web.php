@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TestController;
+use App\Http\Controllers\SalesReportController;
 Route::get('/', function () {
     return view('landing-page');
 });
@@ -26,4 +27,6 @@ Route::post('/permissions/update', [RolePermissionController::class, 'update'])-
 
 
 Route::get('/testusers', [TestController::class, 'userIndex'])->name('users.index');
-Route::get('/users/{id}', [TestController::class, 'show'])->name('users.show');
+Route::get('/users/{id}', action: [TestController::class, 'show'])->name('users.show');
+Route::get('/salesreport/index', action: [SalesReportController::class, 'salesReportIndex'])->name('salesreport.index');
+Route::get('/api/sales-report', [SalesReportController::class, 'salesReportData']);
