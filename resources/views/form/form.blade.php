@@ -128,6 +128,14 @@
         border-color: #007bff;
     }
 
+    .uppercase-input {
+        text-transform: uppercase; /* Converts input text to uppercase */
+    }
+
+    .uppercase-input::placeholder {
+        text-transform: none; /* Ensures the placeholder remains as is */
+    }
+
     .form-content {
         padding: 20px;
     }
@@ -329,21 +337,21 @@
                         <div class="col-md-4 ">
                             <div class="mb-3 mb-md-5 mb-sm-4">
                                 <label for="lastName" class="form-label fw-bold fw-bold">Last Name</label>
-                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="lastName" placeholder="Enter Last Name" required>
+                                <input type="text" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="lastName" placeholder="Enter Last Name" required>
                             </div>
                         </div>
 
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-5 mb-sm-4">
                                 <label for="firstName" class="form-label fw-bold">First Name</label>
-                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="firstName" placeholder="Enter First Name" required>
+                                <input type="text" class="form-control uppercase-input rounded-0 border-1 rounded-0" id="firstName" placeholder="Enter First Name" required>
                             </div>
                         </div>
 
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-5 mb-sm-4">
                                 <label for="middleName" class="form-label fw-bold">Middle Name</label>
-                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="middleName" placeholder="Enter Middle Name (Optional)">
+                                <input type="text" class="form-control uppercase-input rounded-0 border-1 rounded-0" id="middleName" placeholder="Enter Middle Name (Optional)">
                             </div>
                         </div>
 
@@ -359,7 +367,7 @@
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-3 mb-sm-4">
                                 <label for="street" class="form-label fw-bold">Street</label>
-                                <input type="text" class="form-control rounded-0 border-1 rounded-0 border-1" id="street" placeholder="Enter Street" required>
+                                <input type="text" class="form-control rounded-0 border-1" id="street" name="street" placeholder="Enter Street" required>
                             </div>
                         </div>
                         <div class="col-md-4">
@@ -397,7 +405,7 @@
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-3 mb-sm-4">
                                 <label for="phoneNumber" class="form-label fw-bold">Phone Number</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="phoneNumber" placeholder="Enter Phone Number"
+                                <input type="text" class="form-control rounded-0 border-1" id="phoneNumber" placeholder="Enter Phone Number" name="phoneNumber"
                                        pattern="\d{11}" title="Please enter exactly 11 digits" required maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                             </div>
                         </div>
@@ -452,17 +460,18 @@
 
                     <div class="row ">
 
-                        <div class="col-md-4 ">
+                        <div class="col-md-4">
                             <div class="mb-3 mb-md-4 mb-sm-4">
-                                <label for="sa-sm-label" class="form-label fw-bold fw-bold fs-6">SA/SM</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="sa-sm">
-                                    <option selected>Select SA or SM</option>
+                                <label for="sa-sm-label" class="form-label fw-bold fs-6">SA/SM</label>
+                                <select class="form-control form-select rounded-0 border-1 m-0" id="sa-sm" required>
+                                    <option value="" selected disabled>Select SA or SM</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
                                 </select>
                             </div>
                         </div>
+
 
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-4 mb-sm-4">
@@ -474,7 +483,7 @@
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-4 mb-sm-4">
                                 <label for="salesDateLabel" class="form-label fw-bold">Sale Date</label>
-                                <input type="date" class="form-control rounded-0 border-1 rounded-0" id="salesDate" placeholder="Select the Sale Date">
+                                <input type="date" class="form-control rounded-0 border-1 rounded-0" id="salesDate" placeholder="Select the Sale Date" required>
                             </div>
                         </div>
 
@@ -485,8 +494,8 @@
                         <div class="col-md-4 ">
                             <div class="mb-5 mb-md-5 mb-sm-4">
                                 <label for="classificationLabel" class="form-label fw-bold fw-bold fs-6">Classification</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="classification">
-                                    <option selected>Select Classification</option>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="classification" required>
+                                    <option value="" disabled selected>Select Classification</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
@@ -497,8 +506,8 @@
                         <div class="col-md-4">
                             <div class="mb-5 mb-md-5 mb-sm-4">
                                 <label for="insuranceTypeLabel" class="form-label fw-bold">Insurance Type</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="insuranceType">
-                                    <option selected>Select Insurance Type</option>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="insuranceType" required>
+                                    <option value="" disabled selected>Select Insurance Type</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
@@ -509,8 +518,8 @@
                         <div class="col-md-4">
                             <div class="mb-5 mb-md-5 mb-sm-4">
                                 <label for="salesStatusLabel" class="form-label fw-bold">Sale Status</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="salesStatus">
-                                    <option selected>Select Sale Status</option>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="salesStatus" required>
+                                    <option value="" disabled selected>Select Sale Status</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
@@ -525,8 +534,8 @@
                         <div class="col-md-4 ">
                             <div class="mb-3 mb-md-4 mb-sm-4">
                                 <label for="branchManagerLabel" class="form-label fw-bold fw-bold fs-6">Branch Manager</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="branchManager">
-                                    <option selected>Select Branch Manager</option>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="branchManager" required>
+                                    <option value="" disabled selected>Select Branch Manager</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
@@ -558,7 +567,7 @@
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-4 mb-sm-4">
                                 <label for="legalSupervisorLabel" class="form-label fw-bold">Legal Supervisor</label>
-                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="legalSupervisor" placeholder="Enter Legal Supervisor Name" required>
+                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="legalSupervisor" placeholder="Enter Legal Supervisor Name">
                             </div>
                         </div>
 
@@ -577,7 +586,7 @@
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-5 mb-sm-4">
                                 <label for="assignAtty2Label" class="form-label fw-bold">Assigned Attorney (2)</label>
-                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="assignAtty2" placeholder="Enter Attorney's Name" required>
+                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="assignAtty2" placeholder="Enter Attorney's Name">
                             </div>
                         </div>
 
@@ -605,7 +614,7 @@
                             <div class="mb-5 mb-md-5 mb-sm-4">
                                 <label for="providerlabel" class="form-label fw-bold fw-bold fs-6">Provider</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="provider">
-                                    <option selected>Select Provider</option>
+                                    <option value="" disabled selected>Select Provider</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
@@ -620,7 +629,7 @@
                             <div class="mb-5 mb-md-4 mb-sm-4">
                                 <label for="productLabel" class="form-label fw-bold fw-bold fs-6">Product</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="product">
-                                    <option selected>Select Product</option>
+                                    <option value="" disabled selected>Select Product</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
@@ -632,7 +641,7 @@
                             <div class="mb-5 mb-md-4 mb-sm-4">
                                 <label for="subProductLabel" class="form-label fw-bold fw-bold fs-6">Sub-Product</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="subProduct">
-                                    <option selected>Select Sub-Product</option>
+                                    <option value="" disabled selected>Select Sub-Product</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
@@ -644,7 +653,7 @@
                             <div class="mb-5 mb-md-4 mb-sm-4">
                                 <label for="productTypeLabel" class="form-label fw-bold fw-bold fs-6">Product Type</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="productType">
-                                    <option selected>Select Product Type</option>
+                                    <option value="" disabled selected>Select Product Type</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
@@ -661,7 +670,7 @@
                             <div class="mb-5 mb-md-4 mb-sm-4">
                                 <label for="sourceLabel" class="form-label fw-bold fw-bold fs-6">Source</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="source">
-                                    <option selected>Select Source</option>
+                                    <option value="" disabled selected>Select Source</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
@@ -673,7 +682,7 @@
                             <div class="mb-5 mb-md-4 mb-sm-4">
                                 <label for="sourceBranchLabel" class="form-label fw-bold fw-bold fs-6">Source Branch</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="sourceBranch">
-                                    <option selected>Select Source Branch</option>
+                                    <option value="" disabled selected>Select Source Branch</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
@@ -685,7 +694,7 @@
                             <div class="mb-5 mb-md-4 mb-sm-4">
                                 <label for="ifGdfiLabel" class="form-label fw-bold fw-bold fs-6">If GDFI</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="ifGdfi">
-                                    <option selected>Select If GDFI</option>
+                                    <option value="" disabled selected>Select If GDFI</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
@@ -711,7 +720,7 @@
                             <div class="mb-5 mb-md-4 mb-sm-4">
                                 <label for="areaLabel" class="form-label fw-bold fw-bold fs-6">Area</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="area">
-                                    <option selected>Select Area</option>
+                                    <option value="" disabled selected>Select Area</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
@@ -723,7 +732,7 @@
                             <div class="mb-5 mb-md-4 mb-sm-4">
                                 <label for="alfcBranchLabel" class="form-label fw-bold fw-bold fs-6">ALFC Branch</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="alfcBranch">
-                                    <option selected>Select ALFC Branch</option>
+                                    <option value="" disabled selected>Select ALFC Branch</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
@@ -802,7 +811,7 @@
                             <div class="mb-5 mb-md-5 mb-sm-4">
                                 <label for="mopLabel" class="form-label fw-bold fw-bold fs-6">Mode of Payment</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="mop">
-                                    <option selected>Select Mode of Payment</option>
+                                    <option value="" disabled selected>Select Mode of Payment</option>
                                     <option value="1">One</option>
                                     <option value="2">Two</option>
                                     <option value="3">Three</option>
@@ -976,7 +985,12 @@
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-4 mb-sm-4">
                                 <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="commissions" placeholder="Enter Name" required>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="commissions">
+                                    <option value="" disabled selected>Select Commissions</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
                             </div>
                         </div>
 
@@ -1053,6 +1067,7 @@
                         <button type="button" class="next-button" onclick="nextStep()">Next</button>
                     </div>
                 </form>
+
             </div>
 
 
@@ -1212,11 +1227,12 @@
     </div>
 </div>
 
+
+
 <script>
     let currentStep = 0;
     const formSteps = document.querySelectorAll('.form-step');
     const stepIndicators = document.querySelectorAll('.sidebar .step');
-
 
     function showStep(step) {
         formSteps.forEach((formStep, index) => {
@@ -1228,57 +1244,190 @@
             } else {
                 stepIndicators[index].classList.remove('completed');
             }
-
             if (index === step) {
                 stepIndicators[index].querySelector('input[type="radio"]').checked = true;
             }
         });
     }
 
-    function nextStep() {
-        if (currentStep < formSteps.length - 1) {
-            currentStep++;
-            showStep(currentStep);
+    function validateStep(step) {
+        const inputs = formSteps[step].querySelectorAll('input[required], textarea[required], select[required]');
+        let isValid = true;
+
+        inputs.forEach(input => {
+            // Get the error text element (if it exists)
+            const errorText = input.nextElementSibling;
+
+            // Remove the error message if it exists and input is valid
+            input.addEventListener('input', () => {
+                const errorMessage = input.parentNode.querySelector('.error-message');
+                if (input.checkValidity()) {
+                    // Remove error message if input is valid
+                    if (errorMessage) {
+                        errorMessage.remove();
+                    }
+                } else {
+                    // If input is invalid, display the error message
+                    if (!errorMessage) {
+                        const errorMessage = document.createElement('span');
+                        errorMessage.classList.add('error-message', 'text-danger');
+                        errorMessage.innerText = getErrorMessage(input);
+                        input.parentNode.appendChild(errorMessage);
+                    }
+                }
+            });
+
+            // If input is invalid at initial validation, add error message
+            if (!input.checkValidity()) {
+                isValid = false;
+                const existingErrorMessage = input.parentNode.querySelector('.error-message');
+                if (!existingErrorMessage) {
+                    const errorMessage = document.createElement('span');
+                    errorMessage.classList.add('error-message', 'text-danger');
+                    errorMessage.innerText = getErrorMessage(input);
+                    input.parentNode.appendChild(errorMessage);
+                }
+            }
+        });
+
+        return isValid;
+    }
+
+
+
+    // Get the appropriate error message based on input validation
+    function getErrorMessage(input) {
+        if (input.validity.valueMissing) {
+            return 'This field is required.';
+        } else if (input.validity.patternMismatch) {
+            return 'Please follow the requested format.';
+        } else if (input.validity.tooShort) {
+            return `Please enter at least ${input.minLength} characters.`;
+        }
+        return 'This field is invalid.';
+    }
+
+    // Function to save form data to sessionStorage
+    function saveFormData() {
+        const formData = getFormValues();
+        sessionStorage.setItem('formData', JSON.stringify(formData));
+    }
+
+    // Function to load form data from sessionStorage
+    function loadFormData() {
+        const storedData = sessionStorage.getItem('formData');
+
+        if (storedData) {
+            const formData = JSON.parse(storedData);
+            document.getElementById('lastName').value = formData.lastName || '';
+            document.getElementById('firstName').value = formData.firstName || '';
+            document.getElementById('middleName').value = formData.middleName || '';
+            document.getElementById('unitNo').value = formData.unitNo || '';
+            document.getElementById('street').value = formData.street || '';
+            document.getElementById('barangay').value = formData.barangay || '';
+            document.getElementById('city').value = formData.city || '';
+            document.getElementById('fullAddress').value = formData.fullAddress || '';
+            document.getElementById('natureOfBusiness').value = formData.natureOfBusiness || '';
+            document.getElementById('otherAsset').value = formData.otherAsset || '';
+            document.getElementById('phoneNumber').value = formData.phoneNumber || '';
+            document.getElementById('viberNumber').value = formData.viberNumber || '';
+            document.getElementById('otherContact').value = formData.otherContact || '';
+            document.getElementById('facebookAccount').value = formData.facebookAccount || '';
+            document.getElementById('remarksPersonalDetails').value = formData.remarksPersonalDetails || '';
         }
     }
 
+    // Get form data to be saved to sessionStorage
+    function getFormValues() {
+        const fullName = (document.getElementById('lastName').value + ', '
+                        + document.getElementById('firstName').value
+                        + (document.getElementById('middleName').value ? ' ' + document.getElementById('middleName').value : ''))
+                        .toUpperCase();
+
+        const formData = {
+            fullName: fullName,  // Store full name
+
+            lastName: document.getElementById('lastName').value,
+            firstName: document.getElementById('firstName').value,
+            middleName: document.getElementById('middleName').value,
+            unitNo: document.getElementById('unitNo').value,
+            street: document.getElementById('street').value,
+            barangay: document.getElementById('barangay').value,
+            city: document.getElementById('city').value,
+            fullAddress: document.getElementById('fullAddress').value,
+            natureOfBusiness: document.getElementById('natureOfBusiness').value,
+            otherAsset: document.getElementById('otherAsset').value,
+            phoneNumber: document.getElementById('phoneNumber').value,
+            viberNumber: document.getElementById('viberNumber').value,
+            otherContact: document.getElementById('otherContact').value,
+            facebookAccount: document.getElementById('facebookAccount').value,
+            remarksPersonalDetails: document.getElementById('remarksPersonalDetails').value
+        };
+
+        console.log(formData);
+        return formData;
+    }
+
+
+    // Move to the next step, validating first
+    function nextStep() {
+        event.preventDefault();
+
+        if (validateStep(currentStep)) {
+            saveFormData(); // Save form data
+            if (currentStep < formSteps.length - 1) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        }
+    }
+
+    // Move to the previous step
     function prevStep() {
+        saveFormData(); // Save form data
         if (currentStep > 0) {
             currentStep--;
             showStep(currentStep);
         }
     }
 
+    // Event listeners for step navigation
     document.querySelectorAll('.step input[type="radio"]').forEach((radio, index) => {
-            radio.addEventListener('change', () => {
-                currentStep = index;
-                showStep(currentStep);
-            });
+        radio.addEventListener('change', () => {
+            currentStep = index;
+            showStep(currentStep);
         });
+    });
 
+    // Initialize the form by showing the first step and loading form data from sessionStorage
+    document.addEventListener('DOMContentLoaded', () => {
+        loadFormData();
         showStep(currentStep);
+    });
 
-        document.addEventListener('DOMContentLoaded', () => {
-        // Function to update the hidden input field
+    // Update the full address when inputs change
+    document.addEventListener('DOMContentLoaded', () => {
+        const unitNoField = document.getElementById('unitNo');
+        const streetField = document.getElementById('street');
+        const barangayField = document.getElementById('barangay');
+        const cityField = document.getElementById('city');
+        const fullAddressField = document.getElementById('fullAddress');
+
+        // Function to update the full address input
         function updateFullAddress() {
-            const unitNo = document.getElementById('unitNo').value;
-            const street = document.getElementById('street').value;
-            const barangay = document.getElementById('barangay').value;
-            const city = document.getElementById('city').value;
-
-            // Concatenate the address
-            const fullAddress = `${unitNo}, ${street}, ${barangay}, ${city}`;
-
-            // Update the hidden input field
-            document.getElementById('fullAddress').value = fullAddress;
+            const fullAddress = `${unitNoField.value}, ${streetField.value}, ${barangayField.value}, ${cityField.value}`;
+            fullAddressField.value = fullAddress;
         }
 
-        // Add event listeners to update the full address when inputs change
-        document.getElementById('unitNo').addEventListener('input', updateFullAddress);
-        document.getElementById('street').addEventListener('input', updateFullAddress);
-        document.getElementById('barangay').addEventListener('input', updateFullAddress);
-        document.getElementById('city').addEventListener('input', updateFullAddress);
+        // Add event listeners to update the full address when any of the fields change
+        unitNoField.addEventListener('input', updateFullAddress);
+        streetField.addEventListener('input', updateFullAddress);
+        barangayField.addEventListener('input', updateFullAddress);
+        cityField.addEventListener('input', updateFullAddress);
     });
 </script>
+
+
+
 
 @endsection
