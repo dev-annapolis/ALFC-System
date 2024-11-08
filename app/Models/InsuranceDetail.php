@@ -32,7 +32,7 @@ class InsuranceDetail extends Model
         'loan_amount',
         'total_sum_insured',
         'policy_number',
-        'policy_insumption_date',
+        'policy_inception_date',
         'expiry_date',
         'plate_conduction_number',
         'description',
