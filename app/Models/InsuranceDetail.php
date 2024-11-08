@@ -122,7 +122,6 @@ class InsuranceDetail extends Model
     }
     public function assuredDetail()
     {
-        return $this->hasOne(AssuredDetail::class, 'insurance_detail_id');
+        return $this->hasOne(AssuredDetail::class);
     }
-
 }
