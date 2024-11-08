@@ -3,7 +3,7 @@
 @section('content')
 <style>
     .container-form {
-        padding: 15px;
+        /* padding: 15px; */
         background-color: #ffffff;
         box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         border-radius: 8px;
@@ -274,9 +274,9 @@
 </style>
 
 <div class="container-form min-vh-100">
-    <div class="row">
+    <div class="row px-4">
         <!-- Steps section (Sidebar) -->
-        <div class="col-md-3 mt-md-3 col-12 sidebar px-4 ">
+        <div class="col-md-3 mt-md-3 col-12 sidebar px-4">
 
 
             <div class="logo-container d-md-flex align-items-center text-center mt-3 mb-5 pt-md-3">
@@ -325,28 +325,28 @@
             <!-- Step 1: Personal Information -->
             <div class="form-step active px-2">
                 <h3 class="main-title fw-bold fs-1 mt-md-5">Personal Details</h3>
-                <p class="sub-main-title text-muted mb-md-5">Enter assured personal details and information</p>
+                <p class="sub-main-title text-muted mb-md-5">Input the assured's personal details and information accurately.</p>
 
                 <form id="step1 mt-md-5">
 
                     <div class="row ">
 
                         <div class="col-md-4 ">
-                            <div class="mb-3 mb-md-5 mb-sm-4 mt-md-3">
+                            <div class="mb-3 mb-md-4 mb-sm-4 mt-md-3">
                                 <label for="lastName" class="form-label fw-bold fw-bold">Last Name</label>
                                 <input type="text" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="lastName" placeholder="Enter Last Name" required>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-5 mb-sm-4 mt-md-3">
+                            <div class="mb-3 mb-md-4 mb-sm-4 mt-md-3">
                                 <label for="firstName" class="form-label fw-bold">First Name</label>
                                 <input type="text" class="form-control uppercase-input rounded-0 border-1 rounded-0" id="firstName" placeholder="Enter First Name" required>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-5 mb-sm-4 mt-md-3">
+                            <div class="mb-3 mb-md-4 mb-sm-4 mt-md-3">
                                 <label for="middleName" class="form-label fw-bold">Middle Name</label>
                                 <input type="text" class="form-control uppercase-input rounded-0 border-1 rounded-0" id="middleName" placeholder="Enter Middle Name (Optional)">
                             </div>
@@ -1230,6 +1230,9 @@
     let currentStep = 0;
     const formSteps = document.querySelectorAll('.form-step');
     const stepIndicators = document.querySelectorAll('.sidebar .step');
+    const formData = {};
+
+
 
     function showStep(step) {
         formSteps.forEach((formStep, index) => {
@@ -1290,8 +1293,6 @@
         return isValid;
     }
 
-
-
     // Get the appropriate error message based on input validation
     function getErrorMessage(input) {
         if (input.validity.valueMissing) {
@@ -1316,6 +1317,8 @@
 
         if (storedData) {
             const formData = JSON.parse(storedData);
+
+            // PERSONAL INFORMATION first step
             document.getElementById('lastName').value = formData.lastName || '';
             document.getElementById('firstName').value = formData.firstName || '';
             document.getElementById('middleName').value = formData.middleName || '';
@@ -1331,39 +1334,127 @@
             document.getElementById('otherContact').value = formData.otherContact || '';
             document.getElementById('facebookAccount').value = formData.facebookAccount || '';
             document.getElementById('remarksPersonalDetails').value = formData.remarksPersonalDetails || '';
+
+            // INSURANCE INFORMATION
+            document.getElementById('sa-sm').value = formData.saSm || '';
+            document.getElementById('classification').value = formData.classification || '';
+            document.getElementById('insuranceType').value = formData.insuranceType || '';
+            document.getElementById('salesStatus').value = formData.salesStatus || '';
+            document.getElementById('branchManager').value = formData.branchManager || '';
+            document.getElementById('issuanceCode').value = formData.issuanceCode || '';
+            document.getElementById('salesDate').value = formData.salesDate || '';
+            document.getElementById('collectionGm').value = formData.collectionGm || '';
+            document.getElementById('legalRep').value = formData.legalRep || '';
+            document.getElementById('legalSupervisor').value = formData.legalSupervisor || '';
+            document.getElementById('assignAtty1').value = formData.assignAtty1 || '';
+            document.getElementById('assignAtty2').value = formData.assignAtty2 || '';
+
+            // PRODUCT INFORMATION
+            document.getElementById('provider').value = formData.provider || '';
+            document.getElementById('product').value = formData.product || '';
+            document.getElementById('subProduct').value = formData.subProduct || '';
+            document.getElementById('productType').value = formData.productType || '';
+            document.getElementById('source').value = formData.source || '';
+            document.getElementById('sourceBranch').value = formData.sourceBranch || '';
+            document.getElementById('ifGdfi').value = formData.ifGdfi || '';
+            document.getElementById('mortgagee').value = formData.mortgagee || '';
+            document.getElementById('area').value = formData.area || '';
+            document.getElementById('alfcBranch').value = formData.alfcBranch || '';
+            document.getElementById('policyNumber').value = formData.policyNumber || '';
+            document.getElementById('expiryDate').value = formData.expiryDate || '';
+            document.getElementById('policyInsumption').value = formData.policyInsumption || '';
+            document.getElementById('plateConductionNumber').value = formData.plateConductionNumber || '';
+            document.getElementById('description').value = formData.description || '';
+            document.getElementById('loanAmount').value = formData.loanAmount || '';
+            document.getElementById('totalSumInsured').value = formData.totalSumInsured || '';
+            document.getElementById('mop').value = formData.mop || '';
+            document.getElementById('policyExpirationAging').value = formData.policyExpirationAging || '';
+            document.getElementById('bookNumber').value = formData.bookNumber || '';
+            document.getElementById('filingNumber').value = formData.filingNumber || '';
+            document.getElementById('pidReceivedDate').value = formData.pidReceivedDate || '';
+            document.getElementById('pidCompletionDate').value = formData.pidCompletionDate || '';
+            document.getElementById('remarksProducts').value = formData.remarksProducts || '';
+
+
         }
     }
 
+
     // Get form data to be saved to sessionStorage
     function getFormValues() {
-        const fullName = (document.getElementById('lastName').value + ', '
-                        + document.getElementById('firstName').value
-                        + (document.getElementById('middleName').value ? ' ' + document.getElementById('middleName').value : ''))
-                        .toUpperCase();
 
-        const formData = {
-            fullName: fullName,  // Store full name
 
-            lastName: document.getElementById('lastName').value,
-            firstName: document.getElementById('firstName').value,
-            middleName: document.getElementById('middleName').value,
-            unitNo: document.getElementById('unitNo').value,
-            street: document.getElementById('street').value,
-            barangay: document.getElementById('barangay').value,
-            city: document.getElementById('city').value,
-            fullAddress: document.getElementById('fullAddress').value,
-            natureOfBusiness: document.getElementById('natureOfBusiness').value,
-            otherAsset: document.getElementById('otherAsset').value,
-            phoneNumber: document.getElementById('phoneNumber').value,
-            viberNumber: document.getElementById('viberNumber').value,
-            otherContact: document.getElementById('otherContact').value,
-            facebookAccount: document.getElementById('facebookAccount').value,
-            remarksPersonalDetails: document.getElementById('remarksPersonalDetails').value
-        };
+        // PERSONAL INFORMATION first step
+        // if (currentStep == 0) {
+            formData.lastName = document.getElementById('lastName').value;
+            formData.firstName = document.getElementById('firstName').value;
+            formData.middleName = document.getElementById('middleName').value;
+            formData.unitNo = document.getElementById('unitNo').value;
+            formData.street = document.getElementById('street').value;
+            formData.barangay = document.getElementById('barangay').value;
+            formData.city = document.getElementById('city').value;
+            formData.fullAddress = document.getElementById('fullAddress').value;
+            formData.natureOfBusiness = document.getElementById('natureOfBusiness').value;
+            formData.otherAsset = document.getElementById('otherAsset').value;
+            formData.phoneNumber = document.getElementById('phoneNumber').value;
+            formData.viberNumber = document.getElementById('viberNumber').value;
+            formData.otherContact = document.getElementById('otherContact').value;
+            formData.facebookAccount = document.getElementById('facebookAccount').value;
+            formData.remarksPersonalDetails = document.getElementById('remarksPersonalDetails').value;
+        // }
 
-        console.log(formData);
+
+        // INSURANCE INFORMATION second step
+        // if (currentStep == 1) {
+            formData.saSm = document.getElementById('sa-sm').value;
+            formData.classification = document.getElementById('classification').value;
+            formData.insuranceType = document.getElementById('insuranceType').value;
+            formData.salesStatus = document.getElementById('salesStatus').value;
+            formData.branchManager = document.getElementById('branchManager').value;
+            formData.issuanceCode = document.getElementById('issuanceCode').value;
+            formData.salesDate = document.getElementById('salesDate').value;
+            formData.collectionGm = document.getElementById('collectionGm').value;
+            formData.legalRep = document.getElementById('legalRep').value;
+            formData.legalSupervisor = document.getElementById('legalSupervisor').value;
+            formData.assignAtty1 = document.getElementById('assignAtty1').value;
+            formData.assignAtty2 = document.getElementById('assignAtty2').value;
+        // }
+
+
+        // if (currentStep == 2) {
+
+            formData.provider = document.getElementById('provider').value;
+            formData.product = document.getElementById('product').value;
+            formData.subProduct = document.getElementById('subProduct').value;
+            formData.productType = document.getElementById('productType').value;
+            formData.source = document.getElementById('source').value;
+            formData.sourceBranch = document.getElementById('sourceBranch').value;
+            formData.ifGdfi = document.getElementById('ifGdfi').value;
+            formData.mortgagee = document.getElementById('mortgagee').value;
+            formData.area = document.getElementById('area').value;
+            formData.alfcBranch = document.getElementById('alfcBranch').value;
+            formData.policyNumber = document.getElementById('policyNumber').value;
+            formData.expiryDate = document.getElementById('expiryDate').value;
+            formData.policyInsumption = document.getElementById('policyInsumption').value;
+            formData.plateConductionNumber = document.getElementById('plateConductionNumber').value;
+            formData.description = document.getElementById('description').value;
+            formData.loanAmount = document.getElementById('loanAmount').value;
+            formData.totalSumInsured = document.getElementById('totalSumInsured').value;
+            formData.mop = document.getElementById('mop').value;
+            formData.policyExpirationAging = document.getElementById('policyExpirationAging').value;
+            formData.bookNumber = document.getElementById('bookNumber').value;
+            formData.filingNumber = document.getElementById('filingNumber').value;
+            formData.pidReceivedDate = document.getElementById('pidReceivedDate').value;
+            formData.pidCompletionDate = document.getElementById('pidCompletionDate').value;
+            formData.remarksProducts = document.getElementById('remarksProducts').value;
+        // }
+
+
+
+        // console.log(formData);
         return formData;
     }
+
 
 
     // Move to the next step, validating first
@@ -1444,6 +1535,7 @@
         barangayField.addEventListener('input', updateFullAddress);
         cityField.addEventListener('input', updateFullAddress);
     });
+
 </script>
 
 
