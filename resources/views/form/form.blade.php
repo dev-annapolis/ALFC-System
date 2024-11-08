@@ -276,10 +276,10 @@
 <div class="container-form min-vh-100">
     <div class="row">
         <!-- Steps section (Sidebar) -->
-        <div class="col-md-3 mt-md-3 col-12 sidebar px-4">
+        <div class="col-md-3 mt-md-3 col-12 sidebar px-4 ">
 
 
-            <div class="logo-container d-md-flex align-items-center text-center mt-3 mb-5">
+            <div class="logo-container d-md-flex align-items-center text-center mt-3 mb-5 pt-md-3">
                 <img src="{{ asset('images/frontend/alfc-logo.jpg') }}" alt="Logo" class="img-fluid alfc-logo" style="margin-right: 10px;">
                 <p class="fw-bold mb-0 alfc-title">
                     ALFC Insurance Agency Inc.
@@ -324,7 +324,7 @@
 
             <!-- Step 1: Personal Information -->
             <div class="form-step active px-2">
-                <h3 class="main-title fw-bold fs-1">Personal Details</h3>
+                <h3 class="main-title fw-bold fs-1 mt-md-5">Personal Details</h3>
                 <p class="sub-main-title text-muted mb-md-5">Enter assured personal details and information</p>
 
                 <form id="step1 mt-md-5">
@@ -332,21 +332,21 @@
                     <div class="row ">
 
                         <div class="col-md-4 ">
-                            <div class="mb-3 mb-md-5 mb-sm-4">
+                            <div class="mb-3 mb-md-5 mb-sm-4 mt-md-3">
                                 <label for="lastName" class="form-label fw-bold fw-bold">Last Name</label>
                                 <input type="text" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="lastName" placeholder="Enter Last Name" required>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-5 mb-sm-4">
+                            <div class="mb-3 mb-md-5 mb-sm-4 mt-md-3">
                                 <label for="firstName" class="form-label fw-bold">First Name</label>
                                 <input type="text" class="form-control uppercase-input rounded-0 border-1 rounded-0" id="firstName" placeholder="Enter First Name" required>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-5 mb-sm-4">
+                            <div class="mb-3 mb-md-5 mb-sm-4 mt-md-3">
                                 <label for="middleName" class="form-label fw-bold">Middle Name</label>
                                 <input type="text" class="form-control uppercase-input rounded-0 border-1 rounded-0" id="middleName" placeholder="Enter Middle Name (Optional)">
                             </div>
@@ -458,7 +458,7 @@
                     <div class="row ">
 
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
+                            <div class="mb-3 mb-md-5 mb-sm-4 mt-md-3">
                                 <label for="sa-sm-label" class="form-label fw-bold fs-6">SA/SM</label>
                                 <select class="form-control form-select rounded-0 border-1 m-0" id="sa-sm" required>
                                     <option value="" selected disabled>Select SA or SM</option>
@@ -471,14 +471,14 @@
 
 
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
+                            <div class="mb-3 mb-md-5 mb-sm-4 mt-md-3">
                                 <label for="issuanceCodeLabel" class="form-label fw-bold">Issuance Code</label>
                                 <input type="text" class="form-control rounded-0 border-1 rounded-0" id="issuanceCode" placeholder="Enter the Issuance Code" required>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
+                            <div class="mb-3 mb-md-5 mb-sm-4 mt-md-3">
                                 <label for="salesDateLabel" class="form-label fw-bold">Sale Date</label>
                                 <input type="date" class="form-control rounded-0 border-1 rounded-0" id="salesDate" placeholder="Select the Sale Date" required>
                             </div>
@@ -1376,6 +1376,13 @@
                 currentStep++;
                 sessionStorage.setItem('currentStep', currentStep);
                 showStep(currentStep);
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+
+
             }
         }
     }
@@ -1387,6 +1394,14 @@
             currentStep--;
             sessionStorage.setItem('currentStep', currentStep);
             showStep(currentStep);
+
+            window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+
+
+
         }
     }
 
