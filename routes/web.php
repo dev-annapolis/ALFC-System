@@ -30,3 +30,5 @@ Route::get('/testusers', [TestController::class, 'userIndex'])->name('users.inde
 Route::get('/users/{id}', action: [TestController::class, 'show'])->name('users.show');
 Route::get('/salesreport/index', action: [SalesReportController::class, 'salesReportIndex'])->name('salesreport.index');
 Route::get('/api/sales-report', [SalesReportController::class, 'salesReportData']);
+// Route::get('/api/insurance-detail/{id}', [SalesReportController::class, 'fetchInsuranceDetail']);
+Route::get('/api/insurance/details/{id}', [SalesReportController::class, 'showInsuranceDetails']);
