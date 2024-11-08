@@ -7,17 +7,45 @@ use Illuminate\Database\Eloquent\Model;
 class InsuranceDetail extends Model
 {
     protected $fillable = [
-        'issuance_code', 'assured_id', 'sales_associate_id', 'sale_date', 'classification',
-        'insurance_type', 'sale_status', 'branch_manager_id', 'legal_representative_name', 
-        'legal_supervisor_name', 'assigned_atty_one', 'assigned_atty_two', 'collection_gm',
-        'product_id', 'subproduct_id', 'product_type', 'source_id', 'source_branch_id', 
-        'if_gdfi_id', 'mortgagee', 'area_id', 'alfc_branch_id', 'loan_amount', 
-        'total_sum_insured', 'policy_number', 'policy_insumption_date', 'expiry_date',
-        'plate_conduction_number', 'description', 'policy_expiration_aging', 'book_number', 
-        'filing_number', 'pid_received_date', 'pid_completion_date', 'remarks', 
-        'mode_of_payment_id', 'provider_id'
+        'issuance_code',
+        'assured_id',
+        'sales_associate_id',
+        'sale_date',
+        'classification',
+        'insurance_type',
+        'sale_status',
+        'branch_manager_id',
+        'legal_representative_name',
+        'legal_supervisor_name',
+        'assigned_atty_one',
+        'assigned_atty_two',
+        'collection_gm',
+        'product_id',
+        'subproduct_id',
+        'product_type',
+        'source_id',
+        'source_branch_id',
+        'if_gdfi_id',
+        'mortgagee',
+        'area_id',
+        'alfc_branch_id',
+        'loan_amount',
+        'total_sum_insured',
+        'policy_number',
+        'policy_insumption_date',
+        'expiry_date',
+        'plate_conduction_number',
+        'description',
+        'policy_expiration_aging',
+        'book_number',
+        'filing_number',
+        'pid_received_date',
+        'pid_completion_date',
+        'remarks',
+        'mode_of_payment_id',
+        'provider_id'
     ];
-    
+
     public function assured()
     {
         return $this->belongsTo(Assured::class);
@@ -38,9 +66,9 @@ class InsuranceDetail extends Model
         return $this->belongsTo(Product::class);
     }
 
-    public function subProduct()
+    public function subproduct()
     {
-        return $this->belongsTo(SubProduct::class);
+        return $this->belongsTo(Subproduct::class);
     }
 
     public function source()
@@ -80,17 +108,21 @@ class InsuranceDetail extends Model
 
     public function collectionDetails()
     {
-        return $this->hasMany(CollectionDetail::class);
+        return $this->hasOne(CollectionDetail::class);
     }
 
     public function commissionDetails()
     {
-        return $this->hasMany(CommissionDetail::class);
+        return $this->hasOne(CommisionDetail::class);
     }
 
-    public function paymentDetails()
+    public function paymentDetail()
     {
-        return $this->hasMany(PaymentDetail::class);
+        return $this->hasOne(PaymentDetail::class);
     }
-    
+    public function assuredDetail()
+    {
+        return $this->hasOne(AssuredDetail::class, 'insurance_detail_id');
+    }
+
 }

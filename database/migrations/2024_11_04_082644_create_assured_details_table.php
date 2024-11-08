@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -15,6 +14,7 @@ return new class extends Migration
             $table->id();
             $table->string('address')->nullable();
             $table->string('contact_number')->nullable();
+            $table->string('email')->nullable();
             $table->string('other_contact_number')->nullable();
             $table->string('facebook_account')->nullable();
             $table->string('viber_account')->nullable();
