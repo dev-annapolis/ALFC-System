@@ -19,9 +19,9 @@ class SalesReportController extends Controller
 
     public function salesReportData()
     {
-        // Fetch the insurance details along with relationships
+        // Fetch the insurance details along with related data through nested relationships
         $insuranceDetails = InsuranceDetail::with([
-            'assured.assuredDetail',
+            'assured.assuredDetail', // Load assureds with their related assuredDetails
             'paymentDetail',
             'salesAssociate.team',
             'branchManager',
@@ -48,11 +48,13 @@ class SalesReportController extends Controller
                     'provider' => $insuranceDetail->provider->name ?? null,
                     'sale_status' => $insuranceDetail->sale_status ?? null,
                 ];
-            });
+            })
+            ->unique('id'); // Remove duplicates based on 'id' field
 
         // Return data as JSON response
-        return response()->json($insuranceDetails);
+        return response()->json($insuranceDetails->values()); // Reset keys after unique filtering
     }
+
 
     public function showInsuranceDetails($id)
     {
@@ -71,6 +73,7 @@ class SalesReportController extends Controller
 
         if ($permissions->isEmpty()) {
             Log::warning("No permissions found for user role ID: {$role->id}");
+            return response()->json(['message' => 'No permissions found'], 403);
         } else {
             Log::info("Permissions found for role ID: {$role->id}");
         }
@@ -101,7 +104,6 @@ class SalesReportController extends Controller
         ];
 
         // Loop over each table and check for allowed columns
-        // Loop over each table and check for allowed columns
         foreach ($tables as $tableName) {
             Log::info("Processing table: {$tableName}");
 
@@ -117,11 +119,8 @@ class SalesReportController extends Controller
                 // Start building the query
                 $records = DB::table($tableName);
 
-                // Apply join logic only for 'insurance_details' table
                 if ($tableName == 'insurance_details') {
-                    Log::info("Joining related tables for 'insurance_details'");
-
-                    // Filter by insurance detail ID
+                    // Fetch the main record along with related data
                     $records = DB::table('insurance_details')
                         ->where('insurance_details.id', $id)
                         ->distinct()
@@ -142,11 +141,14 @@ class SalesReportController extends Controller
                         ->leftJoin('commision_details', 'insurance_details.id', '=', 'commision_details.insurance_detail_id')
                         ->leftJoin('payment_details', 'insurance_details.id', '=', 'payment_details.insurance_detail_id')
                         ->leftJoin('collection_details', 'insurance_details.id', '=', 'collection_details.insurance_detail_id');
-                } else {
-                    // Check if the table has 'insurance_detail_id', if so apply the condition, else skip it
-                    if (\Schema::hasColumn($tableName, 'insurance_detail_id')) {
-                        $records->where('insurance_detail_id', $id);
-                    }
+                } elseif ($tableName == 'assureds') {
+                    // Ensure that the `assureds` table only shows entries related to the specific insurance detail
+                    $records = DB::table('assureds')
+                        ->join('insurance_details', 'assureds.id', '=', 'insurance_details.assured_id')
+                        ->where('insurance_details.id', $id);
+                } elseif (\Schema::hasColumn($tableName, 'insurance_detail_id')) {
+                    // For other tables that have `insurance_detail_id`, filter by the ID
+                    $records->where('insurance_detail_id', $id);
                 }
 
                 // Add table name prefix to each column to avoid ambiguity
@@ -166,13 +168,14 @@ class SalesReportController extends Controller
             }
         }
 
-
         // Log the final data
         Log::info("Insurance details data retrieved for ID: {$id}", ['data' => $data]);
 
         // Return data as JSON response
         return response()->json($data);
     }
+
+
 
 
 
