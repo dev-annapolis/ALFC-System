@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
+
 <style>
+
     .container-form {
         /* padding: 15px; */
         background-color: #ffffff;
@@ -271,7 +273,37 @@
         }
 
     }
+
+    .select2 {
+        width:100%!important;
+
+
+    }
+    .select2-selection {
+        height: 2.25rem!important;
+        background-color:#f3f3f3!important;
+        border: 1px solid #dddddd !important;
+        border-radius: 0!important;
+        padding-top: 0.125rem;
+
+    }
+
+    .select2-selection__arrow{
+        padding-top: 1.95rem;
+    }
+
+
+
 </style>
+
+
+
+
+<!-- Include Select2 CSS and JS -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
 
 <div class="container-form min-vh-100">
     <div class="row px-4">
@@ -422,6 +454,11 @@
                         </div>
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-5 mb-sm-4">
+                                <label for="emailLabel" class="form-label fw-bold">Email</label>
+                                <input type="email" class="form-control rounded-0 border-1" id="email" placeholder="Enter Email Account URL "> </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-5 mb-sm-4">
                                 <label for="facebookAccount" class="form-label fw-bold">Facebook Account</label>
                                 <input type="text" class="form-control rounded-0 border-1" id="facebookAccount" placeholder="Enter Facebook Profile Account URL "
                                        title="Please enter your Facebook account link or username">
@@ -457,17 +494,8 @@
 
                     <div class="row ">
 
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-5 mb-sm-4 mt-md-3">
-                                <label for="sa-sm-label" class="form-label fw-bold fs-6">SA/SM</label>
-                                <select class="form-control form-select rounded-0 border-1 m-0" id="sa-sm" required>
-                                    <option value="" selected disabled>Select SA or SM</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
-                                </select>
-                            </div>
-                        </div>
+
+
 
 
                         <div class="col-md-4">
@@ -493,9 +521,8 @@
                                 <label for="classificationLabel" class="form-label fw-bold fw-bold fs-6">Classification</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="classification" required>
                                     <option value="" disabled selected>Select Classification</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                    <option value="new">New</option>
+                                    <option value="renewal">Renewal</option>
                                 </select>
                             </div>
                         </div>
@@ -505,9 +532,10 @@
                                 <label for="insuranceTypeLabel" class="form-label fw-bold">Insurance Type</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="insuranceType" required>
                                     <option value="" disabled selected>Select Insurance Type</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                    <option value="sale">Sale</option>
+                                    <option value="cancellation">Cancellation</option>
+                                    <option value="cancelled">Cancelled</option>
+
                                 </select>
                             </div>
                         </div>
@@ -517,9 +545,40 @@
                                 <label for="salesStatusLabel" class="form-label fw-bold">Sale Status</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="salesStatus" required>
                                     <option value="" disabled selected>Select Sale Status</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                    <option value="sale">Sale</option>
+                                    <option value="cancellation">Cancellation</option>
+                                    <option value="cancelled">Cancelled</option>
+                                    <option value="reinstatement">Reinstatement</option>
+                                    <option value="reinstated">Reinstated</option>
+
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4 mt-md-3">
+                                <label for="team-label" class="form-label fw-bold fs-6">Team</label>
+                                <select class="form-control rounded-0 border-1 m-0" id="team" required>
+                                    <option value="" selected>Select Team</option>
+                                    @foreach($teams as $team)
+                                        <option value="{{ $team->id }}">{{ $team->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4 mt-md-3">
+                                <label for="salesAssocManager-label" class="form-label fw-bold fs-6">SA/SM</label>
+                                <select class="form-control rounded-0 border-1 m-0" id="salesAssocManager" required>
+                                    <option value="" selected>Select SA or SM</option>
+                                    @foreach($salesAssociates as $salesAssociate)
+                                        <option value="{{ $salesAssociate->id }}">{{ $salesAssociate->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -528,14 +587,14 @@
 
                     <div class="row ">
 
-                        <div class="col-md-4 ">
+                        <div class="col-md-4">
                             <div class="mb-3 mb-md-4 mb-sm-4">
-                                <label for="branchManagerLabel" class="form-label fw-bold fw-bold fs-6">Branch Manager</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="branchManager" required>
-                                    <option value="" disabled selected>Select Branch Manager</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                <label for="branchManagerLabel-label" class="form-label fw-bold fs-6">Branch Manage</label>
+                                <select class="form-control rounded-0 border-1 m-0" id="branchManager" required>
+                                    <option value="" selected>Select Branch Manager</option>
+                                    @foreach($branchManagers as $branchManager)
+                                        <option value="{{ $branchManager->id }}">{{ $branchManager->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -610,11 +669,11 @@
                         <div class="col-md-4 ">
                             <div class="mb-5 mb-md-5 mb-sm-4">
                                 <label for="providerlabel" class="form-label fw-bold fw-bold fs-6">Provider</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="provider">
-                                    <option value="" disabled selected>Select Provider</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                <select class="form-control rounded-0 border-1 m-0" id="provider" required>
+                                    <option value="" selected>Select Provider</option>
+                                    @foreach($providers as $provider)
+                                        <option value="{{ $provider->id }}">{{ $provider->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -625,11 +684,11 @@
                         <div class="col-md-4 ">
                             <div class="mb-5 mb-md-4 mb-sm-4">
                                 <label for="productLabel" class="form-label fw-bold fw-bold fs-6">Product</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="product">
-                                    <option value="" disabled selected>Select Product</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                <select class="form-control rounded-0 border-1 m-0" id="product" required>
+                                    <option value="" selected>Select Products</option>
+                                    @foreach($products as $product)
+                                        <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -637,11 +696,12 @@
                         <div class="col-md-4 ">
                             <div class="mb-5 mb-md-4 mb-sm-4">
                                 <label for="subProductLabel" class="form-label fw-bold fw-bold fs-6">Sub-Product</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="subProduct">
+
+                                <select class="form-control rounded-0 border-1 m-0" id="subProduct" required>
                                     <option value="" disabled selected>Select Sub-Product</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                    @foreach($subproducts as $subproduct)
+                                        <option value="{{ $subproduct->id }}">{{ $subproduct->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -651,9 +711,8 @@
                                 <label for="productTypeLabel" class="form-label fw-bold fw-bold fs-6">Product Type</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="productType">
                                     <option value="" disabled selected>Select Product Type</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                    <option value="refinancing">Refinancing</option>
+                                    <option value="financing">Financing</option>
                                 </select>
                             </div>
                         </div>
@@ -666,11 +725,12 @@
                         <div class="col-md-4 ">
                             <div class="mb-5 mb-md-4 mb-sm-4">
                                 <label for="sourceLabel" class="form-label fw-bold fw-bold fs-6">Source</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="source">
+
+                                <select class="form-control rounded-0 border-1 m-0" id="selectSources" required>
                                     <option value="" disabled selected>Select Source</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                    @foreach($sources as $source)
+                                        <option value="{{ $source->id }}">{{ $source->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -678,23 +738,25 @@
                         <div class="col-md-4 ">
                             <div class="mb-5 mb-md-4 mb-sm-4">
                                 <label for="sourceBranchLabel" class="form-label fw-bold fw-bold fs-6">Source Branch</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="sourceBranch">
+
+                                <select class="form-control rounded-0 border-1 m-0" id="sourceBranch" required>
                                     <option value="" disabled selected>Select Source Branch</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                    @foreach($sourcebranches as $sourcebranch)
+                                        <option value="{{ $sourcebranch->id }}">{{ $sourcebranch->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
 
-                        <div class="col-md-4 ">
+                        <div class="col-md-4" id="gdficol">
                             <div class="mb-5 mb-md-4 mb-sm-4">
                                 <label for="ifGdfiLabel" class="form-label fw-bold fw-bold fs-6">If GDFI</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="ifGdfi">
+
+                                <select class="form-control rounded-0 border-1 m-0" id="ifGdfi">
                                     <option value="" disabled selected>Select If GDFI</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                    @foreach($ifGdfis as $ifGdfi)
+                                        <option value="{{ $ifGdfi->id }}">{{ $ifGdfi->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -716,11 +778,11 @@
                         <div class="col-md-4 ">
                             <div class="mb-5 mb-md-4 mb-sm-4">
                                 <label for="areaLabel" class="form-label fw-bold fw-bold fs-6">Area</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="area">
+                                <select class="form-control rounded-0 border-1 m-0" id="area">
                                     <option value="" disabled selected>Select Area</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                    @foreach($areas as $area)
+                                        <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -728,11 +790,12 @@
                         <div class="col-md-4 ">
                             <div class="mb-5 mb-md-4 mb-sm-4">
                                 <label for="alfcBranchLabel" class="form-label fw-bold fw-bold fs-6">ALFC Branch</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="alfcBranch">
+
+                                <select class="form-control rounded-0 border-1 m-0" id="alfcBranch">
                                     <option value="" disabled selected>Select ALFC Branch</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                    @foreach($alfcbranches as $alfcbranch)
+                                        <option value="{{ $alfcbranch->id }}">{{ $alfcbranch->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -758,7 +821,7 @@
 
                         <div class="col-md-4 ">
                             <div class="mb-5 mb-md-4 mb-sm-4">
-                                <label for="policyInsumptionLabel" class="form-label fw-bold fw-bold fs-6">Policy Insumption Date</label>
+                                <label for="policyInsumptionLabel" class="form-label fw-bold fw-bold fs-6">Policy Inception Date</label>
                                 <input type="date" class="form-control rounded-0 rounded-0 border-1" id="policyInsumption" placeholder="Enter Policy Inisu" required>
                             </div>
                         </div>
@@ -770,7 +833,7 @@
 
                         <div class="col-md-4 ">
                             <div class="mb-5 mb-md-4 mb-sm-4">
-                                <label for="plateConductionNumberLabel" class="form-label fw-bold fw-bold fs-6">Plate Conduction Number</label>
+                                <label for="plateConductionNumberLabel" class="form-label fw-bold fw-bold fs-6">Plate / Conduction Number</label>
                                 <input type="text" class="form-control rounded-0 rounded-0 border-1" id="plateConductionNumber" placeholder="Enter Plate Conduction Number" required>
                             </div>
                         </div>
@@ -807,11 +870,11 @@
                         <div class="col-md-4 ">
                             <div class="mb-5 mb-md-5 mb-sm-4">
                                 <label for="mopLabel" class="form-label fw-bold fw-bold fs-6">Mode of Payment</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="mop">
+                                <select class="form-control rounded-0 border-1 m-0" id="mop">
                                     <option value="" disabled selected>Select Mode of Payment</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                    @foreach($mops as $mop)
+                                        <option value="{{ $mop->id }}">{{ $mop->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -820,14 +883,14 @@
 
 
 
-                    <div class="row mt-md-5">
+                    <div class="row mt-md-3">
 
-                        <div class="col-md-4 ">
+                        {{-- <div class="col-md-4 ">
                             <div class="mb-5 mb-md-4 mb-sm-4">
                                 <label for="policyExpirationAgingLabel" class="form-label fw-bold fw-bold fs-6">Policy Expiration Aging</label>
                                 <input type="text" class="form-control rounded-0 rounded-0 border-1 disabled" id="policyExpirationAging" disabled value="test">
                             </div>
-                        </div>
+                        </div> --}}
 
                         <div class="col-md-4 ">
                             <div class="mb-5 mb-md-4 mb-sm-4">
@@ -846,7 +909,7 @@
                     </div>
 
 
-                    <div class="row mt-md-5">
+                    <div class="row ">
 
                         <div class="col-md-4 ">
                             <div class="mb-5 mb-md-4 mb-sm-4">
@@ -977,35 +1040,33 @@
 
 
 
-                    <div class="row mt-md-5">
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
-                                <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="commissions">
-                                    <option value="" disabled selected>Select Commissions</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
-                                </select>
+                    <!-- Container to hold the dynamic sections -->
+                    <div id="commissionContainer">
+                        <div class="row mt-md-5">
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-4 mb-sm-4">
+                                    <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
+                                    <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="commissions">
+                                        <option value="" disabled selected>Select Commissions</option>
+                                        <option value="1">One</option>
+                                        <option value="2">Two</option>
+                                        <option value="3">Three</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-4 mb-sm-4">
+                                    <label for="commissionAmountLabel" class="form-label fw-bold">Amount</label>
+                                    <input type="text" class="form-control rounded-0 border-1" id="commissionAmount" placeholder="Enter Amount" required>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
-                                <label for="commissionAmountLabel" class="form-label fw-bold">Amount</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="commissionAmount" placeholder="Enter Amount" required>
-                            </div>
-                        </div>
-
                     </div>
 
                     <div class="row mb-md-5">
-
                         <div class="col-md-4 mb-5 mb-md-5 mb-sm-5">
-                            <button type="button" class="bg-secondary"  onclick="">ADD</button>
+                            <button type="button" class="bg-secondary" id="addButton">ADD</button>
                         </div>
-
                     </div>
 
                     <div class="row mt-md-5">
@@ -1230,8 +1291,15 @@
     let currentStep = 0;
     const formSteps = document.querySelectorAll('.form-step');
     const stepIndicators = document.querySelectorAll('.sidebar .step');
-    const formData = {};
 
+
+    const grossPremiumInput = document.getElementById('grossPremium');
+    const discountInput = document.getElementById('discount');
+    const netOfDiscountInput = document.getElementById('netOfDiscount');
+    const amountDuetoProviderInput = document.getElementById('amountDuetoProvider');
+    const fullCommissionInput = document.getElementById('fullCommission');
+
+    const totalCommissionInput = document.getElementById('totalCommission');
 
 
     function showStep(step) {
@@ -1261,6 +1329,9 @@
             // Remove the error message if it exists and input is valid
             input.addEventListener('input', () => {
                 const errorMessage = input.parentNode.querySelector('.error-message');
+
+
+
                 if (input.checkValidity()) {
                     // Remove error message if input is valid
                     if (errorMessage) {
@@ -1333,10 +1404,11 @@
             document.getElementById('viberNumber').value = formData.viberNumber || '';
             document.getElementById('otherContact').value = formData.otherContact || '';
             document.getElementById('facebookAccount').value = formData.facebookAccount || '';
+            document.getElementById('email').value = formData.email || '';
             document.getElementById('remarksPersonalDetails').value = formData.remarksPersonalDetails || '';
 
             // INSURANCE INFORMATION
-            document.getElementById('sa-sm').value = formData.saSm || '';
+            document.getElementById('salesAssocManager').value = formData.salesAssocManager || '';
             document.getElementById('classification').value = formData.classification || '';
             document.getElementById('insuranceType').value = formData.insuranceType || '';
             document.getElementById('salesStatus').value = formData.salesStatus || '';
@@ -1354,7 +1426,7 @@
             document.getElementById('product').value = formData.product || '';
             document.getElementById('subProduct').value = formData.subProduct || '';
             document.getElementById('productType').value = formData.productType || '';
-            document.getElementById('source').value = formData.source || '';
+            document.getElementById('selectSources').value = formData.selectSources || '';
             document.getElementById('sourceBranch').value = formData.sourceBranch || '';
             document.getElementById('ifGdfi').value = formData.ifGdfi || '';
             document.getElementById('mortgagee').value = formData.mortgagee || '';
@@ -1368,7 +1440,6 @@
             document.getElementById('loanAmount').value = formData.loanAmount || '';
             document.getElementById('totalSumInsured').value = formData.totalSumInsured || '';
             document.getElementById('mop').value = formData.mop || '';
-            document.getElementById('policyExpirationAging').value = formData.policyExpirationAging || '';
             document.getElementById('bookNumber').value = formData.bookNumber || '';
             document.getElementById('filingNumber').value = formData.filingNumber || '';
             document.getElementById('pidReceivedDate').value = formData.pidReceivedDate || '';
@@ -1376,13 +1447,40 @@
             document.getElementById('remarksProducts').value = formData.remarksProducts || '';
 
 
+
+            //COMMISSION INFORMATION
+            document.getElementById('provisionReceipt').value = formData.provisionReceipt || '';
+            grossPremiumInput.value = formData.grossPremium || '';
+            discountInput.value = formData.discount || '';
+            netOfDiscountInput.value = formData.netOfDiscount || '';
+            amountDuetoProviderInput.value = formData.amountDuetoProvider || '';
+            fullCommissionInput.value = formData.fullCommission || '';
+            document.getElementById('marketingFund').value = formData.marketingFund || '';
+            document.getElementById('offsetting').value = formData.offsetting || '';
+            document.getElementById('promo').value = formData.promo || '';
+            document.getElementById('commDeduct').value = formData.commDeduct || '';
+
+            totalCommissionInput.value =  formData.totalCommission || '';
+
+
+
+            document.getElementById('commissions').value = getCommissionsValue() || '';
+
+
+
+
+
+
+
         }
+
     }
 
 
     // Get form data to be saved to sessionStorage
     function getFormValues() {
 
+        const formData = {};
 
         // PERSONAL INFORMATION first step
         // if (currentStep == 0) {
@@ -1400,13 +1498,13 @@
             formData.viberNumber = document.getElementById('viberNumber').value;
             formData.otherContact = document.getElementById('otherContact').value;
             formData.facebookAccount = document.getElementById('facebookAccount').value;
+            formData.email = document.getElementById('email').value;
             formData.remarksPersonalDetails = document.getElementById('remarksPersonalDetails').value;
         // }
 
 
         // INSURANCE INFORMATION second step
-        // if (currentStep == 1) {
-            formData.saSm = document.getElementById('sa-sm').value;
+            formData.salesAssocManager = document.getElementById('salesAssocManager').value;
             formData.classification = document.getElementById('classification').value;
             formData.insuranceType = document.getElementById('insuranceType').value;
             formData.salesStatus = document.getElementById('salesStatus').value;
@@ -1427,7 +1525,7 @@
             formData.product = document.getElementById('product').value;
             formData.subProduct = document.getElementById('subProduct').value;
             formData.productType = document.getElementById('productType').value;
-            formData.source = document.getElementById('source').value;
+            formData.selectSources = document.getElementById('selectSources').value;
             formData.sourceBranch = document.getElementById('sourceBranch').value;
             formData.ifGdfi = document.getElementById('ifGdfi').value;
             formData.mortgagee = document.getElementById('mortgagee').value;
@@ -1441,7 +1539,6 @@
             formData.loanAmount = document.getElementById('loanAmount').value;
             formData.totalSumInsured = document.getElementById('totalSumInsured').value;
             formData.mop = document.getElementById('mop').value;
-            formData.policyExpirationAging = document.getElementById('policyExpirationAging').value;
             formData.bookNumber = document.getElementById('bookNumber').value;
             formData.filingNumber = document.getElementById('filingNumber').value;
             formData.pidReceivedDate = document.getElementById('pidReceivedDate').value;
@@ -1450,18 +1547,34 @@
         // }
 
 
+        // if (currentStep == 3) {
+
+            formData.provisionReceipt = document.getElementById('provisionReceipt').value;
+            formData.grossPremium = grossPremium.value;
+            formData.discount = discount.value;
+            formData.netOfDiscount = netOfDiscountInput.value;
+            formData.amountDuetoProvider = amountDuetoProviderInput.value;
+            formData.fullCommission = fullCommissionInput.value;
+            formData.marketingFund = document.getElementById('marketingFund').value;
+            formData.offsetting = document.getElementById('offsetting').value;
+            formData.promo = document.getElementById('promo').value;
+            formData.commDeduct = document.getElementById('commDeduct').value;
+            formData.totalCommissionInput = document.getElementById('totalCommission').value;
+
+            formData.commissions = getCommissionsValue(); // Add commission values
+
+        //}
+
 
         // console.log(formData);
         return formData;
     }
 
-
-
     // Move to the next step, validating first
     function nextStep() {
         event.preventDefault();
 
-        if (validateStep(currentStep)) {
+        // if (validateStep(currentStep)) {
             saveFormData(); // Save form data
             if (currentStep < formSteps.length - 1) {
                 currentStep++;
@@ -1475,7 +1588,7 @@
 
 
             }
-        }
+        // }
     }
 
     // Move to the previous step
@@ -1496,27 +1609,97 @@
         }
     }
 
-    // Event listeners for step navigation
-    document.querySelectorAll('.step input[type="radio"]').forEach((radio, index) => {
-        radio.addEventListener('change', () => {
-            currentStep = index;
-            sessionStorage.setItem('currentStep', currentStep);
-            showStep(currentStep);
-        });
-    });
+    // Function to check and unhide the div based on the selected source
+    function checkIfGDFI() {
+        const source = document.getElementById('selectSources').value;
 
-    // Initialize the form by showing the first step and loading form data from sessionStorage
-    document.addEventListener('DOMContentLoaded', () => {
+        // Check if the selected source is 2
+        if (source == 2) {
+            document.getElementById('gdficol').style.visibility = "visible";
+        }
+        else {
+            document.getElementById('gdficol').style.visibility = "hidden";
+        }
+    }
+
+    // Function to get all values from the commission fields
+    function getCommissionsValue() {
+        const container = document.getElementById('commissionContainer');
+        const commissionSelects = container.querySelectorAll('select');
+        const commissionInputs = container.querySelectorAll('input');
+
+        const commissions = [];
+        let totalCommission = 0; // Initialize total commission
+
+        commissionSelects.forEach((select, index) => {
+            // Only capture values if the corresponding input exists
+            const amountInput = commissionInputs[index];
+            if (select.value && amountInput && amountInput.value) {
+                const commissionAmount = parseFloat(amountInput.value) || 0; // Safely parse the commission amount
+
+                commissions.push({
+                    commissionType: select.value,
+                    commissionAmount: commissionAmount
+                });
+
+                totalCommission += commissionAmount; // Add to the total commission
+            }
+        });
+
+        // Update the total commission input field with the total sum formatted to 2 decimal places
+        totalCommissionInput.value = totalCommission.toFixed(2); // Format to 2 decimal places
+
+        return commissions;
+    }
+
+    // Function to calculate and update netOfDiscount
+    function getNetOfDiscount() {
+        const grossPremium = parseFloat(grossPremiumInput.value) || 0;  // Default to 0 if empty or invalid
+        const discount = parseFloat(discountInput.value) || 0;  // Default to 0 if empty or invalid
+
+        // Calculate netOfDiscount and update the netOfDiscount input field
+        const netOfDiscount = grossPremium - discount;
+        netOfDiscountInput.value = netOfDiscount.toFixed(2);  // Format to two decimal places
+    }
+
+
+
+    function getFullComm(){
+        const netOfDiscount = parseFloat(netOfDiscountInput.value) || 0;
+        const amountDuetoProvider = parseFloat(amountDuetoProviderInput.value) || 0;
+
+
+        console.log(netOfDiscount);
+        console.log(amountDuetoProvider);
+
+        const fullCommission = netOfDiscount - amountDuetoProvider;
+        fullCommissionInput.value = fullCommission.toFixed(2);
+
+    }
+
+
+
+
+
+
+    $(document).ready(function() {
+        // Initialize form step
         const savedStep = sessionStorage.getItem('currentStep');
         if (savedStep) {
             currentStep = parseInt(savedStep, 10);
         }
         loadFormData();
+        checkIfGDFI();
         showStep(currentStep);
-    });
 
-    // Update the full address when inputs change
-    document.addEventListener('DOMContentLoaded', () => {
+        // Attach event listeners for form inputs
+        const inputs = document.querySelectorAll('input, textarea, select');
+        inputs.forEach(input => {
+            input.addEventListener('input', saveFormData);
+            input.addEventListener('change', saveFormData);
+        });
+
+        // Get address input fields
         const unitNoField = document.getElementById('unitNo');
         const streetField = document.getElementById('street');
         const barangayField = document.getElementById('barangay');
@@ -1534,7 +1717,130 @@
         streetField.addEventListener('input', updateFullAddress);
         barangayField.addEventListener('input', updateFullAddress);
         cityField.addEventListener('input', updateFullAddress);
+
+
+        // computations
+        grossPremiumInput.addEventListener('input', getNetOfDiscount);
+        discountInput.addEventListener('input', getNetOfDiscount);
+        amountDuetoProvider.addEventListener('input', getFullComm);
+
+
+
+        const selectIds = [
+            '#team',
+            '#salesAssocManager',
+            '#branchManager',
+            '#provider',
+            '#product',
+            '#subProduct',
+            '#selectSource',
+            '#sourceBranch',
+            '#ifGdfi',
+            '#area',
+            '#alfcBranch',
+            '#mop',
+        ];
+
+        selectIds.forEach(function(id) {
+            $(id).select2({
+                allowClear: true,
+                minimumResultsForSearch: 0 // Shows the search box even if there are few results
+            });
+        });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     });
+
+
+    // Event listeners for step navigation
+    document.querySelectorAll('.step input[type="radio"]').forEach((radio, index) => {
+        radio.addEventListener('change', () => {
+            currentStep = index;
+            sessionStorage.setItem('currentStep', currentStep);
+            showStep(currentStep);
+        });
+    });
+
+    // Commission Add Functions
+    document.getElementById('addButton').addEventListener('click', function() {
+        // Select the container
+        const container = document.getElementById('commissionContainer');
+
+        // Create a new div element with the same structure
+        const newSection = document.createElement('div');
+        newSection.classList.add('row', 'mt-md-0');
+        newSection.innerHTML = `
+            <div class="col-md-4">
+                <div class="mb-3 mb-md-4 mb-sm-4">
+                    <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
+                    <select class="form-control form-select rounded-0 border-1 rounded-0 m-0 commissionSelect">
+                        <option value="" disabled selected>Select Commissions</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="mb-3 mb-md-4 mb-sm-4">
+                    <label for="commissionAmountLabel" class="form-label fw-bold">Amount</label>
+                    <input type="text" class="form-control rounded-0 border-1 commissionAmount" placeholder="Enter Amount" required>
+                </div>
+            </div>
+        `;
+
+        // Append the new section to the container
+        container.appendChild(newSection);
+
+        // Get the newly added elements inside the newSection
+        const newAmountInput = newSection.querySelector('.commissionAmount');
+        const newSelectInput = newSection.querySelector('.commissionSelect');
+
+        // Ensure the elements exist before attaching event listeners
+        if (newAmountInput) {
+            newAmountInput.addEventListener('input', getCommissionsValue);
+        } else {
+            console.error('Commission Amount input not found.');
+        }
+
+        if (newSelectInput) {
+            newSelectInput.addEventListener('change', getCommissionsValue);
+            getFormValues();
+        } else {
+            console.error('Commission Select input not found.');
+        }
+
+    });
+
+
+
+
+
+
+
+
+
+    // Listen for changes on the source dropdown
+    document.getElementById('selectSources').addEventListener('change', function() {
+        checkIfGDFI();
+    });
+
+
+
+
 
 </script>
 
