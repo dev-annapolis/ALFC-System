@@ -118,11 +118,11 @@ $(document).ready(function() {
 });
 
 function fetchInsuranceDetail(insuranceDetailId) {
-    console.log(insuranceDetailId);
     $.ajax({
         url: `/api/insurance/details/${insuranceDetailId}`,
         method: 'GET',
         success: function(data) {
+            console.log(data); // Check the structure of the data in the console
             var tabList = $('#insuranceTabs');
             var tabContent = $('#insuranceTabContent');
             tabList.empty();
@@ -130,7 +130,6 @@ function fetchInsuranceDetail(insuranceDetailId) {
 
             // Check if the data object is empty
             if (Object.keys(data).length === 0) {
-                // Display a message indicating no data is available
                 tabContent.append(`
                     <div class="alert alert-info" role="alert">
                         No details available for this insurance record.
@@ -143,7 +142,6 @@ function fetchInsuranceDetail(insuranceDetailId) {
                 for (const table in data) {
                     const tableName = table.replace('_', ' ').toUpperCase();
 
-                    // Create a tab for each table
                     const tabId = `tab-${table}`;
                     tabList.append(`
                         <li class="nav-item" role="presentation">
@@ -153,13 +151,46 @@ function fetchInsuranceDetail(insuranceDetailId) {
                         </li>
                     `);
 
-                    // Create a tab pane for each table
                     let tableContent = '';
-                    data[table].forEach(record => {
-                        for (const key in record) {
-                            tableContent += `<p><strong>${key}</strong>: ${record[key]}</p>`;
+                    let rowCounter = 0;  // Counter to track rows
+
+                    for (const key in data[table]) {
+                        let value = data[table][key];
+
+                        if (typeof value === 'object' && value !== null) {
+                            // Skip objects or null values
+                            continue;
+                        } else {
+                            // Dynamically format the key to match the Blade format
+                            let formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, function(char) {
+                                return char.toUpperCase();
+                            });
+
+                            // Start a new row every two inputs
+                            if (rowCounter % 2 === 0) {
+                                tableContent += `<div class="row">`;
+                            }
+
+                            // Create a div with 'col-md-6' for each input field in a 2x2 grid
+                            tableContent += `
+                                <div class="col-md-6 mb-3">
+                                    <div class="form-group">
+                                        <label for="${key}"><strong>${formattedKey}</strong></label>
+                                        <input type="text" id="${key}" class="form-control" value="${value}" readonly />
+                                    </div>
+                                </div>
+                            `;
+
+                            // End the row after two columns
+                            if (rowCounter % 2 === 1) {
+                                tableContent += `</div>`;
+                            }
+
+                            // Increment the row counter
+                            rowCounter++;
                         }
-                    });
+                    }
+
 
                     tabContent.append(`
                         <div class="tab-pane fade ${isFirstTab ? 'show active' : ''}" id="${tabId}" role="tabpanel" aria-labelledby="${tabId}-tab">
@@ -172,10 +203,23 @@ function fetchInsuranceDetail(insuranceDetailId) {
             }
         },
         error: function(xhr, status, error) {
-            alert("Error fetching insurance details: " + error);
+            if (xhr.status === 403) {
+                $('#insuranceTabContent').html(`
+                    <div class="alert alert-info" role="alert">
+                        No permissions found to view this insurance record.
+                    </div>
+                `);
+            } else {
+                alert("Error fetching insurance details: " + error);
+            }
         }
     });
 }
+
+
+
+
+
 </script>
 
 @endsection
