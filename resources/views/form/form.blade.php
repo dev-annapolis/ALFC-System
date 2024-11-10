@@ -1040,13 +1040,14 @@
 
 
 
+
                     <!-- Container to hold the dynamic sections -->
                     <div id="commissionContainer">
-                        <div class="row mt-md-5">
+                        {{-- <div class="row mt-md-5">
                             <div class="col-md-4">
                                 <div class="mb-3 mb-md-4 mb-sm-4">
                                     <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
-                                    <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="commissions">
+                                    <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="commissionsSelect">
                                         <option value="" disabled selected>Select Commissions</option>
                                         <option value="1">One</option>
                                         <option value="2">Two</option>
@@ -1060,7 +1061,7 @@
                                     <input type="text" class="form-control rounded-0 border-1" id="commissionAmount" placeholder="Enter Amount" required>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
 
                     <div class="row mb-md-5">
@@ -1289,6 +1290,10 @@
 
 <script>
     let currentStep = 0;
+    let index = 0;  // Initialize index counter
+
+    const commissions = [];
+
     const formSteps = document.querySelectorAll('.form-step');
     const stepIndicators = document.querySelectorAll('.sidebar .step');
 
@@ -1298,7 +1303,6 @@
     const netOfDiscountInput = document.getElementById('netOfDiscount');
     const amountDuetoProviderInput = document.getElementById('amountDuetoProvider');
     const fullCommissionInput = document.getElementById('fullCommission');
-
     const totalCommissionInput = document.getElementById('totalCommission');
 
 
@@ -1316,6 +1320,45 @@
                 stepIndicators[index].querySelector('input[type="radio"]').checked = true;
             }
         });
+    }
+
+    // Move to the next step, validating first
+    function nextStep() {
+        event.preventDefault();
+
+        // if (validateStep(currentStep)) {
+            saveFormData(); // Save form data
+            if (currentStep < formSteps.length - 1) {
+                currentStep++;
+                sessionStorage.setItem('currentStep', currentStep);
+                showStep(currentStep);
+
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+
+
+            }
+        // }
+    }
+
+    // Move to the previous step
+    function prevStep() {
+        saveFormData(); // Save form data
+        if (currentStep > 0) {
+            currentStep--;
+            sessionStorage.setItem('currentStep', currentStep);
+            showStep(currentStep);
+
+            window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+
+
+
+        }
     }
 
     function validateStep(step) {
@@ -1464,15 +1507,55 @@
 
 
 
-            document.getElementById('commissions').value = getCommissionsValue() || '';
+            // document.getElementById('commissionsSelect').value = getCommissionsValue() || '';
+            // Loading dynamic commission fields (select and amount)
+            console.log(formData.commissionsSelect);
+            if (formData.commissionsSelect && formData.commissionsSelect.length > 0) {
+                // Select the container where you want to append the commission fields
+                const container = document.getElementById('commissionContainer');
+
+                // Loop over each commission in formData.commissionsSelect
+                formData.commissionsSelect.forEach((commission, index) => {
+                    // Create a new div element to hold the commission fields
+                    const newSection = document.createElement('div');
+                    newSection.classList.add('row', 'mt-md-0');
+                    newSection.innerHTML = `
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0 commissionSelect" id="commissionSelect${index}">
+                                    <option value="" disabled selected>Select Commissions</option>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="commissionAmountLabel" class="form-label fw-bold">Amount</label>
+                                <input type="text" class="form-control rounded-0 border-1 commissionAmount" id="commissionAmount${index}" placeholder="Enter Amount" required>
+                            </div>
+                        </div>
+                    `;
+
+                    // Append the new section to the container
+                    container.appendChild(newSection);
+
+                    // Get the newly created select and input elements
+                    const commissionAmount = document.getElementById(`commissionAmount${index}`);
+                    const commissionSelect = document.getElementById(`commissionSelect${index}`);
+
+                    // Populate the newly created fields with data from formData
+                    if (commissionAmount && commissionSelect) {
+                        commissionAmount.value = commission.commissionAmount || ''; // Default if not provided
+                        commissionSelect.value = commission.commissionType || '';   // Default if not provided
+                    }
+                    });
+                }
 
 
-
-
-
-
-
-        }
+            }
 
     }
 
@@ -1561,7 +1644,7 @@
             formData.commDeduct = document.getElementById('commDeduct').value;
             formData.totalCommissionInput = document.getElementById('totalCommission').value;
 
-            formData.commissions = getCommissionsValue(); // Add commission values
+            formData.commissionsSelect = getCommissionsValue(); // Add commission values
 
         //}
 
@@ -1570,44 +1653,6 @@
         return formData;
     }
 
-    // Move to the next step, validating first
-    function nextStep() {
-        event.preventDefault();
-
-        // if (validateStep(currentStep)) {
-            saveFormData(); // Save form data
-            if (currentStep < formSteps.length - 1) {
-                currentStep++;
-                sessionStorage.setItem('currentStep', currentStep);
-                showStep(currentStep);
-
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-
-
-            }
-        // }
-    }
-
-    // Move to the previous step
-    function prevStep() {
-        saveFormData(); // Save form data
-        if (currentStep > 0) {
-            currentStep--;
-            sessionStorage.setItem('currentStep', currentStep);
-            showStep(currentStep);
-
-            window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-
-
-
-        }
-    }
 
     // Function to check and unhide the div based on the selected source
     function checkIfGDFI() {
@@ -1662,6 +1707,89 @@
         netOfDiscountInput.value = netOfDiscount.toFixed(2);  // Format to two decimal places
     }
 
+    // Function to add a new commission select and input field
+    function addCommissions() {
+        let newAmountInput, newSelectInput;
+        let index = 0; 
+
+        const existingFields = document.querySelectorAll('.commissionAmount, .commissionSelect');
+        const container = document.getElementById('commissionContainer');
+        const initialSection = document.createElement('div');
+
+        // Log to check if no fields have been added
+        if (existingFields.length === 0) {
+
+            // Create the initial section and add it above the container
+            initialSection.innerHTML = `
+                <div class="row mt-md-5" id="initialCommissionsTitle">
+                    <div class="col-md-4">
+                        <label for="commissionsTitle" class="form-label fw-bold">Commissions</label>
+                    </div>
+                </div>
+            `;
+            // Append the initialSection above the container
+            container.prepend(initialSection);
+
+        } else {
+            console.log('Fields have already been added.');
+        }
+
+        // Event listener for "Add" button click
+        document.getElementById('addButton').addEventListener('click', function () {
+            initialSection.remove();
+            // Create a new div element with the same structure
+            const newSection = document.createElement('div');
+
+            // Add the 'mt-md-5' class only to the first row
+            if (index === 0) {
+                newSection.classList.add('row', 'mt-md-5');
+            } else {
+                newSection.classList.add('row');
+            }
+
+            newSection.innerHTML = `
+                <div class="col-md-4">
+                    <div class="mb-3 mb-md-4 mb-sm-4">
+                        <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
+                        <select class="form-control form-select rounded-0 border-1 rounded-0 m-0 commissionSelect" id="commissionSelect${index}">
+                            <option value="" disabled selected>Select Commissions</option>
+                            <option value="1">One</option>
+                            <option value="2">Two</option>
+                            <option value="3">Three</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3 mb-md-4 mb-sm-4">
+                        <label for="commissionAmountLabel" class="form-label fw-bold">Amount</label>
+                        <input type="text" class="form-control rounded-0 border-1 commissionAmount" id="commissionAmount${index}" placeholder="Enter Amount" required>
+                    </div>
+                </div>
+            `;
+
+            // Append the new section to the container
+            container.appendChild(newSection);
+
+            // Get the newly added elements inside the newSection
+            newAmountInput = newSection.querySelector(`#commissionAmount${index}`);
+            newSelectInput = newSection.querySelector(`#commissionSelect${index}`);
+
+            // Immediately save the form data after adding the new fields
+            saveFormData();
+
+            // Attach event listeners to the newly added elements
+            newAmountInput.addEventListener('input', function () {
+                saveFormData(); // Save data whenever the input value changes
+            });
+
+            newSelectInput.addEventListener('change', function () {
+                saveFormData(); // Save data whenever the select value changes
+            });
+
+            // Increase the index for the next field
+            index++;  // Increase the index after the field is added
+        });
+    }
 
 
     function getFullComm(){
@@ -1688,6 +1816,7 @@
         if (savedStep) {
             currentStep = parseInt(savedStep, 10);
         }
+
         loadFormData();
         checkIfGDFI();
         showStep(currentStep);
@@ -1751,11 +1880,7 @@
 
 
 
-
-
-
-
-
+        addCommissions();
 
 
 
@@ -1774,56 +1899,10 @@
         });
     });
 
-    // Commission Add Functions
-    document.getElementById('addButton').addEventListener('click', function() {
-        // Select the container
-        const container = document.getElementById('commissionContainer');
 
-        // Create a new div element with the same structure
-        const newSection = document.createElement('div');
-        newSection.classList.add('row', 'mt-md-0');
-        newSection.innerHTML = `
-            <div class="col-md-4">
-                <div class="mb-3 mb-md-4 mb-sm-4">
-                    <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
-                    <select class="form-control form-select rounded-0 border-1 rounded-0 m-0 commissionSelect">
-                        <option value="" disabled selected>Select Commissions</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
-                    </select>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="mb-3 mb-md-4 mb-sm-4">
-                    <label for="commissionAmountLabel" class="form-label fw-bold">Amount</label>
-                    <input type="text" class="form-control rounded-0 border-1 commissionAmount" placeholder="Enter Amount" required>
-                </div>
-            </div>
-        `;
 
-        // Append the new section to the container
-        container.appendChild(newSection);
 
-        // Get the newly added elements inside the newSection
-        const newAmountInput = newSection.querySelector('.commissionAmount');
-        const newSelectInput = newSection.querySelector('.commissionSelect');
 
-        // Ensure the elements exist before attaching event listeners
-        if (newAmountInput) {
-            newAmountInput.addEventListener('input', getCommissionsValue);
-        } else {
-            console.error('Commission Amount input not found.');
-        }
-
-        if (newSelectInput) {
-            newSelectInput.addEventListener('change', getCommissionsValue);
-            getFormValues();
-        } else {
-            console.error('Commission Select input not found.');
-        }
-
-    });
 
 
 
