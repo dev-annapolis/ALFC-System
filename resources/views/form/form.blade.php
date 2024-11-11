@@ -1043,27 +1043,7 @@
 
 
 
-                    <!-- Container to hold the dynamic sections -->
                     <div id="commissionContainer">
-                        {{-- <div class="row mt-md-5">
-                            <div class="col-md-4">
-                                <div class="mb-3 mb-md-4 mb-sm-4">
-                                    <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
-                                    <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="commissionsSelect">
-                                        <option value="" disabled selected>Select Commissions</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-3 mb-md-4 mb-sm-4">
-                                    <label for="commissionAmountLabel" class="form-label fw-bold">Amount</label>
-                                    <input type="text" class="form-control rounded-0 border-1" id="commissionAmount" placeholder="Enter Amount" required>
-                                </div>
-                            </div>
-                        </div> --}}
                     </div>
 
                     <div class="row mb-md-5">
@@ -1535,9 +1515,9 @@
                                 <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0 commissionSelect" id="commissionSelect${index}">
                                     <option value="" disabled selected>Select Commissions</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                    @foreach($commisioners as $commisioner)
+                                        <option value="{{ $commisioner->id }}">{{ $commisioner->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -1561,6 +1541,7 @@
                         commissionAmount.value = commission.commissionAmount || ''; // Default if not provided
                         commissionSelect.value = commission.commissionType || '';   // Default if not provided
                     }
+                    
 
                 });
             }
@@ -1815,6 +1796,8 @@
             }
 
 
+
+
             // For the newly added row, do not add mt-5
             newSection.innerHTML = `
                 <div class="col-md-4">
@@ -1822,9 +1805,9 @@
                         <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
                         <select class="form-control form-select rounded-0 border-1 rounded-0 m-0 commissionSelect" id="commissionSelect${index}">
                             <option value="" disabled selected>Select Commissions</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                            @foreach($commisioners as $commisioner)
+                                <option value="{{ $commisioner->id }}">{{ $commisioner->name }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
