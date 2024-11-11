@@ -1043,27 +1043,7 @@
 
 
 
-                    <!-- Container to hold the dynamic sections -->
                     <div id="commissionContainer">
-                        {{-- <div class="row mt-md-5">
-                            <div class="col-md-4">
-                                <div class="mb-3 mb-md-4 mb-sm-4">
-                                    <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
-                                    <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="commissionsSelect">
-                                        <option value="" disabled selected>Select Commissions</option>
-                                        <option value="1">One</option>
-                                        <option value="2">Two</option>
-                                        <option value="3">Three</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="mb-3 mb-md-4 mb-sm-4">
-                                    <label for="commissionAmountLabel" class="form-label fw-bold">Amount</label>
-                                    <input type="text" class="form-control rounded-0 border-1" id="commissionAmount" placeholder="Enter Amount" required>
-                                </div>
-                            </div>
-                        </div> --}}
                     </div>
 
                     <div class="row mb-md-5">
@@ -1099,7 +1079,7 @@
                         <div class="col-md-4">
                             <div class="mb-5 mb-md-5 mb-sm-5">
                                 <label for="vatLabel" class="form-label fw-bold">VAT</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="vat" required disabled>
+                                <input type="text" class="form-control rounded-0 border-1" id="vatInput" required disabled>
                             </div>
                         </div>
 
@@ -1305,7 +1285,25 @@
     const netOfDiscountInput = document.getElementById('netOfDiscount');
     const amountDuetoProviderInput = document.getElementById('amountDuetoProvider');
     const fullCommissionInput = document.getElementById('fullCommission');
+
+
+    const marketingFundInput = document.getElementById('marketingFund');
+    const offSettingInput = document.getElementById('offsetting');
+    const promoInput = document.getElementById('promo');
+    const commDeductInput = document.getElementById('commDeduct');
+
     const totalCommissionInput = document.getElementById('totalCommission');
+
+
+    const vatInput = document.getElementById('vatInput');
+    let vatValue = 0;
+
+
+    const salesCreditInput  = document.getElementById('salesCredit');
+    let salesCredit = 0;
+
+    const salesCreditPercentInput = document.getElementById('salesCreditPercent');
+    let salesCreditPercent = 0;
 
 
     function showStep(step) {
@@ -1479,7 +1477,7 @@
             document.getElementById('alfcBranch').value = formData.alfcBranch || '';
             document.getElementById('policyNumber').value = formData.policyNumber || '';
             document.getElementById('expiryDate').value = formData.expiryDate || '';
-            document.getElementById('policyInsumption').value = formData.policyInsumption || '';
+            document.getElementById('policyInception').value = formData.policyInception || '';
             document.getElementById('plateConductionNumber').value = formData.plateConductionNumber || '';
             document.getElementById('description').value = formData.description || '';
             document.getElementById('loanAmount').value = formData.loanAmount || '';
@@ -1500,23 +1498,13 @@
             netOfDiscountInput.value = formData.netOfDiscount || '';
             amountDuetoProviderInput.value = formData.amountDuetoProvider || '';
             fullCommissionInput.value = formData.fullCommission || '';
-            document.getElementById('marketingFund').value = formData.marketingFund || '';
-            document.getElementById('offsetting').value = formData.offsetting || '';
-            document.getElementById('promo').value = formData.promo || '';
-            document.getElementById('commDeduct').value = formData.commDeduct || '';
+            marketingFundInput.value = formData.marketingFund || '';
+            offSettingInput.value = formData.offsetting || '';
+            promoInput.value = formData.promo || '';
 
-            totalCommissionInput.value =  formData.totalCommission || '';
-
-
-
-            // document.getElementById('commissionsSelect').value = getCommissionsValue() || '';
-            // Loading dynamic commission fields (select and amount)
-            console.log(formData.commissionsSelect);
             if (formData.commissionsSelect && formData.commissionsSelect.length > 0) {
-                // Select the container where you want to append the commission fields
                 const container = document.getElementById('commissionContainer');
 
-                // Loop over each commission in formData.commissionsSelect
                 formData.commissionsSelect.forEach((commission, index) => {
                     // Create a new div element to hold the commission fields
                     const newSection = document.createElement('div');
@@ -1527,9 +1515,9 @@
                                 <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0 commissionSelect" id="commissionSelect${index}">
                                     <option value="" disabled selected>Select Commissions</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                    @foreach($commisioners as $commisioner)
+                                        <option value="{{ $commisioner->id }}">{{ $commisioner->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -1553,11 +1541,22 @@
                         commissionAmount.value = commission.commissionAmount || ''; // Default if not provided
                         commissionSelect.value = commission.commissionType || '';   // Default if not provided
                     }
-                    });
-                }
+                    
 
-
+                });
             }
+
+            totalCommissionInput.value =  formData.totalCommissionInput || '';
+            commDeductInput.value = formData.commDeduct || '';
+
+
+            vatInput.value = formData.vat || '';
+            salesCreditInput.value = formData.salesCredit || '';
+            salesCreditPercentInput.value = formData.salesCreditPercent || '';
+
+
+
+        }
 
     }
 
@@ -1618,7 +1617,7 @@
             formData.alfcBranch = document.getElementById('alfcBranch').value;
             formData.policyNumber = document.getElementById('policyNumber').value;
             formData.expiryDate = document.getElementById('expiryDate').value;
-            formData.policyInsumption = document.getElementById('policyInsumption').value;
+            formData.policyInception = document.getElementById('policyInception').value;
             formData.plateConductionNumber = document.getElementById('plateConductionNumber').value;
             formData.description = document.getElementById('description').value;
             formData.loanAmount = document.getElementById('loanAmount').value;
@@ -1640,13 +1639,22 @@
             formData.netOfDiscount = netOfDiscountInput.value;
             formData.amountDuetoProvider = amountDuetoProviderInput.value;
             formData.fullCommission = fullCommissionInput.value;
-            formData.marketingFund = document.getElementById('marketingFund').value;
-            formData.offsetting = document.getElementById('offsetting').value;
-            formData.promo = document.getElementById('promo').value;
-            formData.commDeduct = document.getElementById('commDeduct').value;
+            formData.marketingFund = marketingFundInput.value;
+            formData.offsetting = offSettingInput.value;
+            formData.promo = promoInput.value;
+
+            formData.commissionsSelect = getCommissionsValue();
+
             formData.totalCommissionInput = document.getElementById('totalCommission').value;
 
-            formData.commissionsSelect = getCommissionsValue(); // Add commission values
+            formData.commDeduct = commDeductInput.value;
+
+
+            formData.vat = vatInput.value;
+            formData.salesCredit = salesCreditInput.value;
+            formData.salesCreditPercent = salesCreditPercentInput.value;
+
+
 
         //}
 
@@ -1669,35 +1677,6 @@
         }
     }
 
-    // Function to get all values from the commission fields
-    function getCommissionsValue() {
-        const container = document.getElementById('commissionContainer');
-        const commissionSelects = container.querySelectorAll('select');
-        const commissionInputs = container.querySelectorAll('input');
-
-        const commissions = [];
-        let totalCommission = 0; // Initialize total commission
-
-        commissionSelects.forEach((select, index) => {
-            // Only capture values if the corresponding input exists
-            const amountInput = commissionInputs[index];
-            if (select.value && amountInput && amountInput.value) {
-                const commissionAmount = parseFloat(amountInput.value) || 0; // Safely parse the commission amount
-
-                commissions.push({
-                    commissionType: select.value,
-                    commissionAmount: commissionAmount
-                });
-
-                totalCommission += commissionAmount; // Add to the total commission
-            }
-        });
-
-        // Update the total commission input field with the total sum formatted to 2 decimal places
-        totalCommissionInput.value = totalCommission.toFixed(2); // Format to 2 decimal places
-
-        return commissions;
-    }
 
     // Function to calculate and update netOfDiscount
     function getNetOfDiscount() {
@@ -1707,20 +1686,89 @@
         // Calculate netOfDiscount and update the netOfDiscount input field
         const netOfDiscount = grossPremium - discount;
         netOfDiscountInput.value = netOfDiscount.toFixed(2);  // Format to two decimal places
+
+        getVatSalesCredit();
+
     }
 
-    // Function to add a new commission select and input field
+    function getFullComm(){
+        const netOfDiscount = parseFloat(netOfDiscountInput.value) || 0;
+        const amountDuetoProvider = parseFloat(amountDuetoProviderInput.value) || 0;
+
+
+        console.log(netOfDiscount);
+        console.log(amountDuetoProvider);
+
+        const fullCommission = netOfDiscount - amountDuetoProvider;
+        fullCommissionInput.value = fullCommission.toFixed(2);
+
+        getVatSalesCredit();
+
+
+    }
+
+    // Function to get all values from the commission fields
+    function getCommissionsValue() {
+
+            let initialTotalCommission = 0;
+
+            const container = document.getElementById('commissionContainer');
+            const commissionSelects = container.querySelectorAll('select');
+            const commissionInputs = container.querySelectorAll('input');
+
+
+            // Convert input values to numbers
+            let marketingFundValue = parseFloat(marketingFundInput.value) || 0;
+            let offsettingValue = parseFloat(offSettingInput.value) || 0;
+            let promoValue = parseFloat(promoInput.value) || 0;
+
+            // Calculate the total commission
+            initialTotalCommission = marketingFundValue + offsettingValue + promoValue;
+
+
+
+            const commissions = [];
+            let totalCommission = 0 + initialTotalCommission; // Initialize total commission
+
+            commissionSelects.forEach((select, index) => {
+                // Only capture values if the corresponding input exists
+                const amountInput = commissionInputs[index];
+                if (select.value && amountInput && amountInput.value) {
+                    const commissionAmount = parseFloat(amountInput.value) || 0; // Safely parse the commission amount
+
+                    commissions.push({
+                        commissionType: select.value,
+                        commissionAmount: commissionAmount
+                    });
+
+                    totalCommission += commissionAmount; // Add to the total commission
+                }
+            });
+
+            // Update the total commission input field with the total sum formatted to 2 decimal places
+            totalCommissionInput.value = totalCommission.toFixed(2); // Format to 2 decimal places
+            getVatSalesCredit();
+
+            return commissions;
+
+    }
+
     function addCommissions() {
         let newAmountInput, newSelectInput;
-        let index = 0; 
+        let index = 0;
 
         const existingFields = document.querySelectorAll('.commissionAmount, .commissionSelect');
         const container = document.getElementById('commissionContainer');
         const initialSection = document.createElement('div');
 
-        // Log to check if no fields have been added
-        if (existingFields.length === 0) {
+        const firstRow = container.querySelector('.row');
+        if (firstRow) {
+            firstRow.querySelectorAll('.col-md-4').forEach(col => {
+                col.classList.add('mt-5');
+                console.log("existing")
 
+            });
+        } else {
             // Create the initial section and add it above the container
             initialSection.innerHTML = `
                 <div class="row mt-md-5" id="initialCommissionsTitle">
@@ -1731,33 +1779,35 @@
             `;
             // Append the initialSection above the container
             container.prepend(initialSection);
-
-        } else {
-            console.log('Fields have already been added.');
         }
 
         // Event listener for "Add" button click
         document.getElementById('addButton').addEventListener('click', function () {
             initialSection.remove();
+
             // Create a new div element with the same structure
             const newSection = document.createElement('div');
 
-            // Add the 'mt-md-5' class only to the first row
-            if (index === 0) {
-                newSection.classList.add('row', 'mt-md-5');
+            // Check if it's the first row being added
+            if (container.querySelectorAll('.row').length === 0) {
+                newSection.classList.add('row', 'mt-5');  // Apply mt-5 to the first row
             } else {
-                newSection.classList.add('row');
+                newSection.classList.add('row');  // No mt-5 for subsequent rows
             }
 
+
+
+
+            // For the newly added row, do not add mt-5
             newSection.innerHTML = `
                 <div class="col-md-4">
                     <div class="mb-3 mb-md-4 mb-sm-4">
                         <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
                         <select class="form-control form-select rounded-0 border-1 rounded-0 m-0 commissionSelect" id="commissionSelect${index}">
                             <option value="" disabled selected>Select Commissions</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                            @foreach($commisioners as $commisioner)
+                                <option value="{{ $commisioner->id }}">{{ $commisioner->name }}</option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
@@ -1782,33 +1832,45 @@
             // Attach event listeners to the newly added elements
             newAmountInput.addEventListener('input', function () {
                 saveFormData(); // Save data whenever the input value changes
+                getVatSalesCredit();
             });
 
             newSelectInput.addEventListener('change', function () {
                 saveFormData(); // Save data whenever the select value changes
+                getVatSalesCredit();
             });
 
             // Increase the index for the next field
             index++;  // Increase the index after the field is added
         });
-    }
-
-
-    function getFullComm(){
-        const netOfDiscount = parseFloat(netOfDiscountInput.value) || 0;
-        const amountDuetoProvider = parseFloat(amountDuetoProviderInput.value) || 0;
-
-
-        console.log(netOfDiscount);
-        console.log(amountDuetoProvider);
-
-        const fullCommission = netOfDiscount - amountDuetoProvider;
-        fullCommissionInput.value = fullCommission.toFixed(2);
 
     }
 
 
+    function getVatSalesCredit() {
+        const fullCommissionValue = parseFloat(fullCommissionInput.value) || 0;
+        const totalCommissionValue = parseFloat(totalCommissionInput.value) || 0;
 
+        console.log(fullCommissionValue);
+        console.log(totalCommissionValue);
+
+        const vatValue = ((fullCommissionValue - totalCommissionValue) * 0.12) / 1.12;
+
+
+        vatInput.value = vatValue.toFixed(2);
+
+        const salesCreditValue = fullCommissionValue - totalCommissionValue - vatValue;
+
+        salesCreditInput.value = salesCreditValue.toFixed(2);
+
+
+        const salesCreditPercentValue = (salesCreditValue / fullCommissionValue) * 100;
+        const formattedPercent = salesCreditPercentValue.toFixed(2) + '%';
+
+        salesCreditPercentInput.value = formattedPercent;
+
+
+    }
 
 
 
@@ -1819,6 +1881,18 @@
             currentStep = parseInt(savedStep, 10);
         }
 
+        document.querySelectorAll('.step input[type="radio"]').forEach((radio, index) => {
+            radio.addEventListener('change', () => {
+                currentStep = index;
+                sessionStorage.setItem('currentStep', currentStep);
+                showStep(currentStep);
+            });
+        });
+
+        document.getElementById('selectSources').addEventListener('change', function() {
+            checkIfGDFI();
+        });
+
         loadFormData();
         checkIfGDFI();
         showStep(currentStep);
@@ -1828,6 +1902,8 @@
         inputs.forEach(input => {
             input.addEventListener('input', saveFormData);
             input.addEventListener('change', saveFormData);
+            input.addEventListener('select', saveFormData);
+
         });
 
         // Get address input fields
@@ -1854,6 +1930,13 @@
         grossPremiumInput.addEventListener('input', getNetOfDiscount);
         discountInput.addEventListener('input', getNetOfDiscount);
         amountDuetoProvider.addEventListener('input', getFullComm);
+
+
+        marketingFundInput.addEventListener('input', getCommissionsValue);
+        offSettingInput.addEventListener('input', getCommissionsValue);
+        promoInput.addEventListener('input', getCommissionsValue);
+
+        amountDuetoProvider.addEventListener('input', getVatSalesCredit);
 
 
 
@@ -1887,39 +1970,7 @@
 
 
 
-
-
     });
-
-
-    // Event listeners for step navigation
-    document.querySelectorAll('.step input[type="radio"]').forEach((radio, index) => {
-        radio.addEventListener('change', () => {
-            currentStep = index;
-            sessionStorage.setItem('currentStep', currentStep);
-            showStep(currentStep);
-        });
-    });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // Listen for changes on the source dropdown
-    document.getElementById('selectSources').addEventListener('change', function() {
-        checkIfGDFI();
-    });
-
-
 
 
 

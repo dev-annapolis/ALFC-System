@@ -18,6 +18,7 @@ use App\Models\Area;
 use App\Models\AlfcBranch;
 use App\Models\Team;
 use App\Models\ModeOfPayment;
+use App\Models\Commisioner;
 
 
 
@@ -38,6 +39,7 @@ class SalesProcessorController extends Controller
         $areas = Area::select('name','id')->get();
         $alfcbranches = AlfcBranch::select('name','id')->get();
         $mops = ModeOfPayment::select('name','id')->get();
+        $commisioners = Commisioner::select('name','id')->get();
 
 
         return view('form.form', compact(
@@ -54,6 +56,7 @@ class SalesProcessorController extends Controller
             'areas',
             'alfcbranches',
             'mops',
+            'commisioners',
 
 
         )); // Adjust the path if necessary
