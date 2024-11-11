@@ -107,6 +107,7 @@ class UniversalTableController extends Controller
             'insurance_commisioners' => [
                 'insurance_detail_id',
                 'commisioner_id',
+                'amount',
             ],
             'collection_details' => [
                 'insurance_detail_id',
