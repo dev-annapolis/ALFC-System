@@ -1099,7 +1099,7 @@
                         <div class="col-md-4">
                             <div class="mb-5 mb-md-5 mb-sm-5">
                                 <label for="vatLabel" class="form-label fw-bold">VAT</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="vat" required disabled>
+                                <input type="text" class="form-control rounded-0 border-1" id="vatInput" required disabled>
                             </div>
                         </div>
 
@@ -1305,7 +1305,25 @@
     const netOfDiscountInput = document.getElementById('netOfDiscount');
     const amountDuetoProviderInput = document.getElementById('amountDuetoProvider');
     const fullCommissionInput = document.getElementById('fullCommission');
+
+
+    const marketingFundInput = document.getElementById('marketingFund');
+    const offSettingInput = document.getElementById('offsetting');
+    const promoInput = document.getElementById('promo');
+    const commDeductInput = document.getElementById('commDeduct');
+
     const totalCommissionInput = document.getElementById('totalCommission');
+
+
+    const vatInput = document.getElementById('vatInput');
+    let vatValue = 0;
+
+
+    const salesCreditInput  = document.getElementById('salesCredit');
+    let salesCredit = 0;
+
+    const salesCreditPercentInput = document.getElementById('salesCreditPercent');
+    let salesCreditPercent = 0;
 
 
     function showStep(step) {
@@ -1500,10 +1518,9 @@
             netOfDiscountInput.value = formData.netOfDiscount || '';
             amountDuetoProviderInput.value = formData.amountDuetoProvider || '';
             fullCommissionInput.value = formData.fullCommission || '';
-            document.getElementById('marketingFund').value = formData.marketingFund || '';
-            document.getElementById('offsetting').value = formData.offsetting || '';
-            document.getElementById('promo').value = formData.promo || '';
-            document.getElementById('commDeduct').value = formData.commDeduct || '';
+            marketingFundInput.value = formData.marketingFund || '';
+            offSettingInput.value = formData.offsetting || '';
+            promoInput.value = formData.promo || '';
 
             if (formData.commissionsSelect && formData.commissionsSelect.length > 0) {
                 const container = document.getElementById('commissionContainer');
@@ -1549,6 +1566,14 @@
             }
 
             totalCommissionInput.value =  formData.totalCommissionInput || '';
+            commDeductInput.value = formData.commDeduct || '';
+
+
+            vatInput.value = formData.vat || '';
+            salesCreditInput.value = formData.salesCredit || '';
+            salesCreditPercentInput.value = formData.salesCreditPercent || '';
+
+
 
         }
 
@@ -1633,14 +1658,21 @@
             formData.netOfDiscount = netOfDiscountInput.value;
             formData.amountDuetoProvider = amountDuetoProviderInput.value;
             formData.fullCommission = fullCommissionInput.value;
-            formData.marketingFund = document.getElementById('marketingFund').value;
-            formData.offsetting = document.getElementById('offsetting').value;
-            formData.promo = document.getElementById('promo').value;
-            formData.commDeduct = document.getElementById('commDeduct').value;
+            formData.marketingFund = marketingFundInput.value;
+            formData.offsetting = offSettingInput.value;
+            formData.promo = promoInput.value;
 
             formData.commissionsSelect = getCommissionsValue();
 
             formData.totalCommissionInput = document.getElementById('totalCommission').value;
+
+            formData.commDeduct = commDeductInput.value;
+
+
+            formData.vat = vatInput.value;
+            formData.salesCredit = salesCreditInput.value;
+            formData.salesCreditPercent = salesCreditPercentInput.value;
+
 
 
         //}
@@ -1664,35 +1696,6 @@
         }
     }
 
-    // Function to get all values from the commission fields
-    function getCommissionsValue() {
-        const container = document.getElementById('commissionContainer');
-        const commissionSelects = container.querySelectorAll('select');
-        const commissionInputs = container.querySelectorAll('input');
-
-        const commissions = [];
-        let totalCommission = 0; // Initialize total commission
-
-        commissionSelects.forEach((select, index) => {
-            // Only capture values if the corresponding input exists
-            const amountInput = commissionInputs[index];
-            if (select.value && amountInput && amountInput.value) {
-                const commissionAmount = parseFloat(amountInput.value) || 0; // Safely parse the commission amount
-
-                commissions.push({
-                    commissionType: select.value,
-                    commissionAmount: commissionAmount
-                });
-
-                totalCommission += commissionAmount; // Add to the total commission
-            }
-        });
-
-        // Update the total commission input field with the total sum formatted to 2 decimal places
-        totalCommissionInput.value = totalCommission.toFixed(2); // Format to 2 decimal places
-
-        return commissions;
-    }
 
     // Function to calculate and update netOfDiscount
     function getNetOfDiscount() {
@@ -1702,10 +1705,72 @@
         // Calculate netOfDiscount and update the netOfDiscount input field
         const netOfDiscount = grossPremium - discount;
         netOfDiscountInput.value = netOfDiscount.toFixed(2);  // Format to two decimal places
+
+        getVatSalesCredit();
+
     }
 
+    function getFullComm(){
+        const netOfDiscount = parseFloat(netOfDiscountInput.value) || 0;
+        const amountDuetoProvider = parseFloat(amountDuetoProviderInput.value) || 0;
 
 
+        console.log(netOfDiscount);
+        console.log(amountDuetoProvider);
+
+        const fullCommission = netOfDiscount - amountDuetoProvider;
+        fullCommissionInput.value = fullCommission.toFixed(2);
+
+        getVatSalesCredit();
+
+
+    }
+
+    // Function to get all values from the commission fields
+    function getCommissionsValue() {
+
+            let initialTotalCommission = 0;
+
+            const container = document.getElementById('commissionContainer');
+            const commissionSelects = container.querySelectorAll('select');
+            const commissionInputs = container.querySelectorAll('input');
+
+
+            // Convert input values to numbers
+            let marketingFundValue = parseFloat(marketingFundInput.value) || 0;
+            let offsettingValue = parseFloat(offSettingInput.value) || 0;
+            let promoValue = parseFloat(promoInput.value) || 0;
+
+            // Calculate the total commission
+            initialTotalCommission = marketingFundValue + offsettingValue + promoValue;
+
+
+
+            const commissions = [];
+            let totalCommission = 0 + initialTotalCommission; // Initialize total commission
+
+            commissionSelects.forEach((select, index) => {
+                // Only capture values if the corresponding input exists
+                const amountInput = commissionInputs[index];
+                if (select.value && amountInput && amountInput.value) {
+                    const commissionAmount = parseFloat(amountInput.value) || 0; // Safely parse the commission amount
+
+                    commissions.push({
+                        commissionType: select.value,
+                        commissionAmount: commissionAmount
+                    });
+
+                    totalCommission += commissionAmount; // Add to the total commission
+                }
+            });
+
+            // Update the total commission input field with the total sum formatted to 2 decimal places
+            totalCommissionInput.value = totalCommission.toFixed(2); // Format to 2 decimal places
+            getVatSalesCredit();
+
+            return commissions;
+
+    }
 
     function addCommissions() {
         let newAmountInput, newSelectInput;
@@ -1784,10 +1849,12 @@
             // Attach event listeners to the newly added elements
             newAmountInput.addEventListener('input', function () {
                 saveFormData(); // Save data whenever the input value changes
+                getVatSalesCredit();
             });
 
             newSelectInput.addEventListener('change', function () {
                 saveFormData(); // Save data whenever the select value changes
+                getVatSalesCredit();
             });
 
             // Increase the index for the next field
@@ -1797,23 +1864,31 @@
     }
 
 
+    function getVatSalesCredit() {
+        const fullCommissionValue = parseFloat(fullCommissionInput.value) || 0;
+        const totalCommissionValue = parseFloat(totalCommissionInput.value) || 0;
+
+        console.log(fullCommissionValue);
+        console.log(totalCommissionValue);
+
+        const vatValue = ((fullCommissionValue - totalCommissionValue) * 0.12) / 1.12;
 
 
+        vatInput.value = vatValue.toFixed(2);
+
+        const salesCreditValue = fullCommissionValue - totalCommissionValue - vatValue;
+
+        salesCreditInput.value = salesCreditValue.toFixed(2);
 
 
+        const salesCreditPercentValue = (salesCreditValue / fullCommissionValue) * 100;
+        const formattedPercent = salesCreditPercentValue.toFixed(2) + '%';
 
-    function getFullComm(){
-        const netOfDiscount = parseFloat(netOfDiscountInput.value) || 0;
-        const amountDuetoProvider = parseFloat(amountDuetoProviderInput.value) || 0;
+        salesCreditPercentInput.value = formattedPercent;
 
-
-        console.log(netOfDiscount);
-        console.log(amountDuetoProvider);
-
-        const fullCommission = netOfDiscount - amountDuetoProvider;
-        fullCommissionInput.value = fullCommission.toFixed(2);
 
     }
+
 
 
     $(document).ready(function() {
@@ -1822,6 +1897,18 @@
         if (savedStep) {
             currentStep = parseInt(savedStep, 10);
         }
+
+        document.querySelectorAll('.step input[type="radio"]').forEach((radio, index) => {
+            radio.addEventListener('change', () => {
+                currentStep = index;
+                sessionStorage.setItem('currentStep', currentStep);
+                showStep(currentStep);
+            });
+        });
+
+        document.getElementById('selectSources').addEventListener('change', function() {
+            checkIfGDFI();
+        });
 
         loadFormData();
         checkIfGDFI();
@@ -1832,6 +1919,8 @@
         inputs.forEach(input => {
             input.addEventListener('input', saveFormData);
             input.addEventListener('change', saveFormData);
+            input.addEventListener('select', saveFormData);
+
         });
 
         // Get address input fields
@@ -1858,6 +1947,13 @@
         grossPremiumInput.addEventListener('input', getNetOfDiscount);
         discountInput.addEventListener('input', getNetOfDiscount);
         amountDuetoProvider.addEventListener('input', getFullComm);
+
+
+        marketingFundInput.addEventListener('input', getCommissionsValue);
+        offSettingInput.addEventListener('input', getCommissionsValue);
+        promoInput.addEventListener('input', getCommissionsValue);
+
+        amountDuetoProvider.addEventListener('input', getVatSalesCredit);
 
 
 
@@ -1891,39 +1987,7 @@
 
 
 
-
-
     });
-
-
-    // Event listeners for step navigation
-    document.querySelectorAll('.step input[type="radio"]').forEach((radio, index) => {
-        radio.addEventListener('change', () => {
-            currentStep = index;
-            sessionStorage.setItem('currentStep', currentStep);
-            showStep(currentStep);
-        });
-    });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // Listen for changes on the source dropdown
-    document.getElementById('selectSources').addEventListener('change', function() {
-        checkIfGDFI();
-    });
-
-
 
 
 
