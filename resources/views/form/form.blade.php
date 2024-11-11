@@ -1479,7 +1479,7 @@
             document.getElementById('alfcBranch').value = formData.alfcBranch || '';
             document.getElementById('policyNumber').value = formData.policyNumber || '';
             document.getElementById('expiryDate').value = formData.expiryDate || '';
-            document.getElementById('policyInsumption').value = formData.policyInsumption || '';
+            document.getElementById('policyInception').value = formData.policyInception || '';
             document.getElementById('plateConductionNumber').value = formData.plateConductionNumber || '';
             document.getElementById('description').value = formData.description || '';
             document.getElementById('loanAmount').value = formData.loanAmount || '';
@@ -1505,18 +1505,9 @@
             document.getElementById('promo').value = formData.promo || '';
             document.getElementById('commDeduct').value = formData.commDeduct || '';
 
-            totalCommissionInput.value =  formData.totalCommission || '';
-
-
-
-            // document.getElementById('commissionsSelect').value = getCommissionsValue() || '';
-            // Loading dynamic commission fields (select and amount)
-            console.log(formData.commissionsSelect);
             if (formData.commissionsSelect && formData.commissionsSelect.length > 0) {
-                // Select the container where you want to append the commission fields
                 const container = document.getElementById('commissionContainer');
 
-                // Loop over each commission in formData.commissionsSelect
                 formData.commissionsSelect.forEach((commission, index) => {
                     // Create a new div element to hold the commission fields
                     const newSection = document.createElement('div');
@@ -1553,11 +1544,13 @@
                         commissionAmount.value = commission.commissionAmount || ''; // Default if not provided
                         commissionSelect.value = commission.commissionType || '';   // Default if not provided
                     }
-                    });
-                }
 
-
+                });
             }
+
+            totalCommissionInput.value =  formData.totalCommissionInput || '';
+
+        }
 
     }
 
@@ -1618,7 +1611,7 @@
             formData.alfcBranch = document.getElementById('alfcBranch').value;
             formData.policyNumber = document.getElementById('policyNumber').value;
             formData.expiryDate = document.getElementById('expiryDate').value;
-            formData.policyInsumption = document.getElementById('policyInsumption').value;
+            formData.policyInception = document.getElementById('policyInception').value;
             formData.plateConductionNumber = document.getElementById('plateConductionNumber').value;
             formData.description = document.getElementById('description').value;
             formData.loanAmount = document.getElementById('loanAmount').value;
@@ -1644,9 +1637,11 @@
             formData.offsetting = document.getElementById('offsetting').value;
             formData.promo = document.getElementById('promo').value;
             formData.commDeduct = document.getElementById('commDeduct').value;
+
+            formData.commissionsSelect = getCommissionsValue();
+
             formData.totalCommissionInput = document.getElementById('totalCommission').value;
 
-            formData.commissionsSelect = getCommissionsValue(); // Add commission values
 
         //}
 
@@ -1709,18 +1704,25 @@
         netOfDiscountInput.value = netOfDiscount.toFixed(2);  // Format to two decimal places
     }
 
-    // Function to add a new commission select and input field
+
+
+
     function addCommissions() {
         let newAmountInput, newSelectInput;
-        let index = 0; 
+        let index = 0;
 
         const existingFields = document.querySelectorAll('.commissionAmount, .commissionSelect');
         const container = document.getElementById('commissionContainer');
         const initialSection = document.createElement('div');
 
-        // Log to check if no fields have been added
-        if (existingFields.length === 0) {
+        const firstRow = container.querySelector('.row');
+        if (firstRow) {
+            firstRow.querySelectorAll('.col-md-4').forEach(col => {
+                col.classList.add('mt-5');
+                console.log("existing")
 
+            });
+        } else {
             // Create the initial section and add it above the container
             initialSection.innerHTML = `
                 <div class="row mt-md-5" id="initialCommissionsTitle">
@@ -1731,24 +1733,24 @@
             `;
             // Append the initialSection above the container
             container.prepend(initialSection);
-
-        } else {
-            console.log('Fields have already been added.');
         }
 
         // Event listener for "Add" button click
         document.getElementById('addButton').addEventListener('click', function () {
             initialSection.remove();
+
             // Create a new div element with the same structure
             const newSection = document.createElement('div');
 
-            // Add the 'mt-md-5' class only to the first row
-            if (index === 0) {
-                newSection.classList.add('row', 'mt-md-5');
+            // Check if it's the first row being added
+            if (container.querySelectorAll('.row').length === 0) {
+                newSection.classList.add('row', 'mt-5');  // Apply mt-5 to the first row
             } else {
-                newSection.classList.add('row');
+                newSection.classList.add('row');  // No mt-5 for subsequent rows
             }
 
+
+            // For the newly added row, do not add mt-5
             newSection.innerHTML = `
                 <div class="col-md-4">
                     <div class="mb-3 mb-md-4 mb-sm-4">
@@ -1791,7 +1793,13 @@
             // Increase the index for the next field
             index++;  // Increase the index after the field is added
         });
+
     }
+
+
+
+
+
 
 
     function getFullComm(){
@@ -1806,10 +1814,6 @@
         fullCommissionInput.value = fullCommission.toFixed(2);
 
     }
-
-
-
-
 
 
     $(document).ready(function() {
