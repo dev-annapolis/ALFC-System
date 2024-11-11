@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\InsuranceDetail;
 use App\Models\CommisionDetail;
 use App\Models\InsuranceCommisioner;
+use App\Models\CollectionDetail;
 use App\Models\Assured;
 use App\Models\PaymentDetail;
 use App\Models\RolePermission;
@@ -80,7 +81,8 @@ class SalesReportController extends Controller
             'insurance_details',
             'payment_details',
             'commision_details',
-            'insurance_commisioners'
+            'insurance_commisioners',
+            'collection_details'
         ];
 
         foreach ($tables as $tableName) {
@@ -192,7 +194,8 @@ class SalesReportController extends Controller
                             $recordWithAssuredNameFirst->assured_name = $assuredName;
 
                             foreach ($records->getAttributes() as $key => $value) {
-                                $recordWithAssuredNameFirst->$key = $value;
+                                // If the field value is empty or null, set it to '***'
+                                $recordWithAssuredNameFirst->$key = (empty($value)) ? "***" : $value;
                             }
 
                             $data[$tableName] = $recordWithAssuredNameFirst;
@@ -214,6 +217,11 @@ class SalesReportController extends Controller
                         $records = $query->select($columnsWithPrefix)->first();
 
                         if ($records) {
+                            // Iterate over each record's attributes
+                            foreach ($records->getAttributes() as $key => $value) {
+                                // If the field value is empty or null, set it to '***'
+                                $records->$key = (empty($value)) ? "***" : $value;
+                            }
                             $data[$tableName] = $records;
                         } else {
                             $data[$tableName] = null;
@@ -233,6 +241,11 @@ class SalesReportController extends Controller
                         $records = $query->select($columnsWithPrefix)->first();
 
                         if ($records) {
+                            // Iterate over each record's attributes
+                            foreach ($records->getAttributes() as $key => $value) {
+                                // If the field value is empty or null, set it to '***'
+                                $records->$key = (empty($value)) ? "***" : $value;
+                            }
                             $data[$tableName] = $records;
                         } else {
                             $data[$tableName] = null;
@@ -281,6 +294,48 @@ class SalesReportController extends Controller
                         }
                     } catch (\Exception $e) {
                         Log::error("Error processing table: $tableName", ['error' => $e->getMessage()]);
+                        $data[$tableName] = null;
+                    }
+                } elseif ($tableName == 'collection_details') {
+                    try {
+                        // Query CollectionDetail for the given insurance_detail_id with the Tele relationship
+                        $query = CollectionDetail::with('tele') // Eager load the 'tele' relationship
+                            ->where('insurance_detail_id', $id);
+
+                        // Prefix the columns in the collection_details table
+                        $columnsWithPrefix = array_map(function ($column) use ($tableName) {
+                            return "{$tableName}.{$column}";
+                        }, $allowedColumns);
+
+                        // Retrieve the first record from collection_details
+                        $records = $query->select($columnsWithPrefix)->first();
+
+                        if ($records) {
+                            // Define an array to store modified records
+                            $newRecordsArray = [];
+
+                            // Iterate over each record's attributes
+                            foreach ($records->getAttributes() as $key => $value) {
+                                // Check if the field is related to a model (e.g., tele relationship) and replace with '_name'
+                                if ($key === 'tele_id') {
+                                    // Special case for tele relationship, assign tele_name
+                                    $newRecordsArray['tele_name'] = optional($records->tele)->name ?? "***";
+                                } else {
+                                    // If the field value is empty or null, set it to '***'
+                                    $newRecordsArray[$key] = (empty($value)) ? "***" : $value;
+                                }
+                            }
+
+                            // Convert the array back to an object
+                            $records = (object) $newRecordsArray;
+
+                            // Store the modified records in the $data array
+                            $data[$tableName] = $records;
+                        } else {
+                            $data[$tableName] = null;
+                        }
+                    } catch (\Exception $e) {
+                        Log::error("Error processing collection_details: " . $e->getMessage());
                         $data[$tableName] = null;
                     }
                 } else {
