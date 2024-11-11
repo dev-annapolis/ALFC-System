@@ -27,7 +27,7 @@ class RolePermissionController extends Controller
             ],
             'assureds' => [
                 'name',
-                'assured_detail_id',
+                // 'assured_detail_id',
             ],
             'insurance_details' => [
                 'issuance_code',
@@ -68,7 +68,7 @@ class RolePermissionController extends Controller
                 'provider_id',
             ],
             'payment_details' => [
-                'insurance_detail_id',
+                // 'insurance_detail_id',
                 'payment_terms',
                 'due_date',
                 'schedule_first_payment',
@@ -90,7 +90,7 @@ class RolePermissionController extends Controller
                 'policy_received_by',
             ],
             'commision_details' => [
-                'insurance_detail_id',
+                // 'insurance_detail_id',
                 'provision_receipt',
                 'gross_premium',
                 'discount',
@@ -107,11 +107,12 @@ class RolePermissionController extends Controller
                 'comm_deduct',
             ],
             'insurance_commisioners' => [
-                'insurance_detail_id',
+                // 'insurance_detail_id',
                 'commisioner_id',
+                'amount',
             ],
             'collection_details' => [
-                'insurance_detail_id',
+                // 'insurance_detail_id',
                 'insurance_type',
                 'sale_status',
                 'tele_id',
@@ -138,8 +139,8 @@ class RolePermissionController extends Controller
             'assured_details' => [
                 'address',
                 'contact_number',
-                'email',
                 'other_contact_number',
+                'email',
                 'facebook_account',
                 'viber_account',
                 'nature_of_business',
@@ -148,11 +149,11 @@ class RolePermissionController extends Controller
             ],
             'assureds' => [
                 'name',
-                'assured_detail_id',
+                // 'assured_detail_id',
             ],
             'insurance_details' => [
                 'issuance_code',
-                'assured_id', // Corrected spelling from 'asssured_id' to 'assured_id'
+                'assured_id',
                 'sales_associate_id',
                 'sale_date',
                 'classification',
@@ -189,7 +190,7 @@ class RolePermissionController extends Controller
                 'provider_id',
             ],
             'payment_details' => [
-                'insurance_detail_id',
+                // 'insurance_detail_id',
                 'payment_terms',
                 'due_date',
                 'schedule_first_payment',
@@ -211,7 +212,7 @@ class RolePermissionController extends Controller
                 'policy_received_by',
             ],
             'commision_details' => [
-                'insurance_detail_id',
+                // 'insurance_detail_id',
                 'provision_receipt',
                 'gross_premium',
                 'discount',
@@ -228,11 +229,12 @@ class RolePermissionController extends Controller
                 'comm_deduct',
             ],
             'insurance_commisioners' => [
-                'insurance_detail_id',
+                // 'insurance_detail_id',
                 'commisioner_id',
+                'amount',
             ],
             'collection_details' => [
-                'insurance_detail_id',
+                // 'insurance_detail_id',
                 'insurance_type',
                 'sale_status',
                 'tele_id',
@@ -247,7 +249,6 @@ class RolePermissionController extends Controller
                 'contact_number_verification',
             ],
         ];
-
 
         foreach ($roles as $role) {
             foreach ($tables as $table => $columns) {
