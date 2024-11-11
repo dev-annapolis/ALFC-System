@@ -141,8 +141,8 @@ function fetchInsuranceDetail(insuranceDetailId) {
                 // Iterate over each table and create a tab and a tab pane
                 for (const table in data) {
                     const tableName = table.replace('_', ' ').toUpperCase();
-
                     const tabId = `tab-${table}`;
+
                     tabList.append(`
                         <li class="nav-item" role="presentation">
                             <button class="nav-link ${isFirstTab ? 'active' : ''}" id="${tabId}-tab" data-bs-toggle="tab" data-bs-target="#${tabId}" type="button" role="tab" aria-controls="${tabId}" aria-selected="${isFirstTab}">
@@ -153,44 +153,100 @@ function fetchInsuranceDetail(insuranceDetailId) {
 
                     let tableContent = '';
                     let rowCounter = 0;  // Counter to track rows
+                    let titleDisplayed = false; // Track if the title has been displayed
 
-                    for (const key in data[table]) {
-                        let value = data[table][key];
+                    if (Array.isArray(data[table])) {
+                        // If the data for the table is an array (multiple records)
+                        data[table].forEach(record => {
+                            // Display title only once for commissioner records
+                            if (!titleDisplayed) {
+                                titleDisplayed = true;
+                            }
+                            
+                            // Generate content for each record
+                            rowCounter = 0;  // Reset counter for each record
 
-                        if (typeof value === 'object' && value !== null) {
-                            // Skip objects or null values
-                            continue;
-                        } else {
-                            // Dynamically format the key to match the Blade format
-                            let formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, function(char) {
-                                return char.toUpperCase();
-                            });
+                            for (const key in record) {
+                                let value = record[key];
 
-                            // Start a new row every two inputs
-                            if (rowCounter % 2 === 0) {
-                                tableContent += `<div class="row">`;
+                                // Dynamically format the key to match the Blade format
+                                let formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, function(char) {
+                                    return char.toUpperCase();
+                                });
+
+                                // Start a new row every two inputs
+                                if (rowCounter % 2 === 0) {
+                                    tableContent += `<div class="row">`;
+                                }
+
+                                // Create a div with 'col-md-6' for each input field in a 2x2 grid
+                                tableContent += `
+                                   <div class="col-md-6 col-sm-6 mb-3">
+                                        <div class="form-group">
+                                            <label for="${key}"><strong>${formattedKey}</strong></label>
+                                            <input type="text" id="${key}" class="form-control" value="${value}" readonly />
+                                        </div>
+                                    </div>
+                                `;
+
+                                // End the row after two columns
+                                if (rowCounter % 2 === 1) {
+                                    tableContent += `</div>`;
+                                }
+
+                                // Increment the row counter
+                                rowCounter++;
                             }
 
-                            // Create a div with 'col-md-6' for each input field in a 2x2 grid
-                            tableContent += `
-                                <div class="col-md-6 mb-3">
-                                    <div class="form-group">
-                                        <label for="${key}"><strong>${formattedKey}</strong></label>
-                                        <input type="text" id="${key}" class="form-control" value="${value}" readonly />
-                                    </div>
-                                </div>
-                            `;
-
-                            // End the row after two columns
-                            if (rowCounter % 2 === 1) {
+                            // Close the last row if it has an odd number of items
+                            if (rowCounter % 2 !== 0) {
                                 tableContent += `</div>`;
                             }
+                        });
+                    } else {
+                        // If the data for the table is not an array (single record)
+                        for (const key in data[table]) {
+                            let value = data[table][key];
 
-                            // Increment the row counter
-                            rowCounter++;
+                            if (typeof value === 'object' && value !== null) {
+                                // Skip objects or null values
+                                continue;
+                            } else {
+                                // Dynamically format the key to match the Blade format
+                                let formattedKey = key.replace(/_/g, ' ').replace(/\b\w/g, function(char) {
+                                    return char.toUpperCase();
+                                });
+
+                                // Start a new row every two inputs
+                                if (rowCounter % 2 === 0) {
+                                    tableContent += `<div class="row">`;
+                                }
+
+                                // Create a div with 'col-md-6' for each input field in a 2x2 grid
+                                tableContent += `
+                                    <div class="col-md-6 mb-3">
+                                        <div class="form-group">
+                                            <label for="${key}"><strong>${formattedKey}</strong></label>
+                                            <input type="text" id="${key}" class="form-control" value="${value}" readonly />
+                                        </div>
+                                    </div>
+                                `;
+
+                                // End the row after two columns
+                                if (rowCounter % 2 === 1) {
+                                    tableContent += `</div>`;
+                                }
+
+                                // Increment the row counter
+                                rowCounter++;
+                            }
+                        }
+
+                        // Close the last row if it has an odd number of items
+                        if (rowCounter % 2 !== 0) {
+                            tableContent += `</div>`;
                         }
                     }
-
 
                     tabContent.append(`
                         <div class="tab-pane fade ${isFirstTab ? 'show active' : ''}" id="${tabId}" role="tabpanel" aria-labelledby="${tabId}-tab">
@@ -215,6 +271,8 @@ function fetchInsuranceDetail(insuranceDetailId) {
         }
     });
 }
+
+
 
 
 

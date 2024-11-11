@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\AssuredDetail;
 use Illuminate\Http\Request;
 use App\Models\InsuranceDetail;
+use App\Models\CommisionDetail;
+use App\Models\InsuranceCommisioner;
 use App\Models\Assured;
+use App\Models\PaymentDetail;
 use App\Models\RolePermission;
 use Log;
 use Auth;
@@ -68,33 +71,16 @@ class SalesReportController extends Controller
             ->get();
 
         if ($permissions->isEmpty()) {
-            // Log::warning("No permissions found for user role ID: {$role->id}");
             return response()->json(['message' => 'No permissions found'], 403);
-        } else {
-            // Log::info("Permissions found for role ID: {$role->id}");
         }
 
         $data = [];
-
         $tables = [
             'assured_details',
-            //'assureds',
             'insurance_details',
-            // 'commision_details',
-            // 'collection_details',
-            // 'payment_details',
-            // 'insurance_commisioners',
-            // 'sales_associates',
-            // 'branch_managers',
-            // 'products',
-            // 'subproducts',
-            // 'sources',
-            // 'source_branches',
-            // 'if_gdfis',
-            // 'areas',
-            // 'alfc_branches',
-            // 'mode_of_payments',
-            // 'providers',
+            'payment_details',
+            'commision_details',
+            'insurance_commisioners'
         ];
 
         foreach ($tables as $tableName) {
@@ -104,102 +90,211 @@ class SalesReportController extends Controller
 
             if (count($allowedColumns) > 0) {
                 if ($tableName == 'insurance_details') {
-                    $query = InsuranceDetail::with([
-                        'assured.assuredDetail',
-                        'salesAssociate',
-                        'branchManager',
-                        'product',
-                        'subproduct',
-                        'source',
-                        'sourceBranch',
-                        'ifGdfi',
-                        'area',
-                        'alfcBranch',
-                        'modeOfPayment',
-                        'provider',
-                    ])->where('insurance_details.id', $id);
+                    try {
+                        $query = InsuranceDetail::with([
+                            'assured.assuredDetail',
+                            'salesAssociate',
+                            'branchManager',
+                            'product',
+                            'subproduct',
+                            'source',
+                            'sourceBranch',
+                            'ifGdfi',
+                            'area',
+                            'alfcBranch',
+                            'modeOfPayment',
+                            'provider',
+                        ])->where('insurance_details.id', $id);
 
-                    $columnsWithPrefix = array_map(function ($column) use ($tableName) {
-                        return "{$tableName}.{$column}";
-                    }, $allowedColumns);
+                        $columnsWithPrefix = array_map(function ($column) use ($tableName) {
+                            return "{$tableName}.{$column}";
+                        }, $allowedColumns);
 
-                    $records = $query->select($columnsWithPrefix)->first();
+                        $records = $query->select($columnsWithPrefix)->first();
 
-                    if ($records) {
-                        $records->assured_id = optional($records->assured)->name;
-                        $records->sales_associate_id = optional($records->salesAssociate)->name;
-                        $records->branch_manager_id = optional($records->branchManager)->name;
-                        $records->product_id = optional($records->product)->name;
-                        $records->subproduct_id = optional($records->subproduct)->name;
-                        $records->source_id = optional($records->source)->name;
-                        $records->source_branch_id = optional($records->sourceBranch)->name;
-                        $records->if_gdfi_id = optional($records->ifGdfi)->name;
-                        $records->area_id = optional($records->area)->name;
-                        $records->alfc_branch_id = optional($records->alfcBranch)->name;
-                        $records->mode_of_payment_id = optional($records->modeOfPayment)->name;
-                        $records->provider_id = optional($records->provider)->name;
+                        if ($records) {
+                            // Define an array of field mappings for replacement
+                            $fieldsToReplace = [
+                                'assured_id' => 'assured',
+                                'sales_associate_id' => 'salesAssociate',
+                                'branch_manager_id' => 'branchManager',
+                                'product_id' => 'product',
+                                'subproduct_id' => 'subproduct',
+                                'source_id' => 'source',
+                                'source_branch_id' => 'sourceBranch',
+                                'if_gdfi_id' => 'ifGdfi',
+                                'area_id' => 'area',
+                                'alfc_branch_id' => 'alfcBranch',
+                                'mode_of_payment_id' => 'modeOfPayment',
+                                'provider_id' => 'provider',
+                            ];
 
-                        $data[$tableName] = $records;
-                    } else {
+                            // Convert the object to an array using toArray() to get only the model attributes
+                            $recordsArray = $records->toArray();  // Using toArray() method
+
+                            // Create a new array to hold the modified records
+                            $newRecordsArray = [];
+
+                            // Iterate through the original record fields
+                            foreach ($recordsArray as $key => $value) {
+                                // If the field is in the replacement map, replace it
+                                if (isset($fieldsToReplace[$key])) {
+                                    // Replace _id with _name and get the corresponding name
+                                    $relation = $fieldsToReplace[$key];
+                                    if ($key === 'assured_id') {
+                                        // Special case for assured_id to become assured_name
+                                        $newRecordsArray['assured_name'] = optional($records->{$relation})->name ?? "***";
+                                    } else {
+                                        // For all other fields, just remove the _id suffix and replace it with related name
+                                        $newKey = str_replace('_id', '', $key);  // Remove _id from the key
+                                        $newRecordsArray[$newKey . '_name'] = optional($records->{$relation})->name ?? "***";
+                                    }
+                                } else {
+                                    // If the field value is null, show '***'
+                                    $newRecordsArray[$key] = $value ?? "***";
+                                }
+                            }
+
+                            // Convert back to object
+                            $records = (object) $newRecordsArray;
+
+                            // Store the modified records in the $data array
+                            $data[$tableName] = $records;
+                        } else {
+                            $data[$tableName] = null;
+                        }
+                    } catch (\Exception $e) {
+                        Log::error("Error processing insurance_details: " . $e->getMessage());
                         $data[$tableName] = null;
                     }
                 } elseif ($tableName == 'assured_details') {
-                    // Query AssuredDetail based on related InsuranceDetail by navigating through Assured
-                    $query = AssuredDetail::whereHas('assured.insuranceDetails', function ($q) use ($id) {
-                        $q->where('insurance_details.id', $id);
-                    });
+                    try {
+                        $query = AssuredDetail::whereHas('assured.insuranceDetails', function ($q) use ($id) {
+                            $q->where('insurance_details.id', $id);
+                        });
 
+                        $assuredName = InsuranceDetail::with('assured')
+                            ->where('insurance_details.id', $id)
+                            ->first()
+                            ->assured
+                            ->name;
 
+                        $columnsWithPrefix = array_map(function ($column) use ($tableName) {
+                            return "{$tableName}.{$column}";
+                        }, $allowedColumns);
 
-                    $assuredName = InsuranceDetail::with('assured')
-                        ->where('insurance_details.id', $id)
-                        ->first()
-                        ->assured
-                        ->name;
+                        $records = $query->select($columnsWithPrefix)->first();
 
-                    // Fetch the columns with the table prefix
-                    $columnsWithPrefix = array_map(function ($column) use ($tableName) {
-                        return "{$tableName}.{$column}";
-                    }, $allowedColumns);
+                        if ($records) {
+                            $records->assured_name = $assuredName;
 
-                    // Include 'assured' relation to access assured name
-                    $records = $query->select($columnsWithPrefix)->first();
+                            $recordWithAssuredNameFirst = new \stdClass();
+                            $recordWithAssuredNameFirst->assured_name = $assuredName;
 
-                    if ($records) {
-                        // Add the 'assured_name' property manually and place it first
-                        $records->assured_name = $assuredName;
+                            foreach ($records->getAttributes() as $key => $value) {
+                                $recordWithAssuredNameFirst->$key = $value;
+                            }
 
-                        // To ensure that 'assured_name' is first, we'll use a new stdClass object
-                        $recordWithAssuredNameFirst = new \stdClass();
-
-                        // Add 'assured_name' first
-                        $recordWithAssuredNameFirst->assured_name = $assuredName;
-
-                        // Now, loop through the existing columns and add them to the new object
-                        foreach ($records->getAttributes() as $key => $value) {
-                            $recordWithAssuredNameFirst->$key = $value;
+                            $data[$tableName] = $recordWithAssuredNameFirst;
+                        } else {
+                            $data[$tableName] = null;
                         }
-
-                        // Assign the new object to $data
-                        $data[$tableName] = $recordWithAssuredNameFirst;
-                    } else {
+                    } catch (\Exception $e) {
+                        Log::error("Error processing assured_details: " . $e->getMessage());
                         $data[$tableName] = null;
                     }
+                } elseif ($tableName == 'payment_details') {
+                    try {
+                        $query = PaymentDetail::where('insurance_detail_id', $id);
+
+                        $columnsWithPrefix = array_map(function ($column) use ($tableName) {
+                            return "{$tableName}.{$column}";
+                        }, $allowedColumns);
+
+                        $records = $query->select($columnsWithPrefix)->first();
+
+                        if ($records) {
+                            $data[$tableName] = $records;
+                        } else {
+                            $data[$tableName] = null;
+                        }
+                    } catch (\Exception $e) {
+                        Log::error("Error processing payment_details: " . $e->getMessage());
+                        $data[$tableName] = null;
+                    }
+                } elseif ($tableName == 'commision_details') {
+                    try {
+                        $query = CommisionDetail::where('insurance_detail_id', $id);
+
+                        $columnsWithPrefix = array_map(function ($column) use ($tableName) {
+                            return "{$tableName}.{$column}";
+                        }, $allowedColumns);
+
+                        $records = $query->select($columnsWithPrefix)->first();
+
+                        if ($records) {
+                            $data[$tableName] = $records;
+                        } else {
+                            $data[$tableName] = null;
+                        }
+                    } catch (\Exception $e) {
+                        Log::error("Error processing commision_details: " . $e->getMessage());
+                        $data[$tableName] = null;
+                    }
+                } elseif ($tableName == 'insurance_commisioners') {
+                    Log::info("Processing table: $tableName");
+
+                    try {
+                        // Query InsuranceCommissioner for the given insurance_detail_id
+                        $query = InsuranceCommisioner::with('commisioner') // Eager load the commisioner relationship
+                            ->where('insurance_detail_id', $id);
+
+                        // Prefix the columns in the insurance_commissioners table
+                        $columnsWithPrefix = array_map(function ($column) use ($tableName) {
+                            return "{$tableName}.{$column}";
+                        }, $allowedColumns);
+
+                        // Log::info("Columns selected: ", $columnsWithPrefix);
+
+                        // Retrieve the records without the join, using the relationship to get commisioner_name
+                        $records = $query
+                            ->select($columnsWithPrefix) // Select the necessary columns from insurance_commissioners table
+                            ->get();
+
+                        // Check if there are any records
+                        if ($records->isNotEmpty()) {
+                            // Initialize an empty array to store each record's data
+                            $data[$tableName] = [];
+
+                            // Iterate over each record and store the details
+                            foreach ($records as $record) {
+                                $data[$tableName][] = [
+                                    'commisioner_name' => optional($record->commisioner)->name ?? "***", // Access commisioner name via the relationship
+                                    'amount' => $record->amount ?? "***",
+                                ];
+                            }
+
+                            // Log::info("Data formatted for table: $tableName", $data[$tableName]);
+                        } else {
+                            $data[$tableName] = null;
+                            // Log::info("No records found for insurance_detail_id: $id");
+                        }
+                    } catch (\Exception $e) {
+                        Log::error("Error processing table: $tableName", ['error' => $e->getMessage()]);
+                        $data[$tableName] = null;
+                    }
+                } else {
+                    Log::info("No allowed columns for table: {$tableName}");
                 }
-
-
-
-            } else {
-                Log::info("No allowed columns for table: {$tableName}");
             }
+
         }
-
         return response()->json($data);
+
     }
-
-
-
-
-
-
 }
+
+
+
+
+

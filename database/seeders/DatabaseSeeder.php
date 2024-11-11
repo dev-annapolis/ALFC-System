@@ -1515,18 +1515,21 @@ class DatabaseSeeder extends Seeder
             [
                 'insurance_detail_id' => 1, // FK reference to an insurance_detail
                 'commisioner_id' => 1, // FK reference to a commissioner
+                'amount' => '1000',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'insurance_detail_id' => 1, // Same insurance detail, different commissioner
                 'commisioner_id' => 2, // FK reference to a different commissioner
+                'amount' => '1000',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'insurance_detail_id' => 2, // Different insurance detail
                 'commisioner_id' => 1, // Same commissioner as in the first entry
+                'amount' => '1000',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
