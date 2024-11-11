@@ -1145,65 +1145,22 @@
 
                     </div>
 
-                    <div class="row mb-md-3 mt-md-5">
+                    <div class="row mb-md-3 mt-md-3" id="schedulePaymentTerms">
 
                         <div class="col-md-4">
                             <div class="mb-4 mb-md-3 mb-sm-4">
-                                <label for="ScheduleFirstPaymentLabel" class="form-label fw-bold">Schedule of 1st Payment</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="ScheduleFirstPayment" placeholder="Enter Schedule of 1st Payment" required>
-                            </div>
-                        </div>
-
-
-                    </div>
-
-
-                    <div class="row mt-md-5">
-
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-3 mb-sm-4">
-                                <label for="ScheduleFirstPaymentLabel" class="form-label fw-bold">Schedule of 2nd Payment</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="ScheduleFirstPayment" required disabled>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-3 mb-sm-4">
-                                <label for="ScheduleFirstPaymentLabel" class="form-label fw-bold">Schedule of 3rd Payment</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="ScheduleFirstPayment" required disabled>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-3 mb-sm-4">
-                                <label for="ScheduleFirstPaymentLabel" class="form-label fw-bold">Schedule of 4th Payment</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="ScheduleFirstPayment" required disabled>
-                            </div>
-                        </div>
-
-
-                    </div>
-
-
-                    <div class="row mb-md-5">
-
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-5 mb-sm-4">
-                                <label for="ScheduleFirstPaymentLabel" class="form-label fw-bold">Schedule of 5th Payment</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="ScheduleFirstPayment" required disabled>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-5 mb-sm-4">
-                                <label for="ScheduleFirstPaymentLabel" class="form-label fw-bold">Schedule of 6th Payment</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="ScheduleFirstPayment" required disabled>
+                                <label for="SchedulePayment1" class="form-label fw-bold">1st Payment</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="SchedulePayment1" placeholder="Enter Schedule of 1st Payment" required>
                             </div>
                         </div>
 
 
 
                     </div>
+
+
+
+
 
 
                     <div class="row mt-md-5">
@@ -1279,6 +1236,8 @@
     const formSteps = document.querySelectorAll('.form-step');
     const stepIndicators = document.querySelectorAll('.sidebar .step');
 
+    const storedData = sessionStorage.getItem('formData');
+
 
     const grossPremiumInput = document.getElementById('grossPremium');
     const discountInput = document.getElementById('discount');
@@ -1304,6 +1263,17 @@
 
     const salesCreditPercentInput = document.getElementById('salesCreditPercent');
     let salesCreditPercent = 0;
+
+
+    const paymentTermsInputs = document.getElementById('paymentTerms');
+    const dueDateStartInputs = document.getElementById('dueDateStart');
+    const dueDateEndInputs = document.getElementById('dueDateEnd');
+
+
+    let isFieldsAdded = false;  // Flag to check if fields have already been added
+    const schedulePaymentInputs = document.getElementById('SchedulePayment1');
+
+
 
 
     function showStep(step) {
@@ -1427,7 +1397,6 @@
 
     // Function to load form data from sessionStorage
     function loadFormData() {
-        const storedData = sessionStorage.getItem('formData');
 
         if (storedData) {
             const formData = JSON.parse(storedData);
@@ -1541,7 +1510,7 @@
                         commissionAmount.value = commission.commissionAmount || ''; // Default if not provided
                         commissionSelect.value = commission.commissionType || '';   // Default if not provided
                     }
-                    
+
 
                 });
             }
@@ -1554,6 +1523,13 @@
             salesCreditInput.value = formData.salesCredit || '';
             salesCreditPercentInput.value = formData.salesCreditPercent || '';
 
+
+
+
+            //PAYMMENTS INFORMATIONS
+            paymentTermsInputs.value = formData.paymentTerms || '';
+            dueDateStartInputs.value = formData.dueDateStart || '';
+            dueDateEndInputs.value = formData.dueDateEnd || '';
 
 
         }
@@ -1659,6 +1635,19 @@
         //}
 
 
+        // if (currentStep == 4) {
+
+            formData.paymentTerms = paymentTermsInputs.value;
+            formData.dueDateStart = dueDateStartInputs.value;
+            formData.dueDateEnd = dueDateEndInputs.value;
+
+
+
+
+        //}
+
+
+
         // console.log(formData);
         return formData;
     }
@@ -1676,7 +1665,6 @@
             document.getElementById('gdficol').style.visibility = "hidden";
         }
     }
-
 
     // Function to calculate and update netOfDiscount
     function getNetOfDiscount() {
@@ -1851,25 +1839,134 @@
         const fullCommissionValue = parseFloat(fullCommissionInput.value) || 0;
         const totalCommissionValue = parseFloat(totalCommissionInput.value) || 0;
 
-        console.log(fullCommissionValue);
-        console.log(totalCommissionValue);
+
 
         const vatValue = ((fullCommissionValue - totalCommissionValue) * 0.12) / 1.12;
-
-
         vatInput.value = vatValue.toFixed(2);
 
-        const salesCreditValue = fullCommissionValue - totalCommissionValue - vatValue;
 
+        const salesCreditValue = fullCommissionValue - totalCommissionValue - vatValue;
         salesCreditInput.value = salesCreditValue.toFixed(2);
 
 
-        const salesCreditPercentValue = (salesCreditValue / fullCommissionValue) * 100;
-        const formattedPercent = salesCreditPercentValue.toFixed(2) + '%';
 
+        if (fullCommissionValue === 0 || !isFinite(salesCreditValue / fullCommissionValue)) {
+            // Handle division by zero or invalid values
+            salesCreditPercentValue = 0;
+        } else {
+            salesCreditPercentValue = (salesCreditValue / fullCommissionValue) * 100;
+        }
+        const formattedPercent = salesCreditPercentValue.toFixed(2) + '%';
         salesCreditPercentInput.value = formattedPercent;
 
 
+    }
+
+
+    function calculateDueDateEnd() {
+        const paymentTermsValue = parseInt(paymentTermsInputs.value); // Parse payment terms as an integer
+        const dueDateStartValue = new Date(dueDateStartInputs.value); // Convert due date start value to Date object
+
+        // Add payment terms (in months) to the start date
+        dueDateStartValue.setMonth(dueDateStartValue.getMonth() + paymentTermsValue);
+
+        // Format the due date end in yyyy-MM-dd format
+        const year = dueDateStartValue.getFullYear();
+        const month = String(dueDateStartValue.getMonth()).padStart(2, '0'); // Add leading zero if needed
+        const day = String(dueDateStartValue.getDate()).padStart(2, '0'); // Add leading zero if needed
+
+        const dueDateEnd = `${year}-${month}-${day}`;
+
+        // Set the due date end value in the input field
+        dueDateEndInputs.value = dueDateEnd;
+    }
+
+
+
+    function calculateSchedulePaymentsAmount() {
+        if (storedData) {
+            const formData = JSON.parse(storedData);
+
+            const grossPremiumValue = formData.grossPremium; // Get gross premium value
+            const TermsValue = parseInt(paymentTermsInputs.value); // Get terms (number of payments)
+            const FirstPaymentValue = parseFloat(schedulePaymentInputs.value); // Get first payment value
+            const remainingAmount = grossPremiumValue - FirstPaymentValue; // Calculate remaining amount after first payment
+            const remainingTerms = TermsValue - 1; // Remaining terms excluding the first one
+
+            // Calculate the monthly payment for the remaining terms
+            const monthlySchedulePayment = remainingAmount / remainingTerms;
+
+            console.log("Monthly Payment: " + monthlySchedulePayment);
+            console.log("Total Terms: " + TermsValue);
+
+            // Get the container for the payment terms
+            const schedulePaymentContainer = document.getElementById('schedulePaymentTerms');
+
+            // Get all current input fields for payments
+            const currentFields = schedulePaymentContainer.querySelectorAll('input[id^="SchedulePayment"]');
+
+            // Step 1: Remove extra fields if terms have decreased
+            if (currentFields.length > TermsValue) {
+                // Remove the extra fields (excluding the first one)
+                for (let i = currentFields.length; i > TermsValue; i--) {
+                    const fieldToRemove = currentFields[i - 1];
+                    if (fieldToRemove.id !== "SchedulePayment1") { // Keep the first payment intact
+                        fieldToRemove.parentElement.parentElement.remove();
+                    }
+                }
+            }
+
+            // Step 2: Add new fields if terms have increased
+            if (currentFields.length < TermsValue) {
+                // Only add new fields if necessary (from the 2nd payment onward)
+                for (let i = currentFields.length + 1; i <= TermsValue; i++) {
+                    // Create a new div for each new payment input field
+                    const colDiv = document.createElement('div');
+                    colDiv.classList.add('col-md-4');
+
+                    const mbDiv = document.createElement('div');
+                    mbDiv.classList.add('mb-4', 'mb-md-3', 'mb-sm-4');
+
+                    const label = document.createElement('label');
+                    label.setAttribute('for', 'SchedulePayment' + i);
+                    label.classList.add('form-label', 'fw-bold');
+
+                    // Set label text based on the term (e.g., 2nd, 3rd, 4th Payment)
+                    if (i === 2) {
+                        label.textContent = '2nd Payment';
+                    } else if (i === 3) {
+                        label.textContent = '3rd Payment';
+                    } else if (i === 4) {
+                        label.textContent = '4th Payment';
+                    } else {
+                        label.textContent = i + 'th Payment';  // Default for more than 4th
+                    }
+
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.classList.add('form-control', 'rounded-0', 'border-1');
+                    input.id = 'SchedulePayment' + i;
+
+                    input.placeholder = label.textContent;  // Set placeholder to match label text
+                    input.value = monthlySchedulePayment.toFixed(2); // Set the calculated value
+                    input.required = true;
+
+                    // Append the input field to the form
+                    mbDiv.appendChild(label);
+                    mbDiv.appendChild(input);
+                    colDiv.appendChild(mbDiv);
+                    schedulePaymentContainer.appendChild(colDiv);
+                }
+            }
+
+            // Step 3: Update the values for all existing fields (starting from the 2nd payment onward)
+            for (let i = 2; i <= TermsValue; i++) {
+                const input = document.getElementById('SchedulePayment' + i);
+                if (input) {
+                    input.value = monthlySchedulePayment.toFixed(2); // Update the payment amount
+                }
+            }
+        }
     }
 
 
@@ -1968,6 +2065,18 @@
         addCommissions();
 
 
+        function formatDateToText(date) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(date).toLocaleDateString('en-US', options);
+        }
+        paymentTermsInputs.addEventListener('change', calculateDueDateEnd);
+        dueDateStartInputs.addEventListener('change', calculateDueDateEnd);
+        calculateDueDateEnd();
+
+
+        // Add event listeners to both paymentTermsInputs and schedulePaymentInputs
+        paymentTermsInputs.addEventListener('input', calculateSchedulePaymentsAmount);
+        schedulePaymentInputs.addEventListener('input', calculateSchedulePaymentsAmount);
 
 
     });
