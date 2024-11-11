@@ -15,6 +15,7 @@ class UniversalTableController extends Controller
             'assured_details' => [
                 'address',
                 'contact_number',
+                'email',
                 'other_contact_number',
                 'facebook_account',
                 'viber_account',
@@ -43,7 +44,7 @@ class UniversalTableController extends Controller
                 'product_id',
                 'subproduct_id',
                 'source_id',
-                'source_braanch_id',
+                'source_branch_id',
                 'if_gdfi_id',
                 'mortgagee',
                 'area_id',
@@ -51,7 +52,7 @@ class UniversalTableController extends Controller
                 'loan_amount',
                 'total_sum_insured',
                 'policy_number',
-                'policy_insumption_date',
+                'policy_inception_date',
                 'expiry_date',
                 'plate_conduction_number',
                 'description',
@@ -65,7 +66,7 @@ class UniversalTableController extends Controller
                 'provider_id',
             ],
             'payment_details' => [
-                'insurance_id',
+                'insurance_detail_id',
                 'payment_terms',
                 'due_date',
                 'schedule_first_payment',
@@ -87,7 +88,7 @@ class UniversalTableController extends Controller
                 'policy_received_by',
             ],
             'commision_details' => [
-                'insurance_id',
+                'insurance_detail_id',
                 'provision_receipt',
                 'gross_premium',
                 'discount',
@@ -104,11 +105,11 @@ class UniversalTableController extends Controller
                 'comm_deduct',
             ],
             'insurance_commisioners' => [
-                'insurance_id',
+                'insurance_detail_id',
                 'commisioner_id',
             ],
             'collection_details' => [
-                'insurance_id',
+                'insurance_detail_id',
                 'insurance_type',
                 'sale_status',
                 'tele_id',
@@ -224,6 +225,7 @@ class UniversalTableController extends Controller
             'insurance_commisioners',
             'commision_details',
             'payment_details',
+            'collection_details',  // Added collection_details table
         ];
 
         // Loop over each table
@@ -239,6 +241,7 @@ class UniversalTableController extends Controller
 
                 // For 'insurance_details' table, join related tables
                 if ($tableName == 'insurance_details') {
+                    // Original code
                     $records = DB::table('insurance_details')
                         ->distinct() // Ensure no duplicates
                         ->leftJoin('assureds', 'insurance_details.assured_id', '=', 'assureds.id')
@@ -256,20 +259,28 @@ class UniversalTableController extends Controller
                         ->leftJoin('providers', 'insurance_details.provider_id', '=', 'providers.id')
                         ->leftJoin('insurance_commisioners', 'insurance_details.id', '=', 'insurance_commisioners.insurance_detail_id')
                         ->leftJoin('commision_details', 'insurance_details.id', '=', 'commision_details.insurance_detail_id')
-                        ->leftJoin('payment_details', 'insurance_details.id', '=', 'payment_details.insurance_detail_id');
+                        ->leftJoin('payment_details', 'insurance_details.id', '=', 'payment_details.insurance_detail_id')
+                        ->leftJoin('collection_details', 'insurance_details.id', '=', 'collection_details.insurance_detail_id'); // Join with collection_details table
+
                 }
 
-                // Apply select to retrieve only allowed columns
-                $records = $records->select($allowedColumns);
+                // Add table name prefix to each column to avoid ambiguity
+                $columnsWithPrefix = array_map(function ($column) use ($tableName) {
+                    return "{$tableName}.{$column}";
+                }, $allowedColumns);
+
+                // Apply select to retrieve only allowed columns with prefixed table names
+                $records = $records->select($columnsWithPrefix);
 
                 // Fetch the records
                 $data[$tableName] = $records->get();
-                // dump($data);
             }
         }
-        // dd($data);
+
         // Return the view with the data
         return view('universal_table', compact('data', 'permissions'));
     }
+
+
 
 }

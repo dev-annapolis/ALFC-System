@@ -821,8 +821,10 @@
 
                         <div class="col-md-4 ">
                             <div class="mb-5 mb-md-4 mb-sm-4">
-                                <label for="policyInsumptionLabel" class="form-label fw-bold fw-bold fs-6">Policy Inception Date</label>
-                                <input type="date" class="form-control rounded-0 rounded-0 border-1" id="policyInsumption" placeholder="Enter Policy Inisu" required>
+
+                                <label for="policyInceptionLabel" class="form-label fw-bold fw-bold fs-6">Policy Inception Date</label>
+                                <input type="date" class="form-control rounded-0 rounded-0 border-1" id="policyInception" placeholder="Enter Policy Inisu" required>
+
                             </div>
                         </div>
 
