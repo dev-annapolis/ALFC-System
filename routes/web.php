@@ -40,6 +40,7 @@ Route::post('/permissions/update', [RolePermissionController::class, 'update'])-
 
 Route::get('/testusers', [TestController::class, 'userIndex'])->name('users.index');
 Route::get('/users/{id}', action: [TestController::class, 'show'])->name('users.show');
+
 Route::get('/salesreport/index', action: [SalesReportController::class, 'salesReportIndex'])->name('salesreport.index');
 Route::get('/api/sales-report', [SalesReportController::class, 'salesReportData']);
 // Route::get('/api/insurance-detail/{id}', [SalesReportController::class, 'fetchInsuranceDetail']);

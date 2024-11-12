@@ -106,12 +106,12 @@ class InsuranceDetail extends Model
         return $this->belongsTo(Provider::class);
     }
 
-    public function collectionDetails()
+    public function collectionDetail()
     {
         return $this->hasOne(CollectionDetail::class);
     }
 
-    public function commissionDetails()
+    public function commisionDetail()
     {
         return $this->hasOne(CommisionDetail::class);
     }
@@ -123,5 +123,9 @@ class InsuranceDetail extends Model
     public function assuredDetail()
     {
         return $this->hasOne(AssuredDetail::class);
+    }
+    public function insuranceCommisioner()
+    {
+        return $this->hasMany(InsuranceCommisioner::class);
     }
 }

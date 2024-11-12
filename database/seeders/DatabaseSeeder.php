@@ -1526,13 +1526,13 @@ class DatabaseSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
-            [
-                'insurance_detail_id' => 2, // Different insurance detail
-                'commisioner_id' => 1, // Same commissioner as in the first entry
-                'amount' => '1000',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
+            // [
+            //     'insurance_detail_id' => 2, // Different insurance detail
+            //     'commisioner_id' => 1, // Same commissioner as in the first entry
+            //     'amount' => '1000',
+            //     'created_at' => now(),
+            //     'updated_at' => now(),
+            // ],
         ]);
 
         DB::table('collection_details')->insert([
