@@ -407,10 +407,8 @@ class SalesReportController extends Controller
 
     private function getTableData($tableName, $insuranceDetail, $permissions)
     {
-        // Set default data
         $tableData = $this->getDefaultTableData($tableName, $insuranceDetail);
 
-        // Apply permission-based masking
         foreach ($permissions as $permission) {
             if ($permission->table_name == $tableName) {
                 foreach ($tableData as $key => $value) {
@@ -418,11 +416,22 @@ class SalesReportController extends Controller
                         $tableData[$key] = '*****';
                     }
                 }
+
+                if ($tableName == 'insurance_commisioners') {
+                    foreach ($tableData as &$commisionerData) {
+                        foreach ($commisionerData as $commisionerKey => $commisionerValue) {
+                            if ($permission->can_view == 0 && $permission->column_name == $commisionerKey) {
+                                $commisionerData[$commisionerKey] = '*****';
+                            }
+                        }
+                    }
+                }
             }
         }
 
         return $tableData;
     }
+
 
     private function getDefaultTableData($tableName, $insuranceDetail)
     {
