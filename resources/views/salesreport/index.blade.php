@@ -15,7 +15,7 @@
     }
 </style>
 
-<div class="container mt-5">
+<div class="container-fluid mt-5">
     <h2>Sales Report</h2>
     
     <!-- Responsive wrapper for the table -->
@@ -23,19 +23,17 @@
         <table id="salesReportTable" class="table table-bordered">
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Contact Number</th>
-                    <th>Email</th>
-                    <th>Issuance Code</th>
-                    <th>Sale Date</th>
-                    <th>Good As Sales Date</th>
-                    <th>Sales Associate</th>
-                    <th>Sales Team</th>
-                    <th>Branch Manager</th>
-                    <th>Source</th>
-                    <th>Subproduct</th>
-                    <th>Policy Inception Date</th>
                     <th>Provider</th>
+                    <th>Issuance Code</th>
+                    <th>Assured Name</th>
+                    <th>Contact Number </br> Email</th>
+
+                    <th>Sales Associate </br>( Sales Team )</th>
+                    <th>Branch Manager </br>( Source )</th>
+                    <th>Sroduct</th>
+
+                    <th>Sale Date </br> Good As Sales Date </br> Policy Inception Date</th>
+                    
                     <th>Sale Status</th>
                     <th>Actions</th> <!-- Added Actions column -->
                 </tr>
@@ -79,19 +77,18 @@ $(document).ready(function() {
 
             data.forEach(function(detail) {
                 var row = `<tr>
-                    <td>${detail.name}</td>
-                    <td>${detail.contact_number}</td>
-                    <td>${detail.email}</td>
-                    <td>${detail.issuance_code}</td>
-                    <td>${detail.sale_date}</td>
-                    <td>${detail.good_as_sales_date}</td>
-                    <td>${detail.sales_associate}</td>
-                    <td>${detail.sales_team}</td>
-                    <td>${detail.branch_manager}</td>
-                    <td>${detail.source}</td>
-                    <td>${detail.subproduct}</td>
-                    <td>${detail.policy_inception_date}</td>
                     <td>${detail.provider}</td>
+                    <td>${detail.issuance_code}</td>
+                    <td>${detail.name}</td>
+                    <td>${detail.contact_number} </br> ${detail.email}</td>
+                    
+                    
+                    <td>${detail.sales_associate} </br>( ${detail.sales_team} )</td>
+                    <td>${detail.branch_manager} </br>( ${detail.source} )</td>
+                    <td>${detail.subproduct}</td>
+
+                    <td>${detail.sale_date} </br> ${detail.good_as_sales_date} </br> ${detail.policy_inception_date}</td>
+                    
                     <td>${detail.sale_status}</td>
                     <td><button class="btn btn-primary viewDetailBtn" data-id="${detail.id}" data-bs-toggle="offcanvas" data-bs-target="#detailOffCanvas">View</button></td>
                 </tr>`;
