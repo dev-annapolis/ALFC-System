@@ -406,31 +406,45 @@ class SalesReportController extends Controller
     }
 
     private function getTableData($tableName, $insuranceDetail, $permissions)
-    {
-        $tableData = $this->getDefaultTableData($tableName, $insuranceDetail);
+{
+    $tableData = $this->getDefaultTableData($tableName, $insuranceDetail);
+    $editableColumns = [];
 
-        foreach ($permissions as $permission) {
-            if ($permission->table_name == $tableName) {
-                foreach ($tableData as $key => $value) {
-                    if ($permission->can_view == 0 && $permission->column_name == $key) {
-                        $tableData[$key] = '*****';
-                    }
+    foreach ($permissions as $permission) {
+        if ($permission->table_name == $tableName) {
+            foreach ($tableData as $key => $value) {
+                // Mask columns where viewing is restricted
+                if ($permission->can_view == 0 && $permission->column_name == $key) {
+                    $tableData[$key] = '*****';
                 }
 
-                if ($tableName == 'insurance_commisioners') {
-                    foreach ($tableData as &$commisionerData) {
-                        foreach ($commisionerData as $commisionerKey => $commisionerValue) {
-                            if ($permission->can_view == 0 && $permission->column_name == $commisionerKey) {
-                                $commisionerData[$commisionerKey] = '*****';
-                            }
+                // Mark columns as editable based on permissions
+                if ($permission->column_name == $key) {
+                    $editableColumns[$key] = $permission->can_edit == 1;
+                }
+            }
+
+            if ($tableName == 'insurance_commisioners') {
+                foreach ($tableData as &$commisionerData) {
+                    foreach ($commisionerData as $commisionerKey => $commisionerValue) {
+                        if ($permission->can_view == 0 && $permission->column_name == $commisionerKey) {
+                            $commisionerData[$commisionerKey] = '*****';
+                        }
+                        if ($permission->column_name == $commisionerKey) {
+                            $editableColumns[$commisionerKey] = $permission->can_edit == 1;
                         }
                     }
                 }
             }
         }
-
-        return $tableData;
     }
+
+    return [
+        'data' => $tableData,
+        'editable' => $editableColumns,
+    ];
+}
+
 
 
     private function getDefaultTableData($tableName, $insuranceDetail)
