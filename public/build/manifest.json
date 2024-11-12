@@ -1,4 +1,8 @@
 {
+  "public/fonts/Poppins/Poppins-Bold.ttf": {
+    "file": "assets/Poppins-Bold-qTAUjFF7.ttf",
+    "src": "public/fonts/Poppins/Poppins-Bold.ttf"
+  },
   "public/fonts/Poppins/Poppins-Regular.ttf": {
     "file": "assets/Poppins-Regular-CTKNfV9P.ttf",
     "src": "public/fonts/Poppins/Poppins-Regular.ttf"
@@ -12,15 +16,16 @@
     "src": "public/fonts/TimesRoman/Times-Roman-Regular.TTF"
   },
   "resources/js/app.js": {
-    "file": "assets/app-p-dUuLK2.js",
+    "file": "assets/app-BsPZCY80.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "css": [
-      "assets/app-DH9n_E7K.css"
+      "assets/app-BaFPSZ4i.css"
     ],
     "assets": [
       "assets/Poppins-Regular-CTKNfV9P.ttf",
+      "assets/Poppins-Bold-qTAUjFF7.ttf",
       "assets/Times-Roman-Regular-BH0awosN.TTF",
       "assets/Times-Roman-Italic-CVWNPw41.TTF"
     ]
