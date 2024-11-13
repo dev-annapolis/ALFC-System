@@ -151,18 +151,44 @@ function fetchInsuranceDetail(insuranceDetailId) {
                     `);
 
                     let tableContent = '<table class="table">';
+                    let count = 0;
+
                     for (const [key, value] of Object.entries(tableData)) {
                         const isEditable = editableFields[key];
+                        const formattedKey = key.replace(/_/g, ' ').toUpperCase();
+
+                        // Start a new row every two items
+                        if (count % 2 === 0) {
+                            tableContent += '<tr>';
+                        }
+
                         tableContent += `
-                            <tr>
-                                <td>${key.replace('_', ' ').toUpperCase()}</td>
-                                <td>
-                                    ${value}
-                                    ${isEditable ? '<button class="btn btn-sm btn-outline-primary edit-btn"><i class="fas fa-edit"></i></button>' : ''}
-                                </td>
-                            </tr>
+                            <td>
+                                <label><strong>${formattedKey}</strong></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="${key}" value="${value}" ${isEditable ? 'readonly' : 'readonly'}>
+                                    ${isEditable ? `
+                                        <button class="btn btn-outline-primary edit-btn" data-key="${key}">
+                                            edit
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </td>
                         `;
+
+                        // Close the row every two items
+                        if (count % 2 === 1) {
+                            tableContent += '</tr>';
+                        }
+
+                        count++;
                     }
+
+                    // If the last row has only one cell, close it with an empty cell for alignment
+                    if (count % 2 === 1) {
+                        tableContent += '<td></td></tr>';
+                    }
+
                     tableContent += '</table>';
 
                     tabContent.append(`
@@ -172,6 +198,27 @@ function fetchInsuranceDetail(insuranceDetailId) {
                     `);
                     isFirstTab = false;
                 }
+
+                // Add click event listener for edit buttons
+                $('.edit-btn').on('click', function() {
+                    const key = $(this).data('key');
+                    const inputField = $(`#${key}`);
+
+                    // Log the inputField variable to console
+
+                    // Toggle readonly attribute and focus the field if it becomes editable
+                    if (inputField.prop('readonly')) {
+                        inputField.prop('readonly', false).focus();
+                        $(this).html('save'); // Change icon to a save icon
+                    } else {
+                        inputField.prop('readonly', true);
+                        $(this).html('<i class="fas fa-edit"></i>'); // Change icon back to edit icon
+
+                        // Optionally, you can save the new value to the server here
+                        // Example:
+                        // $.post(`/api/insurance/details/update`, { key: key, value: inputField.val() });
+                    }
+                });
             }
         },
         error: function() {
