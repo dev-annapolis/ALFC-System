@@ -16,6 +16,8 @@
 </style>
 
 <div class="container-fluid mt-5">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <h2>Sales Report</h2>
     
     <!-- Responsive wrapper for the table -->
@@ -115,9 +117,14 @@ $(document).ready(function() {
 });
 
 function fetchInsuranceDetail(insuranceDetailId) {
+    var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
     $.ajax({
         url: `/api/insurance/details/${insuranceDetailId}`,
         method: 'GET',
+        headers: {
+            'X-CSRF-TOKEN': csrfToken // Add CSRF token here
+        },
         success: function(data) {
             console.log(data); // Check the structure of the data in the console
             var tabList = $('#insuranceTabs');
@@ -166,10 +173,10 @@ function fetchInsuranceDetail(insuranceDetailId) {
                             <td>
                                 <label><strong>${formattedKey}</strong></label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control" id="${key}" value="${value}" ${isEditable ? 'readonly' : 'readonly'}>
-                                    ${isEditable ? `
-                                        <button class="btn btn-outline-primary edit-btn" data-key="${key}">
-                                            edit
+                                    <input type="text" class="form-control" id="${key}" value="${value}" readonly>
+                                    ${isEditable ? ` 
+                                        <button class="btn btn-outline-primary edit-btn" data-key="${key}" data-table="${table}">
+                                            Edit
                                         </button>
                                     ` : ''}
                                 </div>
@@ -199,26 +206,84 @@ function fetchInsuranceDetail(insuranceDetailId) {
                     isFirstTab = false;
                 }
 
-                // Add click event listener for edit buttons
-                $('.edit-btn').on('click', function() {
-                    const key = $(this).data('key');
-                    const inputField = $(`#${key}`);
+                // Function to attach edit event handlers
+                function attachEditHandlers() {
+                    $('.edit-btn').on('click', function() {
+                        const key = $(this).data('key');
+                        const inputField = $(`#${key}`);
+                        const editButton = $(this);
+                        const tableName = $(this).data('table'); // Get the table name from the button's data attribute
 
-                    // Log the inputField variable to console
+                        // Store the original value in case the user cancels
+                        const originalValue = inputField.val();
 
-                    // Toggle readonly attribute and focus the field if it becomes editable
-                    if (inputField.prop('readonly')) {
+                        // Toggle the editable state and replace button with save and cancel buttons
                         inputField.prop('readonly', false).focus();
-                        $(this).html('save'); // Change icon to a save icon
-                    } else {
-                        inputField.prop('readonly', true);
-                        $(this).html('<i class="fas fa-edit"></i>'); // Change icon back to edit icon
+                        editButton.replaceWith(`
+                            <button class="btn btn-outline-success save-btn" data-key="${key}" data-table="${tableName}">Save</button>
+                            <button class="btn btn-outline-secondary cancel-btn" data-key="${key}" data-table="${tableName}">Cancel</button>
+                        `);
 
-                        // Optionally, you can save the new value to the server here
-                        // Example:
-                        // $.post(`/api/insurance/details/update`, { key: key, value: inputField.val() });
-                    }
-                });
+                        // Add event listener for save button
+                        $(`.save-btn[data-key="${key}"]`).on('click', function() {
+                            inputField.prop('readonly', true);
+                            const newValue = inputField.val();
+                            const tableName = $(this).data('table'); // Pass the tableName to save logic
+
+                            // Log the table name, field name (key), and new value to the console
+                            console.log(`Table Name: ${tableName}, Field saved: ${key}, New Value: ${newValue}`);
+
+                            // Replace save and cancel buttons with edit button again
+                            $(this).replaceWith(`
+                                <button class="btn btn-outline-primary edit-btn" data-key="${key}" data-table="${tableName}">Edit</button>
+                            `);
+                            $(`.cancel-btn[data-key="${key}"]`).remove();
+
+                            // Reattach edit handler to the new edit button
+                            attachEditHandlers();
+
+                            // Save the new value to the server here
+                            $.ajax({
+                                url: `/api/insurance/details/update`,
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': csrfToken // Add CSRF token here
+                                },
+                                data: {
+                                    table: tableName,
+                                    field_name: key,
+                                    value: newValue,
+                                    insurance_detail_id: insuranceDetailId // Make sure to send the insurance detail ID
+                                },
+                                success: function(response) {
+                                    if (response.success) {
+                                        console.log('Field updated successfully:', response.updatedData);
+                                    }
+                                },
+                                error: function(error) {
+                                    console.log('Error updating field:', error);
+                                }
+                            });
+                        });
+
+                        // Add event listener for cancel button
+                        $(`.cancel-btn[data-key="${key}"]`).on('click', function() {
+                            inputField.val(originalValue).prop('readonly', true);
+
+                            // Replace save and cancel buttons with edit button again
+                            $(this).replaceWith(`
+                                <button class="btn btn-outline-primary edit-btn" data-key="${key}" data-table="${tableName}">Edit</button>
+                            `);
+                            $(`.save-btn[data-key="${key}"]`).remove();
+
+                            // Reattach edit handler to the new edit button
+                            attachEditHandlers();
+                        });
+                    });
+                }
+
+                // Initial attachment of edit handlers
+                attachEditHandlers();
             }
         },
         error: function() {
@@ -226,11 +291,6 @@ function fetchInsuranceDetail(insuranceDetailId) {
         }
     });
 }
-
-
-
-
-
 
 
 
