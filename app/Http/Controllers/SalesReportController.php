@@ -570,6 +570,68 @@ class SalesReportController extends Controller
         }
     }
 
+    public function updateInsuranceDetail(Request $request)
+    {
+        Log::info($request);
+        $tableName = $request->input('table');
+        $key = $request->input('field_name');
+        $newValue = $request->input('value');
+        $insuranceDetailId = $request->input('insurance_detail_id');
+
+        // Retrieve the insurance detail with related models
+        $insuranceDetail = InsuranceDetail::with([
+            'assured.assuredDetail',
+            'salesAssociate',
+            'branchManager',
+            'product',
+            'subproduct',
+            'source',
+            'sourceBranch',
+            'ifGdfi',
+            'area',
+            'alfcBranch',
+            'modeOfPayment',
+            'provider',
+            'paymentDetail',
+            'commisionDetail',
+            'collectionDetail.tele',
+            'insuranceCommisioner.commisioner'
+        ])->find($insuranceDetailId);
+
+        // Ensure the insurance detail record exists
+        if (!$insuranceDetail) {
+            return response()->json(['error' => 'Insurance detail not found'], 404);
+        }
+
+        if ($tableName === 'assured_details') {
+            if ($key === 'assured_name') {
+
+                $assured = $insuranceDetail->assured;
+                if ($assured) {
+                    $assured->name = $newValue;
+                    $assured->save();
+
+                    return response()->json(['success' => 'Field updated successfully', 'updatedData' => $assured]);
+                } else {
+                    return response()->json(['error' => 'Assured record not found'], 404);
+                }
+            } else {
+                $assuredDetail = $insuranceDetail->assured->assuredDetail;
+                if ($assuredDetail) {
+                    $assuredDetail->$key = $newValue;
+                    $assuredDetail->save();
+
+                    return response()->json(['success' => 'Field updated successfully', 'updatedData' => $assuredDetail]);
+                } else {
+                    return response()->json(['error' => 'Assured record not found'], 404);
+                }
+            }
+        }
+
+        return response()->json(['error' => 'Invalid table or field name'], 400);
+    }
+
+
 
 
 }
