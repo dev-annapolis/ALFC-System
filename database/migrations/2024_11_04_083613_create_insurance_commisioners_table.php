@@ -13,6 +13,7 @@ return new class extends Migration {
         Schema::create('insurance_commisioners', function (Blueprint $table) {
             $table->foreignId('insurance_detail_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('commisioner_id')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('commisioner_name')->nullable()->constrained()->onDelete('cascade');
             $table->string('amount')->nullable();
             $table->timestamps();
         });
