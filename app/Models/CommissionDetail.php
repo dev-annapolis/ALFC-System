@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class CommisionDetail extends Model
+class CommissionDetail extends Model
 {
     protected $fillable = [
         'insurance_detail_id', 'provision_receipt', 'gross_premium', 'discount',
@@ -17,5 +17,4 @@ class CommisionDetail extends Model
     {
         return $this->belongsTo(InsuranceDetail::class);
     }
-    
 }

@@ -13,9 +13,9 @@ class InsuranceCommisioner extends Model
         return $this->belongsTo(InsuranceDetail::class);
     }
 
-    public function commisioner()
+    public function commissioner()
     {
-        return $this->belongsTo(Commisioner::class);
+        return $this->belongsTo(Commissioner::class);
     }
 
 }

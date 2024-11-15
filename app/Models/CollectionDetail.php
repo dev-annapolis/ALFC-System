@@ -17,7 +17,7 @@ class CollectionDetail extends Model
     {
         return $this->belongsTo(InsuranceDetail::class);
     }
-    
+
     public function tele()
     {
         return $this->belongsTo(Tele::class);
