@@ -14,28 +14,48 @@ return new class extends Migration
         Schema::create('payment_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('insurance_detail_id')->nullable()->constrained()->onDelete('cascade');
+
             $table->string('payment_terms')->nullable();
-            $table->string('due_date')->nullable();
+            $table->string('due_date_start')->nullable();
+            $table->string('due_date_end')->nullable();
 
-            $table->string('schedule_first_payment')->nullable();
-            $table->string('schedule_second_payment')->nullable();
-            $table->string('schedule_third_payment')->nullable();
-            $table->string('schedule_fourth_payment')->nullable();
-            $table->string('schedule_fifth_payment')->nullable();
-            $table->string('schedule_sixth_payment')->nullable();
-            $table->string('schedule_seventh_payment')->nullable();
-            $table->string('schedule_eight_payment')->nullable();
+            $table->string('first_payment_schedule')->nullable();
+            $table->string('first_payment_amount')->nullable();
 
+            $table->string('second_payment_schedule')->nullable();
+            $table->string('second_payment_amount')->nullable();
+
+            $table->string('third_payment_schedule')->nullable();
+            $table->string('third_payment_amount')->nullable();
+
+            $table->string('fourth_payment_schedule')->nullable();
+            $table->string('fourth_payment_amount')->nullable();
+
+            $table->string('fifth_payment_schedule')->nullable();
+            $table->string('fifth_payment_amount')->nullable();
+
+            $table->string('sixth_payment_schedule')->nullable();
+            $table->string('sixth_payment_amount')->nullable();
+
+            $table->string('seventh_payment_schedule')->nullable();
+            $table->string('seventh_payment_amount')->nullable();
+
+            $table->string('eight_payment_schedule')->nullable();
+            $table->string('eight_payment_amount')->nullable();
+
+            $table->string('provision_receipt')->nullable();
+
+            $table->string('initial_payment')->nullable();
             $table->string('for_billing')->nullable();
             $table->string('over_under_payment')->nullable();
-            $table->string('initial_payment')->nullable();
-            $table->string('good_as_sales_date')->nullable();
-            $table->string('status')->nullable();
+        
+            $table->string('date_of_good_as_sales')->nullable();
+            $table->string('payment_status')->nullable();
 
-            $table->string('ra_comments')->nullable();
-            $table->string('admin_assistant_remarks')->nullable();
-            $table->string('tracking_number')->nullable();
-            $table->string('policy_received_by')->nullable();
+            // $table->string('ra_comments')->nullable();
+            // $table->string('admin_assistant_remarks')->nullable();
+            // $table->string('tracking_number')->nullable();
+            // $table->string('policy_received_by')->nullable();
 
             $table->timestamps();
         });
