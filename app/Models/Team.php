@@ -13,4 +13,9 @@ class Team extends Model
         return $this->hasMany(SalesAssociate::class);
     }
 
+    public function salesManagers()
+    {
+        return $this->hasMany(SalesManager::class);
+    }
+
 }
