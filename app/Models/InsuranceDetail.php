@@ -46,19 +46,19 @@ class InsuranceDetail extends Model
         'provider_id'
     ];
 
-    public function assured()
-    {
-        return $this->belongsTo(Assured::class);
-    }
-
     public function salesAssociate()
     {
         return $this->belongsTo(SalesAssociate::class);
     }
 
-    public function branchManager()
+    public function salesManager()
     {
-        return $this->belongsTo(BranchManager::class);
+        return $this->belongsTo(SalesManager::class);
+    }
+
+    public function provider()
+    {
+        return $this->belongsTo(Provider::class);
     }
 
     public function product()
@@ -68,7 +68,7 @@ class InsuranceDetail extends Model
 
     public function subproduct()
     {
-        return $this->belongsTo(Subproduct::class);
+        return $this->belongsTo(SubProduct::class);
     }
 
     public function source()
@@ -101,31 +101,23 @@ class InsuranceDetail extends Model
         return $this->belongsTo(ModeOfPayment::class);
     }
 
-    public function provider()
+    public function collectionDetails()
     {
-        return $this->belongsTo(Provider::class);
+        return $this->hasMany(CollectionDetail::class);
     }
 
-    public function collectionDetail()
+    public function commissionDetails()
     {
-        return $this->hasOne(CollectionDetail::class);
+        return $this->hasMany(CommissionDetail::class);
     }
 
-    public function commisionDetail()
+    public function paymentDetails()
     {
-        return $this->hasOne(CommisionDetail::class);
+        return $this->hasMany(PaymentDetail::class);
     }
 
-    public function paymentDetail()
+    public function insuranceCommissioner()
     {
-        return $this->hasOne(PaymentDetail::class);
-    }
-    public function assuredDetail()
-    {
-        return $this->hasOne(AssuredDetail::class);
-    }
-    public function insuranceCommisioner()
-    {
-        return $this->hasMany(InsuranceCommisioner::class);
+        return $this->hasOne(InsuranceCommissioner::class);
     }
 }
