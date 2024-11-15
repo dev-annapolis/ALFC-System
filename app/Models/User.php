@@ -23,6 +23,11 @@ class User extends Authenticatable
         return $this->hasMany(SalesAssociate::class);
     }
 
+    public function salesManagers()
+    {
+        return $this->hasMany(SalesManager::class);
+    }
+
     protected $hidden = [
         'password',
         'remember_token',
