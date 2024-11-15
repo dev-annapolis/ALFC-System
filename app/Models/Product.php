@@ -13,4 +13,9 @@ class Product extends Model
         return $this->hasMany(Subproduct::class);
     }
 
+    public function insuranceDetails()
+    {
+        return $this->hasMany(InsuranceDetail::class);
+    }
+
 }
