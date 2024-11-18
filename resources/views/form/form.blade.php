@@ -1175,6 +1175,14 @@
 
                     <div class="row mt-md-5">
 
+
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4">
+                                <label for="initialPaymentLabel" class="form-label fw-bold">Initial Payment</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="initialPayment" placeholder="Enter Initial Payment" required>
+                            </div>
+                        </div>
+
                         <div class="col-md-4">
                             <div class="mb-4 mb-md-4 mb-sm-4">
                                 <label for="forBillingLabel" class="form-label fw-bold">For Billing</label>
@@ -1189,12 +1197,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4">
-                                <label for="initialPaymentLabel" class="form-label fw-bold">Initial Payment</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="initialPayment" placeholder="Enter Initial Payment" required>
-                            </div>
-                        </div>
+
 
                     </div>
 
@@ -1203,7 +1206,7 @@
                         <div class="col-md-4">
                             <div class="mb-4 mb-md-5 mb-sm-4">
                                 <label for="dateGoodSalesLabel" class="form-label fw-bold">Date of Good as Sales</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="dateGoodSales" placeholder="Enter Date of Good as Sales" required>
+                                <input type="date" class="form-control rounded-0 border-1" id="dateGoodSales" placeholder="Enter Date of Good as Sales" required>
                             </div>
                         </div>
 
@@ -1283,6 +1286,9 @@
     let isFieldsAdded = false;  // Flag to check if fields have already been added
     const schedulePaymentInputs = document.getElementById('SchedulePayment1');
 
+    const initialPaymentInputs = document.getElementById('initialPayment');
+    const forBillingInputs = document.getElementById('forBilling');
+    const overUnderPaymentInputs = document.getElementById('overUnderPayment');
 
 
 
@@ -1540,7 +1546,11 @@
             paymentTermsInputs.value = formData.paymentTerms || '';
             dueDateStartInputs.value = formData.dueDateStart || '';
             dueDateEndInputs.value = formData.dueDateEnd || '';
-            schedulePaymentInputs.value = formData.firstPayment || '';
+            // schedulePaymentInputs.value = formData.firstPayment || '';
+            initialPaymentInputs.value = formData.initialPayment || '';
+
+            forBillingInputs.value = formData.forBilling || '';
+            overUnderPaymentInputs.value = formData.overUnderPayment || '';
 
 
         }
@@ -1652,20 +1662,11 @@
             formData.dueDateStart = dueDateStartInputs.value;
             formData.dueDateEnd = dueDateEndInputs.value;
             formData.firstPayment = schedulePaymentInputs.value;
+            formData.initialPayment = initialPaymentInputs.value;
 
+            formData.forBilling = forBillingInputs.value;
 
-
-            const schedulePaymentContainer = document.getElementById('schedulePaymentTerms');
-            const schedulePayments = schedulePaymentContainer.querySelectorAll('input[id^="SchedulePayment"]');
-
-
-
-            // Loop through and add SchedulePayment2 and up to formData
-            schedulePayments.forEach((input, index) => {
-                if (index > 0) {  // Start from SchedulePayment2 (index 1)
-                    formData['SchedulePayment' + (index + 1)] = input.value;
-                }
-            });
+            formData.overUnderPayment = overUnderPaymentInputs.value;
 
 
         //}
@@ -1939,10 +1940,11 @@
             const remainingAmount = grossPremiumValue - FirstPaymentValue; // Calculate remaining amount after first payment
             const remainingTerms = TermsValue - 1; // Remaining terms excluding the first one
 
-
             if (TermsValue === 1) {
                 schedulePaymentInputs.value = grossPremiumValue; // Automatically set to gross premium if only one term
             }
+            initialPayment.value = schedulePaymentInputs.value;
+
 
             // Calculate the monthly payment for the remaining terms
             const monthlySchedulePayment = remainingAmount / remainingTerms;
@@ -1956,11 +1958,9 @@
             // Get all current input fields for payments
             const currentFields = schedulePaymentContainer.querySelectorAll('input[id^="SchedulePayment"]');
 
-            // Only show the payment fields when the first payment is entered
             if (FirstPaymentValue > 0) {
-                // Step 1: Remove extra fields if terms have decreased
+
                 if (currentFields.length > TermsValue) {
-                    // Remove the extra fields (excluding the first one)
                     for (let i = currentFields.length; i > TermsValue; i--) {
                         const fieldToRemove = currentFields[i - 1];
                         if (fieldToRemove.id !== "SchedulePayment1") { // Keep the first payment intact
@@ -1969,11 +1969,8 @@
                     }
                 }
 
-                // Step 2: Add new fields if terms have increased
                 if (currentFields.length < TermsValue) {
-                    // Only add new fields if necessary (from the 2nd payment onward)
                     for (let i = currentFields.length + 1; i <= TermsValue; i++) {
-                        // Create a new div for each new payment input field
                         const colDiv = document.createElement('div');
                         colDiv.classList.add('col-md-4');
 
@@ -1984,7 +1981,6 @@
                         label.setAttribute('for', 'SchedulePayment' + i);
                         label.classList.add('form-label', 'fw-bold');
 
-                        // Set label text based on the term (e.g., 2nd, 3rd, 4th Payment)
                         if (i === 2) {
                             label.textContent = '2nd Payment';
                         } else if (i === 3) {
@@ -1992,7 +1988,7 @@
                         } else if (i === 4) {
                             label.textContent = '4th Payment';
                         } else {
-                            label.textContent = i + 'th Payment';  // Default for more than 4th
+                            label.textContent = i + 'th Payment';
                         }
 
                         const input = document.createElement('input');
@@ -2000,11 +1996,10 @@
                         input.classList.add('form-control', 'rounded-0', 'border-1');
                         input.id = 'SchedulePayment' + i;
 
-                        input.placeholder = label.textContent;  // Set placeholder to match label text
-                        input.value = monthlySchedulePayment.toFixed(2); // Set the calculated value
+                        input.placeholder = label.textContent;
+                        input.value = monthlySchedulePayment.toFixed(2);
                         input.required = true;
 
-                        // Append the input field to the form
                         mbDiv.appendChild(label);
                         mbDiv.appendChild(input);
                         colDiv.appendChild(mbDiv);
@@ -2012,13 +2007,13 @@
                     }
                 }
 
-                // Step 3: Update the values for all existing fields (starting from the 2nd payment onward)
                 for (let i = 2; i <= TermsValue; i++) {
                     const input = document.getElementById('SchedulePayment' + i);
                     if (input) {
                         input.value = monthlySchedulePayment.toFixed(2); // Update the payment amount
                     }
                 }
+
             }
         }
     }
@@ -2070,7 +2065,6 @@
             fullAddressField.value = fullAddress;
         }
 
-        // Add event listeners to update the full address when any of the fields change
         unitNoField.addEventListener('input', updateFullAddress);
         streetField.addEventListener('input', updateFullAddress);
         barangayField.addEventListener('input', updateFullAddress);
@@ -2127,16 +2121,14 @@
         }
 
 
-        calculateDueDateEnd();
         paymentTermsInputs.addEventListener('change', calculateDueDateEnd);
         dueDateStartInputs.addEventListener('change', calculateDueDateEnd);
+        calculateDueDateEnd();
 
 
-
-        calculateSchedulePaymentsAmount();
+        // Add event listeners to both paymentTermsInputs and schedulePaymentInputs
         paymentTermsInputs.addEventListener('input', calculateSchedulePaymentsAmount);
         schedulePaymentInputs.addEventListener('input', calculateSchedulePaymentsAmount);
-
 
     });
 
