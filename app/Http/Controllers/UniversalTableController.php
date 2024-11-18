@@ -104,7 +104,7 @@ class UniversalTableController extends Controller
                 'sales_credit_percent',
                 'comm_deduct',
             ],
-            'insurance_commisioners' => [
+            'insurance_commissioners' => [
                 'insurance_detail_id',
                 'commisioner_id',
                 'amount',
@@ -159,7 +159,7 @@ class UniversalTableController extends Controller
                     ->join('alfc_branches', 'insurance_details.alfc_branch_id', '=', 'alfc_branches.id')
                     ->join('mode_of_payments', 'insurance_details.mode_of_payment_id', '=', 'mode_of_payments.id')
                     ->join('providers', 'insurance_details.provider_id', '=', 'providers.id')
-                    ->leftJoin('insurance_commisioners', 'insurance_details.id', '=', 'insurance_commisioners.insurance_detail_id')
+                    ->leftJoin('insurance_commissioners', 'insurance_details.id', '=', 'insurance_commissioners.insurance_detail_id')
                     ->leftJoin('commision_details', 'insurance_details.id', '=', 'commision_details.insurance_detail_id')
                     ->select(
                         'insurance_details.*',
@@ -175,7 +175,7 @@ class UniversalTableController extends Controller
                         'alfc_branches.*',
                         'mode_of_payments.*',
                         'providers.*',
-                        'insurance_commisioners.*',
+                        'insurance_commissioners.*',
                         'commision_details.*'
                     );
             }
@@ -223,7 +223,7 @@ class UniversalTableController extends Controller
             'alfc_branches',
             'mode_of_payments',
             'providers',
-            'insurance_commisioners',
+            'insurance_commissioners',
             'commision_details',
             'payment_details',
             'collection_details',  // Added collection_details table
@@ -258,7 +258,7 @@ class UniversalTableController extends Controller
                         ->leftJoin('alfc_branches', 'insurance_details.alfc_branch_id', '=', 'alfc_branches.id')
                         ->leftJoin('mode_of_payments', 'insurance_details.mode_of_payment_id', '=', 'mode_of_payments.id')
                         ->leftJoin('providers', 'insurance_details.provider_id', '=', 'providers.id')
-                        ->leftJoin('insurance_commisioners', 'insurance_details.id', '=', 'insurance_commisioners.insurance_detail_id')
+                        ->leftJoin('insurance_commissioners', 'insurance_details.id', '=', 'insurance_commissioners.insurance_detail_id')
                         ->leftJoin('commision_details', 'insurance_details.id', '=', 'commision_details.insurance_detail_id')
                         ->leftJoin('payment_details', 'insurance_details.id', '=', 'payment_details.insurance_detail_id')
                         ->leftJoin('collection_details', 'insurance_details.id', '=', 'collection_details.insurance_detail_id'); // Join with collection_details table

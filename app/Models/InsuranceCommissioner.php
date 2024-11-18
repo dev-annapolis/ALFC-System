@@ -4,12 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class InsuranceCommisioner extends Model
+class InsuranceCommissioner extends Model
 {
     protected $fillable = [
-        'insurance_detail_id', 
-        'commisioner_id', 
-        'commisioner_name', 
+        'insurance_detail_id',
+        'commisioner_id',
+        'commissioner_name',
         'amount'
     ];
 

@@ -64,7 +64,7 @@ class RolePermissionController extends Controller
                 'mode_of_payment_name',
                 'provider_name',
             ],
-            'commision_details' => [
+            'commission_details' => [
                 'provision_receipt',
                 'gross_premium',
                 'discount',
@@ -80,8 +80,8 @@ class RolePermissionController extends Controller
                 'sales_credit_percent',
                 'comm_deduct',
             ],
-            'insurance_commisioners' => [
-                'commisioner_name',
+            'insurance_commissioners' => [
+                'commissioner_name',
                 'amount',
             ],
             'collection_details' => [
@@ -120,7 +120,7 @@ class RolePermissionController extends Controller
                 'policy_received_by',
             ],
         ];
-        
+
 
 
         return view('permissions.edit', compact('roles', 'tables'));
@@ -180,7 +180,7 @@ class RolePermissionController extends Controller
                 'mode_of_payment_name',
                 'provider_name',
             ],
-            'commision_details' => [
+            'commission_details' => [
                 'provision_receipt',
                 'gross_premium',
                 'discount',
@@ -196,8 +196,8 @@ class RolePermissionController extends Controller
                 'sales_credit_percent',
                 'comm_deduct',
             ],
-            'insurance_commisioners' => [
-                'commisioner_name',
+            'insurance_commissioners' => [
+                'commissioner_name',
                 'amount',
             ],
             'collection_details' => [
@@ -236,7 +236,7 @@ class RolePermissionController extends Controller
                 'policy_received_by',
             ],
         ];
-        
+
 
         foreach ($roles as $role) {
             foreach ($tables as $table => $columns) {

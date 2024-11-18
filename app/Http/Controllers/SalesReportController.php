@@ -364,7 +364,7 @@ class SalesReportController extends Controller
             'assured_details',
             'insurance_details',
             'commision_details',
-            'insurance_commisioners',
+            'insurance_commissioners',
             'collection_details',
             'payment_details',
         ];
