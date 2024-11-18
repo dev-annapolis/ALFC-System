@@ -45,3 +45,4 @@ Route::get('/salesreport/index', action: [SalesReportController::class, 'salesRe
 Route::get('/api/sales-report', [SalesReportController::class, 'salesReportData']);
 // Route::get('/api/insurance-detail/{id}', [SalesReportController::class, 'fetchInsuranceDetail']);
 Route::get('/api/insurance/details/{id}', [SalesReportController::class, 'showInsuranceDetails']);
+Route::post('/api/insurance/details/update', [SalesReportController::class, 'updateInsuranceDetail']);

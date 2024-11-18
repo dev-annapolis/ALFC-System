@@ -370,25 +370,25 @@ class SalesReportController extends Controller
         ];
 
         $insuranceDetail = InsuranceDetail::with([
-            'assured.assuredDetail', 
-            'salesAssociate', 
-            'branchManager', 
-            'product', 
-            'subproduct', 
-            'source', 
-            'sourceBranch', 
-            'ifGdfi', 
-            'area', 
-            'alfcBranch', 
-            'modeOfPayment', 
+            'assured.assuredDetail',
+            'salesAssociate',
+            'branchManager',
+            'product',
+            'subproduct',
+            'source',
+            'sourceBranch',
+            'ifGdfi',
+            'area',
+            'alfcBranch',
+            'modeOfPayment',
             'provider',
             'paymentDetail',
             'commisionDetail',
             'collectionDetail.tele',
             'insuranceCommisioner.commisioner'
         ])
-        ->where('insurance_details.id', $id)
-        ->first();
+            ->where('insurance_details.id', $id)
+            ->first();
 
         if (!$insuranceDetail) {
             return response()->json(['message' => 'Insurance details not found'], 404);
@@ -396,7 +396,7 @@ class SalesReportController extends Controller
 
         foreach ($tables as $tableName) {
             $tablePermissions = $permissions->where('table_name', $tableName)->where('can_view', 1);
-        
+
             if ($tablePermissions->count() > 0) {
                 $data[$tableName] = $this->getTableData($tableName, $insuranceDetail, $permissions);
             }
@@ -406,44 +406,44 @@ class SalesReportController extends Controller
     }
 
     private function getTableData($tableName, $insuranceDetail, $permissions)
-{
-    $tableData = $this->getDefaultTableData($tableName, $insuranceDetail);
-    $editableColumns = [];
+    {
+        $tableData = $this->getDefaultTableData($tableName, $insuranceDetail);
+        $editableColumns = [];
 
-    foreach ($permissions as $permission) {
-        if ($permission->table_name == $tableName) {
-            foreach ($tableData as $key => $value) {
-                // Mask columns where viewing is restricted
-                if ($permission->can_view == 0 && $permission->column_name == $key) {
-                    $tableData[$key] = '*****';
+        foreach ($permissions as $permission) {
+            if ($permission->table_name == $tableName) {
+                foreach ($tableData as $key => $value) {
+                    // Mask columns where viewing is restricted
+                    if ($permission->can_view == 0 && $permission->column_name == $key) {
+                        $tableData[$key] = '*****';
+                    }
+
+                    // Mark columns as editable based on permissions
+                    if ($permission->column_name == $key) {
+                        $editableColumns[$key] = $permission->can_edit == 1;
+                    }
                 }
 
-                // Mark columns as editable based on permissions
-                if ($permission->column_name == $key) {
-                    $editableColumns[$key] = $permission->can_edit == 1;
-                }
-            }
-
-            if ($tableName == 'insurance_commisioners') {
-                foreach ($tableData as &$commisionerData) {
-                    foreach ($commisionerData as $commisionerKey => $commisionerValue) {
-                        if ($permission->can_view == 0 && $permission->column_name == $commisionerKey) {
-                            $commisionerData[$commisionerKey] = '*****';
-                        }
-                        if ($permission->column_name == $commisionerKey) {
-                            $editableColumns[$commisionerKey] = $permission->can_edit == 1;
+                if ($tableName == 'insurance_commisioners') {
+                    foreach ($tableData as &$commisionerData) {
+                        foreach ($commisionerData as $commisionerKey => $commisionerValue) {
+                            if ($permission->can_view == 0 && $permission->column_name == $commisionerKey) {
+                                $commisionerData[$commisionerKey] = '*****';
+                            }
+                            if ($permission->column_name == $commisionerKey) {
+                                $editableColumns[$commisionerKey] = $permission->can_edit == 1;
+                            }
                         }
                     }
                 }
             }
         }
-    }
 
-    return [
-        'data' => $tableData,
-        'editable' => $editableColumns,
-    ];
-}
+        return [
+            'data' => $tableData,
+            'editable' => $editableColumns,
+        ];
+    }
 
 
 
@@ -569,6 +569,68 @@ class SalesReportController extends Controller
                 return [];
         }
     }
+
+    public function updateInsuranceDetail(Request $request)
+    {
+        Log::info($request);
+        $tableName = $request->input('table');
+        $key = $request->input('field_name');
+        $newValue = $request->input('value');
+        $insuranceDetailId = $request->input('insurance_detail_id');
+
+        // Retrieve the insurance detail with related models
+        $insuranceDetail = InsuranceDetail::with([
+            'assured.assuredDetail',
+            'salesAssociate',
+            'branchManager',
+            'product',
+            'subproduct',
+            'source',
+            'sourceBranch',
+            'ifGdfi',
+            'area',
+            'alfcBranch',
+            'modeOfPayment',
+            'provider',
+            'paymentDetail',
+            'commisionDetail',
+            'collectionDetail.tele',
+            'insuranceCommisioner.commisioner'
+        ])->find($insuranceDetailId);
+
+        // Ensure the insurance detail record exists
+        if (!$insuranceDetail) {
+            return response()->json(['error' => 'Insurance detail not found'], 404);
+        }
+
+        if ($tableName === 'assured_details') {
+            if ($key === 'assured_name') {
+
+                $assured = $insuranceDetail->assured;
+                if ($assured) {
+                    $assured->name = $newValue;
+                    $assured->save();
+
+                    return response()->json(['success' => 'Field updated successfully', 'updatedData' => $assured]);
+                } else {
+                    return response()->json(['error' => 'Assured record not found'], 404);
+                }
+            } else {
+                $assuredDetail = $insuranceDetail->assured->assuredDetail;
+                if ($assuredDetail) {
+                    $assuredDetail->$key = $newValue;
+                    $assuredDetail->save();
+
+                    return response()->json(['success' => 'Field updated successfully', 'updatedData' => $assuredDetail]);
+                } else {
+                    return response()->json(['error' => 'Assured record not found'], 404);
+                }
+            }
+        }
+
+        return response()->json(['error' => 'Invalid table or field name'], 400);
+    }
+
 
 
 
