@@ -6,8 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\AssuredDetail;
 use Illuminate\Http\Request;
 use App\Models\InsuranceDetail;
-use App\Models\CommisionDetail;
-use App\Models\InsuranceCommisioner;
+use App\Models\CommissionDetail;
+use App\Models\InsuranceCommissioner;
 use App\Models\CollectionDetail;
 use App\Models\Assured;
 use App\Models\PaymentDetail;
@@ -27,10 +27,10 @@ class SalesReportController extends Controller
     {
         // Fetch the insurance details along with related data through nested relationships
         $insuranceDetails = InsuranceDetail::with([
-            'assured.assuredDetail', // Load assureds with their related assuredDetails
+            'assuredDetail', // Load assureds with their related assuredDetails
             'paymentDetail',
             'salesAssociate.team',
-            'branchManager',
+            // 'branchManager',
             'source',
             'subproduct',
             'provider',
@@ -39,20 +39,20 @@ class SalesReportController extends Controller
             ->map(function ($insuranceDetail) {
                 return [
                     'id' => $insuranceDetail->id ?? null,
-                    'name' => $insuranceDetail->assured->name ?? null,
-                    'contact_number' => $insuranceDetail->assured->assuredDetail->contact_number ?? null,
-                    'email' => $insuranceDetail->assured->assuredDetail->email ?? null,
+                    'name' => $insuranceDetail->assuredDetail->name ?? null,
+                    'contact_number' => $insuranceDetail->assuredDetail->contact_number ?? null,
+                    'email' => $insuranceDetail->assuredDetail->email ?? null,
                     'issuance_code' => $insuranceDetail->issuance_code,
                     'sale_date' => $insuranceDetail->sale_date,
                     'good_as_sales_date' => $insuranceDetail->paymentDetail->good_as_sales_date ?? null,
                     'sales_associate' => $insuranceDetail->salesAssociate->name ?? null,
                     'sales_team' => $insuranceDetail->salesAssociate->team->name ?? null,
-                    'branch_manager' => $insuranceDetail->branchManager->name ?? null,
+                    // 'branch_manager' => $insuranceDetail->branchManager->name ?? null,
                     'source' => $insuranceDetail->source->name ?? null,
                     'subproduct' => $insuranceDetail->subproduct->name ?? null,
                     'policy_inception_date' => $insuranceDetail->policy_inception_date ?? null,
                     'provider' => $insuranceDetail->provider->name ?? null,
-                    'sale_status' => $insuranceDetail->sale_status ?? null,
+                    'sale_status' => $insuranceDetail->insurance_status ?? null,
                 ];
             })
             ->unique('id'); // Remove duplicates based on 'id' field
@@ -61,291 +61,6 @@ class SalesReportController extends Controller
         return response()->json($insuranceDetails->values()); // Reset keys after unique filtering
     }
 
-
-    // public function showInsuranceDetailss($id)
-    // {
-    //     $user = Auth::user();
-    //     $role = $user->role;
-
-    //     $permissions = RolePermission::where('role_id', $role->id)
-    //         ->where('can_view', 1)
-    //         ->get();
-
-    //     if ($permissions->isEmpty()) {
-    //         return response()->json(['message' => 'No permissions found'], 403);
-    //     }
-
-    //     $data = [];
-    //     $tables = [
-    //         'assured_details',
-    //         'insurance_details',
-    //         'payment_details',
-    //         'commision_details',
-    //         'insurance_commisioners',
-    //         'collection_details'
-    //     ];
-
-    //     foreach ($tables as $tableName) {
-    //         $allowedColumns = $permissions->where('table_name', $tableName)
-    //             ->pluck('column_name')
-    //             ->toArray();
-
-    //         if (count($allowedColumns) > 0) {
-    //             if ($tableName == 'insurance_details') {
-    //                 try {
-    //                     $query = InsuranceDetail::with([
-    //                         'assured.assuredDetail',
-    //                         'salesAssociate',
-    //                         'branchManager',
-    //                         'product',
-    //                         'subproduct',
-    //                         'source',
-    //                         'sourceBranch',
-    //                         'ifGdfi',
-    //                         'area',
-    //                         'alfcBranch',
-    //                         'modeOfPayment',
-    //                         'provider',
-    //                     ])->where('insurance_details.id', $id);
-
-    //                     $columnsWithPrefix = array_map(function ($column) use ($tableName) {
-    //                         return "{$tableName}.{$column}";
-    //                     }, $allowedColumns);
-
-    //                     $records = $query->select($columnsWithPrefix)->first();
-
-    //                     if ($records) {
-    //                         // Define an array of field mappings for replacement
-    //                         $fieldsToReplace = [
-    //                             'assured_id' => 'assured',
-    //                             'sales_associate_id' => 'salesAssociate',
-    //                             'branch_manager_id' => 'branchManager',
-    //                             'product_id' => 'product',
-    //                             'subproduct_id' => 'subproduct',
-    //                             'source_id' => 'source',
-    //                             'source_branch_id' => 'sourceBranch',
-    //                             'if_gdfi_id' => 'ifGdfi',
-    //                             'area_id' => 'area',
-    //                             'alfc_branch_id' => 'alfcBranch',
-    //                             'mode_of_payment_id' => 'modeOfPayment',
-    //                             'provider_id' => 'provider',
-    //                         ];
-
-    //                         // Convert the object to an array using toArray() to get only the model attributes
-    //                         $recordsArray = $records->toArray();  // Using toArray() method
-
-    //                         // Create a new array to hold the modified records
-    //                         $newRecordsArray = [];
-
-    //                         // Iterate through the original record fields
-    //                         foreach ($recordsArray as $key => $value) {
-    //                             // If the field is in the replacement map, replace it
-    //                             if (isset($fieldsToReplace[$key])) {
-    //                                 // Replace _id with _name and get the corresponding name
-    //                                 $relation = $fieldsToReplace[$key];
-    //                                 if ($key === 'assured_id') {
-    //                                     // Special case for assured_id to become assured_name
-    //                                     $newRecordsArray['assured_name'] = optional($records->{$relation})->name ?? "***";
-    //                                 } else {
-    //                                     // For all other fields, just remove the _id suffix and replace it with related name
-    //                                     $newKey = str_replace('_id', '', $key);  // Remove _id from the key
-    //                                     $newRecordsArray[$newKey . '_name'] = optional($records->{$relation})->name ?? "***";
-    //                                 }
-    //                             } else {
-    //                                 // If the field value is null, show '***'
-    //                                 $newRecordsArray[$key] = $value ?? "***";
-    //                             }
-    //                         }
-
-    //                         // Convert back to object
-    //                         $records = (object) $newRecordsArray;
-
-    //                         // Store the modified records in the $data array
-    //                         $data[$tableName] = $records;
-    //                     } else {
-    //                         $data[$tableName] = null;
-    //                     }
-    //                 } catch (\Exception $e) {
-    //                     Log::error("Error processing insurance_details: " . $e->getMessage());
-    //                     $data[$tableName] = null;
-    //                 }
-    //             } elseif ($tableName == 'assured_details') {
-    //                 try {
-    //                     $query = AssuredDetail::whereHas('assured.insuranceDetails', function ($q) use ($id) {
-    //                         $q->where('insurance_details.id', $id);
-    //                     });
-
-    //                     $assuredName = InsuranceDetail::with('assured')
-    //                         ->where('insurance_details.id', $id)
-    //                         ->first()
-    //                         ->assured
-    //                         ->name;
-
-    //                     $columnsWithPrefix = array_map(function ($column) use ($tableName) {
-    //                         return "{$tableName}.{$column}";
-    //                     }, $allowedColumns);
-
-    //                     $records = $query->select($columnsWithPrefix)->first();
-
-    //                     if ($records) {
-    //                         $records->assured_name = $assuredName;
-
-    //                         $recordWithAssuredNameFirst = new \stdClass();
-    //                         $recordWithAssuredNameFirst->assured_name = $assuredName;
-
-    //                         foreach ($records->getAttributes() as $key => $value) {
-    //                             // If the field value is empty or null, set it to '***'
-    //                             $recordWithAssuredNameFirst->$key = (empty($value)) ? "***" : $value;
-    //                         }
-
-    //                         $data[$tableName] = $recordWithAssuredNameFirst;
-    //                     } else {
-    //                         $data[$tableName] = null;
-    //                     }
-    //                 } catch (\Exception $e) {
-    //                     Log::error("Error processing assured_details: " . $e->getMessage());
-    //                     $data[$tableName] = null;
-    //                 }
-    //             } elseif ($tableName == 'payment_details') {
-    //                 try {
-    //                     $query = PaymentDetail::where('insurance_detail_id', $id);
-
-    //                     $columnsWithPrefix = array_map(function ($column) use ($tableName) {
-    //                         return "{$tableName}.{$column}";
-    //                     }, $allowedColumns);
-
-    //                     $records = $query->select($columnsWithPrefix)->first();
-
-    //                     if ($records) {
-    //                         // Iterate over each record's attributes
-    //                         foreach ($records->getAttributes() as $key => $value) {
-    //                             // If the field value is empty or null, set it to '***'
-    //                             $records->$key = (empty($value)) ? "***" : $value;
-    //                         }
-    //                         $data[$tableName] = $records;
-    //                     } else {
-    //                         $data[$tableName] = null;
-    //                     }
-    //                 } catch (\Exception $e) {
-    //                     Log::error("Error processing payment_details: " . $e->getMessage());
-    //                     $data[$tableName] = null;
-    //                 }
-    //             } elseif ($tableName == 'commision_details') {
-    //                 try {
-    //                     $query = CommisionDetail::where('insurance_detail_id', $id);
-
-    //                     $columnsWithPrefix = array_map(function ($column) use ($tableName) {
-    //                         return "{$tableName}.{$column}";
-    //                     }, $allowedColumns);
-
-    //                     $records = $query->select($columnsWithPrefix)->first();
-
-    //                     if ($records) {
-    //                         // Iterate over each record's attributes
-    //                         foreach ($records->getAttributes() as $key => $value) {
-    //                             // If the field value is empty or null, set it to '***'
-    //                             $records->$key = (empty($value)) ? "***" : $value;
-    //                         }
-    //                         $data[$tableName] = $records;
-    //                     } else {
-    //                         $data[$tableName] = null;
-    //                     }
-    //                 } catch (\Exception $e) {
-    //                     Log::error("Error processing commision_details: " . $e->getMessage());
-    //                     $data[$tableName] = null;
-    //                 }
-    //             } elseif ($tableName == 'insurance_commisioners') {
-    //                 Log::info("Processing table: $tableName");
-
-    //                 try {
-    //                     // Query InsuranceCommissioner for the given insurance_detail_id
-    //                     $query = InsuranceCommisioner::with('commisioner') // Eager load the commisioner relationship
-    //                         ->where('insurance_detail_id', $id);
-
-    //                     // Prefix the columns in the insurance_commissioners table
-    //                     $columnsWithPrefix = array_map(function ($column) use ($tableName) {
-    //                         return "{$tableName}.{$column}";
-    //                     }, $allowedColumns);
-
-    //                     // Log::info("Columns selected: ", $columnsWithPrefix);
-
-    //                     // Retrieve the records without the join, using the relationship to get commisioner_name
-    //                     $records = $query
-    //                         ->select($columnsWithPrefix) // Select the necessary columns from insurance_commissioners table
-    //                         ->get();
-
-    //                     // Check if there are any records
-    //                     if ($records->isNotEmpty()) {
-    //                         // Initialize an empty array to store each record's data
-    //                         $data[$tableName] = [];
-
-    //                         // Iterate over each record and store the details
-    //                         foreach ($records as $record) {
-    //                             $data[$tableName][] = [
-    //                                 'commisioner_name' => optional($record->commisioner)->name ?? "***", // Access commisioner name via the relationship
-    //                                 'amount' => $record->amount ?? "***",
-    //                             ];
-    //                         }
-
-    //                         // Log::info("Data formatted for table: $tableName", $data[$tableName]);
-    //                     } else {
-    //                         $data[$tableName] = null;
-    //                         // Log::info("No records found for insurance_detail_id: $id");
-    //                     }
-    //                 } catch (\Exception $e) {
-    //                     Log::error("Error processing table: $tableName", ['error' => $e->getMessage()]);
-    //                     $data[$tableName] = null;
-    //                 }
-    //             } elseif ($tableName == 'collection_details') {
-    //                 try {
-    //                     // Query CollectionDetail for the given insurance_detail_id with the Tele relationship
-    //                     $query = CollectionDetail::with('tele') // Eager load the 'tele' relationship
-    //                         ->where('insurance_detail_id', $id);
-
-    //                     // Prefix the columns in the collection_details table
-    //                     $columnsWithPrefix = array_map(function ($column) use ($tableName) {
-    //                         return "{$tableName}.{$column}";
-    //                     }, $allowedColumns);
-
-    //                     // Retrieve the first record from collection_details
-    //                     $records = $query->select($columnsWithPrefix)->first();
-
-    //                     if ($records) {
-    //                         // Define an array to store modified records
-    //                         $newRecordsArray = [];
-
-    //                         // Iterate over each record's attributes
-    //                         foreach ($records->getAttributes() as $key => $value) {
-    //                             // Check if the field is related to a model (e.g., tele relationship) and replace with '_name'
-    //                             if ($key === 'tele_id') {
-    //                                 // Special case for tele relationship, assign tele_name
-    //                                 $newRecordsArray['tele_name'] = optional($records->tele)->name ?? "***";
-    //                             } else {
-    //                                 // If the field value is empty or null, set it to '***'
-    //                                 $newRecordsArray[$key] = (empty($value)) ? "***" : $value;
-    //                             }
-    //                         }
-
-    //                         // Convert the array back to an object
-    //                         $records = (object) $newRecordsArray;
-
-    //                         // Store the modified records in the $data array
-    //                         $data[$tableName] = $records;
-    //                     } else {
-    //                         $data[$tableName] = null;
-    //                     }
-    //                 } catch (\Exception $e) {
-    //                     Log::error("Error processing collection_details: " . $e->getMessage());
-    //                     $data[$tableName] = null;
-    //                 }
-    //             } else {
-    //                 Log::info("No allowed columns for table: {$tableName}");
-    //             }
-    //         }
-
-    //     }
-    //     return response()->json($data);
-    // }
 
     public function showInsuranceDetails($id)
     {
@@ -363,16 +78,16 @@ class SalesReportController extends Controller
         $tables = [
             'assured_details',
             'insurance_details',
-            'commision_details',
-            'insurance_commisioners',
+            'commission_details',
+            'insurance_commissioners',
             'collection_details',
             'payment_details',
         ];
 
         $insuranceDetail = InsuranceDetail::with([
-            'assured.assuredDetail',
+            'assuredDetail',
             'salesAssociate',
-            'branchManager',
+            // 'branchManager',
             'product',
             'subproduct',
             'source',
@@ -383,9 +98,9 @@ class SalesReportController extends Controller
             'modeOfPayment',
             'provider',
             'paymentDetail',
-            'commisionDetail',
+            'commissionDetail',
             'collectionDetail.tele',
-            'insuranceCommisioner.commisioner'
+            'insuranceCommissioner.commissioner'
         ])
             ->where('insurance_details.id', $id)
             ->first();
@@ -413,6 +128,9 @@ class SalesReportController extends Controller
         foreach ($permissions as $permission) {
             if ($permission->table_name == $tableName) {
                 foreach ($tableData as $key => $value) {
+                    // Debug: Log each key's permission
+                    \Log::info("Processing: Table {$tableName}, Key: {$key}, Permission: " . json_encode($permission));
+
                     // Mask columns where viewing is restricted
                     if ($permission->can_view == 0 && $permission->column_name == $key) {
                         $tableData[$key] = '*****';
@@ -424,20 +142,24 @@ class SalesReportController extends Controller
                     }
                 }
 
-                if ($tableName == 'insurance_commisioners') {
-                    foreach ($tableData as &$commisionerData) {
-                        foreach ($commisionerData as $commisionerKey => $commisionerValue) {
-                            if ($permission->can_view == 0 && $permission->column_name == $commisionerKey) {
-                                $commisionerData[$commisionerKey] = '*****';
+                // Special handling for nested data (e.g., `insurance_commissioners`)
+                if ($tableName == 'insurance_commissioners') {
+                    foreach ($tableData as &$commissionerData) {
+                        foreach ($commissionerData as $commissionerKey => $commissionerValue) {
+                            if ($permission->can_view == 0 && $permission->column_name == $commissionerKey) {
+                                $commissionerData[$commissionerKey] = '*****';
                             }
-                            if ($permission->column_name == $commisionerKey) {
-                                $editableColumns[$commisionerKey] = $permission->can_edit == 1;
+                            if ($permission->column_name == $commissionerKey) {
+                                $editableColumns[$commissionerKey] = $permission->can_edit == 1;
                             }
                         }
                     }
                 }
             }
         }
+
+        // Debug: Log final editable columns
+        \Log::info("Editable columns for table {$tableName}: " . json_encode($editableColumns));
 
         return [
             'data' => $tableData,
@@ -452,81 +174,80 @@ class SalesReportController extends Controller
         switch ($tableName) {
             case 'assured_details':
                 return [
-                    'assured_name' => $insuranceDetail->assured->name ?? "N/A",
-                    'address' => $insuranceDetail->assured->assuredDetail->address ?? "N/A",
-                    'contact_number' => $insuranceDetail->assured->assuredDetail->contact_number ?? "N/A",
-                    'other_contact_number' => $insuranceDetail->assured->assuredDetail->other_contact_number ?? "N/A",
-                    'email' => $insuranceDetail->assured->assuredDetail->email ?? "N/A",
-                    'facebook_account' => $insuranceDetail->assured->assuredDetail->facebook_account ?? "N/A",
-                    'viber_account' => $insuranceDetail->assured->assuredDetail->viber_account ?? "N/A",
-                    'nature_of_business' => $insuranceDetail->assured->assuredDetail->nature_of_business ?? "N/A",
-                    'other_assets' => $insuranceDetail->assured->assuredDetail->other_assets ?? "N/A",
-                    'remarks' => $insuranceDetail->assured->assuredDetail->remarks ?? "N/A",
+                    'name' => $insuranceDetail->assuredDetail->name ?? "N/A",
+                    'address' => $insuranceDetail->assuredDetail->address ?? "N/A",
+                    'contact_number' => $insuranceDetail->assuredDetail->contact_number ?? "N/A",
+                    'other_contact_number' => $insuranceDetail->assuredDetail->other_contact_number ?? "N/A",
+                    'email' => $insuranceDetail->assuredDetail->email ?? "N/A",
+                    'facebook_account' => $insuranceDetail->assuredDetail->facebook_account ?? "N/A",
+                    'viber_account' => $insuranceDetail->assuredDetail->viber_account ?? "N/A",
+                    'nature_of_business' => $insuranceDetail->assuredDetail->nature_of_business ?? "N/A",
+                    'other_assets' => $insuranceDetail->assuredDetail->other_assets ?? "N/A",
+                    'other_source_of_business' => $insuranceDetail->assuredDetail->other_source_of_business ?? "N/A",
+                    // 'remarks' => $insuranceDetail->assuredDetail->remarks ?? "N/A",
                 ];
             case 'insurance_details':
                 return [
+                    'name' => $insuranceDetail->assuredDetail->name ?? "N/A",
                     'issuance_code' => $insuranceDetail->issuance_code ?? "N/A",
-                    'assured_name' => $insuranceDetail->assured->name ?? "N/A",
                     'sales_associate_name' => $insuranceDetail->salesAssociate->name ?? "N/A",
+                    'sales_manager' => $insuranceDetail->sales_manager_id ?? "N/A",
                     'sale_date' => $insuranceDetail->sale_date ?? "N/A",
+                    'team' => $insuranceDetail->team->name ?? "N/A",
                     'classification' => $insuranceDetail->classification ?? "N/A",
-                    'insurance_type' => $insuranceDetail->insurance_type ?? "N/A",
-                    'sale_status' => $insuranceDetail->sale_status ?? "N/A",
-                    'branch_manager_name' => $insuranceDetail->branchManager->name ?? "N/A",
-                    'legal_representative_name' => $insuranceDetail->legal_representative_name ?? "N/A",
-                    'legal_supervisor_name' => $insuranceDetail->legal_supervisor_name ?? "N/A",
-                    'assigned_atty_one' => $insuranceDetail->assigned_atty_one ?? "N/A",
-                    'assigned_atty_two' => $insuranceDetail->assigned_atty_two ?? "N/A",
-                    'collection_gm' => $insuranceDetail->collection_gm ?? "N/A",
+                    'insurance_status' => $insuranceDetail->insurance_status ?? "N/A",
+                    'book_number' => $insuranceDetail->book_number ?? "N/A",
+                    'filing_number' => $insuranceDetail->filing_number ?? "N/A",
+                    'database_remarks' => $insuranceDetail->database_remarks ?? "N/A",
+                    'pid_received_date' => $insuranceDetail->pid_received_date ?? "N/A",
+                    'pid_completion_date' => $insuranceDetail->pid_completion_date ?? "N/A",
+                    'pid_status' => $insuranceDetail->pid_status ?? "N/A",
+                    'provider_name' => $insuranceDetail->provider->name ?? "N/A",
                     'product_name' => $insuranceDetail->product->name ?? "N/A",
                     'subproduct_name' => $insuranceDetail->subproduct->name ?? "N/A",
+                    'product_type' => $insuranceDetail->product_type ?? "N/A",
                     'source_name' => $insuranceDetail->source->name ?? "N/A",
                     'source_branch_name' => $insuranceDetail->sourceBranch->name ?? "N/A",
-                    'if_gdfi_name' => $insuranceDetail->ifGdfi->name ?? "N/A",
+                    'if_gdfi' => $insuranceDetail->ifGdfi->name ?? "N/A",
                     'mortgagee' => $insuranceDetail->mortgagee ?? "N/A",
                     'area_name' => $insuranceDetail->area->name ?? "N/A",
                     'alfc_branch_name' => $insuranceDetail->alfcBranch->name ?? "N/A",
-                    'loan_amount' => $insuranceDetail->loan_amount ?? "N/A",
-                    'total_sum_insured' => $insuranceDetail->total_sum_insured ?? "N/A",
                     'policy_number' => $insuranceDetail->policy_number ?? "N/A",
-                    'policy_inception_date' => $insuranceDetail->policy_inception_date ?? "N/A",
-                    'expiry_date' => $insuranceDetail->expiry_date ?? "N/A",
                     'plate_conduction_number' => $insuranceDetail->plate_conduction_number ?? "N/A",
                     'description' => $insuranceDetail->description ?? "N/A",
+                    'policy_inception_date' => $insuranceDetail->policy_inception_date ?? "N/A",
+                    'expiry_date' => $insuranceDetail->expiry_date ?? "N/A",
                     'policy_expiration_aging' => $insuranceDetail->policy_expiration_aging ?? "N/A",
-                    'book_number' => $insuranceDetail->book_number ?? "N/A",
-                    'filing_number' => $insuranceDetail->filing_number ?? "N/A",
-                    'pid_received_date' => $insuranceDetail->pid_received_date ?? "N/A",
-                    'pid_completion_date' => $insuranceDetail->pid_completion_date ?? "N/A",
-                    'remarks' => $insuranceDetail->remarks ?? "N/A",
-                    'mode_of_payment_name' => $insuranceDetail->modeOfPayment->name ?? "N/A",
-                    'provider_name' => $insuranceDetail->provider->name ?? "N/A",
+                    'loan_amount' => $insuranceDetail->loan_amount ?? "N/A",
+                    'total_sum_insured' => $insuranceDetail->total_sum_insured ?? "N/A",
+                    'mode_of_payment_name' => $insuranceDetail->modeOfPayment->name ?? "N/A"
                 ];
-            case 'commision_details':
+            case 'commission_details':
                 return [
-                    'provision_receipt' => $insuranceDetail->commisionDetail->provision_receipt ?? "N/A",
-                    'gross_premium' => $insuranceDetail->commisionDetail->gross_premium ?? "N/A",
-                    'discount' => $insuranceDetail->commisionDetail->discount ?? "N/A",
-                    'net_discounted' => $insuranceDetail->commisionDetail->net_discounted ?? "N/A",
-                    'amount_due_to_provider' => $insuranceDetail->commisionDetail->amount_due_to_provider ?? "N/A",
-                    'full_commission' => $insuranceDetail->commisionDetail->full_commission ?? "N/A",
-                    'marketing_fund' => $insuranceDetail->commisionDetail->marketing_fund ?? "N/A",
-                    'offsetting' => $insuranceDetail->commisionDetail->offsetting ?? "N/A",
-                    'promo' => $insuranceDetail->commisionDetail->promo ?? "N/A",
-                    'total_commission' => $insuranceDetail->commisionDetail->total_commission ?? "N/A",
-                    'vat' => $insuranceDetail->commisionDetail->vat ?? "N/A",
-                    'sales_credit' => $insuranceDetail->commisionDetail->sales_credit ?? "N/A",
-                    'sales_credit_percent' => $insuranceDetail->commisionDetail->sales_credit_percent ?? "N/A",
-                    'comm_deduct' => $insuranceDetail->commisionDetail->comm_deduct ?? "N/A"
+                    'gross_premium' => $insuranceDetail->commissionDetail->gross_premium ?? "N/A",
+                    'discount' => $insuranceDetail->commissionDetail->discount ?? "N/A",
+                    'gross_premium_net_discounted' => $insuranceDetail->commissionDetail->gross_premium_net_discounted ?? "N/A",
+                    'amount_due_to_provider' => $insuranceDetail->commissionDetail->amount_due_to_provider ?? "N/A",
+                    'full_commission' => $insuranceDetail->commissionDetail->full_commission ?? "N/A",
+                    'travel_incentives' => $insuranceDetail->commissionDetail->travel_incentives ?? "N/A",
+                    'offsetting' => $insuranceDetail->commissionDetail->offsetting ?? "N/A",
+                    'promo' => $insuranceDetail->commissionDetail->promo ?? "N/A",
+                    'total_commission' => $insuranceDetail->commissionDetail->total_commission ?? "N/A",
+                    'vat' => $insuranceDetail->commissionDetail->vat ?? "N/A",
+                    'sales_credit' => $insuranceDetail->commissionDetail->sales_credit ?? "N/A",
+                    'sales_credit_percent' => $insuranceDetail->commissionDetail->sales_credit_percent ?? "N/A",
+                    'comm_deduct' => $insuranceDetail->commissionDetail->comm_deduct ?? "N/A"
                 ];
-            case 'insurance_commisioners':
+            case 'insurance_commissioners':
                 $commissionersData = [];
-                foreach ($insuranceDetail->insuranceCommisioner as $commisionerDetail) {
+                foreach ($insuranceDetail->insuranceCommissioner as $commissionerDetail) {
                     $commissionersData[] = [
-                        'commisioner_name' => $commisionerDetail->commisioner->name ?? "N/A",
-                        'amount' => $commisionerDetail->amount ?? "N/A"
+                        'commissioner_title' => $commissionerDetail->commissioner->name ?? "N/A",
+                        'commissioner_name' => $commissionerDetail->commissioner_name ?? "N/A",
+                        'amount' => $commissionerDetail->amount ?? "N/A"
                     ];
                 }
+
                 return $commissionersData;
             case 'collection_details':
                 return [
@@ -546,27 +267,34 @@ class SalesReportController extends Controller
             case 'payment_details':
                 return [
                     'payment_terms' => $insuranceDetail->paymentDetail->payment_terms ?? "N/A",
-                    'due_date' => $insuranceDetail->paymentDetail->due_date ?? "N/A",
-                    'schedule_first_payment' => $insuranceDetail->paymentDetail->schedule_first_payment ?? "N/A",
-                    'schedule_second_payment' => $insuranceDetail->paymentDetail->schedule_second_payment ?? "N/A",
-                    'schedule_third_payment' => $insuranceDetail->paymentDetail->schedule_third_payment ?? "N/A",
-                    'schedule_fourth_payment' => $insuranceDetail->paymentDetail->schedule_fourth_payment ?? "N/A",
-                    'schedule_fifth_payment' => $insuranceDetail->paymentDetail->schedule_fifth_payment ?? "N/A",
-                    'schedule_sixth_payment' => $insuranceDetail->paymentDetail->schedule_sixth_payment ?? "N/A",
-                    'schedule_seventh_payment' => $insuranceDetail->paymentDetail->schedule_seventh_payment ?? "N/A",
-                    'schedule_eighth_payment' => $insuranceDetail->paymentDetail->schedule_eighth_payment ?? "N/A",
+                    'date_of_good_as_sales' => $insuranceDetail->paymentDetail->date_of_good_as_sales ?? "N/A",
+                    'due_date_start' => $insuranceDetail->paymentDetail->due_date_start ?? "N/A",
+                    'due_date_end' => $insuranceDetail->paymentDetail->due_date_end ?? "N/A",
+                    'schedule_first_payment' => $insuranceDetail->paymentDetail->first_payment_schedule ?? "N/A",
+                    'amount_first_payment' => $insuranceDetail->paymentDetail->first_payment_amount ?? "N/A",
+                    'schedule_second_payment' => $insuranceDetail->paymentDetail->second_payment_schedule ?? "N/A",
+                    'amount_second_payment' => $insuranceDetail->paymentDetail->second_payment_amount ?? "N/A",
+                    'schedule_third_payment' => $insuranceDetail->paymentDetail->third_payment_schedule ?? "N/A",
+                    'amount_third_payment' => $insuranceDetail->paymentDetail->third_payment_amount ?? "N/A",
+                    'schedule_fourth_payment' => $insuranceDetail->paymentDetail->fourth_payment_schedule ?? "N/A",
+                    'amount_fourth_payment' => $insuranceDetail->paymentDetail->fourth_payment_amount ?? "N/A",
+                    'schedule_fifth_payment' => $insuranceDetail->paymentDetail->fifth_payment_schedule ?? "N/A",
+                    'amount_fifth_payment' => $insuranceDetail->paymentDetail->fifth_payment_amount ?? "N/A",
+                    'schedule_sixth_payment' => $insuranceDetail->paymentDetail->sixth_payment_schedule ?? "N/A",
+                    'amount_sixth_payment' => $insuranceDetail->paymentDetail->sixth_payment_amount ?? "N/A",
+                    'schedule_seventh_payment' => $insuranceDetail->paymentDetail->seventh_payment_schedule ?? "N/A",
+                    'amount_seventh_payment' => $insuranceDetail->paymentDetail->seventh_payment_amount ?? "N/A",
+                    'schedule_eighth_payment' => $insuranceDetail->paymentDetail->eight_payment_schedule ?? "N/A",
+                    'amount_eighth_payment' => $insuranceDetail->paymentDetail->eight_payment_amount ?? "N/A",
+                    'provision_receipt' => $insuranceDetail->paymentDetail->provision_receipt ?? "N/A",
+                    'initial_payment' => $insuranceDetail->paymentDetail->initial_payment ?? "N/A",
                     'for_billing' => $insuranceDetail->paymentDetail->for_billing ?? "N/A",
                     'over_under_payment' => $insuranceDetail->paymentDetail->over_under_payment ?? "N/A",
-                    'initial_payment' => $insuranceDetail->paymentDetail->initial_payment ?? "N/A",
-                    'good_as_sales_date' => $insuranceDetail->paymentDetail->good_as_sales_date ?? "N/A",
-                    'status' => $insuranceDetail->paymentDetail->status ?? "N/A",
-                    'ra_comments' => $insuranceDetail->paymentDetail->ra_comments ?? "N/A",
-                    'admin_assistant_remarks' => $insuranceDetail->paymentDetail->admin_assistant_remarks ?? "N/A",
-                    'tracking_number' => $insuranceDetail->paymentDetail->tracking_number ?? "N/A",
-                    'policy_received_by' => $insuranceDetail->paymentDetail->policy_received_by ?? "N/A"
+                    'payment_status' => $insuranceDetail->paymentDetail->payment_status ?? "N/A",
                 ];
             default:
                 return [];
+
         }
     }
 
@@ -580,9 +308,9 @@ class SalesReportController extends Controller
 
         // Retrieve the insurance detail with related models
         $insuranceDetail = InsuranceDetail::with([
-            'assured.assuredDetail',
+            'assuredDetail',
             'salesAssociate',
-            'branchManager',
+            'salesManager',
             'product',
             'subproduct',
             'source',
@@ -593,9 +321,10 @@ class SalesReportController extends Controller
             'modeOfPayment',
             'provider',
             'paymentDetail',
-            'commisionDetail',
+            'commissionDetail',
             'collectionDetail.tele',
-            'insuranceCommisioner.commisioner'
+            'insurancecommissioner.commissioner',
+            'team', // Ensure team relationship is loaded
         ])->find($insuranceDetailId);
 
         // Ensure the insurance detail record exists
@@ -603,20 +332,10 @@ class SalesReportController extends Controller
             return response()->json(['error' => 'Insurance detail not found'], 404);
         }
 
-        if ($tableName === 'assured_details') {
-            if ($key === 'assured_name') {
-
-                $assured = $insuranceDetail->assured;
-                if ($assured) {
-                    $assured->name = $newValue;
-                    $assured->save();
-
-                    return response()->json(['success' => 'Field updated successfully', 'updatedData' => $assured]);
-                } else {
-                    return response()->json(['error' => 'Assured record not found'], 404);
-                }
-            } else {
-                $assuredDetail = $insuranceDetail->assured->assuredDetail;
+        // Handle updates based on table name
+        switch ($tableName) {
+            case 'assured_details':
+                $assuredDetail = $insuranceDetail->assuredDetail;
                 if ($assuredDetail) {
                     $assuredDetail->$key = $newValue;
                     $assuredDetail->save();
@@ -625,11 +344,54 @@ class SalesReportController extends Controller
                 } else {
                     return response()->json(['error' => 'Assured record not found'], 404);
                 }
-            }
-        }
 
-        return response()->json(['error' => 'Invalid table or field name'], 400);
+            case 'insurance_details':
+                // Here, we update the fields in the insurance details table
+                if (isset($insuranceDetail->$key)) {
+                    $insuranceDetail->$key = $newValue;
+                    $insuranceDetail->save();
+
+                    return response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail]);
+                }
+
+                // Handle fields from related tables
+                $relationFields = [
+                    'assuredDetail' => ['name', 'issuance_code'],
+                    'salesAssociate' => ['name'],
+                    'salesManager' => ['name'],
+                    'product' => ['name'],
+                    'subproduct' => ['name'],
+                    'source' => ['name'],
+                    'sourceBranch' => ['name'],
+                    'ifGdfi' => ['name'],
+                    'area' => ['name'],
+                    'alfcBranch' => ['name'],
+                    'modeOfPayment' => ['name'],
+                    'provider' => ['name'],
+                    'team' => ['name'],
+                ];
+
+                foreach ($relationFields as $relation => $fields) {
+                    if (in_array($key, $fields)) {
+                        $relatedModel = $insuranceDetail->$relation;
+                        if ($relatedModel) {
+                            $relatedModel->$key = $newValue;
+                            $relatedModel->save();
+
+                            return response()->json(['success' => 'Field updated successfully', 'updatedData' => $relatedModel]);
+                        } else {
+                            return response()->json(['error' => ucfirst($relation) . ' record not found'], 404);
+                        }
+                    }
+                }
+
+                return response()->json(['error' => 'Field name does not exist in the table or its relations'], 400);
+
+            default:
+                return response()->json(['error' => 'Invalid table or field name'], 400);
+        }
     }
+
 
 
 

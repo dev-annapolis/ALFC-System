@@ -31,7 +31,7 @@
                     <th>Contact Number </br> Email</th>
 
                     <th>Sales Associate </br>( Sales Team )</th>
-                    <th>Branch Manager </br>( Source )</th>
+                    <th>Source </th>
                     <th>Sroduct</th>
 
                     <th>Sale Date </br> Good As Sales Date </br> Policy Inception Date</th>
@@ -86,7 +86,7 @@ $(document).ready(function() {
                     
                     
                     <td>${detail.sales_associate} </br>( ${detail.sales_team} )</td>
-                    <td>${detail.branch_manager} </br>( ${detail.source} )</td>
+                    <td>${detail.source} </td>
                     <td>${detail.subproduct}</td>
 
                     <td>${detail.sale_date} </br> ${detail.good_as_sales_date} </br> ${detail.policy_inception_date}</td>
@@ -148,6 +148,7 @@ function fetchInsuranceDetail(insuranceDetailId) {
                     const editableFields = data[table].editable;
                     const tableName = table.replace('_', ' ').toUpperCase();
                     const tabId = `tab-${table}`;
+            console.log("Editable fields for table:", editableFields);
 
                     tabList.append(`
                         <li class="nav-item" role="presentation">
@@ -158,45 +159,84 @@ function fetchInsuranceDetail(insuranceDetailId) {
                     `);
 
                     let tableContent = '<table class="table">';
-                    let count = 0;
-
-                    for (const [key, value] of Object.entries(tableData)) {
-                        const isEditable = editableFields[key];
-                        const formattedKey = key.replace(/_/g, ' ').toUpperCase();
-
-                        // Start a new row every two items
-                        if (count % 2 === 0) {
-                            tableContent += '<tr>';
+                        if (table === 'insurance_commissioners') {
+                            // Render editable input fields for `insurance_commissioners` in a row
+                            tableContent = '<div class="row">';
+                            tableData.forEach((commissioner, index) => {
+                                tableContent += `
+                                    <div class="col-md-4 mb-3">
+                                        <label for="commissioner-title-${index}" class="form-label"><strong>Commissioner Title</strong></label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="commissioner-title-${index}" data-key="commissioner_title-${index}" value="${commissioner.commissioner_title}" readonly>
+                                            <button class="btn btn-outline-primary edit-btn" data-key="commissioner-title-${index}" data-index="${index}" data-table="${table}">
+                                                Edit
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="commissioner-name-${index}" class="form-label"><strong>Commissioner Name</strong></label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="commissioner-name-${index}" data-key="commissioner_name-${index}" value="${commissioner.commissioner_name}" readonly>
+                                            <button class="btn btn-outline-primary edit-btn" data-key="commissioner-name-${index}" data-index="${index}" data-table="${table}">
+                                                Edit
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="commissioner-amount-${index}" class="form-label"><strong>Amount</strong></label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="commissioner-amount-${index}" data-key="commissioner_amount-${index}" value="${commissioner.amount}" readonly>
+                                            <button class="btn btn-outline-primary edit-btn" data-key="commissioner-amount-${index}" data-index="${index}" data-table="${table}">
+                                                Edit
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                `;
+                            });
+                            tableContent += '</div>';
                         }
 
-                        tableContent += `
-                            <td>
-                                <label><strong>${formattedKey}</strong></label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="${key}" value="${value}" readonly>
-                                    ${isEditable ? ` 
-                                        <button class="btn btn-outline-primary edit-btn" data-key="${key}" data-table="${table}">
-                                            Edit
-                                        </button>
-                                    ` : ''}
-                                </div>
-                            </td>
-                        `;
+                        else {
+                                                // Default rendering for other tables
+                        tableContent = '<table class="table">';
+                        let count = 0;
 
-                        // Close the row every two items
+                        for (const [key, value] of Object.entries(tableData)) {
+                            const isEditable = editableFields[key];
+                            const formattedKey = key.replace(/_/g, ' ').toUpperCase();
+
+                            if (count % 2 === 0) {
+                                tableContent += '<tr>';
+                            }
+
+                            tableContent += `  
+                                <td>
+                                    <label><strong>${formattedKey}</strong></label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="${key}" value="${value}" readonly>
+                                        ${isEditable ? `
+                                            <button class="btn btn-outline-primary edit-btn" data-key="${key}" data-table="${table}">
+                                                Edit
+                                            </button>
+                                        ` : ''}
+                                    </div>
+                                </td>
+                            `;
+
+                            if (count % 2 === 1) {
+                                tableContent += '</tr>';
+                            }
+
+                            count++;
+                        }
+
                         if (count % 2 === 1) {
-                            tableContent += '</tr>';
+                            tableContent += '<td></td></tr>';
                         }
 
-                        count++;
+                        tableContent += '</table>';
                     }
-
-                    // If the last row has only one cell, close it with an empty cell for alignment
-                    if (count % 2 === 1) {
-                        tableContent += '<td></td></tr>';
-                    }
-
-                    tableContent += '</table>';
 
                     tabContent.append(`
                         <div class="tab-pane fade ${isFirstTab ? 'show active' : ''}" id="${tabId}" role="tabpanel" aria-labelledby="${tabId}-tab">

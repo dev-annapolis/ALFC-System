@@ -10,10 +10,10 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('insurance_commisioners', function (Blueprint $table) {
+        Schema::create('insurance_commissioners', function (Blueprint $table) {
             $table->foreignId('insurance_detail_id')->nullable()->constrained()->onDelete('cascade');
-            $table->foreignId('commisioner_id')->nullable()->constrained()->onDelete('cascade');
-            $table->foreignId('commisioner_name')->nullable()->constrained()->onDelete('cascade');
+            $table->foreignId('commissioner_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('commissioner_name')->nullable();
             $table->string('amount')->nullable();
             $table->timestamps();
         });
@@ -24,6 +24,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('insurance_commisioners');
+        Schema::dropIfExists('insurance_commissioners');
     }
 };
