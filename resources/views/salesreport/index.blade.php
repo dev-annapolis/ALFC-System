@@ -31,7 +31,7 @@
                     <th>Contact Number </br> Email</th>
 
                     <th>Sales Associate </br>( Sales Team )</th>
-                    <th>Branch Manager </br>( Source )</th>
+                    <th>Source </th>
                     <th>Sroduct</th>
 
                     <th>Sale Date </br> Good As Sales Date </br> Policy Inception Date</th>
@@ -86,7 +86,7 @@ $(document).ready(function() {
                     
                     
                     <td>${detail.sales_associate} </br>( ${detail.sales_team} )</td>
-                    <td>${detail.branch_manager} </br>( ${detail.source} )</td>
+                    <td>${detail.source} </td>
                     <td>${detail.subproduct}</td>
 
                     <td>${detail.sale_date} </br> ${detail.good_as_sales_date} </br> ${detail.policy_inception_date}</td>

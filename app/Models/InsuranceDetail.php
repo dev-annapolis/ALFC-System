@@ -7,38 +7,38 @@ use Illuminate\Database\Eloquent\Model;
 class InsuranceDetail extends Model
 {
     protected $fillable = [
-        'assured_detail_id', 
-        'issuance_code', 
-        'sale_date', 
-        'classification', 
-        'insurance_status', 
-        'team_id', 
-        'sales_associate_id', 
-        'sales_manager_id', 
-        'book_number', 
-        'filing_number', 
-        'database_remarks', 
-        'pid_received_date', 
-        'pid_completion_date', 
-        'pid_status', 
-        'provider_id', 
-        'product_id', 
-        'subproduct_id', 
-        'product_type', 
-        'source_id', 
-        'source_branch_id', 
-        'if_gdfi_id', 
-        'mortgagee', 
-        'area_id', 
-        'alfc_branch_id', 
-        'policy_number', 
-        'plate_conduction_number', 
-        'description', 
-        'policy_inception_date', 
-        'expiry_date', 
-        'mode_of_payment_id', 
-        'loan_amount', 
-        'total_sum_insured', 
+        'assured_detail_id',
+        'issuance_code',
+        'sale_date',
+        'classification',
+        'insurance_status',
+        'team_id',
+        'sales_associate_id',
+        'sales_manager_id',
+        'book_number',
+        'filing_number',
+        'database_remarks',
+        'pid_received_date',
+        'pid_completion_date',
+        'pid_status',
+        'provider_id',
+        'product_id',
+        'subproduct_id',
+        'product_type',
+        'source_id',
+        'source_branch_id',
+        'if_gdfi_id',
+        'mortgagee',
+        'area_id',
+        'alfc_branch_id',
+        'policy_number',
+        'plate_conduction_number',
+        'description',
+        'policy_inception_date',
+        'expiry_date',
+        'mode_of_payment_id',
+        'loan_amount',
+        'total_sum_insured',
         'policy_expiration_aging'
     ];
 
@@ -99,21 +99,25 @@ class InsuranceDetail extends Model
 
     public function collectionDetails()
     {
-        return $this->hasMany(CollectionDetail::class);
+        return $this->hasOne(CollectionDetail::class);
     }
 
     public function commissionDetails()
     {
-        return $this->hasMany(CommissionDetail::class);
+        return $this->hasOne(CommissionDetail::class);
     }
 
-    public function paymentDetails()
+    public function paymentDetail()
     {
-        return $this->hasMany(PaymentDetail::class);
+        return $this->hasOne(PaymentDetail::class);
     }
 
     public function insuranceCommissioner()
     {
         return $this->hasOne(InsuranceCommissioner::class);
+    }
+    public function assuredDetail()
+    {
+        return $this->belongsTo(AssuredDetail::class);
     }
 }
