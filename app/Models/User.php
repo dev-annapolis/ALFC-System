@@ -11,7 +11,17 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    protected $fillable = ['username', 'password', 'name', 'email', 'viber_number', 'role_id', 'status', 'email_verified_at'];
+    protected $fillable = [
+        'username', 
+        'password', 
+        'name', 
+        'email', 
+        'viber_number', 
+        'role_id', 
+        'status', 
+        'email_verified_at', 
+        'remember_token'
+    ];
 
     public function role()
     {
