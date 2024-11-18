@@ -97,12 +97,12 @@ class InsuranceDetail extends Model
         return $this->belongsTo(ModeOfPayment::class);
     }
 
-    public function collectionDetails()
+    public function collectionDetail()
     {
         return $this->hasOne(CollectionDetail::class);
     }
 
-    public function commissionDetails()
+    public function commissionDetail()
     {
         return $this->hasOne(CommissionDetail::class);
     }
@@ -114,10 +114,14 @@ class InsuranceDetail extends Model
 
     public function insuranceCommissioner()
     {
-        return $this->hasOne(InsuranceCommissioner::class);
+        return $this->hasMany(InsuranceCommissioner::class);
     }
     public function assuredDetail()
     {
         return $this->belongsTo(AssuredDetail::class);
+    }
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
     }
 }

@@ -95,7 +95,7 @@ class UniversalTableController extends Controller
                 'net_discounted',
                 'amount_due_to_provider',
                 'full_commission',
-                'marketing_fund',
+                'travel_incentives',
                 'offsetting',
                 'promo',
                 'total_commission',
