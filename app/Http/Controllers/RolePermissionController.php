@@ -28,7 +28,7 @@ class RolePermissionController extends Controller
             'insurance_details' => [
                 'name',
                 'issuance_code',
-                'team',
+                'team_name',
                 'sale_date',
                 'sales_associate_name',
                 'sales_manager_name',
@@ -148,7 +148,7 @@ class RolePermissionController extends Controller
             'insurance_details' => [
                 'name',
                 'issuance_code',
-                'team',
+                'team_name',
                 'sale_date',
                 'sales_associate_name',
                 'sales_manager_name',
