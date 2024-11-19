@@ -219,15 +219,11 @@ $(document).ready(function() {
                         $('.edit-btn').on('click', function () {
                             const key = $(this).data('key');
                             const inputField = $(`#${key}`);
-                            const editButton = $(this);
-                            const tableName = $(this).data('table'); // Get the table name from the button's data attribute
-
-                            // Store the original value in case the user cancels
                             const originalValue = inputField.val();
-
-                            // Check if the key is one of the dropdown fields
+                            const editButton = $(this);
+                            const tableName = $(this).data('table'); 
+                            
                             if (['sales_associate_name', 'team_name', 'sales_manager_name', 'provider_name', 'product_name', 'subproduct_name'].includes(key)) {
-                                // Dynamically determine the data source based on the key
                                 let options;
                                 switch (key) {
                                     case 'sales_associate_name':
@@ -252,7 +248,6 @@ $(document).ready(function() {
                                         options = [];
                                 }
 
-                                // Build the dropdown HTML
                                 let dropdownHtml = `<select class="form-select" id="${key}">`;
                                 options.forEach(option => {
                                     dropdownHtml += `
@@ -263,19 +258,15 @@ $(document).ready(function() {
                                 });
                                 dropdownHtml += '</select>';
 
-                                // Replace the input field with the dropdown
                                 inputField.replaceWith(dropdownHtml);
 
-                                // Replace the edit button with save and cancel buttons
                                 editButton.replaceWith(`
                                     <button class="btn btn-outline-success save-btn" data-key="${key}" data-table="${tableName}">Save</button>
                                     <button class="btn btn-outline-secondary cancel-btn" data-key="${key}" data-table="${tableName}">Cancel</button>
                                 `);
 
-                                // Attach save and cancel handlers
                                 attachSaveCancelHandlers(key, tableName, originalValue);
                             } else {
-                                // For other editable fields
                                 inputField.prop('readonly', false).focus();
                                 editButton.replaceWith(`
                                     <button class="btn btn-outline-success save-btn" data-key="${key}" data-table="${tableName}">Save</button>
@@ -291,7 +282,6 @@ $(document).ready(function() {
                             const newValue = $(`#${key}`).val(); // Get the new value
                             const saveButton = $(this);
 
-                            // Save the new value to the server
                             $.ajax({
                                 url: `/api/insurance/details/update`,
                                 method: 'POST',
@@ -309,10 +299,8 @@ $(document).ready(function() {
                                         console.log('Field updated successfully:', response.updatedData);
 
                                         if (['sales_associate_name', 'team_name', 'sales_manager_name', 'provider_name', 'product_name', 'subproduct_name'].includes(key)) {
-                                            // Replace the field with the updated name from the response
                                             $(`#${key}`).replaceWith(`<input type="text" class="form-control" id="${key}" value="${response.updatedName || newValue}" readonly>`);
                                         } else {
-                                            // Replace the field with the new value for other fields
                                             $(`#${key}`).replaceWith(`<input type="text" class="form-control" id="${key}" value="${newValue}" readonly>`);
                                         }
 
@@ -340,8 +328,6 @@ $(document).ready(function() {
                         });
                     }
 
-
-                    // Initial attachment of edit handlers
                     attachEditHandlers();
                 }
             },
