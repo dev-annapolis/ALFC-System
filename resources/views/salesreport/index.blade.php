@@ -119,7 +119,12 @@ $(document).ready(function() {
 });
 
 
-    const salesAssociates = @json($sales_associates);
+    const salesAssociates = @json($sales_associates); //for sales_associate_name
+    const teams = @json($teams); //for team
+    const salesManagers = @json($sales_managers); //for sales_manager_name
+    const providers = @json($providers); //for provider
+    const products = @json($products); //for product
+    const subproducts = @json($subproducts); //for subproduct
 
     function fetchInsuranceDetail(insuranceDetailId) {
         var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -210,7 +215,6 @@ $(document).ready(function() {
                         isFirstTab = false;
                     }
 
-                    // Function to attach edit event handlers
                     function attachEditHandlers() {
                         $('.edit-btn').on('click', function () {
                             const key = $(this).data('key');
@@ -221,22 +225,54 @@ $(document).ready(function() {
                             // Store the original value in case the user cancels
                             const originalValue = inputField.val();
 
-                            // If the key is `sales_associate_name`, transform to dropdown
-                            if (key === 'sales_associate_name') {
+                            // Check if the key is one of the dropdown fields
+                            if (['sales_associate_name', 'team', 'sales_manager_name', 'provider', 'product', 'subproduct'].includes(key)) {
+                                // Dynamically determine the data source based on the key
+                                let options;
+                                switch (key) {
+                                    case 'sales_associate_name':
+                                        options = salesAssociates;
+                                        break;
+                                    case 'team':
+                                        options = teams;
+                                        break;
+                                    case 'sales_manager_name':
+                                        options = salesManagers;
+                                        break;
+                                    case 'provider':
+                                        options = providers;
+                                        break;
+                                    case 'product':
+                                        options = products;
+                                        break;
+                                    case 'subproduct':
+                                        options = subproducts;
+                                        break;
+                                    default:
+                                        options = [];
+                                }
+
+                                // Build the dropdown HTML
                                 let dropdownHtml = `<select class="form-select" id="${key}">`;
-                                salesAssociates.forEach(associate => {
+                                options.forEach(option => {
                                     dropdownHtml += `
-                                        <option value="${associate.id}" ${associate.name === originalValue ? 'selected' : ''}>
-                                            ${associate.name}
+                                        <option value="${option.id}" ${option.name === originalValue ? 'selected' : ''}>
+                                            ${option.name}
                                         </option>
                                     `;
                                 });
                                 dropdownHtml += '</select>';
+
+                                // Replace the input field with the dropdown
                                 inputField.replaceWith(dropdownHtml);
+
+                                // Replace the edit button with save and cancel buttons
                                 editButton.replaceWith(`
                                     <button class="btn btn-outline-success save-btn" data-key="${key}" data-table="${tableName}">Save</button>
                                     <button class="btn btn-outline-secondary cancel-btn" data-key="${key}" data-table="${tableName}">Cancel</button>
                                 `);
+
+                                // Attach save and cancel handlers
                                 attachSaveCancelHandlers(key, tableName, originalValue);
                             } else {
                                 // For other editable fields
@@ -250,7 +286,6 @@ $(document).ready(function() {
                         });
                     }
 
-                    // Function to handle save and cancel logic
                     function attachSaveCancelHandlers(key, tableName, originalValue) {
                         $(`.save-btn[data-key="${key}"]`).on('click', function () {
                             const newValue = $(`#${key}`).val(); // Get the new value
@@ -273,9 +308,9 @@ $(document).ready(function() {
                                     if (response.success) {
                                         console.log('Field updated successfully:', response.updatedData);
 
-                                        if (key === 'sales_associate_name') {
-                                            // Replace the field with the updated name instead of the ID
-                                            $(`#${key}`).replaceWith(`<input type="text" class="form-control" id="${key}" value="${response.updatedName}" readonly>`);
+                                        if (['sales_associate_name', 'team', 'sales_manager_name', 'provider', 'product', 'subproduct'].includes(key)) {
+                                            // Replace the field with the updated name from the response
+                                            $(`#${key}`).replaceWith(`<input type="text" class="form-control" id="${key}" value="${response.updatedName || newValue}" readonly>`);
                                         } else {
                                             // Replace the field with the new value for other fields
                                             $(`#${key}`).replaceWith(`<input type="text" class="form-control" id="${key}" value="${newValue}" readonly>`);
@@ -304,6 +339,7 @@ $(document).ready(function() {
                             attachEditHandlers();
                         });
                     }
+
 
                     // Initial attachment of edit handlers
                     attachEditHandlers();
