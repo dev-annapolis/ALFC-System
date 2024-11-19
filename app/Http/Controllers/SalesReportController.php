@@ -23,6 +23,12 @@ use App\Models\SalesManager;
 use App\Models\Provider;
 use App\Models\Product;
 use App\Models\Subproduct;
+use App\Models\Source;
+use App\Models\Sourcebranch;
+use App\Models\IfGdfi;
+use App\Models\Area;
+use App\Models\AlfcBranch;
+use App\Models\ModeOfPayment;
 
 class SalesReportController extends Controller
 {
@@ -35,7 +41,15 @@ class SalesReportController extends Controller
         $products = Product::where('status', 'active')->get();
         $subproducts = Subproduct::where('status', 'active')->get();
 
-        return view('salesreport.index', compact('sales_associates', 'teams', 'sales_managers', 'providers', 'products', 'subproducts'));
+        $sources = Source::where('status', 'active')->get();
+        $sourcebranches = Sourcebranch::where('status', 'active')->get();
+        $ifgdfis = IfGdfi::where('status', 'active')->get();
+        $areas = Area::where('status', 'active')->get();
+        $alfcbranches = AlfcBranch::where('status', 'active')->get();
+        $modeofpayments = ModeOfPayment::where('status', 'active')->get();
+
+
+        return view('salesreport.index', compact('sales_associates', 'teams', 'sales_managers', 'providers', 'products', 'subproducts', 'sources', 'sourcebranches', 'ifgdfis', 'areas', 'alfcbranches', 'modeofpayments'));
     }
 
     public function salesReportData()
