@@ -185,17 +185,16 @@ class SalesReportController extends Controller
                     'viber_account' => $insuranceDetail->assuredDetail->viber_account ?? "N/A",
                     'nature_of_business' => $insuranceDetail->assuredDetail->nature_of_business ?? "N/A",
                     'other_assets' => $insuranceDetail->assuredDetail->other_assets ?? "N/A",
-                    'other_source_of_business' => $insuranceDetail->assuredDetail->other_source_of_business ?? "N/A",
-                    // 'remarks' => $insuranceDetail->assuredDetail->remarks ?? "N/A",
+                    'other_source_of_business' => $insuranceDetail->assuredDetail->other_source_of_business ?? "N/A"
                 ];
             case 'insurance_details':
                 return [
                     'name' => $insuranceDetail->assuredDetail->name ?? "N/A",
                     'issuance_code' => $insuranceDetail->issuance_code ?? "N/A",
-                    'sales_associate_name' => $insuranceDetail->salesAssociate->name ?? "N/A",
-                    'sales_manager' => $insuranceDetail->sales_manager_id ?? "N/A",
-                    'sale_date' => $insuranceDetail->sale_date ?? "N/A",
                     'team' => $insuranceDetail->team->name ?? "N/A",
+                    'sale_date' => $insuranceDetail->sale_date ?? "N/A",
+                    'sales_associate_name' => $insuranceDetail->salesAssociate->name ?? "N/A",
+                    'sales_manager_name' => $insuranceDetail->salesManager->name ?? "N/A",
                     'classification' => $insuranceDetail->classification ?? "N/A",
                     'insurance_status' => $insuranceDetail->insurance_status ?? "N/A",
                     'book_number' => $insuranceDetail->book_number ?? "N/A",
