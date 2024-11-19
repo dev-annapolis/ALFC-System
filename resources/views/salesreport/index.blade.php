@@ -226,26 +226,26 @@ $(document).ready(function() {
                             const originalValue = inputField.val();
 
                             // Check if the key is one of the dropdown fields
-                            if (['sales_associate_name', 'team', 'sales_manager_name', 'provider', 'product', 'subproduct'].includes(key)) {
+                            if (['sales_associate_name', 'team_name', 'sales_manager_name', 'provider_name', 'product_name', 'subproduct_name'].includes(key)) {
                                 // Dynamically determine the data source based on the key
                                 let options;
                                 switch (key) {
                                     case 'sales_associate_name':
                                         options = salesAssociates;
                                         break;
-                                    case 'team':
+                                    case 'team_name':
                                         options = teams;
                                         break;
                                     case 'sales_manager_name':
                                         options = salesManagers;
                                         break;
-                                    case 'provider':
+                                    case 'provider_name':
                                         options = providers;
                                         break;
-                                    case 'product':
+                                    case 'product_name':
                                         options = products;
                                         break;
-                                    case 'subproduct':
+                                    case 'subproduct_name':
                                         options = subproducts;
                                         break;
                                     default:
@@ -308,7 +308,7 @@ $(document).ready(function() {
                                     if (response.success) {
                                         console.log('Field updated successfully:', response.updatedData);
 
-                                        if (['sales_associate_name', 'team', 'sales_manager_name', 'provider', 'product', 'subproduct'].includes(key)) {
+                                        if (['sales_associate_name', 'team_name', 'sales_manager_name', 'provider_name', 'product_name', 'subproduct_name'].includes(key)) {
                                             // Replace the field with the updated name from the response
                                             $(`#${key}`).replaceWith(`<input type="text" class="form-control" id="${key}" value="${response.updatedName || newValue}" readonly>`);
                                         } else {
