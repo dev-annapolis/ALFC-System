@@ -12,17 +12,30 @@ use App\Models\CollectionDetail;
 use App\Models\Assured;
 use App\Models\PaymentDetail;
 use App\Models\RolePermission;
-use App\Models\SalesAssociate;
+
 use Log;
 use Auth;
 use DB;
+
+use App\Models\Team;
+use App\Models\SalesAssociate;
+use App\Models\SalesManager;
+use App\Models\Provider;
+use App\Models\Product;
+use App\Models\Subproduct;
 
 class SalesReportController extends Controller
 {
     public function salesReportIndex()
     {
-        $sales_associates = SalesAssociate::where('status', 'active')->get(); // Fetch the data
-        return view('salesreport.index', compact('sales_associates'));
+        $teams = Team::where('status', 'active')->get();
+        $sales_associates = SalesAssociate::where('status', 'active')->get();
+        $sales_managers = SalesManager::where('status', 'active')->get();
+        $providers = Provider::where('status', 'active')->get();
+        $products = Product::where('status', 'active')->get();
+        $subproducts = Subproduct::where('status', 'active')->get();
+
+        return view('salesreport.index', compact('sales_associates', 'teams', 'sales_managers', 'providers', 'products', 'subproducts'));
     }
 
     public function salesReportData()
