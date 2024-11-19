@@ -68,6 +68,8 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+
+
 $(document).ready(function() {
     // Load the sales report data when the page loads
     $.ajax({
@@ -116,90 +118,58 @@ $(document).ready(function() {
     });
 });
 
-function fetchInsuranceDetail(insuranceDetailId) {
-    var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    $.ajax({
-        url: `/api/insurance/details/${insuranceDetailId}`,
-        method: 'GET',
-        headers: {
-            'X-CSRF-TOKEN': csrfToken // Add CSRF token here
-        },
-        success: function(data) {
-            console.log(data); // Check the structure of the data in the console
-            var tabList = $('#insuranceTabs');
-            var tabContent = $('#insuranceTabContent');
-            tabList.empty();
-            tabContent.empty();
+    const salesAssociates = @json($sales_associates); //for sales_associate_name
+    const teams = @json($teams); //for team
+    const salesManagers = @json($sales_managers); //for sales_manager_name
+    const providers = @json($providers); //for provider
+    const products = @json($products); //for product
+    const subproducts = @json($subproducts); //for subproduct
 
-            // Check if the data object is empty
-            if (Object.keys(data).length === 0) {
-                tabContent.append(`
-                    <div class="alert alert-info" role="alert">
-                        No details available for this insurance record.
-                    </div>
-                `);
-            } else {
-                let isFirstTab = true; // Track the first tab for active class assignment
+    function fetchInsuranceDetail(insuranceDetailId) {
+        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-                // Iterate over each table and create a tab and a tab pane
-                for (const table in data) {
-                    const tableData = data[table].data;
-                    const editableFields = data[table].editable;
-                    const tableName = table.replace('_', ' ').toUpperCase();
-                    const tabId = `tab-${table}`;
-            console.log("Editable fields for table:", editableFields);
+        $.ajax({
+            url: `/api/insurance/details/${insuranceDetailId}`,
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken // Add CSRF token here
+            },
+            success: function(data) {
+                console.log(data); // Check the structure of the data in the console
+                var tabList = $('#insuranceTabs');
+                var tabContent = $('#insuranceTabContent');
+                tabList.empty();
+                tabContent.empty();
 
-                    tabList.append(`
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link ${isFirstTab ? 'active' : ''}" id="${tabId}-tab" data-bs-toggle="tab" data-bs-target="#${tabId}" type="button" role="tab" aria-controls="${tabId}" aria-selected="${isFirstTab}">
-                                ${tableName}
-                            </button>
-                        </li>
+                // Check if the data object is empty
+                if (Object.keys(data).length === 0) {
+                    tabContent.append(`
+                        <div class="alert alert-info" role="alert">
+                            No details available for this insurance record.
+                        </div>
                     `);
+                } else {
+                    let isFirstTab = true; // Track the first tab for active class assignment
 
-                    let tableContent = '<table class="table">';
-                        if (table === 'insurance_commissioners') {
-                            // Render editable input fields for `insurance_commissioners` in a row
-                            tableContent = '<div class="row">';
-                            tableData.forEach((commissioner, index) => {
-                                tableContent += `
-                                    <div class="col-md-4 mb-3">
-                                        <label for="commissioner-title-${index}" class="form-label"><strong>Commissioner Title</strong></label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="commissioner-title-${index}" data-key="commissioner_title-${index}" value="${commissioner.commissioner_title}" readonly>
-                                            <button class="btn btn-outline-primary edit-btn" data-key="commissioner-title-${index}" data-index="${index}" data-table="${table}">
-                                                Edit
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label for="commissioner-name-${index}" class="form-label"><strong>Commissioner Name</strong></label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="commissioner-name-${index}" data-key="commissioner_name-${index}" value="${commissioner.commissioner_name}" readonly>
-                                            <button class="btn btn-outline-primary edit-btn" data-key="commissioner-name-${index}" data-index="${index}" data-table="${table}">
-                                                Edit
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 mb-3">
-                                        <label for="commissioner-amount-${index}" class="form-label"><strong>Amount</strong></label>
-                                        <div class="input-group">
-                                            <input type="text" class="form-control" id="commissioner-amount-${index}" data-key="commissioner_amount-${index}" value="${commissioner.amount}" readonly>
-                                            <button class="btn btn-outline-primary edit-btn" data-key="commissioner-amount-${index}" data-index="${index}" data-table="${table}">
-                                                Edit
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                `;
-                            });
-                            tableContent += '</div>';
-                        }
+                    // Iterate over each table and create a tab and a tab pane
+                    for (const table in data) {
+                        const tableData = data[table].data;
+                        const editableFields = data[table].editable;
+                        const tableName = table.replace('_', ' ').toUpperCase();
+                        const tabId = `tab-${table}`;
 
-                        else {
-                                                // Default rendering for other tables
-                        tableContent = '<table class="table">';
+                        console.log("Editable fields for table:", editableFields);
+
+                        tabList.append(`
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link ${isFirstTab ? 'active' : ''}" id="${tabId}-tab" data-bs-toggle="tab" data-bs-target="#${tabId}" type="button" role="tab" aria-controls="${tabId}" aria-selected="${isFirstTab}">
+                                    ${tableName}
+                                </button>
+                            </li>
+                        `);
+
+                        let tableContent = '<table class="table">';
                         let count = 0;
 
                         for (const [key, value] of Object.entries(tableData)) {
@@ -210,7 +180,7 @@ function fetchInsuranceDetail(insuranceDetailId) {
                                 tableContent += '<tr>';
                             }
 
-                            tableContent += `  
+                            tableContent += `
                                 <td>
                                     <label><strong>${formattedKey}</strong></label>
                                     <div class="input-group">
@@ -236,101 +206,138 @@ function fetchInsuranceDetail(insuranceDetailId) {
                         }
 
                         tableContent += '</table>';
+
+                        tabContent.append(`
+                            <div class="tab-pane fade ${isFirstTab ? 'show active' : ''}" id="${tabId}" role="tabpanel" aria-labelledby="${tabId}-tab">
+                                ${tableContent}
+                            </div>
+                        `);
+                        isFirstTab = false;
                     }
 
-                    tabContent.append(`
-                        <div class="tab-pane fade ${isFirstTab ? 'show active' : ''}" id="${tabId}" role="tabpanel" aria-labelledby="${tabId}-tab">
-                            ${tableContent}
-                        </div>
-                    `);
-                    isFirstTab = false;
-                }
+                    function attachEditHandlers() {
+                        $('.edit-btn').on('click', function () {
+                            const key = $(this).data('key');
+                            const inputField = $(`#${key}`);
+                            const originalValue = inputField.val();
+                            const editButton = $(this);
+                            const tableName = $(this).data('table'); 
+                            
+                            if (['sales_associate_name', 'team_name', 'sales_manager_name', 'provider_name', 'product_name', 'subproduct_name'].includes(key)) {
+                                let options;
+                                switch (key) {
+                                    case 'sales_associate_name':
+                                        options = salesAssociates;
+                                        break;
+                                    case 'team_name':
+                                        options = teams;
+                                        break;
+                                    case 'sales_manager_name':
+                                        options = salesManagers;
+                                        break;
+                                    case 'provider_name':
+                                        options = providers;
+                                        break;
+                                    case 'product_name':
+                                        options = products;
+                                        break;
+                                    case 'subproduct_name':
+                                        options = subproducts;
+                                        break;
+                                    default:
+                                        options = [];
+                                }
 
-                // Function to attach edit event handlers
-                function attachEditHandlers() {
-                    $('.edit-btn').on('click', function() {
-                        const key = $(this).data('key');
-                        const inputField = $(`#${key}`);
-                        const editButton = $(this);
-                        const tableName = $(this).data('table'); // Get the table name from the button's data attribute
+                                let dropdownHtml = `<select class="form-select" id="${key}">`;
+                                options.forEach(option => {
+                                    dropdownHtml += `
+                                        <option value="${option.id}" ${option.name === originalValue ? 'selected' : ''}>
+                                            ${option.name}
+                                        </option>
+                                    `;
+                                });
+                                dropdownHtml += '</select>';
 
-                        // Store the original value in case the user cancels
-                        const originalValue = inputField.val();
+                                inputField.replaceWith(dropdownHtml);
 
-                        // Toggle the editable state and replace button with save and cancel buttons
-                        inputField.prop('readonly', false).focus();
-                        editButton.replaceWith(`
-                            <button class="btn btn-outline-success save-btn" data-key="${key}" data-table="${tableName}">Save</button>
-                            <button class="btn btn-outline-secondary cancel-btn" data-key="${key}" data-table="${tableName}">Cancel</button>
-                        `);
+                                editButton.replaceWith(`
+                                    <button class="btn btn-outline-success save-btn" data-key="${key}" data-table="${tableName}">Save</button>
+                                    <button class="btn btn-outline-secondary cancel-btn" data-key="${key}" data-table="${tableName}">Cancel</button>
+                                `);
 
-                        // Add event listener for save button
-                        $(`.save-btn[data-key="${key}"]`).on('click', function() {
-                            inputField.prop('readonly', true);
-                            const newValue = inputField.val();
-                            const tableName = $(this).data('table'); // Pass the tableName to save logic
+                                attachSaveCancelHandlers(key, tableName, originalValue);
+                            } else {
+                                inputField.prop('readonly', false).focus();
+                                editButton.replaceWith(`
+                                    <button class="btn btn-outline-success save-btn" data-key="${key}" data-table="${tableName}">Save</button>
+                                    <button class="btn btn-outline-secondary cancel-btn" data-key="${key}" data-table="${tableName}">Cancel</button>
+                                `);
+                                attachSaveCancelHandlers(key, tableName, originalValue);
+                            }
+                        });
+                    }
 
-                            // Log the table name, field name (key), and new value to the console
-                            console.log(`Table Name: ${tableName}, Field saved: ${key}, New Value: ${newValue}`);
+                    function attachSaveCancelHandlers(key, tableName, originalValue) {
+                        $(`.save-btn[data-key="${key}"]`).on('click', function () {
+                            const newValue = $(`#${key}`).val(); // Get the new value
+                            const saveButton = $(this);
 
-                            // Replace save and cancel buttons with edit button again
-                            $(this).replaceWith(`
-                                <button class="btn btn-outline-primary edit-btn" data-key="${key}" data-table="${tableName}">Edit</button>
-                            `);
-                            $(`.cancel-btn[data-key="${key}"]`).remove();
-
-                            // Reattach edit handler to the new edit button
-                            attachEditHandlers();
-
-                            // Save the new value to the server here
                             $.ajax({
                                 url: `/api/insurance/details/update`,
                                 method: 'POST',
                                 headers: {
-                                    'X-CSRF-TOKEN': csrfToken // Add CSRF token here
+                                    'X-CSRF-TOKEN': csrfToken
                                 },
                                 data: {
                                     table: tableName,
                                     field_name: key,
                                     value: newValue,
-                                    insurance_detail_id: insuranceDetailId // Make sure to send the insurance detail ID
+                                    insurance_detail_id: insuranceDetailId
                                 },
-                                success: function(response) {
+                                success: function (response) {
                                     if (response.success) {
                                         console.log('Field updated successfully:', response.updatedData);
+
+                                        if (['sales_associate_name', 'team_name', 'sales_manager_name', 'provider_name', 'product_name', 'subproduct_name'].includes(key)) {
+                                            $(`#${key}`).replaceWith(`<input type="text" class="form-control" id="${key}" value="${response.updatedName || newValue}" readonly>`);
+                                        } else {
+                                            $(`#${key}`).replaceWith(`<input type="text" class="form-control" id="${key}" value="${newValue}" readonly>`);
+                                        }
+
+                                        // Update buttons
+                                        saveButton.replaceWith(`
+                                            <button class="btn btn-outline-primary edit-btn" data-key="${key}" data-table="${tableName}">Edit</button>
+                                        `);
+                                        $(`.cancel-btn[data-key="${key}"]`).remove();
+                                        attachEditHandlers();
                                     }
                                 },
-                                error: function(error) {
+                                error: function (error) {
                                     console.log('Error updating field:', error);
                                 }
                             });
                         });
 
-                        // Add event listener for cancel button
-                        $(`.cancel-btn[data-key="${key}"]`).on('click', function() {
-                            inputField.val(originalValue).prop('readonly', true);
-
-                            // Replace save and cancel buttons with edit button again
+                        $(`.cancel-btn[data-key="${key}"]`).on('click', function () {
+                            $(`#${key}`).replaceWith(`<input type="text" class="form-control" id="${key}" value="${originalValue}" readonly>`);
                             $(this).replaceWith(`
                                 <button class="btn btn-outline-primary edit-btn" data-key="${key}" data-table="${tableName}">Edit</button>
                             `);
                             $(`.save-btn[data-key="${key}"]`).remove();
-
-                            // Reattach edit handler to the new edit button
                             attachEditHandlers();
                         });
-                    });
-                }
+                    }
 
-                // Initial attachment of edit handlers
-                attachEditHandlers();
+                    attachEditHandlers();
+                }
+            },
+            error: function () {
+                alert('Failed to fetch insurance details.');
             }
-        },
-        error: function() {
-            alert('Failed to fetch insurance details.');
-        }
-    });
-}
+        });
+    }
+
+
 
 
 

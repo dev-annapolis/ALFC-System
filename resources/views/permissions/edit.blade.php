@@ -20,8 +20,14 @@
                 <tr>
                     <td></td>
                     @foreach($roles as $role)
-                        <th>View</th>
-                        <th>Edit</th>
+                        <th>
+                            View<br>
+                            <input type="checkbox" class="check-all" data-type="view" data-role="{{ $role->id }}">
+                        </th>
+                        <th>
+                            Edit<br>
+                            <input type="checkbox" class="check-all" data-type="edit" data-role="{{ $role->id }}">
+                        </th>
                     @endforeach
                 </tr>
             </thead>
@@ -35,11 +41,15 @@
                             <td>{{ ucwords(str_replace('_', ' ', $column)) }}</td>
                             @foreach($roles as $role)
                                 <td>
-                                    <input type="checkbox" name="permissions[{{ $role->id }}][{{ $table }}][{{ $column }}][view]"
+                                    <input type="checkbox" 
+                                           class="checkbox-view checkbox-role-{{ $role->id }}" 
+                                           name="permissions[{{ $role->id }}][{{ $table }}][{{ $column }}][view]"
                                            {{ $role->rolePermissions->where('table_name', $table)->where('column_name', $column)->where('can_view', true)->isNotEmpty() ? 'checked' : '' }}>
                                 </td>
                                 <td>
-                                    <input type="checkbox" name="permissions[{{ $role->id }}][{{ $table }}][{{ $column }}][edit]"
+                                    <input type="checkbox" 
+                                           class="checkbox-edit checkbox-role-{{ $role->id }}" 
+                                           name="permissions[{{ $role->id }}][{{ $table }}][{{ $column }}][edit]"
                                            {{ $role->rolePermissions->where('table_name', $table)->where('column_name', $column)->where('can_edit', true)->isNotEmpty() ? 'checked' : '' }}>
                                 </td>
                             @endforeach
@@ -50,4 +60,22 @@
         </table>
         <button type="submit" class="btn btn-primary">Save Permissions</button>
     </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const checkAllBoxes = document.querySelectorAll('.check-all');
+            
+            checkAllBoxes.forEach(checkAllBox => {
+                checkAllBox.addEventListener('change', function () {
+                    const role = this.getAttribute('data-role');
+                    const type = this.getAttribute('data-type');
+                    const checkboxes = document.querySelectorAll(`.checkbox-${type}.checkbox-role-${role}`);
+                    
+                    checkboxes.forEach(checkbox => {
+                        checkbox.checked = this.checked;
+                    });
+                });
+            });
+        });
+    </script>
 @endsection
