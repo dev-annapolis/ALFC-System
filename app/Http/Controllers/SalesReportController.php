@@ -353,7 +353,7 @@ class SalesReportController extends Controller
             'commissionDetail',
             'collectionDetail.tele',
             'insurancecommissioner.commissioner',
-            'team', // Ensure team relationship is loaded
+            'team',
         ])->find($insuranceDetailId);
 
         // Ensure the insurance detail record exists
@@ -374,117 +374,103 @@ class SalesReportController extends Controller
                     return response()->json(['error' => 'Assured record not found'], 404);
                 }
 
-                case 'insurance_details':
-                    if ($key === 'sales_associate_name') {
-                        $insuranceDetail->sales_associate_id = $newValue;
-                        $insuranceDetail->save();
-                
-                        $salesAssociate = SalesAssociate::find($newValue);
-                        if ($salesAssociate) {
-                            return response()->json([
-                                'success' => 'Field updated successfully',
-                                'updatedData' => $insuranceDetail,
-                                'updatedName' => $salesAssociate->name // Include the name of the sales associate
-                            ]);
-                        } else {
-                            return response()->json(['error' => 'Sales associate not found'], 404);
-                        }
-                    }
-                
-                    if ($key === 'team_name') {
-                        $insuranceDetail->team_id = $newValue;
-                        $insuranceDetail->save();
-                
-                        $team = Team::find($newValue);
-                        if ($team) {
-                            return response()->json([
-                                'success' => 'Field updated successfully',
-                                'updatedData' => $insuranceDetail,
-                                'updatedName' => $team->name // Include the name of the team
-                            ]);
-                        } else {
-                            return response()->json(['error' => 'Team not found'], 404);
-                        }
-                    }
-                
-                    if ($key === 'sales_manager_name') {
-                        $insuranceDetail->sales_manager_id = $newValue;
-                        $insuranceDetail->save();
-                
-                        $salesManager = SalesManager::find($newValue);
-                        if ($salesManager) {
-                            return response()->json([
-                                'success' => 'Field updated successfully',
-                                'updatedData' => $insuranceDetail,
-                                'updatedName' => $salesManager->name // Include the name of the sales manager
-                            ]);
-                        } else {
-                            return response()->json(['error' => 'Sales manager not found'], 404);
-                        }
-                    }
-                
-                    if ($key === 'provider_name') {
-                        $insuranceDetail->provider_id = $newValue;
-                        $insuranceDetail->save();
-                
-                        $provider = Provider::find($newValue);
-                        if ($provider) {
-                            return response()->json([
-                                'success' => 'Field updated successfully',
-                                'updatedData' => $insuranceDetail,
-                                'updatedName' => $provider->name // Include the name of the provider
-                            ]);
-                        } else {
-                            return response()->json(['error' => 'Provider not found'], 404);
-                        }
-                    }
-                
-                    if ($key === 'product_name') {
-                        $insuranceDetail->product_id = $newValue;
-                        $insuranceDetail->save();
-                
-                        $product = Product::find($newValue);
-                        if ($product) {
-                            return response()->json([
-                                'success' => 'Field updated successfully',
-                                'updatedData' => $insuranceDetail,
-                                'updatedName' => $product->name // Include the name of the product
-                            ]);
-                        } else {
-                            return response()->json(['error' => 'Product not found'], 404);
-                        }
-                    }
-                
-                    if ($key === 'subproduct_name') {
-                        $insuranceDetail->subproduct_id = $newValue;
-                        $insuranceDetail->save();
-                
-                        $subproduct = Subproduct::find($newValue);
-                        if ($subproduct) {
-                            return response()->json([
-                                'success' => 'Field updated successfully',
-                                'updatedData' => $insuranceDetail,
-                                'updatedName' => $subproduct->name // Include the name of the subproduct
-                            ]);
-                        } else {
-                            return response()->json(['error' => 'Subproduct not found'], 404);
-                        }
-                    }
-                
-                    if (isset($insuranceDetail->$key)) {
-                        $insuranceDetail->$key = $newValue;
-                        $insuranceDetail->save();
-                
-                        return response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail]);
-                    }
-                
-                    return response()->json(['error' => 'Field name does not exist in the table or its relations'], 400);
-                
+            case 'insurance_details':
+                // Handle field updates for related models
+                if ($key === 'sales_associate_name') {
+                    $insuranceDetail->sales_associate_id = $newValue;
+                    $insuranceDetail->save();
+
+                    $salesAssociate = SalesAssociate::find($newValue);
+                    return $salesAssociate
+                        ? response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail, 'updatedName' => $salesAssociate->name])
+                        : response()->json(['error' => 'Sales associate not found'], 404);
+                }
+
+                if ($key === 'team_name') {
+                    $insuranceDetail->team_id = $newValue;
+                    $insuranceDetail->save();
+
+                    $team = Team::find($newValue);
+                    return $team
+                        ? response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail, 'updatedName' => $team->name])
+                        : response()->json(['error' => 'Team not found'], 404);
+                }
+
+                if ($key === 'source_name') {
+                    $insuranceDetail->source_id = $newValue;
+                    $insuranceDetail->save();
+
+                    $source = Source::find($newValue);
+                    return $source
+                        ? response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail, 'updatedName' => $source->name])
+                        : response()->json(['error' => 'Source not found'], 404);
+                }
+
+                if ($key === 'source_branch_name') {
+                    $insuranceDetail->source_branch_id = $newValue;
+                    $insuranceDetail->save();
+
+                    $sourceBranch = SourceBranch::find($newValue);
+                    return $sourceBranch
+                        ? response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail, 'updatedName' => $sourceBranch->name])
+                        : response()->json(['error' => 'Source branch not found'], 404);
+                }
+
+                if ($key === 'if_gdfi') {
+                    $insuranceDetail->if_gdfi_id = $newValue;
+                    $insuranceDetail->save();
+
+                    $ifGdfi = IfGdfi::find($newValue);
+                    return $ifGdfi
+                        ? response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail, 'updatedName' => $ifGdfi->name])
+                        : response()->json(['error' => 'IF GDFI not found'], 404);
+                }
+
+                if ($key === 'area_name') {
+                    $insuranceDetail->area_id = $newValue;
+                    $insuranceDetail->save();
+
+                    $area = Area::find($newValue);
+                    return $area
+                        ? response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail, 'updatedName' => $area->name])
+                        : response()->json(['error' => 'Area not found'], 404);
+                }
+
+                if ($key === 'alfc_branch_name') {
+                    $insuranceDetail->alfc_branch_id = $newValue;
+                    $insuranceDetail->save();
+
+                    $alfcBranch = AlfcBranch::find($newValue);
+                    return $alfcBranch
+                        ? response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail, 'updatedName' => $alfcBranch->name])
+                        : response()->json(['error' => 'ALFC branch not found'], 404);
+                }
+
+                if ($key === 'mode_of_payment_name') {
+                    $insuranceDetail->mode_of_payment_id = $newValue;
+                    $insuranceDetail->save();
+
+                    $modeOfPayment = ModeOfPayment::find($newValue);
+                    return $modeOfPayment
+                        ? response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail, 'updatedName' => $modeOfPayment->name])
+                        : response()->json(['error' => 'Mode of payment not found'], 404);
+                }
+
+                // Fallback for generic fields
+                if (isset($insuranceDetail->$key)) {
+                    $insuranceDetail->$key = $newValue;
+                    $insuranceDetail->save();
+
+                    return response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail]);
+                }
+
+                return response()->json(['error' => 'Field name does not exist in the table or its relations'], 400);
 
             default:
                 return response()->json(['error' => 'Invalid table or field name'], 400);
         }
     }
+
 
 
 
