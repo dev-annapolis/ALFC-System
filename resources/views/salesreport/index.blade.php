@@ -2,17 +2,7 @@
 
 @section('content')
 <style>
-    @media (min-width: 992px) { /* For large screens */
-        .custom-offcanvas {
-            width: 35% !important; /* Make it 70% width on large screens */
-        }
-    }
 
-    @media (max-width: 991px) { /* For smaller screens */
-        .custom-offcanvas {
-            width: 100% !important; /* Full width on smaller screens */
-        }
-    }
 </style>
 
 <div class="container-fluid mt-5">
@@ -71,7 +61,7 @@
 
 
 $(document).ready(function() {
-    // Load the sales report data when the page loads
+        // Load the sales report data when the page loads
         $.ajax({
             url: '/api/sales-report',
             method: 'GET',
@@ -116,6 +106,80 @@ $(document).ready(function() {
             $('#insuranceTabs').empty();
             $('#insuranceTabContent').empty();
         });
+
+        const offcanvas = document.getElementById('detailOffCanvas');
+
+        // Create and style the resize handle
+        const resizeHandle = document.createElement('div');
+        resizeHandle.style.width = '10px';
+        resizeHandle.style.height = '100%';
+        resizeHandle.style.background = '#ccc';
+        resizeHandle.style.cursor = 'ew-resize';
+        resizeHandle.style.position = 'absolute';
+        resizeHandle.style.top = '0';
+        resizeHandle.style.left = '-5px'; /* Slight overlap for better usability */
+        resizeHandle.style.zIndex = '1050';
+
+        offcanvas.appendChild(resizeHandle);
+
+        let isDragging = false;
+        let startX = 0;
+        let startWidth = 0;
+
+        // Helper to calculate dynamic min and max width based on screen size
+        function getDynamicMinWidth() {
+            return 200; // Set your minimum width in pixels
+        }
+
+        function getDynamicMaxWidth() {
+            return window.innerWidth < 992 ? window.innerWidth : Math.floor(window.innerWidth * 0.65);
+        }
+
+        // Start resizing on mousedown
+        resizeHandle.addEventListener('mousedown', function (e) {
+            isDragging = true;
+            startX = e.clientX;
+            startWidth = offcanvas.offsetWidth;
+
+            // Disable text selection while resizing
+            document.body.style.userSelect = 'none';
+            document.body.style.cursor = 'ew-resize';
+        });
+
+        // Resize the offcanvas on mousemove
+        document.addEventListener('mousemove', function (e) {
+            if (!isDragging) return;
+
+            const deltaX = startX - e.clientX; // Calculate the change in mouse position
+            let newWidth = startWidth + deltaX;
+
+            // Constrain the width to min and max values
+            newWidth = Math.max(getDynamicMinWidth(), Math.min(getDynamicMaxWidth(), newWidth));
+
+            offcanvas.style.width = newWidth + 'px';
+        });
+
+        // Stop resizing on mouseup
+        document.addEventListener('mouseup', function () {
+            if (isDragging) {
+                isDragging = false;
+                document.body.style.userSelect = ''; // Restore text selection
+                document.body.style.cursor = ''; // Restore default cursor
+            }
+        });
+
+        // Set initial width based on screen size
+        function setInitialWidth() {
+            if (window.innerWidth >= 992) {
+                offcanvas.style.width = '35%'; // Default 35% for large screens
+            } else {
+                offcanvas.style.width = '100%'; // Default 100% for small screens
+            }
+        }
+
+        // Call the initial setup and handle window resizing
+        setInitialWidth();
+        window.addEventListener('resize', setInitialWidth);
     });
 
 
