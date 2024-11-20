@@ -31,7 +31,7 @@
     /* Font size for md and above (768px and up) */
     @media (min-width: 768px) {
         .alfc-title{
-            font-size: 1rem; /* equivalent to fs-1 */
+            font-size: 0.8rem; /* equivalent to fs-1 */
             margin-top: 0.5rem;
         }
     }
@@ -52,6 +52,7 @@
         display: flex;
         flex-direction: column;
         position: relative;
+
     }
 
     /* Connector line */
@@ -109,6 +110,7 @@
         position: relative;
         z-index: 1;
         background-color: #EFEFEF;
+
     }
 
     .step.completed {
@@ -140,6 +142,7 @@
 
     .form-content {
         padding: 20px;
+        padding-bottom:0;
     }
 
     .form-step {
@@ -187,11 +190,11 @@
 
 
     .button-container {
-        margin-top: 50px;
+        margin-top: 170px;
         display: flex;
         justify-content: flex-end; /* Pushes the button to the right */
-        bottom: 20px;      /* Adjust this value as needed */
         right: 20px;       /* Adjust this value as needed */
+
     }
 
     .submit-button {
@@ -251,26 +254,35 @@
 
     /* Responsive adjustments */
     @media (max-width: 768px) {
+
         .steps {
             flex-direction: row;
             justify-content: space-between;
             padding-left: 0;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
         }
 
         .steps::before {
             display: none;
+            width: 50px;
+            height: 50px;
         }
 
         .step {
             flex-direction: column;
             text-align: center;
             margin: 0;
-            font-size: 0.85em; /* Even smaller font size for smaller screens */
+            font-size: 1.75rem; /* Even smaller font size for smaller screens */
         }
 
         .step::before {
+            height:30px;
+            width:30px;
             margin: 0 auto 5px;
         }
+
+
 
     }
 
@@ -297,8 +309,6 @@
 </style>
 
 
-
-
 <!-- Include Select2 CSS and JS -->
 <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -306,218 +316,138 @@
 
 
 <div class="container-form min-vh-100">
-    <div class="row px-4">
+    <div class="row px-3">
         <!-- Steps section (Sidebar) -->
-        <div class="col-md-3 mt-md-3 col-12 sidebar px-4">
+        <div class="col-md-2 mt-md-3 col-12 sidebar px-4">
 
 
-            <div class="logo-container d-md-flex align-items-center text-center mt-3 mb-5 pt-md-3">
-                <img src="{{ asset('images/frontend/alfc-logo.jpg') }}" alt="Logo" class="img-fluid alfc-logo" style="margin-right: 10px;">
+            <div class="logo-container d-md-flex flex-column align-items-center text-center mt-3 mb-5 pt-md-1 pt-md-1 pt-sm-5">
+                <img src="{{ asset('images/frontend/alfc-logo.jpg') }}" alt="Logo" class="img-fluid alfc-logo mb-3">
                 <p class="fw-bold mb-0 alfc-title">
                     ALFC Insurance Agency Inc.
                 </p>
             </div>
 
-            {{-- <div class="logo-container d-md-flex align-items-center justify-content-sm-center text-sm-center text-md-start m-3 mb-5 bg-danger">
-                <img src="{{ asset('images/frontend/alfc-logo.jpg') }}" alt="Logo" class="img-fluid mb-2 mb-md-0" style="max-width: 50px;">
-                <p class="fw-bold mb-0 ms-md-2">
-                    ALFC Insurance Agency Inc.
-                </p>
-            </div> --}}
-
-
 
             <div class="steps mb-5" id="stepsContainer">
                 <label class="step active fw-bold">
                     <input type="radio" name="step" value="1" checked disabled>
-                    Personal Details
+                    Insurance Details
                 </label>
                 <label class="step">
                     <input type="radio" name="step" value="2" disabled>
-                    Insurance
+                    Commissions
                 </label>
-                <label class="step">
-                    <input type="radio" name="step" value="3" disabled>
-                    Product
-                </label>
-                <label class="step">
-                    <input type="radio" name="step" value="4" disabled>
-                    Commission
-                </label>
-                <label class="step">
-                    <input type="radio" name="step" value="5" disabled>
-                    Payment
-                </label>
+
             </div>
+
         </div>
 
         <!-- Form content section -->
-        <div class="col-md-9 col-12 form-content pt-md-5">
+        <div class="col-md-10 col-12 form-content pt-md-5">
 
-            <!-- Step 1: Personal Information -->
-            <div class="form-step active px-2">
-                <h3 class="main-title fw-bold fs-1 mt-md-5">Personal Details</h3>
+            <!-- Step 1: Insurance Information -->
+            <div class="form-step active px-md-3 mb-md-5">
+                <h3 class="main-title fw-bold fs-1 mt-md-5">Insurance Details</h3>
                 <p class="sub-main-title text-muted mb-md-5">Input the assured's personal details and information accurately.</p>
 
-                <form id="step1 mt-md-5">
+                <form id="step1 mt-md-5 mb-md-5">
 
+                    {{-- Assured Name --}}
                     <div class="row ">
 
-                        <div class="col-md-4 ">
-                            <div class="mb-3 mb-md-4 mb-sm-4 mt-md-3">
-                                <label for="lastName" class="form-label fw-bold fw-bold">Last Name</label>
-                                <input type="text" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="lastName" placeholder="Enter Last Name" required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4 mt-md-3">
-                                <label for="firstName" class="form-label fw-bold">First Name</label>
-                                <input type="text" class="form-control uppercase-input rounded-0 border-1 rounded-0" id="firstName" placeholder="Enter First Name" required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4 mt-md-3">
-                                <label for="middleName" class="form-label fw-bold">Middle Name</label>
-                                <input type="text" class="form-control uppercase-input rounded-0 border-1 rounded-0" id="middleName" placeholder="Enter Middle Name (Optional)">
+                        <div class="col-md-6">
+                            <div class="mb-3 mb-md-3 mt-md-3 mt-sm-5">
+                                <label for="assuredNameLabel" class="form-label fw-bold fw-bold">Assured/Client Name</label>
+                                <input type="text" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="assuredName" placeholder="Enter Assured Full Name" required>
                             </div>
                         </div>
 
                     </div>
 
+                    {{-- Lot Number, Street, and Barangay --}}
                     <div class="row">
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-3 mb-sm-4">
-                                <label for="unitNo" class="form-label fw-bold">Lot Number</label>
+                            <div class="mb-3 mb-md-3 mb-sm-2 mt-md-3 mt-sm-4">
+                                <label for="unitNoLabel" class="form-label fw-bold">Lot Number</label>
                                 <input type="text" class="form-control rounded-0 border-1 rounded-0 border-1" id="unitNo" placeholder="Enter lot number or unit number" required>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-3 mb-sm-4">
-                                <label for="street" class="form-label fw-bold">Street</label>
+                            <div class="mb-3 mb-md-3 mb-sm-2 mt-md-3 mt-sm-4">
+                                <label for="streetLabel" class="form-label fw-bold">Street</label>
                                 <input type="text" class="form-control rounded-0 border-1" id="street" name="street" placeholder="Enter Street" required>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-3 mb-sm-4">
-                                <label for="barangay" class="form-label fw-bold">Barangay</label>
+                            <div class="mb-3 mb-md-3 mb-sm-2 mt-md-3 mt-sm-4">
+                                <label for="barangayLabel" class="form-label fw-bold">Barangay</label>
                                 <input type="text" class="form-control rounded-0 border-1" id="barangay" placeholder="Enter Barangay" required>
                             </div>
                         </div>
+
+                    </div>
+
+                    {{-- City and Country --}}
+                    <div class="row">
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-5 mb-sm-4">
-                                <label for="city" class="form-label fw-bold">City</label>
+                            <div class="mb-3 mb-md-3 mb-sm-2 mt-md-2 mt-sm-4">
+                                <label for="cityLabel" class="form-label fw-bold">City</label>
                                 <input type="text" class="form-control rounded-0 border-1" id="city" placeholder="Enter City" required>
                             </div>
                         </div>
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-3 mb-sm-2 mt-md-2 mt-sm-4">
+                                <label for="countryLabel" class="form-label fw-bold">Country</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="country" placeholder="Enter Country" required>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="fullAddress" name="fullAddress">
+
                     </div>
 
-                    <input type="hidden" id="fullAddress" name="fullAddress">
+                    {{-- Address and Contact Number --}}
+                    <div class="row ">
 
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-5 mb-sm-4">
-                                <label for="natureOfBusinessLabel" class="form-label fw-bold">Nature of Business</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="natureOfBusiness" placeholder="Enter Nature of Business" required>
+                        <div class="col-md-6">
+                            <div class="mb-4 mb-md-4 mb-sm-5 mt-md-2">
+                                <label for="assuredEmailLabel" class="form-label fw-bold fw-bold">Email</label>
+                                <input type="text" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="assuredEmail" placeholder="Enter Email" required>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-5 mb-sm-4">
-                                <label for="otherAssetLabel" class="form-label fw-bold">Other Asset</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="otherAsset" placeholder="Enter Other Asset" required>
+
+                        <div class="col-md-6">
+                            <div class="mb-4 mb-md-4 mb-sm-5 mt-md-2">
+                                <label for="assuredContactNumberLabel" class="form-label fw-bold fw-bold">Contact Number</label>
+                                <input type="text" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="assuredContactNumber" placeholder="Enter Assured Address" required>
                             </div>
                         </div>
+
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-3 mb-sm-4">
-                                <label for="phoneNumber" class="form-label fw-bold">Phone Number</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="phoneNumber" placeholder="Enter Phone Number" name="phoneNumber"
-                                       pattern="\d{11}" title="Please enter exactly 11 digits" required maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-3 mb-sm-4">
-                                <label for="viberNumber" class="form-label fw-bold">Viber Number</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="viberNumber" placeholder="Enter Viber Number"
-                                       pattern="\d{11}" title="Please enter exactly 11 digits" required maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-3 mb-sm-4">
-                                <label for="otherContact" class="form-label fw-bold">Other Contact Number</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="otherContact" placeholder="Enter Other Contact Number"
-                                       oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-5 mb-sm-4">
-                                <label for="emailLabel" class="form-label fw-bold">Email</label>
-                                <input type="email" class="form-control rounded-0 border-1" id="email" placeholder="Enter Email Account URL "> </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-5 mb-sm-4">
-                                <label for="facebookAccount" class="form-label fw-bold">Facebook Account</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="facebookAccount" placeholder="Enter Facebook Profile Account URL "
-                                       title="Please enter your Facebook account link or username">
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="mb-3 mb-md-5 mb-sm-4">
-                                <label for="remarksPersonalDetailsLabel" class="form-label fw-bold">Remarks</label>
-                                <textarea class="form-control rounded-0 border-1" id="remarksPersonalDetails" rows="5" placeholder="Enter your remarks here..." required></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-
-
-
-                    <div class="button-container">
-                        <button type="button " class="next-button" onclick="nextStep()">Next</button>
-                    </div>
-                </form>
-
-            </div>
-
-            <!-- Step 2: Insurance -->
-            <div class="form-step px-2">
-                <h3 class="main-title fw-bold fs-1 mt-md-5">Insurance</h3>
-                <p class="sub-main-title text-muted mb-md-5">Enter Insurance Details and Information</p>
-
-                <form id="step2 mt-md-5">
-
+                    {{-- Issuance Code and Sale Date --}}
                     <div class="row ">
 
 
-
-
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-5 mb-sm-4 mt-md-3">
-                                <label for="issuanceCodeLabel" class="form-label fw-bold">Issuance Code</label>
-                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="issuanceCode" placeholder="Enter the Issuance Code" required>
+                        <div class="col-md-8">
+                            <div class="mb-3 mb-md-3 mb-sm-4 mt-md-5 mt-sm-4">
+                                <label for="sssuanceCodeLabel" class="form-label fw-bold fw-bold">Issuance Code</label>
+                                <input type="text" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="IssuanceCode" placeholder="Enter Issuance Code" required>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-5 mb-sm-4 mt-md-3">
-                                <label for="salesDateLabel" class="form-label fw-bold">Sale Date</label>
-                                <input type="date" class="form-control rounded-0 border-1 rounded-0" id="salesDate" placeholder="Select the Sale Date" required>
-                            </div>
-                        </div>
+
+
 
                     </div>
 
+                    {{-- Classification and Sale Status --}}
                     <div class="row ">
+
 
                         <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-5 mb-sm-4">
+                            <div class="mb-3 mb-md-3 mb-sm-4 mt-md-2">
                                 <label for="classificationLabel" class="form-label fw-bold fw-bold fs-6">Classification</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="classification" required>
                                     <option value="" disabled selected>Select Classification</option>
@@ -528,39 +458,32 @@
                         </div>
 
                         <div class="col-md-4">
-                            <div class="mb-5 mb-md-5 mb-sm-4">
-                                <label for="insuranceTypeLabel" class="form-label fw-bold">Insurance Type</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="insuranceType" required>
+                            <div class="mb-3 mb-md-3 mb-sm-4 mt-md-2">
+                                <label for="insuranceTypeLabel" class="form-label fw-bold">Sale Status</label>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="saleStatus" required>
                                     <option value="" disabled selected>Select Insurance Type</option>
                                     <option value="sale">Sale</option>
-                                    <option value="cancellation">Cancellation</option>
+                                    <option value="reinstated">Reinstated</option>
                                     <option value="cancelled">Cancelled</option>
-
                                 </select>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class="mb-5 mb-md-5 mb-sm-4">
-                                <label for="salesStatusLabel" class="form-label fw-bold">Sale Status</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="salesStatus" required>
-                                    <option value="" disabled selected>Select Sale Status</option>
-                                    <option value="sale">Sale</option>
-                                    <option value="cancellation">Cancellation</option>
-                                    <option value="cancelled">Cancelled</option>
-                                    <option value="reinstatement">Reinstatement</option>
-                                    <option value="reinstated">Reinstated</option>
-
-                                </select>
+                            <div class="mb-3 mb-md-3 mb-sm-4 mt-md-2">
+                                <label for="saleDateLabel" class="form-label fw-bold fw-bold">Sale Date</label>
+                                <input type="date" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="saleDate"  required>
                             </div>
                         </div>
+
+
 
                     </div>
 
-                    <div class="row">
-
+                    {{-- Team and SA/SM --}}
+                    <div class="row ">
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4 mt-md-3">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
                                 <label for="team-label" class="form-label fw-bold fs-6">Team</label>
                                 <select class="form-control rounded-0 border-1 m-0" id="team" required>
                                     <option value="" selected>Select Team</option>
@@ -572,10 +495,10 @@
                         </div>
 
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4 mt-md-3">
-                                <label for="salesAssocManager-label" class="form-label fw-bold fs-6">SA/SM</label>
-                                <select class="form-control rounded-0 border-1 m-0" id="salesAssocManager" required>
-                                    <option value="" selected>Select SA or SM</option>
+                            <div class="mb-3 mb-md-3 mb-sm-4 mt-md-2">
+                                <label for="salesAssociateLabel" class="form-label fw-bold fs-6">SA</label>
+                                <select class="form-control rounded-0 border-1 m-0" id="salesAssociate">
+                                    <option value="" selected>SA</option>
                                     @foreach($salesAssociates as $salesAssociate)
                                         <option value="{{ $salesAssociate->id }}">{{ $salesAssociate->name }}</option>
                                     @endforeach
@@ -583,91 +506,24 @@
                             </div>
                         </div>
 
-                    </div>
-
-                    <div class="row ">
-
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
-                                <label for="branchManagerLabel-label" class="form-label fw-bold fs-6">Branch Manage</label>
-                                <select class="form-control rounded-0 border-1 m-0" id="branchManager" required>
-                                    <option value="" selected>Select Branch Manager</option>
-                                    @foreach($branchManagers as $branchManager)
-                                        <option value="{{ $branchManager->id }}">{{ $branchManager->name }}</option>
+                            <div class="mb-3 mb-md-3 mb-sm-4 mt-md-2">
+                                <label for="salesManagerLabel" class="form-label fw-bold fs-6">SM</label>
+                                <select class="form-control rounded-0 border-1 m-0" id="salesManager">
+                                    <option value="" selected>SM</option>
+                                    @foreach($salesAssociates as $salesAssociate)
+                                        <option value="{{ $salesAssociate->id }}">{{ $salesAssociate->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
-                                <label for="collectionGmLabel" class="form-label fw-bold">Collection GM</label>
-                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="collectionGm" placeholder="Enter Collection GM Name" required>
-                            </div>
-                        </div>
-
-
-
                     </div>
 
+                    {{-- Provider --}}
+                    <div class="row">
 
-                    <div class="row ">
-
-                        <div class="col-md-4 ">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
-                                <label for="legalRepLabel" class="form-label fw-bold fw-bold fs-6">Legal Representative</label>
-                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="legalRep" placeholder="Enter Legal Rep. Name">
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
-                                <label for="legalSupervisorLabel" class="form-label fw-bold">Legal Supervisor</label>
-                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="legalSupervisor" placeholder="Enter Legal Supervisor Name">
-                            </div>
-                        </div>
-
-                    </div>
-
-
-                    <div class="row ">
-
-                        <div class="col-md-4 ">
-                            <div class="mb-3 mb-md-5 mb-sm-4">
-                                <label for="assignAtty1Label" class="form-label fw-bold fw-bold fs-6">Assigned Attorney (1)</label>
-                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="assignAtty1" placeholder="Enter Attorney's Name">
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-5 mb-sm-4">
-                                <label for="assignAtty2Label" class="form-label fw-bold">Assigned Attorney (2)</label>
-                                <input type="text" class="form-control rounded-0 border-1 rounded-0" id="assignAtty2" placeholder="Enter Attorney's Name">
-                            </div>
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="button-container">
-                        <button type="button" class="prev-button" onclick="prevStep()">Back</button>
-                        <button type="button" class="next-button" onclick="nextStep()">Next</button>
-                    </div>
-                </form>
-            </div>
-
-
-            <!-- Step 3: Product -->
-            <div class="form-step px-2">
-                <h3 class="main-title fw-bold fs-1 mt-md-5">Product</h3>
-                <p class="sub-main-title text-muted mb-md-5">Enter product details and information</p>
-
-                <form id="step3 mt-md-5">
-
-                    <div class="row ">
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-5 mb-sm-4">
+                        <div class="col-md-5">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
                                 <label for="providerlabel" class="form-label fw-bold fw-bold fs-6">Provider</label>
                                 <select class="form-control rounded-0 border-1 m-0" id="provider" required>
                                     <option value="" selected>Select Provider</option>
@@ -677,12 +533,43 @@
                                 </select>
                             </div>
                         </div>
+
+                        <div class="col-md-7">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
+                                <label for="policyNumberLabel" class="form-label fw-bold fw-bold fs-6">Policy Number</label>
+                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="policyNumber" placeholder="Enter Policy Number" required>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div class="row mt-md-3">
+                    {{-- Policy Inception Date and Expiry Date --}}
+                    <div class="row ">
 
+                        <div class="col-md-5">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
+
+                                <label for="policyInceptionLabel" class="form-label fw-bold fw-bold fs-6">Policy Inception Date</label>
+                                <input type="date" class="form-control rounded-0 rounded-0 border-1" id="policyInception" placeholder="Enter Policy Inisu" required>
+
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-5">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
+                                <label for="expiryDateLabel" class="form-label fw-bold fw-bold fs-6">Expiry Date</label>
+                                <input type="date" class="form-control rounded-0 rounded-0 border-1" id="expiryDate" placeholder="Enter Policy Number" required>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    {{-- Product, Sub-Product, and Product Type --}}
+                    <div class="row">
                         <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
                                 <label for="productLabel" class="form-label fw-bold fw-bold fs-6">Product</label>
                                 <select class="form-control rounded-0 border-1 m-0" id="product" required>
                                     <option value="" selected>Select Products</option>
@@ -694,7 +581,7 @@
                         </div>
 
                         <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
                                 <label for="subProductLabel" class="form-label fw-bold fw-bold fs-6">Sub-Product</label>
 
                                 <select class="form-control rounded-0 border-1 m-0" id="subProduct" required>
@@ -707,7 +594,7 @@
                         </div>
 
                         <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
                                 <label for="productTypeLabel" class="form-label fw-bold fw-bold fs-6">Product Type</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="productType">
                                     <option value="" disabled selected>Select Product Type</option>
@@ -719,11 +606,11 @@
 
                     </div>
 
-
+                    {{-- Source, Source Branch, and If GDFI --}}
                     <div class="row ">
 
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4">
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
                                 <label for="sourceLabel" class="form-label fw-bold fw-bold fs-6">Source</label>
 
                                 <select class="form-control rounded-0 border-1 m-0" id="selectSources" required>
@@ -736,7 +623,7 @@
                         </div>
 
                         <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
                                 <label for="sourceBranchLabel" class="form-label fw-bold fw-bold fs-6">Source Branch</label>
 
                                 <select class="form-control rounded-0 border-1 m-0" id="sourceBranch" required>
@@ -748,7 +635,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4" id="gdficol">
+                        <div class="col-md-4" id="gdficol" style="display: none;">
                             <div class="mb-5 mb-md-4 mb-sm-4">
                                 <label for="ifGdfiLabel" class="form-label fw-bold fw-bold fs-6">If GDFI</label>
 
@@ -763,20 +650,18 @@
 
                     </div>
 
-                    <div class="row ">
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-5 mb-sm-4">
+                    {{-- Area, Mortagee, and ALFC Branch --}}
+                    <div class="row mb-md-5">
+
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
                                 <label for="mortgageeLabel" class="form-label fw-bold fw-bold fs-6">Mortagee</label>
                                 <input type="text" class="form-control rounded-0 rounded-0 border-1" id="mortgagee" placeholder="Enter Mortgagee" required>
                             </div>
                         </div>
-                    </div>
 
-
-                    <div class="row mt-md-3">
-
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4">
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
                                 <label for="areaLabel" class="form-label fw-bold fw-bold fs-6">Area</label>
                                 <select class="form-control rounded-0 border-1 m-0" id="area">
                                     <option value="" disabled selected>Select Area</option>
@@ -787,8 +672,8 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4">
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
                                 <label for="alfcBranchLabel" class="form-label fw-bold fw-bold fs-6">ALFC Branch</label>
 
                                 <select class="form-control rounded-0 border-1 m-0" id="alfcBranch">
@@ -803,238 +688,65 @@
                     </div>
 
 
-                    <div class="row ">
-
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4">
-                                <label for="policyNumberLabel" class="form-label fw-bold fw-bold fs-6">Policy Number</label>
-                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="policyNumber" placeholder="Enter Policy Number" required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4">
-                                <label for="expiryDateLabel" class="form-label fw-bold fw-bold fs-6">Expiry Date</label>
-                                <input type="date" class="form-control rounded-0 rounded-0 border-1" id="expiryDate" placeholder="Enter Policy Number" required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4">
-
-                                <label for="policyInceptionLabel" class="form-label fw-bold fw-bold fs-6">Policy Inception Date</label>
-                                <input type="date" class="form-control rounded-0 rounded-0 border-1" id="policyInception" placeholder="Enter Policy Inisu" required>
-
-                            </div>
-                        </div>
-
-                    </div>
-
-
-                    <div class="row">
-
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4">
-                                <label for="plateConductionNumberLabel" class="form-label fw-bold fw-bold fs-6">Plate / Conduction Number</label>
-                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="plateConductionNumber" placeholder="Enter Plate Conduction Number" required>
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4">
-                                <label for="descriptionLabel" class="form-label fw-bold fw-bold fs-6">Description</label>
-                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="description" placeholder="Enter Description" required>
-                            </div>
-                        </div>
-
-
-                    </div>
-
-
-                    <div class="row">
-
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-5 mb-sm-4">
-                                <label for="loanAmountLabel" class="form-label fw-bold fw-bold fs-6">Loan Amount</label>
-                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="loanAmount" placeholder="Enter Loan Amount" required>
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-5 mb-sm-4">
-                                <label for="totalSumInsuredLabel" class="form-label fw-bold fw-bold fs-6">Total Sum Insured </label>
-                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="totalSumInsured" placeholder="Enter Total Sum Insured" required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-5 mb-sm-4">
-                                <label for="mopLabel" class="form-label fw-bold fw-bold fs-6">Mode of Payment</label>
-                                <select class="form-control rounded-0 border-1 m-0" id="mop">
-                                    <option value="" disabled selected>Select Mode of Payment</option>
-                                    @foreach($mops as $mop)
-                                        <option value="{{ $mop->id }}">{{ $mop->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="row mt-md-3">
-
-                        {{-- <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4">
-                                <label for="policyExpirationAgingLabel" class="form-label fw-bold fw-bold fs-6">Policy Expiration Aging</label>
-                                <input type="text" class="form-control rounded-0 rounded-0 border-1 disabled" id="policyExpirationAging" disabled value="test">
-                            </div>
-                        </div> --}}
-
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4">
-                                <label for="bookNumberLabel" class="form-label fw-bold fw-bold fs-6">Book Number</label>
-                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="bookNumber" placeholder="Enter Book Number" required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4">
-                                <label for="filingNumberLabel" class="form-label fw-bold fw-bold fs-6">Filing Number</label>
-                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="filingNumber" placeholder="Enter Filing Number" required>
-                            </div>
-                        </div>
-
-                    </div>
-
-
-                    <div class="row ">
-
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4">
-                                <label for="pidReceivedDateLabel" class="form-label fw-bold fw-bold fs-6">PID Received Date</label>
-                                <input type="date" class="form-control rounded-0 rounded-0 border-1" id="pidReceivedDate" required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4">
-                                <label for="pidCompletionDateLabel" class="form-label fw-bold fw-bold fs-6">PID Completion Date</label>
-                                <input type="date" class="form-control rounded-0 rounded-0 border-1" id="pidCompletionDate" required>
-                            </div>
-                        </div>
-
-
-
-                    </div>
-
-
-                    <div class="row mt-md-5">
-                        <div class="col-md-12">
-                            <div class="mb-3 mb-md-5 mb-sm-4">
-                                <label for="remarksProductsLabel" class="form-label fw-bold">Remarks</label>
-                                <textarea class="form-control rounded-0 border-1" id="remarksProducts" rows="5" placeholder="Enter your remarks here..." required></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="button-container">
-                        <button type="button" class="prev-button" onclick="prevStep()">Back</button>
+                    <div class="button-container mb-md-5 mb-mt-5">
+                        <button type="button" class="prev-button" onclick="cancelStep()">Cancel</button>
                         <button type="button" class="next-button" onclick="nextStep()">Next</button>
                     </div>
+
+
                 </form>
+
             </div>
 
+            <!-- Step 2: Commission Details-->
+            <div class="form-step px-3 mb-md-5">
+                <h3 class="main-title fw-bold fs-1 mt-md-5">Commissions</h3>
+                <p class="sub-main-title text-muted mb-md-5">Enter Commissions Details and Information</p>
 
-            <!-- Step 4: Commission -->
-            <div class="form-step px-2">
-                <h3 class="main-title fw-bold fs-1 mt-md-5">Commision</h3>
-                <p class="sub-main-title text-muted mb-md-5">Enter Commission details and information</p>
+                <form id="step2 mt-md-5">
 
 
-
-                <form id="step4 mt-md-5">
-
+                    {{-- Gross Premium, Discount, and Gross Premium, Net of Discount --}}
                     <div class="row">
 
                         <div class="col-md-4">
-                            <div class="mb-4 mb-md-5 mb-sm-4">
-                                <label for="provisionReceiptLabel" class="form-label fw-bold">Provision Receipt</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="provisionReceipt" placeholder="Enter Provision Receipt" required>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <div class="row">
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
                                 <label for="grossPremiumLabel" class="form-label fw-bold">Gross Premium</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="grossPremium" placeholder="Enter Gross Premium" required>
+                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="grossPremium" placeholder="Enter Gross Premium" required>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
                                 <label for="discountLabel" class="form-label fw-bold">Discount</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="discount" placeholder="Enter Discount" required>
+                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="discount" placeholder="Enter Discount" required>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
-                                <label for="netOfDiscountLabel" class="form-label fw-bold">Net of Discount</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="netOfDiscount"  disabled required>
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
+                                <label for="netOfDiscountLabel" class="form-label fw-bold">Gross Premium, Net of Discount</label>
+                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="netOfDiscount"  disabled required>
                             </div>
                         </div>
 
                     </div>
 
-
+                    {{-- Amount Due to Provider and Full Commission --}}
                     <div class="row">
 
 
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
                                 <label for="amountDuetoProviderLabel" class="form-label fw-bold">Amount Due to Provider</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="amountDuetoProvider" placeholder="Enter Amount Due to Provider" required>
+                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="amountDuetoProvider" placeholder="Enter Amount Due to Provider" required>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
                                 <label for="fullCommissionLabel" class="form-label fw-bold">Full Commission</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="fullCommission"  disabled required>
-                            </div>
-                        </div>
-
-                    </div>
-
-
-                    <div class="row">
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
-                                <label for="marketingFundLabel" class="form-label fw-bold">Marketing Fund</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="marketingFund" placeholder="Enter Marketing Fund" required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
-                                <label for="offsettingLabel" class="form-label fw-bold">Offsetting</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="offsetting" placeholder="Enter Offsetting" required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
-                                <label for="promoLabel" class="form-label fw-bold">Promo</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="promo" placeholder="Enter Promo Amount" required>
+                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="fullCommission"  disabled required>
                             </div>
                         </div>
 
@@ -1045,53 +757,79 @@
 
                     <div id="commissionContainer">
                     </div>
-
                     <div class="row mb-md-5">
                         <div class="col-md-4 mb-5 mb-md-5 mb-sm-5">
                             <button type="button" class="bg-secondary" id="addButton">ADD</button>
                         </div>
                     </div>
 
-                    <div class="row mt-md-5">
 
+                    {{-- Travel Incentives, Offsetting, and Promo --}}
+                    <div class="row">
 
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
-                                <label for="commDeductLabel" class="form-label fw-bold">Comm Deduct</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="commDeduct" placeholder="Enter Comm Deduct" required>
+                            <div class="mb-3 mb-md-4 mb-sm-4 mt-md-2">
+                                <label for="travelIncentivesLabel" class="form-label fw-bold">Travel Incentives</label>
+                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="travelIncentives" placeholder="Enter Travel Incentives" required>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
-                                <label for="totalCommissionLabel" class="form-label fw-bold">Total Commission</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="totalCommission" required disabled>
+                            <div class="mb-3 mb-md-4 mb-sm-4 mt-md-2">
+                                <label for="offsettingLabel" class="form-label fw-bold">Offsetting</label>
+                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="offsetting" placeholder="Enter Offsetting" required>
                             </div>
                         </div>
 
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4 mt-md-2">
+                                <label for="promoLabel" class="form-label fw-bold">Promo</label>
+                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="promo" placeholder="Enter Promo Amount" required>
+                            </div>
+                        </div>
 
                     </div>
 
 
 
-                    <div class="row mt-md-3 mb-md-5">
+                    {{-- Comm Deduct and Total Commission --}}
+                    <div class="row">
 
                         <div class="col-md-4">
-                            <div class="mb-5 mb-md-5 mb-sm-5">
+                            <div class="mb-3 mb-md-2 mb-sm-4">
+                                <label for="totalCommissionLabel" class="form-label fw-bold">Total Commission</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="totalCommission" required disabled>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-2 mb-sm-4">
+                                <label for="commDeductLabel" class="form-label fw-bold">Comm Deduct</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="commDeduct" placeholder="Enter Comm Deduct" required>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {{-- VAT, Sales Credit, and Sales Credit % --}}
+                    <div class="row mt-md-3">
+
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-5 mb-sm-4">
                                 <label for="vatLabel" class="form-label fw-bold">VAT</label>
                                 <input type="text" class="form-control rounded-0 border-1" id="vatInput" required disabled>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class="mb-5 mb-md-4 mb-sm-5">
+                            <div class="mb-3 mb-md-5 mb-sm-4">
                                 <label for="salesCreditLabel" class="form-label fw-bold">Sales Credit</label>
                                 <input type="text" class="form-control rounded-0 border-1" id="salesCredit" required disabled>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class="mb-5 mb-md-5 mb-sm-5">
+                            <div class="mb-3 mb-md-5 mb-sm-4">
                                 <label for="salesCreditPercentLabel" class="form-label fw-bold">Sales Credit %</label>
                                 <input type="text" class="form-control rounded-0 border-1" id="salesCreditPercent" required disabled>
                             </div>
@@ -1103,27 +841,13 @@
 
 
 
-                    <div class="button-container mt-md-5">
-                        <button type="button" class="prev-button" onclick="prevStep()">Back</button>
-                        <button type="button" class="next-button" onclick="nextStep()">Next</button>
-                    </div>
-                </form>
-
-            </div>
 
 
-            <!-- Step 5: Payment -->
-            <div class="form-step px-2">
-                <h3 class="main-title fw-bold fs-1 mt-md-5">Payment</h3>
-                <p class="sub-main-title text-muted mb-md-5">Enter Payment details and information</p>
-
-                <form id="step5 mt-md-5">
-
-
-                    <div class="row">
+                    {{-- Payment Terms --}}
+                    <div class="row mb-md-1 mt-md-5">
 
                         <div class="col-md-4">
-                            <div class="mb-4 mb-md-5 mb-sm-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4">
                                 <label for="paymentTermsLabel" class="form-label fw-bold">Payment Terms</label>
                                 <input
                                     type="number"
@@ -1140,14 +864,14 @@
                         </div>
 
                         <div class="col-md-4">
-                            <div class="mb-4 mb-md-5 mb-sm-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4">
                                 <label for="dueDateStartLabel" class="form-label fw-bold">Due Date Start</label>
                                 <input type="date" class="form-control rounded-0 border-1" id="dueDateStart" required>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class="mb-4 mb-md-5 mb-sm-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4">
                                 <label for="dueDateEndLabel" class="form-label fw-bold">Due Date End</label>
                                 <input type="date" class="form-control rounded-0 border-1" id="dueDateEnd" required>
                             </div>
@@ -1155,43 +879,46 @@
 
                     </div>
 
-                    <div class="row mb-md-3 mt-md-3" id="schedulePaymentTerms">
 
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-3 mb-sm-4">
-                                <label for="SchedulePayment1" class="form-label fw-bold">1st Payment</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="SchedulePayment1" placeholder="Enter Schedule of 1st Payment" required>
-                            </div>
-                        </div>
-
-
+                    {{-- Payments --}}
+                    <div class="mb-md-3 mt-md-5" id="schedulePaymentTerms">
 
                     </div>
 
 
 
 
-
-
                     <div class="row mt-md-5">
 
-
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4">
+                        <div class="col-md-4 mt-md-5">
+                            <div class="mb-4 mb-md-3 mb-sm-4">
                                 <label for="initialPaymentLabel" class="form-label fw-bold">Initial Payment</label>
                                 <input type="text" class="form-control rounded-0 border-1" id="initialPayment" placeholder="Enter Initial Payment" required>
                             </div>
                         </div>
 
+                    </div>
+
+                    <div class="row">
+
+
+
                         <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-3">
+                                <label for="dateGoodSalesLabel" class="form-label fw-bold">Date of Good as Sales</label>
+                                <input type="date" class="form-control rounded-0 border-1" id="dateGoodSales" placeholder="Enter Date of Good as Sales" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-3">
                                 <label for="forBillingLabel" class="form-label fw-bold">For Billing</label>
                                 <input type="text" class="form-control rounded-0 border-1" id="forBilling" placeholder="Enter For Billing" required>
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-3">
                                 <label for="overUnderPaymentLabel" class="form-label fw-bold">Over (Under) Payment</label>
                                 <input type="text" class="form-control rounded-0 border-1" id="overUnderPayment" placeholder="Enter Over or Under Payment" required>
                             </div>
@@ -1199,19 +926,23 @@
 
 
 
+
+
                     </div>
+
 
                     <div class="row">
 
                         <div class="col-md-4">
-                            <div class="mb-4 mb-md-5 mb-sm-4">
-                                <label for="dateGoodSalesLabel" class="form-label fw-bold">Date of Good as Sales</label>
-                                <input type="date" class="form-control rounded-0 border-1" id="dateGoodSales" placeholder="Enter Date of Good as Sales" required>
+                            <div class="mb-4 mb-md-4 mb-sm-4">
+                                <label for="prNumberLabel" class="form-label fw-bold">PR#</label>
+                                <input type="text" class="form-control rounded-0 border-1" id="prNumber" placeholder="Enter PR Number" required>
                             </div>
                         </div>
 
+
                         <div class="col-md-4">
-                            <div class="mb-4 mb-md-5 mb-sm-4">
+                            <div class="mb-4 mb-md-4 mb-sm-4">
                                 <label for="statusPaymentLabel" class="form-label fw-bold">Status</label>
                                 <input type="text" class="form-control rounded-0 border-1" id="statusPayment" placeholder="Enter Status" required>
                             </div>
@@ -1221,14 +952,14 @@
                     </div>
 
 
+                    <div class="button-container mb-md-5 mb-mt-5">
+                        <button type="button" class="prev-button" onclick="prevStep()">Back</button>
+                        <button type="submit" class="next-button">Submit</button>
+
+                    </div>
                 </form>
-
-
-                <div class="button-container">
-                    <button type="button" class="prev-button" onclick="prevStep()">Back</button>
-                    <button type="submit" class="submit-button">Submit</button>
-                </div>
             </div>
+
 
 
 
@@ -1241,40 +972,82 @@
 
 
 <script>
-    let currentStep = 0;
-    let index = 0;  // Initialize index counter
 
-    const commissions = [];
+    let currentStep = 0;
+    let index = 0;
+
+    const inputs = document.querySelectorAll('input, select, change');
 
     const formSteps = document.querySelectorAll('.form-step');
     const stepIndicators = document.querySelectorAll('.sidebar .step');
-
     const storedData = sessionStorage.getItem('formData');
 
 
+    //FIRST FORM
+    const assuredNameInput = document.getElementById('assuredName');
+
+    const fullAddressInput = document.getElementById('fullAddress');
+    const unitNoInput = document.getElementById('unitNo');
+    const streetInput = document.getElementById('street');
+    const barangayInput = document.getElementById('barangay');
+    const cityInput = document.getElementById('city');
+    const countryInput = document.getElementById('country');
+    const addressFields = [unitNoInput, streetInput, barangayInput, cityInput];
+
+    const assuredEmailInput = document.getElementById('assuredEmail');
+    const assuredContactNumberInput = document.getElementById('assuredContactNumber');
+
+    const IssuanceCodeInput = document.getElementById('IssuanceCode');
+    const classificationSelect = document.getElementById('classification');
+    const saleStatusSelect = document.getElementById('saleStatus');
+
+    const saleDateDateSelect = document.getElementById('saleDate');
+    const teamSelect = document.getElementById('team');
+
+    const salesAssociateSelect = document.getElementById('salesAssociate');
+    const salesManagerSelect = document.getElementById('salesManager');
+
+    const providerSelect = document.getElementById('provider');
+    const policyNumberInput = document.getElementById('policyNumber');
+
+    const policyInceptionDateSelect = document.getElementById('policyInception');
+    const expiryDateSelect = document.getElementById('expiryDate');
+
+    const productSelect = document.getElementById('product');
+    const subProductSelect = document.getElementById('subProduct');
+    const productTypeSelect = document.getElementById('productType');
+    const sourceSelect = document.getElementById('selectSources');
+    const sourceBranchSelect = document.getElementById('sourceBranch');
+    const ifGdfiSelect = document.getElementById('ifGdfi');
+    const mortgageeInput = document.getElementById('mortgagee');
+    const areaSelect = document.getElementById('area');
+    const alfcBranchSelect = document.getElementById('alfcBranch');
+
+    const selecDropdownIds = document.querySelectorAll('select');
+
+
+    //SECOND FORM
     const grossPremiumInput = document.getElementById('grossPremium');
     const discountInput = document.getElementById('discount');
     const netOfDiscountInput = document.getElementById('netOfDiscount');
     const amountDuetoProviderInput = document.getElementById('amountDuetoProvider');
     const fullCommissionInput = document.getElementById('fullCommission');
 
-
-    const marketingFundInput = document.getElementById('marketingFund');
+    const travelIncentivesInput = document.getElementById('travelIncentives');
     const offSettingInput = document.getElementById('offsetting');
     const promoInput = document.getElementById('promo');
     const commDeductInput = document.getElementById('commDeduct');
 
+    let fullCommissionValue = 0;
     const totalCommissionInput = document.getElementById('totalCommission');
-
+    let totalCommission = 0;
 
     const vatInput = document.getElementById('vatInput');
-    let vatValue = 0;
-
-
     const salesCreditInput  = document.getElementById('salesCredit');
-    let salesCredit = 0;
-
     const salesCreditPercentInput = document.getElementById('salesCreditPercent');
+
+    let vatValue = 0;
+    let salesCredit = 0;
     let salesCreditPercent = 0;
 
 
@@ -1286,12 +1059,95 @@
     let isFieldsAdded = false;  // Flag to check if fields have already been added
     const schedulePaymentInputs = document.getElementById('SchedulePayment1');
 
-    const initialPaymentInputs = document.getElementById('initialPayment');
-    const forBillingInputs = document.getElementById('forBilling');
-    const overUnderPaymentInputs = document.getElementById('overUnderPayment');
+
+    $(document).ready(function() {
+
+        const savedStep = sessionStorage.getItem('currentStep');
+        if (savedStep) {
+            currentStep = parseInt(savedStep, 10);
+        }
+
+        document.querySelectorAll('.step input[type="radio"]').forEach((radio, index) => {
+            radio.addEventListener('change', () => {
+                currentStep = index;
+                sessionStorage.setItem('currentStep', currentStep);
+                showStep(currentStep);
+            });
+        });
+
+        showStep(currentStep);
+        attachRadioChangeHandlers();
+        checkIfGDFI();
+        loadFormData();
 
 
 
+        selecDropdownIds.forEach(select => {
+            $(select).select2({
+                allowClear: false,
+                minimumResultsForSearch: 5,
+                dropdownPosition: 'below'
+            });
+
+            // Manually call saveFormData when the select is changed via select2
+            $(select).on('select2:select', function() {
+                saveFormData();
+            });
+        });
+
+
+
+        $('#selectSources').on('change', function() {
+            checkIfGDFI();
+        });
+
+
+        addressFields.forEach(field => {
+            field.addEventListener('input', updateFullAddress);
+        });
+
+
+        // Attach event listeners for input and change events
+        inputs.forEach(input => {
+            input.addEventListener('input', saveFormData);
+            input.addEventListener('change', saveFormData);
+        });
+
+
+
+        document.querySelectorAll('.formatted-input').forEach(input => {
+            input.addEventListener('input', formatInputWithCommas);
+        });
+
+        // Specific event listeners for individual fields
+        grossPremiumInput.addEventListener('input', getNetOfDiscount);
+        discountInput.addEventListener('input', getNetOfDiscount);
+        amountDuetoProvider.addEventListener('input', getFullComm);
+
+        travelIncentivesInput.addEventListener('input', getCommissionsValue);
+        offSettingInput.addEventListener('input', getCommissionsValue);
+        promoInput.addEventListener('input', getCommissionsValue);
+
+
+        addCommissions();
+        clearValidation();
+
+
+        function formatDateToText(date) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(date).toLocaleDateString('en-US', options);
+        }
+
+
+        paymentTermsInputs.addEventListener('change', validatePaymentTerms);
+        dueDateStartInputs.addEventListener('change', calculateDueDateEnd);
+
+        paymentTermsInputs.addEventListener('input', calculateSchedulePaymentsAmount);
+
+    });
+
+
+    //STEPS FUNCTIONS
     function showStep(step) {
         formSteps.forEach((formStep, index) => {
             formStep.classList.toggle('active', index === step);
@@ -1308,8 +1164,7 @@
         });
     }
 
-    // Move to the next step, validating first
-    function nextStep() {
+    function nextStep(){
         event.preventDefault();
 
         // if (validateStep(currentStep)) {
@@ -1327,10 +1182,14 @@
 
             }
         // }
+
+
+
     }
 
-    // Move to the previous step
-    function prevStep() {
+    function prevStep(){
+        event.preventDefault();
+
         saveFormData(); // Save form data
         if (currentStep > 0) {
             currentStep--;
@@ -1347,53 +1206,15 @@
         }
     }
 
-    function validateStep(step) {
-        const inputs = formSteps[step].querySelectorAll('input[required], textarea[required], select[required]');
-        let isValid = true;
-
-        inputs.forEach(input => {
-            // Get the error text element (if it exists)
-            const errorText = input.nextElementSibling;
-
-            // Remove the error message if it exists and input is valid
-            input.addEventListener('input', () => {
-                const errorMessage = input.parentNode.querySelector('.error-message');
-
-
-
-                if (input.checkValidity()) {
-                    // Remove error message if input is valid
-                    if (errorMessage) {
-                        errorMessage.remove();
-                    }
-                } else {
-                    // If input is invalid, display the error message
-                    if (!errorMessage) {
-                        const errorMessage = document.createElement('span');
-                        errorMessage.classList.add('error-message', 'text-danger');
-                        errorMessage.innerText = getErrorMessage(input);
-                        input.parentNode.appendChild(errorMessage);
-                    }
-                }
+    function attachRadioChangeHandlers(){
+        $('.step input[type="radio"]').each(function(index) {
+            $(this).on('change', function() {
+                currentStep = index;
+                showStep(currentStep);
             });
-
-            // If input is invalid at initial validation, add error message
-            if (!input.checkValidity()) {
-                isValid = false;
-                const existingErrorMessage = input.parentNode.querySelector('.error-message');
-                if (!existingErrorMessage) {
-                    const errorMessage = document.createElement('span');
-                    errorMessage.classList.add('error-message', 'text-danger');
-                    errorMessage.innerText = getErrorMessage(input);
-                    input.parentNode.appendChild(errorMessage);
-                }
-            }
         });
-
-        return isValid;
     }
 
-    // Get the appropriate error message based on input validation
     function getErrorMessage(input) {
         if (input.validity.valueMissing) {
             return 'This field is required.';
@@ -1405,365 +1226,229 @@
         return 'This field is invalid.';
     }
 
+    function validateStep(step) {
+        const inputs = formSteps[step].querySelectorAll('input[required], textarea[required], select[required]');
+        let isValid = [...inputs].every(input => input.checkValidity());
+
+        inputs.forEach(input => {
+            const errorMessage = input.parentNode.querySelector('.error-message');
+            if (!input.checkValidity()) {
+                if (!errorMessage) {
+                    const error = document.createElement('span');
+                    error.classList.add('error-message', 'text-danger');
+                    error.innerText = getErrorMessage(input);
+                    input.parentNode.appendChild(error);
+                }
+            } else if (errorMessage) {
+                errorMessage.remove();
+            }
+        });
+
+        return isValid;
+    }
+
+
+
+    //SESSIONS FUNCTIONS
     // Function to save form data to sessionStorage
     function saveFormData() {
         const formData = getFormValues();
         sessionStorage.setItem('formData', JSON.stringify(formData));
     }
 
-    // Function to load form data from sessionStorage
-    function loadFormData() {
-
-        if (storedData) {
-            const formData = JSON.parse(storedData);
-
-            // PERSONAL INFORMATION first step
-            document.getElementById('lastName').value = formData.lastName || '';
-            document.getElementById('firstName').value = formData.firstName || '';
-            document.getElementById('middleName').value = formData.middleName || '';
-            document.getElementById('unitNo').value = formData.unitNo || '';
-            document.getElementById('street').value = formData.street || '';
-            document.getElementById('barangay').value = formData.barangay || '';
-            document.getElementById('city').value = formData.city || '';
-            document.getElementById('fullAddress').value = formData.fullAddress || '';
-            document.getElementById('natureOfBusiness').value = formData.natureOfBusiness || '';
-            document.getElementById('otherAsset').value = formData.otherAsset || '';
-            document.getElementById('phoneNumber').value = formData.phoneNumber || '';
-            document.getElementById('viberNumber').value = formData.viberNumber || '';
-            document.getElementById('otherContact').value = formData.otherContact || '';
-            document.getElementById('facebookAccount').value = formData.facebookAccount || '';
-            document.getElementById('email').value = formData.email || '';
-            document.getElementById('remarksPersonalDetails').value = formData.remarksPersonalDetails || '';
-
-            // INSURANCE INFORMATION
-            document.getElementById('salesAssocManager').value = formData.salesAssocManager || '';
-            document.getElementById('classification').value = formData.classification || '';
-            document.getElementById('insuranceType').value = formData.insuranceType || '';
-            document.getElementById('salesStatus').value = formData.salesStatus || '';
-            document.getElementById('branchManager').value = formData.branchManager || '';
-            document.getElementById('issuanceCode').value = formData.issuanceCode || '';
-            document.getElementById('salesDate').value = formData.salesDate || '';
-            document.getElementById('collectionGm').value = formData.collectionGm || '';
-            document.getElementById('legalRep').value = formData.legalRep || '';
-            document.getElementById('legalSupervisor').value = formData.legalSupervisor || '';
-            document.getElementById('assignAtty1').value = formData.assignAtty1 || '';
-            document.getElementById('assignAtty2').value = formData.assignAtty2 || '';
-
-            // PRODUCT INFORMATION
-            document.getElementById('provider').value = formData.provider || '';
-            document.getElementById('product').value = formData.product || '';
-            document.getElementById('subProduct').value = formData.subProduct || '';
-            document.getElementById('productType').value = formData.productType || '';
-            document.getElementById('selectSources').value = formData.selectSources || '';
-            document.getElementById('sourceBranch').value = formData.sourceBranch || '';
-            document.getElementById('ifGdfi').value = formData.ifGdfi || '';
-            document.getElementById('mortgagee').value = formData.mortgagee || '';
-            document.getElementById('area').value = formData.area || '';
-            document.getElementById('alfcBranch').value = formData.alfcBranch || '';
-            document.getElementById('policyNumber').value = formData.policyNumber || '';
-            document.getElementById('expiryDate').value = formData.expiryDate || '';
-            document.getElementById('policyInception').value = formData.policyInception || '';
-            document.getElementById('plateConductionNumber').value = formData.plateConductionNumber || '';
-            document.getElementById('description').value = formData.description || '';
-            document.getElementById('loanAmount').value = formData.loanAmount || '';
-            document.getElementById('totalSumInsured').value = formData.totalSumInsured || '';
-            document.getElementById('mop').value = formData.mop || '';
-            document.getElementById('bookNumber').value = formData.bookNumber || '';
-            document.getElementById('filingNumber').value = formData.filingNumber || '';
-            document.getElementById('pidReceivedDate').value = formData.pidReceivedDate || '';
-            document.getElementById('pidCompletionDate').value = formData.pidCompletionDate || '';
-            document.getElementById('remarksProducts').value = formData.remarksProducts || '';
-
-
-
-            //COMMISSION INFORMATION
-            document.getElementById('provisionReceipt').value = formData.provisionReceipt || '';
-            grossPremiumInput.value = formData.grossPremium || '';
-            discountInput.value = formData.discount || '';
-            netOfDiscountInput.value = formData.netOfDiscount || '';
-            amountDuetoProviderInput.value = formData.amountDuetoProvider || '';
-            fullCommissionInput.value = formData.fullCommission || '';
-            marketingFundInput.value = formData.marketingFund || '';
-            offSettingInput.value = formData.offsetting || '';
-            promoInput.value = formData.promo || '';
-
-            if (formData.commissionsSelect && formData.commissionsSelect.length > 0) {
-                const container = document.getElementById('commissionContainer');
-
-                formData.commissionsSelect.forEach((commission, index) => {
-                    // Create a new div element to hold the commission fields
-                    const newSection = document.createElement('div');
-                    newSection.classList.add('row', 'mt-md-0');
-                    newSection.innerHTML = `
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
-                                <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0 commissionSelect" id="commissionSelect${index}">
-                                    <option value="" disabled selected>Select Commissions</option>
-                                    @foreach($commisioners as $commisioner)
-                                        <option value="{{ $commisioner->id }}">{{ $commisioner->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4">
-                                <label for="commissionAmountLabel" class="form-label fw-bold">Amount</label>
-                                <input type="text" class="form-control rounded-0 border-1 commissionAmount" id="commissionAmount${index}" placeholder="Enter Amount" required>
-                            </div>
-                        </div>
-                    `;
-
-                    // Append the new section to the container
-                    container.appendChild(newSection);
-
-                    // Get the newly created select and input elements
-                    const commissionAmount = document.getElementById(`commissionAmount${index}`);
-                    const commissionSelect = document.getElementById(`commissionSelect${index}`);
-
-                    // Populate the newly created fields with data from formData
-                    if (commissionAmount && commissionSelect) {
-                        commissionAmount.value = commission.commissionAmount || ''; // Default if not provided
-                        commissionSelect.value = commission.commissionType || '';   // Default if not provided
-                    }
-
-
-                });
-            }
-
-            totalCommissionInput.value =  formData.totalCommissionInput || '';
-            commDeductInput.value = formData.commDeduct || '';
-
-
-            vatInput.value = formData.vat || '';
-            salesCreditInput.value = formData.salesCredit || '';
-            salesCreditPercentInput.value = formData.salesCreditPercent || '';
-
-
-
-
-            //PAYMMENTS INFORMATIONS
-            paymentTermsInputs.value = formData.paymentTerms || '';
-            dueDateStartInputs.value = formData.dueDateStart || '';
-            dueDateEndInputs.value = formData.dueDateEnd || '';
-            // schedulePaymentInputs.value = formData.firstPayment || '';
-            initialPaymentInputs.value = formData.initialPayment || '';
-
-            forBillingInputs.value = formData.forBilling || '';
-            overUnderPaymentInputs.value = formData.overUnderPayment || '';
-
-
-        }
-
-    }
-
-
     // Get form data to be saved to sessionStorage
     function getFormValues() {
 
         const formData = {};
 
-        // PERSONAL INFORMATION first step
-        // if (currentStep == 0) {
-            formData.lastName = document.getElementById('lastName').value;
-            formData.firstName = document.getElementById('firstName').value;
-            formData.middleName = document.getElementById('middleName').value;
-            formData.unitNo = document.getElementById('unitNo').value;
-            formData.street = document.getElementById('street').value;
-            formData.barangay = document.getElementById('barangay').value;
-            formData.city = document.getElementById('city').value;
-            formData.fullAddress = document.getElementById('fullAddress').value;
-            formData.natureOfBusiness = document.getElementById('natureOfBusiness').value;
-            formData.otherAsset = document.getElementById('otherAsset').value;
-            formData.phoneNumber = document.getElementById('phoneNumber').value;
-            formData.viberNumber = document.getElementById('viberNumber').value;
-            formData.otherContact = document.getElementById('otherContact').value;
-            formData.facebookAccount = document.getElementById('facebookAccount').value;
-            formData.email = document.getElementById('email').value;
-            formData.remarksPersonalDetails = document.getElementById('remarksPersonalDetails').value;
-        // }
+        formData.assuredNameValue = assuredNameInput.value;
+        formData.fullAddressValue = fullAddressInput.value;
+        formData.unitNoValue = unitNoInput.value;
+        formData.streetValue = streetInput.value;
+        formData.barangayValue = barangayInput.value;
+        formData.cityValue = cityInput.value;
+        formData.countryValue = countryInput.value;
+
+        formData.assuredEmailValue = assuredEmailInput.value;
+        formData.assuredContactNumberValue = assuredContactNumberInput.value;
+
+        formData.IssuanceCodeValue = IssuanceCodeInput.value;
+        formData.classificationValue = classificationSelect.value;
+        formData.saleStatusValue = saleStatusSelect.value;
+        formData.saleDateValue = saleDateDateSelect.value;
+
+        formData.teamValue = teamSelect.value;
+        formData.salesAssociateValue = salesAssociateSelect.value;
+        formData.salesManagerValue = salesManagerSelect.value;
+
+        formData.providerValue = providerSelect.value;
+        formData.policyNumberValue = policyNumberInput.value;
+        formData.policyInceptionValue = policyInceptionDateSelect.value;
+        formData.expiryDateValue = expiryDateSelect.value;
+
+        formData.productValue = productSelect.value;
+        formData.subProductValue = subProductSelect.value;
+        formData.productTypeValue = productTypeSelect.value;
+        formData.sourceValue = sourceSelect.value;
+        formData.sourceBranchValue = sourceBranchSelect.value;
+        formData.ifGdfiValue = ifGdfiSelect.value;
+        formData.mortgageeValue = mortgageeInput.value;
+        formData.areaValue = areaSelect.value;
+        formData.areaValue = alfcBranchSelect.value;
 
 
-        // INSURANCE INFORMATION second step
-            formData.salesAssocManager = document.getElementById('salesAssocManager').value;
-            formData.classification = document.getElementById('classification').value;
-            formData.insuranceType = document.getElementById('insuranceType').value;
-            formData.salesStatus = document.getElementById('salesStatus').value;
-            formData.branchManager = document.getElementById('branchManager').value;
-            formData.issuanceCode = document.getElementById('issuanceCode').value;
-            formData.salesDate = document.getElementById('salesDate').value;
-            formData.collectionGm = document.getElementById('collectionGm').value;
-            formData.legalRep = document.getElementById('legalRep').value;
-            formData.legalSupervisor = document.getElementById('legalSupervisor').value;
-            formData.assignAtty1 = document.getElementById('assignAtty1').value;
-            formData.assignAtty2 = document.getElementById('assignAtty2').value;
-        // }
-
-
-        // if (currentStep == 2) {
-
-            formData.provider = document.getElementById('provider').value;
-            formData.product = document.getElementById('product').value;
-            formData.subProduct = document.getElementById('subProduct').value;
-            formData.productType = document.getElementById('productType').value;
-            formData.selectSources = document.getElementById('selectSources').value;
-            formData.sourceBranch = document.getElementById('sourceBranch').value;
-            formData.ifGdfi = document.getElementById('ifGdfi').value;
-            formData.mortgagee = document.getElementById('mortgagee').value;
-            formData.area = document.getElementById('area').value;
-            formData.alfcBranch = document.getElementById('alfcBranch').value;
-            formData.policyNumber = document.getElementById('policyNumber').value;
-            formData.expiryDate = document.getElementById('expiryDate').value;
-            formData.policyInception = document.getElementById('policyInception').value;
-            formData.plateConductionNumber = document.getElementById('plateConductionNumber').value;
-            formData.description = document.getElementById('description').value;
-            formData.loanAmount = document.getElementById('loanAmount').value;
-            formData.totalSumInsured = document.getElementById('totalSumInsured').value;
-            formData.mop = document.getElementById('mop').value;
-            formData.bookNumber = document.getElementById('bookNumber').value;
-            formData.filingNumber = document.getElementById('filingNumber').value;
-            formData.pidReceivedDate = document.getElementById('pidReceivedDate').value;
-            formData.pidCompletionDate = document.getElementById('pidCompletionDate').value;
-            formData.remarksProducts = document.getElementById('remarksProducts').value;
-        // }
-
-
-        // if (currentStep == 3) {
-
-            formData.provisionReceipt = document.getElementById('provisionReceipt').value;
-            formData.grossPremium = grossPremium.value;
-            formData.discount = discount.value;
-            formData.netOfDiscount = netOfDiscountInput.value;
-            formData.amountDuetoProvider = amountDuetoProviderInput.value;
-            formData.fullCommission = fullCommissionInput.value;
-            formData.marketingFund = marketingFundInput.value;
-            formData.offsetting = offSettingInput.value;
-            formData.promo = promoInput.value;
-
-            formData.commissionsSelect = getCommissionsValue();
-
-            formData.totalCommissionInput = document.getElementById('totalCommission').value;
-
-            formData.commDeduct = commDeductInput.value;
-
-
-            formData.vat = vatInput.value;
-            formData.salesCredit = salesCreditInput.value;
-            formData.salesCreditPercent = salesCreditPercentInput.value;
-
-
-
-        //}
-
-
-        // if (currentStep == 4) {
-
-            formData.paymentTerms = paymentTermsInputs.value;
-            formData.dueDateStart = dueDateStartInputs.value;
-            formData.dueDateEnd = dueDateEndInputs.value;
-            formData.firstPayment = schedulePaymentInputs.value;
-            formData.initialPayment = initialPaymentInputs.value;
-
-            formData.forBilling = forBillingInputs.value;
-
-            formData.overUnderPayment = overUnderPaymentInputs.value;
-
-
-        //}
-
-
-
-        // console.log(formData);
         return formData;
     }
 
+    // Function to load form data from sessionStorage
+    function loadFormData() {
+        const storedData = sessionStorage.getItem('formData'); // Assuming data is stored under 'formData'
 
-    // Function to check and unhide the div based on the selected source
+        if (storedData) {
+            const formData = JSON.parse(storedData);
+
+            // Load values into form inputs
+            assuredNameInput.value = formData.assuredNameValue || '';
+            fullAddressInput.value = formData.fullAddressValue || '';
+            unitNoInput.value = formData.unitNoValue || '';
+            streetInput.value = formData.streetValue || '';
+            barangayInput.value = formData.barangayValue || '';
+            cityInput.value = formData.cityValue || '';
+            countryInput.value = formData.countryValue || '';
+
+            assuredEmailInput.value = formData.assuredEmailValue || '';
+            assuredContactNumberInput.value = formData.assuredContactNumberValue || '';
+
+            IssuanceCodeInput.value = formData.IssuanceCodeValue || '';
+            classificationSelect.value = formData.classificationValue || '';
+            saleStatusSelect.value = formData.saleStatusValue || '';
+            saleDateDateSelect.value = formData.saleDateValue || '';
+
+            teamSelect.value = formData.teamValue || '';
+            salesAssociateSelect.value = formData.salesAssociateValue || '';
+            salesManagerSelect.value = formData.salesManagerValue || '';
+
+            providerSelect.value = formData.providerValue || '';
+            policyNumberInput.value = formData.policyNumberValue || '';
+            policyInceptionDateSelect.value = formData.policyInceptionValue || '';
+            expiryDateSelect.value = formData.expiryDateValue || '';
+
+            productSelect.value = formData.productValue || '';
+            subProductSelect.value = formData.subProductValue || '';
+            productTypeSelect.value = formData.productTypeValue || '';
+            sourceSelect.value = formData.sourceValue || '';
+            sourceBranchSelect.value = formData.sourceBranchValue || '';
+            ifGdfiSelect.value = formData.ifGdfiValue || '';
+            mortgageeInput.value = formData.mortgageeValue || '';
+            areaSelect.value = formData.areaValue || '';
+            alfcBranchSelect.value = formData.alfcBranchValue || '';
+        }
+    }
+
+
+    //FORMATTING FUNCTIONS
+    function updateFullAddress() {
+        const fullAddress = `${unitNoInput.value}, ${streetInput.value}, ${barangayInput.value}, ${cityInput.value}, ${countryInput.value}`;
+        fullAddressInput.value = fullAddress;
+    }
+
     function checkIfGDFI() {
         const source = document.getElementById('selectSources').value;
-
-        // Check if the selected source is 2
         if (source == 2) {
-            document.getElementById('gdficol').style.visibility = "visible";
-        }
-        else {
-            document.getElementById('gdficol').style.visibility = "hidden";
+            // Show the div
+            document.getElementById('gdficol').style.display = "block";
+        } else {
+            // Hide the div
+            document.getElementById('gdficol').style.display = "none";
         }
     }
 
-    // Function to calculate and update netOfDiscount
+    // Function to format the input with commas for display purposes only
+    function formatInputWithCommas(event) {
+        let rawValue = event.target.value.replace(/,/g, ''); // Remove commas
+
+        // Check if there is a decimal point
+        if (rawValue.indexOf('.') !== -1) {
+            // Split into integer and decimal parts
+            let parts = rawValue.split('.');
+            let integerPart = parts[0]; // Integer part
+            let decimalPart = parts[1]; // Decimal part
+
+            // Format the integer part with commas
+            integerPart = Number(integerPart).toLocaleString('en-US');
+
+            // Reassemble the integer and decimal parts
+            rawValue = integerPart + '.' + decimalPart;
+        } else {
+            // If no decimal point, just format the entire number
+            rawValue = Number(rawValue).toLocaleString('en-US');
+        }
+
+        // Store the raw value in the data attribute
+        event.target.dataset.rawValue = rawValue.replace(/,/g, ''); // Store without commas
+
+        // Update the input field value with formatted commas
+        event.target.value = rawValue;
+    }
+
+    function validatePaymentTerms() {
+        let value = paymentTermsInputs.value;
+
+        // Allow only numbers between 1 and 8
+        if (value === '0' || value === '' || value < 1 || value > 8) {
+            // If the value is invalid (either 0, less than 1, or greater than 8), reset the input
+            paymentTermsInputs.setCustomValidity('Please enter a number between 1 and 8.');
+            paymentTermsInputs.reportValidity(); // Show the error message
+            paymentTermsInputs.value = ''; // Clear the invalid input
+        } else {
+            // Clear custom validity message if input is valid
+            paymentTermsInputs.setCustomValidity('');
+        }
+    }
+
+    // Clear custom validation when the user clicks into the input
+    function clearValidation() {
+        const paymentTermsInput = document.getElementById('paymentTerms');
+        paymentTermsInput.setCustomValidity('');
+    }
+
+
+
+
+
+    //COMPUTATION FUNCTIONS
+
+
+    // Function to calculate net of discount
     function getNetOfDiscount() {
-        const grossPremium = parseFloat(grossPremiumInput.value) || 0;  // Default to 0 if empty or invalid
-        const discount = parseFloat(discountInput.value) || 0;  // Default to 0 if empty or invalid
+        // Get raw values from data attributes
+        grossPremiumValue = parseFloat(grossPremiumInput.dataset.rawValue) || 0;
+        discountValue = parseFloat(discountInput.dataset.rawValue) || 0;
 
-        // Calculate netOfDiscount and update the netOfDiscount input field
-        const netOfDiscount = grossPremium - discount;
-        netOfDiscountInput.value = netOfDiscount.toFixed(2);  // Format to two decimal places
+        // Calculate net value
+        netOfDiscountValue = grossPremiumValue - discountValue;
 
-        getVatSalesCredit();
+        // Store the result in a data attribute and display it with commas
+        netOfDiscountInput.dataset.netOfDiscountValue = netOfDiscountValue;
+        netOfDiscountInput.value = netOfDiscountValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
+        getVatSalesCreditandPercentage();
     }
 
-    function getFullComm(){
-        const netOfDiscount = parseFloat(netOfDiscountInput.value) || 0;
-        const amountDuetoProvider = parseFloat(amountDuetoProviderInput.value) || 0;
+    // Function to calculate full commission
+    function getFullComm() {
+        // Get raw values from data attributes
+        netOfDiscountValue = parseFloat(netOfDiscountInput.dataset.netOfDiscountValue) || 0;
+        amountDuetoProviderValue = parseFloat(amountDuetoProvider.dataset.rawValue) || 0;
 
+        // Calculate full commission
+        fullCommissionValue = netOfDiscountValue - amountDuetoProviderValue;
 
-        console.log(netOfDiscount);
-        console.log(amountDuetoProvider);
+        // Store the result in a data attribute and display it with commas
+        fullCommissionInput.dataset.fullCommissionValue = fullCommissionValue;
+        fullCommissionInput.value = fullCommissionValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-        const fullCommission = netOfDiscount - amountDuetoProvider;
-        fullCommissionInput.value = fullCommission.toFixed(2);
-
-        getVatSalesCredit();
-
-
-    }
-
-    // Function to get all values from the commission fields
-    function getCommissionsValue() {
-
-            let initialTotalCommission = 0;
-
-            const container = document.getElementById('commissionContainer');
-            const commissionSelects = container.querySelectorAll('select');
-            const commissionInputs = container.querySelectorAll('input');
-
-
-            // Convert input values to numbers
-            let marketingFundValue = parseFloat(marketingFundInput.value) || 0;
-            let offsettingValue = parseFloat(offSettingInput.value) || 0;
-            let promoValue = parseFloat(promoInput.value) || 0;
-
-            // Calculate the total commission
-            initialTotalCommission = marketingFundValue + offsettingValue + promoValue;
-
-
-
-            const commissions = [];
-            let totalCommission = 0 + initialTotalCommission; // Initialize total commission
-
-            commissionSelects.forEach((select, index) => {
-                // Only capture values if the corresponding input exists
-                const amountInput = commissionInputs[index];
-                if (select.value && amountInput && amountInput.value) {
-                    const commissionAmount = parseFloat(amountInput.value) || 0; // Safely parse the commission amount
-
-                    commissions.push({
-                        commissionType: select.value,
-                        commissionAmount: commissionAmount
-                    });
-
-                    totalCommission += commissionAmount; // Add to the total commission
-                }
-            });
-
-            // Update the total commission input field with the total sum formatted to 2 decimal places
-            totalCommissionInput.value = totalCommission.toFixed(2); // Format to 2 decimal places
-            getVatSalesCredit();
-
-            return commissions;
-
+        getVatSalesCreditandPercentage();
     }
 
     function addCommissions() {
@@ -1840,17 +1525,18 @@
             newSelectInput = newSection.querySelector(`#commissionSelect${index}`);
 
             // Immediately save the form data after adding the new fields
-            saveFormData();
+            // saveFormData();
 
             // Attach event listeners to the newly added elements
             newAmountInput.addEventListener('input', function () {
-                saveFormData(); // Save data whenever the input value changes
-                getVatSalesCredit();
+                getCommissionsValue();
+                // saveFormData(); // Save data whenever the input value changes
+                getVatSalesCreditandPercentage();
             });
 
             newSelectInput.addEventListener('change', function () {
-                saveFormData(); // Save data whenever the select value changes
-                getVatSalesCredit();
+                // saveFormData(); // Save data whenever the select value changes
+                // getVatSalesCredit();
             });
 
             // Increase the index for the next field
@@ -1859,21 +1545,60 @@
 
     }
 
+    // Function to get all values from the commission fields
+    function getCommissionsValue() {
 
-    function getVatSalesCredit() {
-        const fullCommissionValue = parseFloat(fullCommissionInput.value) || 0;
-        const totalCommissionValue = parseFloat(totalCommissionInput.value) || 0;
+        let initialTotalCommission = 0;
+
+        const container = document.getElementById('commissionContainer');
+        const commissionSelects = container.querySelectorAll('select');
+        const commissionInputs = container.querySelectorAll('input');
+
+
+        // Convert input values to numbers
+        let travelIncentivesValues = parseFloat(travelIncentivesInput.value) || 0;
+        let offsettingValue = parseFloat(offSettingInput.value) || 0;
+        let promoValue = parseFloat(promoInput.value) || 0;
+
+        // Calculate the total commission
+        initialTotalCommission = travelIncentivesValues + offsettingValue + promoValue;
 
 
 
-        const vatValue = ((fullCommissionValue - totalCommissionValue) * 0.12) / 1.12;
+        const commissions = [];
+        totalCommission = 0 + initialTotalCommission; // Initialize total commission
+
+        commissionSelects.forEach((select, index) => {
+            // Only capture values if the corresponding input exists
+            const amountInput = commissionInputs[index];
+            if (select.value && amountInput && amountInput.value) {
+                const commissionAmount = parseFloat(amountInput.value) || 0; // Safely parse the commission amount
+
+                commissions.push({
+                    commissionType: select.value,
+                    commissionAmount: commissionAmount
+                });
+
+                totalCommission += commissionAmount; // Add to the total commission
+            }
+        });
+
+        // Update the total commission input field with the total sum formatted to 2 decimal places
+        totalCommissionInput.value = totalCommission.toFixed(2); // Format to 2 decimal places
+
+        getVatSalesCreditandPercentage();
+        return commissions;
+
+    }
+
+
+    function getVatSalesCreditandPercentage() {
+
+        vatValue = ((fullCommissionValue - totalCommissionInput.value) * 0.12) / 1.12;
         vatInput.value = vatValue.toFixed(2);
 
-
-        const salesCreditValue = fullCommissionValue - totalCommissionValue - vatValue;
+        salesCreditValue = fullCommissionValue - totalCommissionInput.value - vatValue;
         salesCreditInput.value = salesCreditValue.toFixed(2);
-
-
 
         if (fullCommissionValue === 0 || !isFinite(salesCreditValue / fullCommissionValue)) {
             // Handle division by zero or invalid values
@@ -1881,33 +1606,10 @@
         } else {
             salesCreditPercentValue = (salesCreditValue / fullCommissionValue) * 100;
         }
+
         const formattedPercent = salesCreditPercentValue.toFixed(2) + '%';
         salesCreditPercentInput.value = formattedPercent;
 
-
-    }
-
-
-    function validatePaymentTerms() {
-        const paymentTermsInput = document.getElementById('paymentTerms');
-        let value = paymentTermsInput.value;
-
-        // Allow only numbers between 1 and 8
-        if (value === '0' || value === '' || value < 1 || value > 8) {
-            // If the value is invalid (either 0, less than 1, or greater than 8), reset the input
-            paymentTermsInput.setCustomValidity('Please enter a number between 1 and 8.');
-            paymentTermsInput.reportValidity(); // Show the error message
-            paymentTermsInput.value = ''; // Clear the invalid input
-        } else {
-            // Clear custom validity message if input is valid
-            paymentTermsInput.setCustomValidity('');
-        }
-    }
-
-    // Clear custom validation when the user clicks into the input
-    function clearValidation() {
-        const paymentTermsInput = document.getElementById('paymentTerms');
-        paymentTermsInput.setCustomValidity('');
     }
 
 
@@ -1931,210 +1633,127 @@
 
 
     function calculateSchedulePaymentsAmount() {
-        if (storedData) {
-            const formData = JSON.parse(storedData);
+    const TermsValue = parseInt(paymentTermsInputs.value); // Number of payment terms
+    const schedulePaymentContainer = document.getElementById('schedulePaymentTerms');
+    schedulePaymentContainer.innerHTML = ''; // Clear existing inputs
+    const paymentInputs = []; // To track all payment inputs
+    const paymentDateInputs = []; // To track all date inputs
 
-            const grossPremiumValue = formData.grossPremium; // Get gross premium value
-            const TermsValue = parseInt(paymentTermsInputs.value); // Get terms (number of payments)
-            const FirstPaymentValue = parseFloat(schedulePaymentInputs.value); // Get first payment value
-            const remainingAmount = grossPremiumValue - FirstPaymentValue; // Calculate remaining amount after first payment
-            const remainingTerms = TermsValue - 1; // Remaining terms excluding the first one
+    // Function to get the correct suffix for the number
+    function getSuffix(i) {
+        if (i % 10 === 1 && i % 100 !== 11) return 'st';
+        if (i % 10 === 2 && i % 100 !== 12) return 'nd';
+        if (i % 10 === 3 && i % 100 !== 13) return 'rd';
+        return 'th';
+    }
 
-            if (TermsValue === 1) {
-                schedulePaymentInputs.value = grossPremiumValue; // Automatically set to gross premium if only one term
+    // Create payment fields dynamically
+    for (let i = 1; i <= TermsValue; i++) {
+        const row = document.createElement('div');
+        row.classList.add('row', 'mt-md-2');
+
+        // Payment date input
+        const colDate = document.createElement('div');
+        colDate.classList.add('col-md-4');
+        colDate.innerHTML = `
+            <div class="mb-3">
+                <label for="paymentDate${i}" class="form-label fw-bold">${i}${getSuffix(i)} Payment Date</label>
+                <input type="date" id="paymentDate${i}" class="form-control rounded-0 border-1" required>
+            </div>
+        `;
+
+        // Payment amount input
+        const colAmount = document.createElement('div');
+        colAmount.classList.add('col-md-4');
+        colAmount.innerHTML = `
+            <div class="mb-3">
+                <label for="paymentAmount${i}" class="form-label fw-bold">${i}${getSuffix(i)} Payment Amount</label>
+                <input type="number" id="paymentAmount${i}" class="form-control rounded-0 border-1" placeholder="Enter ${i}${getSuffix(i)} Payment Amount" step="0.01" required>
+            </div>
+        `;
+
+        row.appendChild(colDate);
+        row.appendChild(colAmount);
+        schedulePaymentContainer.appendChild(row);
+
+        // Store reference to the payment input for event handling
+        paymentInputs.push(document.getElementById(`paymentAmount${i}`));
+        paymentDateInputs.push(document.getElementById(`paymentDate${i}`));
+    }
+
+    // Event listener for the first payment input
+    if (paymentInputs.length > 0) {
+        paymentInputs[0].addEventListener('input', function () {
+            const firstPaymentValue = parseFloat(this.value) || 0;
+
+            if (firstPaymentValue === 0 || this.value.trim() === "") {
+                // Clear all fields if first payment is invalid or empty
+                paymentInputs.forEach(input => input.value = "");
+                return;
             }
-            initialPayment.value = schedulePaymentInputs.value;
 
-
-            // Calculate the monthly payment for the remaining terms
-            const monthlySchedulePayment = remainingAmount / remainingTerms;
-
-            console.log("Monthly Payment: " + monthlySchedulePayment);
-            console.log("Total Terms: " + TermsValue);
-
-            // Get the container for the payment terms
-            const schedulePaymentContainer = document.getElementById('schedulePaymentTerms');
-
-            // Get all current input fields for payments
-            const currentFields = schedulePaymentContainer.querySelectorAll('input[id^="SchedulePayment"]');
-
-            if (FirstPaymentValue > 0) {
-
-                if (currentFields.length > TermsValue) {
-                    for (let i = currentFields.length; i > TermsValue; i--) {
-                        const fieldToRemove = currentFields[i - 1];
-                        if (fieldToRemove.id !== "SchedulePayment1") { // Keep the first payment intact
-                            fieldToRemove.parentElement.parentElement.remove();
-                        }
-                    }
-                }
-
-                if (currentFields.length < TermsValue) {
-                    for (let i = currentFields.length + 1; i <= TermsValue; i++) {
-                        const colDiv = document.createElement('div');
-                        colDiv.classList.add('col-md-4');
-
-                        const mbDiv = document.createElement('div');
-                        mbDiv.classList.add('mb-4', 'mb-md-3', 'mb-sm-4');
-
-                        const label = document.createElement('label');
-                        label.setAttribute('for', 'SchedulePayment' + i);
-                        label.classList.add('form-label', 'fw-bold');
-
-                        if (i === 2) {
-                            label.textContent = '2nd Payment';
-                        } else if (i === 3) {
-                            label.textContent = '3rd Payment';
-                        } else if (i === 4) {
-                            label.textContent = '4th Payment';
-                        } else {
-                            label.textContent = i + 'th Payment';
-                        }
-
-                        const input = document.createElement('input');
-                        input.type = 'text';
-                        input.classList.add('form-control', 'rounded-0', 'border-1');
-                        input.id = 'SchedulePayment' + i;
-
-                        input.placeholder = label.textContent;
-                        input.value = monthlySchedulePayment.toFixed(2);
-                        input.required = true;
-
-                        mbDiv.appendChild(label);
-                        mbDiv.appendChild(input);
-                        colDiv.appendChild(mbDiv);
-                        schedulePaymentContainer.appendChild(colDiv);
-                    }
-                }
-
-                for (let i = 2; i <= TermsValue; i++) {
-                    const input = document.getElementById('SchedulePayment' + i);
-                    if (input) {
-                        input.value = monthlySchedulePayment.toFixed(2); // Update the payment amount
-                    }
-                }
-
+            // Ensure the first payment does not exceed the gross premium
+            if (firstPaymentValue > grossPremiumValue) {
+                alert("First payment cannot exceed the gross premium.");
+                this.value = grossPremiumValue.toFixed(2);
+                return;
             }
+
+            // Calculate the remaining amount and update other fields
+            const remainingAmount = grossPremiumValue - firstPaymentValue;
+            const remainingTerms = TermsValue - 1;
+            const monthlyPayment = (remainingAmount / remainingTerms).toFixed(2);
+
+            for (let i = 1; i < paymentInputs.length; i++) {
+                paymentInputs[i].value = monthlyPayment;
+            }
+        });
+
+        // Add event listeners to dynamically adjust the other payment inputs
+        for (let i = 1; i < paymentInputs.length; i++) {
+            paymentInputs[i].addEventListener('input', function () {
+                let totalPaid = 0;
+
+                for (let j = 0; j <= i; j++) {
+                    totalPaid += parseFloat(paymentInputs[j].value) || 0;
+                }
+
+                const remainingAmount = grossPremiumValue - totalPaid;
+                const remainingTerms = TermsValue - (i + 1);
+
+                if (remainingTerms > 0) {
+                    const recalculatedPayment = (remainingAmount / remainingTerms).toFixed(2);
+
+                    for (let k = i + 1; k < paymentInputs.length; k++) {
+                        paymentInputs[k].value = recalculatedPayment;
+                    }
+                }
+            });
         }
     }
 
+    // Add an event listener to the first payment date input
+    if (paymentDateInputs.length > 0) {
+        paymentDateInputs[0].addEventListener('change', function () {
+            const firstDate = new Date(this.value);
 
-
-    $(document).ready(function() {
-        // Initialize form step
-        const savedStep = sessionStorage.getItem('currentStep');
-        if (savedStep) {
-            currentStep = parseInt(savedStep, 10);
-        }
-
-        document.querySelectorAll('.step input[type="radio"]').forEach((radio, index) => {
-            radio.addEventListener('change', () => {
-                currentStep = index;
-                sessionStorage.setItem('currentStep', currentStep);
-                showStep(currentStep);
-            });
+            // Increment and set subsequent payment dates
+            for (let i = 1; i < paymentDateInputs.length; i++) {
+                const nextDate = new Date(firstDate);
+                nextDate.setMonth(firstDate.getMonth() + i);
+                paymentDateInputs[i].value = nextDate.toISOString().split('T')[0];
+            }
         });
-
-        document.getElementById('selectSources').addEventListener('change', function() {
-            checkIfGDFI();
-        });
-
-        loadFormData();
-        checkIfGDFI();
-        showStep(currentStep);
-
-        // Attach event listeners for form inputs
-        const inputs = document.querySelectorAll('input, textarea, select');
-        inputs.forEach(input => {
-            input.addEventListener('input', saveFormData);
-            input.addEventListener('change', saveFormData);
-            input.addEventListener('select', saveFormData);
-
-        });
-
-        // Get address input fields
-        const unitNoField = document.getElementById('unitNo');
-        const streetField = document.getElementById('street');
-        const barangayField = document.getElementById('barangay');
-        const cityField = document.getElementById('city');
-        const fullAddressField = document.getElementById('fullAddress');
-
-        // Function to update the full address input
-        function updateFullAddress() {
-            const fullAddress = `${unitNoField.value}, ${streetField.value}, ${barangayField.value}, ${cityField.value}`;
-            fullAddressField.value = fullAddress;
-        }
-
-        unitNoField.addEventListener('input', updateFullAddress);
-        streetField.addEventListener('input', updateFullAddress);
-        barangayField.addEventListener('input', updateFullAddress);
-        cityField.addEventListener('input', updateFullAddress);
-
-
-        // computations
-        grossPremiumInput.addEventListener('input', getNetOfDiscount);
-        discountInput.addEventListener('input', getNetOfDiscount);
-        amountDuetoProvider.addEventListener('input', getFullComm);
-
-
-        marketingFundInput.addEventListener('input', getCommissionsValue);
-        offSettingInput.addEventListener('input', getCommissionsValue);
-        promoInput.addEventListener('input', getCommissionsValue);
-
-        amountDuetoProvider.addEventListener('input', getVatSalesCredit);
+    }
+}
 
 
 
-        const selectIds = [
-            '#team',
-            '#salesAssocManager',
-            '#branchManager',
-            '#provider',
-            '#product',
-            '#subProduct',
-            '#selectSource',
-            '#sourceBranch',
-            '#ifGdfi',
-            '#area',
-            '#alfcBranch',
-            '#mop',
-        ];
-
-        selectIds.forEach(function(id) {
-            $(id).select2({
-                allowClear: true,
-                minimumResultsForSearch: 0 // Shows the search box even if there are few results
-            });
-        });
-
-
-
-
-        addCommissions();
-        validatePaymentTerms();
-        clearValidation();
-
-
-        function formatDateToText(date) {
-            const options = { year: 'numeric', month: 'long', day: 'numeric' };
-            return new Date(date).toLocaleDateString('en-US', options);
-        }
-
-
-        paymentTermsInputs.addEventListener('change', calculateDueDateEnd);
-        dueDateStartInputs.addEventListener('change', calculateDueDateEnd);
-        calculateDueDateEnd();
-
-
-        // Add event listeners to both paymentTermsInputs and schedulePaymentInputs
-        paymentTermsInputs.addEventListener('input', calculateSchedulePaymentsAmount);
-        schedulePaymentInputs.addEventListener('input', calculateSchedulePaymentsAmount);
-
-    });
 
 
 
 </script>
+
 
 
 
