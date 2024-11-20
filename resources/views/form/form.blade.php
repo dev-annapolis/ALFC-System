@@ -777,7 +777,7 @@
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-4 mb-sm-4 mt-md-2">
                                 <label for="offsettingLabel" class="form-label fw-bold">Offsetting</label>
-                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="offsetting" placeholder="Enter Offsetting" required>
+                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="offSetting" placeholder="Enter Offsetting" required>
                             </div>
                         </div>
 
@@ -975,6 +975,7 @@
 
     let currentStep = 0;
     let index = 0;
+    const commissions = [];
 
     const inputs = document.querySelectorAll('input, select, change');
 
@@ -1034,7 +1035,7 @@
     const fullCommissionInput = document.getElementById('fullCommission');
 
     const travelIncentivesInput = document.getElementById('travelIncentives');
-    const offSettingInput = document.getElementById('offsetting');
+    const offSettingInput = document.getElementById('offSetting');
     const promoInput = document.getElementById('promo');
     const commDeductInput = document.getElementById('commDeduct');
 
@@ -1055,9 +1056,20 @@
     const dueDateStartInputs = document.getElementById('dueDateStart');
     const dueDateEndInputs = document.getElementById('dueDateEnd');
 
-
-    let isFieldsAdded = false;  // Flag to check if fields have already been added
     const schedulePaymentInputs = document.getElementById('SchedulePayment1');
+
+    const initialPaymentInputs = document.getElementById('initialPayment');
+    const dateGoodSalesSelect = document.getElementById('dateGoodSales');
+    const forBillingInputs = document.getElementById('forBilling');
+    const overUnderPaymentInputs = document.getElementById('overUnderPayment');
+    const prNumberInputs = document.getElementById('prNumber');
+    const statusPaymentInputs = document.getElementById('statusPayment');
+
+
+
+
+
+
 
 
     $(document).ready(function() {
@@ -1079,7 +1091,6 @@
         attachRadioChangeHandlers();
         checkIfGDFI();
         loadFormData();
-
 
 
         selecDropdownIds.forEach(select => {
@@ -1129,7 +1140,7 @@
         promoInput.addEventListener('input', getCommissionsValue);
 
 
-        addCommissions();
+        addCommissionsInput();
         clearValidation();
 
 
@@ -1141,8 +1152,9 @@
 
         paymentTermsInputs.addEventListener('change', validatePaymentTerms);
         dueDateStartInputs.addEventListener('change', calculateDueDateEnd);
-
         paymentTermsInputs.addEventListener('input', calculateSchedulePaymentsAmount);
+        calculateDueDateEnd();
+
 
     });
 
@@ -1261,6 +1273,7 @@
 
         const formData = {};
 
+        //FIRST FORM
         formData.assuredNameValue = assuredNameInput.value;
         formData.fullAddressValue = fullAddressInput.value;
         formData.unitNoValue = unitNoInput.value;
@@ -1294,7 +1307,45 @@
         formData.ifGdfiValue = ifGdfiSelect.value;
         formData.mortgageeValue = mortgageeInput.value;
         formData.areaValue = areaSelect.value;
-        formData.areaValue = alfcBranchSelect.value;
+        formData.alfcBranchValue = alfcBranchSelect.value;
+
+
+
+
+        //SECOND FORM
+        formData.grossPremiumValue = grossPremiumInput.value;
+        formData.discountValue = discountInput.value;
+        formData.netOfDiscountValue = netOfDiscountInput.value;
+
+        formData.amountDuetoProviderValue = amountDuetoProviderInput.value;
+        formData.fullCommissionValue = fullCommissionInput.value;
+
+        formData.commissionsSelect = getCommissionsValue();
+
+        formData.travelIncentivesValues = travelIncentivesInput.value;
+        formData.offSettingValues = offSettingInput.value;
+        formData.promoValues = promoInput.value;
+
+        formData.totalCommissionValues = totalCommissionInput.value;
+        formData.commDeductValues = commDeductInput.value;
+
+        formData.paymentTermsValues = paymentTermsInputs.value;
+        formData.dueDateStartValues = dueDateStartInputs.value;
+        formData.dueDateEndValues = dueDateEndInputs.value;
+
+
+
+        formData.initialPaymentValues = initialPaymentInputs.value;
+        formData.dateGoodSalesValues = dateGoodSalesSelect.value;
+        formData.forBillingValues = forBillingInputs.value;
+        formData.overUnderPaymentValues = overUnderPaymentInputs.value;
+        formData.prNumberValues = prNumberInputs.value;
+        formData.statusPaymentValues = statusPaymentInputs.value;
+
+
+
+
+
 
 
         return formData;
@@ -1302,12 +1353,14 @@
 
     // Function to load form data from sessionStorage
     function loadFormData() {
+
         const storedData = sessionStorage.getItem('formData'); // Assuming data is stored under 'formData'
 
         if (storedData) {
             const formData = JSON.parse(storedData);
 
             // Load values into form inputs
+            //FIRST FORM
             assuredNameInput.value = formData.assuredNameValue || '';
             fullAddressInput.value = formData.fullAddressValue || '';
             unitNoInput.value = formData.unitNoValue || '';
@@ -1342,8 +1395,103 @@
             mortgageeInput.value = formData.mortgageeValue || '';
             areaSelect.value = formData.areaValue || '';
             alfcBranchSelect.value = formData.alfcBranchValue || '';
+
+
+
+
+
+            //SECOND FORM
+            grossPremiumInput.value = formData.grossPremiumValue || '';
+            discountInput.value = formData.discountValue || '';
+            netOfDiscountInput.value = formData.netOfDiscountValue || '';
+            amountDuetoProviderInput.value = formData.amountDuetoProviderValue || '';
+            fullCommissionInput.value = formData.fullCommissionValue || '';
+
+
+
+            if (formData.commissionsSelect && formData.commissionsSelect.length > 0) {
+                const container = document.getElementById('commissionContainer');
+
+                formData.commissionsSelect.forEach((commission, index) => {
+                    // Create a new div element to hold the commission fields
+                    const newSection = document.createElement('div');
+                    newSection.classList.add('row', 'mt-md-0');
+                    newSection.innerHTML = `
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
+                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0 commissionSelect" id="commissionSelect${index}">
+                                    <option value="" disabled selected>Select Commissions</option>
+                                    @foreach($commisioners as $commisioner)
+                                        <option value="{{ $commisioner->id }}">{{ $commisioner->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="commissionNameLabel" class="form-label fw-bold">Name</label>
+                                <input type="text" class="form-control rounded-0 border-1 commissionName" id="commissionName${index}" placeholder="Enter a Name" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3 mb-md-4 mb-sm-4">
+                                <label for="commissionAmountLabel" class="form-label fw-bold">Amount</label>
+                                <input type="text" class="form-control rounded-0 border-1 commissionAmount" id="commissionAmount${index}" placeholder="Enter Amount" required>
+                            </div>
+                        </div>
+
+                    `;
+
+                    // Append the new section to the container
+                    container.appendChild(newSection);
+
+                    // Get the newly created select and input elements
+                    const commissionAmount = document.getElementById(`commissionAmount${index}`);
+                    const commissionName = document.getElementById(`commissionName${index}`);
+                    const commissionSelect = document.getElementById(`commissionSelect${index}`);
+
+                    // Populate the newly created fields with data from formData
+                    if (commissionAmount && commissionName && commissionSelect) {
+                        commissionAmount.value = commission.commissionAmount || ''; // Default if not provided
+                        commissionName.value = commission.commissionName || ''; // Default if not provided
+                        commissionSelect.value = commission.commissionType || '';   // Default if not provided
+                    }
+
+
+                });
+            }
+
+
+            travelIncentivesInput.value = formData.travelIncentivesValues || '';
+            offSettingInput.value = formData.offSettingValues || '';
+            promoInput.value = formData.promoValues || '';
+
+            totalCommissionInput.value = formData.totalCommissionValues || '';
+            commDeductInput.value = formData.commDeductValues || '';
+
+            paymentTermsInputs.value = formData.paymentTermsValues || '';
+            dueDateStartInputs.value = formData.dueDateStartValues || '';
+            dueDateEndInputs.value = formData.dueDateEndValues || '';
+
+
+            initialPaymentInputs.value = formData.initialPaymentValues || '';
+            dateGoodSalesSelect.value = formData.dateGoodSalesValues || '';
+            forBillingInputs.value = formData.forBillingValues || '';
+            overUnderPaymentInputs.value = formData.overUnderPaymentValues || '';
+            prNumberInputs.value = formData.prNumberValues || '';
+            statusPaymentInputs.value = formData.statusPaymentValues || '';
+
+
+
+
+
+
+
         }
     }
+
+
 
 
     //FORMATTING FUNCTIONS
@@ -1415,9 +1563,7 @@
 
 
 
-
     //COMPUTATION FUNCTIONS
-
 
     // Function to calculate net of discount
     function getNetOfDiscount() {
@@ -1451,8 +1597,8 @@
         getVatSalesCreditandPercentage();
     }
 
-    function addCommissions() {
-        let newAmountInput, newSelectInput;
+    function addCommissionsInput() {
+        let newAmountInput, newnNameInput, newSelectInput;
         let index = 0;
 
         const existingFields = document.querySelectorAll('.commissionAmount, .commissionSelect');
@@ -1464,7 +1610,6 @@
             firstRow.querySelectorAll('.col-md-4').forEach(col => {
                 col.classList.add('mt-5');
                 console.log("existing")
-
             });
         } else {
             // Create the initial section and add it above the container
@@ -1493,9 +1638,6 @@
                 newSection.classList.add('row');  // No mt-5 for subsequent rows
             }
 
-
-
-
             // For the newly added row, do not add mt-5
             newSection.innerHTML = `
                 <div class="col-md-4">
@@ -1511,6 +1653,12 @@
                 </div>
                 <div class="col-md-4">
                     <div class="mb-3 mb-md-4 mb-sm-4">
+                        <label for="commissionNameLabel" class="form-label fw-bold">Name</label>
+                        <input type="text" class="form-control rounded-0 border-1 commissionName" id="commissionName${index}" placeholder="Enter a Name" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="mb-3 mb-md-4 mb-sm-4">
                         <label for="commissionAmountLabel" class="form-label fw-bold">Amount</label>
                         <input type="text" class="form-control rounded-0 border-1 commissionAmount" id="commissionAmount${index}" placeholder="Enter Amount" required>
                     </div>
@@ -1522,28 +1670,48 @@
 
             // Get the newly added elements inside the newSection
             newAmountInput = newSection.querySelector(`#commissionAmount${index}`);
+            newnNameInput = newSection.querySelector(`#commissionName${index}`);
             newSelectInput = newSection.querySelector(`#commissionSelect${index}`);
-
-            // Immediately save the form data after adding the new fields
-            // saveFormData();
-
-            // Attach event listeners to the newly added elements
-            newAmountInput.addEventListener('input', function () {
-                getCommissionsValue();
-                // saveFormData(); // Save data whenever the input value changes
-                getVatSalesCreditandPercentage();
-            });
-
-            newSelectInput.addEventListener('change', function () {
-                // saveFormData(); // Save data whenever the select value changes
-                // getVatSalesCredit();
-            });
+            attachEventListeners();
 
             // Increase the index for the next field
             index++;  // Increase the index after the field is added
         });
 
+        // Attach event listeners to any commission input fields that already exist or newly added fields
+        attachEventListeners();
+
+        function attachEventListeners() {
+            // Attach event listeners to all commissionAmount, commissionName, commissionSelect elements
+            const amountInputs = document.querySelectorAll('.commissionAmount');
+            const nameInputs = document.querySelectorAll('.commissionName');
+            const selectInputs = document.querySelectorAll('.commissionSelect');
+
+            // For each of the commissionAmount inputs
+            amountInputs.forEach(input => {
+                input.addEventListener('input', function () {
+                    getCommissionsValue();
+                    saveFormData();
+                    getVatSalesCreditandPercentage();
+                });
+            });
+
+            // For each of the commissionName inputs
+            nameInputs.forEach(input => {
+                input.addEventListener('input', function () {
+                    saveFormData(); // Save data whenever the input value changes
+                });
+            });
+
+            // For each of the commissionSelect inputs
+            selectInputs.forEach(input => {
+                input.addEventListener('change', function () {
+                    saveFormData(); // Save data whenever the select value changes
+                });
+            });
+        }
     }
+
 
     // Function to get all values from the commission fields
     function getCommissionsValue() {
@@ -1551,31 +1719,33 @@
         let initialTotalCommission = 0;
 
         const container = document.getElementById('commissionContainer');
-        const commissionSelects = container.querySelectorAll('select');
-        const commissionInputs = container.querySelectorAll('input');
+        const commissionSelects = container.querySelectorAll('.commissionSelect'); // Select all dynamic select elements
+        const commissionInputs = container.querySelectorAll('.commissionAmount'); // Select all amount input elements
+        const commissionNames = container.querySelectorAll('.commissionName'); // Select all name input elements
 
-
-        // Convert input values to numbers
+        // Convert input values to numbers for the incentives (assuming they are global or already defined)
         let travelIncentivesValues = parseFloat(travelIncentivesInput.value) || 0;
         let offsettingValue = parseFloat(offSettingInput.value) || 0;
         let promoValue = parseFloat(promoInput.value) || 0;
 
-        // Calculate the total commission
+        // Calculate the initial total commission (assuming this is the base value)
         initialTotalCommission = travelIncentivesValues + offsettingValue + promoValue;
 
-
-
         const commissions = [];
-        totalCommission = 0 + initialTotalCommission; // Initialize total commission
+        let totalCommission = initialTotalCommission; // Start total commission with the initial value
 
+        // Loop through all the selects and corresponding input fields
         commissionSelects.forEach((select, index) => {
-            // Only capture values if the corresponding input exists
-            const amountInput = commissionInputs[index];
-            if (select.value && amountInput && amountInput.value) {
+            const amountInput = commissionInputs[index]; // The amount input corresponds to the same index
+            const nameInput = commissionNames[index];   // The name input corresponds to the same index
+
+            // Ensure the select, name input, and amount input are valid
+            if (select.value && amountInput && amountInput.value && nameInput && nameInput.value) {
                 const commissionAmount = parseFloat(amountInput.value) || 0; // Safely parse the commission amount
 
                 commissions.push({
                     commissionType: select.value,
+                    commissionName: nameInput.value,   // Add the name entered by the user
                     commissionAmount: commissionAmount
                 });
 
@@ -1586,9 +1756,8 @@
         // Update the total commission input field with the total sum formatted to 2 decimal places
         totalCommissionInput.value = totalCommission.toFixed(2); // Format to 2 decimal places
 
-        getVatSalesCreditandPercentage();
+        getVatSalesCreditandPercentage(); // Call any necessary functions after the calculation
         return commissions;
-
     }
 
 
@@ -1633,123 +1802,129 @@
 
 
     function calculateSchedulePaymentsAmount() {
-    const TermsValue = parseInt(paymentTermsInputs.value); // Number of payment terms
-    const schedulePaymentContainer = document.getElementById('schedulePaymentTerms');
-    schedulePaymentContainer.innerHTML = ''; // Clear existing inputs
-    const paymentInputs = []; // To track all payment inputs
-    const paymentDateInputs = []; // To track all date inputs
 
-    // Function to get the correct suffix for the number
-    function getSuffix(i) {
-        if (i % 10 === 1 && i % 100 !== 11) return 'st';
-        if (i % 10 === 2 && i % 100 !== 12) return 'nd';
-        if (i % 10 === 3 && i % 100 !== 13) return 'rd';
-        return 'th';
-    }
+        const TermsValue = parseInt(paymentTermsInputs.value); // Number of payment terms
+        const schedulePaymentContainer = document.getElementById('schedulePaymentTerms');
+        schedulePaymentContainer.innerHTML = ''; // Clear existing inputs
+        const paymentInputs = []; // To track all payment inputs
+        const paymentDateInputs = []; // To track all date inputs
 
-    // Create payment fields dynamically
-    for (let i = 1; i <= TermsValue; i++) {
-        const row = document.createElement('div');
-        row.classList.add('row', 'mt-md-2');
+        // Function to get the correct suffix for the number
+        function getSuffix(i) {
+            if (i % 10 === 1 && i % 100 !== 11) return 'st';
+            if (i % 10 === 2 && i % 100 !== 12) return 'nd';
+            if (i % 10 === 3 && i % 100 !== 13) return 'rd';
+            return 'th';
+        }
 
-        // Payment date input
-        const colDate = document.createElement('div');
-        colDate.classList.add('col-md-4');
-        colDate.innerHTML = `
-            <div class="mb-3">
-                <label for="paymentDate${i}" class="form-label fw-bold">${i}${getSuffix(i)} Payment Date</label>
-                <input type="date" id="paymentDate${i}" class="form-control rounded-0 border-1" required>
-            </div>
-        `;
+        // Create payment fields dynamically
+        for (let i = 1; i <= TermsValue; i++) {
+            const row = document.createElement('div');
+            row.classList.add('row', 'mt-md-2');
 
-        // Payment amount input
-        const colAmount = document.createElement('div');
-        colAmount.classList.add('col-md-4');
-        colAmount.innerHTML = `
-            <div class="mb-3">
-                <label for="paymentAmount${i}" class="form-label fw-bold">${i}${getSuffix(i)} Payment Amount</label>
-                <input type="number" id="paymentAmount${i}" class="form-control rounded-0 border-1" placeholder="Enter ${i}${getSuffix(i)} Payment Amount" step="0.01" required>
-            </div>
-        `;
+            // Payment date input
+            const colDate = document.createElement('div');
+            colDate.classList.add('col-md-4');
+            colDate.innerHTML = `
+                <div class="mb-3">
+                    <label for="paymentDate${i}" class="form-label fw-bold">${i}${getSuffix(i)} Payment Date</label>
+                    <input type="date" id="paymentDate${i}" class="form-control rounded-0 border-1" required>
+                </div>
+            `;
 
-        row.appendChild(colDate);
-        row.appendChild(colAmount);
-        schedulePaymentContainer.appendChild(row);
+            // Payment amount input
+            const colAmount = document.createElement('div');
+            colAmount.classList.add('col-md-4');
+            colAmount.innerHTML = `
+                <div class="mb-3">
+                    <label for="paymentAmount${i}" class="form-label fw-bold">${i}${getSuffix(i)} Payment Amount</label>
+                    <input type="number" id="paymentAmount${i}" class="form-control rounded-0 border-1" placeholder="Enter ${i}${getSuffix(i)} Payment Amount" step="0.01" required>
+                </div>
+            `;
 
-        // Store reference to the payment input for event handling
-        paymentInputs.push(document.getElementById(`paymentAmount${i}`));
-        paymentDateInputs.push(document.getElementById(`paymentDate${i}`));
-    }
+            row.appendChild(colDate);
+            row.appendChild(colAmount);
+            schedulePaymentContainer.appendChild(row);
 
-    // Event listener for the first payment input
-    if (paymentInputs.length > 0) {
-        paymentInputs[0].addEventListener('input', function () {
-            const firstPaymentValue = parseFloat(this.value) || 0;
+            // Store reference to the payment input for event handling
+            paymentInputs.push(document.getElementById(`paymentAmount${i}`));
+            paymentDateInputs.push(document.getElementById(`paymentDate${i}`));
+        }
 
-            if (firstPaymentValue === 0 || this.value.trim() === "") {
-                // Clear all fields if first payment is invalid or empty
-                paymentInputs.forEach(input => input.value = "");
-                return;
-            }
+        // Event listener for the first payment input
+        if (paymentInputs.length > 0) {
 
-            // Ensure the first payment does not exceed the gross premium
-            if (firstPaymentValue > grossPremiumValue) {
-                alert("First payment cannot exceed the gross premium.");
-                this.value = grossPremiumValue.toFixed(2);
-                return;
-            }
+            paymentInputs[0].addEventListener('input', function () {
+                const firstPaymentValue = parseFloat(this.value) || 0;
 
-            // Calculate the remaining amount and update other fields
-            const remainingAmount = grossPremiumValue - firstPaymentValue;
-            const remainingTerms = TermsValue - 1;
-            const monthlyPayment = (remainingAmount / remainingTerms).toFixed(2);
+                if (firstPaymentValue === 0 || this.value.trim() === "") {
+                    // Clear all fields if first payment is invalid or empty
+                    paymentInputs.forEach(input => input.value = "");
+                    return;
+                }
 
+                // Ensure the first payment does not exceed the gross premium
+                if (firstPaymentValue > grossPremiumValue) {
+                    alert("First payment cannot exceed the gross premium.");
+                    this.value = grossPremiumValue.toFixed(2);
+                    return;
+                }
+
+                // Calculate the remaining amount and update other fields
+                const remainingAmount = grossPremiumValue - firstPaymentValue;
+                const remainingTerms = TermsValue - 1;
+                const monthlyPayment = (remainingAmount / remainingTerms).toFixed(2);
+
+                for (let i = 1; i < paymentInputs.length; i++) {
+                    paymentInputs[i].value = monthlyPayment;
+                }
+
+                initialPaymentInputs.value = firstPaymentValue;
+
+            });
+
+            // Add event listeners to dynamically adjust the other payment inputs
             for (let i = 1; i < paymentInputs.length; i++) {
-                paymentInputs[i].value = monthlyPayment;
-            }
-        });
+                paymentInputs[i].addEventListener('input', function () {
+                    let totalPaid = 0;
 
-        // Add event listeners to dynamically adjust the other payment inputs
-        for (let i = 1; i < paymentInputs.length; i++) {
-            paymentInputs[i].addEventListener('input', function () {
-                let totalPaid = 0;
-
-                for (let j = 0; j <= i; j++) {
-                    totalPaid += parseFloat(paymentInputs[j].value) || 0;
-                }
-
-                const remainingAmount = grossPremiumValue - totalPaid;
-                const remainingTerms = TermsValue - (i + 1);
-
-                if (remainingTerms > 0) {
-                    const recalculatedPayment = (remainingAmount / remainingTerms).toFixed(2);
-
-                    for (let k = i + 1; k < paymentInputs.length; k++) {
-                        paymentInputs[k].value = recalculatedPayment;
+                    for (let j = 0; j <= i; j++) {
+                        totalPaid += parseFloat(paymentInputs[j].value) || 0;
                     }
+
+                    const remainingAmount = grossPremiumValue - totalPaid;
+                    const remainingTerms = TermsValue - (i + 1);
+
+                    if (remainingTerms > 0) {
+                        const recalculatedPayment = (remainingAmount / remainingTerms).toFixed(2);
+
+                        for (let k = i + 1; k < paymentInputs.length; k++) {
+                            paymentInputs[k].value = recalculatedPayment;
+                        }
+                    }
+                });
+            }
+
+
+        }
+
+        // Add an event listener to the first payment date input
+        if (paymentDateInputs.length > 0) {
+            paymentDateInputs[0].addEventListener('change', function () {
+                const firstDate = new Date(this.value);
+
+                // Increment and set subsequent payment dates
+                for (let i = 1; i < paymentDateInputs.length; i++) {
+                    const nextDate = new Date(firstDate);
+                    nextDate.setMonth(firstDate.getMonth() + i);
+                    paymentDateInputs[i].value = nextDate.toISOString().split('T')[0];
                 }
+
             });
         }
+
+
     }
-
-    // Add an event listener to the first payment date input
-    if (paymentDateInputs.length > 0) {
-        paymentDateInputs[0].addEventListener('change', function () {
-            const firstDate = new Date(this.value);
-
-            // Increment and set subsequent payment dates
-            for (let i = 1; i < paymentDateInputs.length; i++) {
-                const nextDate = new Date(firstDate);
-                nextDate.setMonth(firstDate.getMonth() + i);
-                paymentDateInputs[i].value = nextDate.toISOString().split('T')[0];
-            }
-        });
-    }
-}
-
-
-
-
 
 
 </script>
