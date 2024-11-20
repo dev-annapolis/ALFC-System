@@ -29,6 +29,8 @@ use App\Models\IfGdfi;
 use App\Models\Area;
 use App\Models\AlfcBranch;
 use App\Models\ModeOfPayment;
+use App\Models\Tele;
+
 
 class SalesReportController extends Controller
 {
@@ -48,8 +50,9 @@ class SalesReportController extends Controller
         $alfcbranches = AlfcBranch::where('status', 'active')->get();
         $modeofpayments = ModeOfPayment::where('status', 'active')->get();
 
+        $teles = Tele::where('status', 'active')->get();
 
-        return view('salesreport.index', compact('sales_associates', 'teams', 'sales_managers', 'providers', 'products', 'subproducts', 'sources', 'sourcebranches', 'ifgdfis', 'areas', 'alfcbranches', 'modeofpayments'));
+        return view('salesreport.index', compact('sales_associates', 'teams', 'sales_managers', 'providers', 'products', 'subproducts', 'sources', 'sourcebranches', 'ifgdfis', 'areas', 'alfcbranches', 'modeofpayments', 'teles'));
     }
 
     public function salesReportData()
@@ -73,7 +76,7 @@ class SalesReportController extends Controller
                     'email' => $insuranceDetail->assuredDetail->email ?? null,
                     'issuance_code' => $insuranceDetail->issuance_code,
                     'sale_date' => $insuranceDetail->sale_date,
-                    'good_as_sales_date' => $insuranceDetail->paymentDetail->good_as_sales_date ?? null,
+                    'good_as_sales_date' => $insuranceDetail->paymentDetail->date_of_good_as_sales ?? null,
                     'sales_associate' => $insuranceDetail->salesAssociate->name ?? null,
                     'sales_team' => $insuranceDetail->salesAssociate->team->name ?? null,
                     // 'branch_manager' => $insuranceDetail->branchManager->name ?? null,
@@ -158,7 +161,7 @@ class SalesReportController extends Controller
             if ($permission->table_name == $tableName) {
                 foreach ($tableData as $key => $value) {
                     // Debug: Log each key's permission
-                    \Log::info("Processing: Table {$tableName}, Key: {$key}, Permission: " . json_encode($permission));
+                    // \Log::info("Processing: Table {$tableName}, Key: {$key}, Permission: " . json_encode($permission));
 
                     // Mask columns where viewing is restricted
                     if ($permission->can_view == 0 && $permission->column_name == $key) {
@@ -188,7 +191,7 @@ class SalesReportController extends Controller
         }
 
         // Debug: Log final editable columns
-        \Log::info("Editable columns for table {$tableName}: " . json_encode($editableColumns));
+        // \Log::info("Editable columns for table {$tableName}: " . json_encode($editableColumns));
 
         return [
             'data' => $tableData,
@@ -385,6 +388,16 @@ class SalesReportController extends Controller
                         ? response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail, 'updatedName' => $salesAssociate->name])
                         : response()->json(['error' => 'Sales associate not found'], 404);
                 }
+                if ($key === 'sales_manager_name') {
+                    $insuranceDetail->sales_manager_id = $newValue;
+                    $insuranceDetail->save();
+
+                    $salesManager = SalesManager::find($newValue);
+                    return $salesManager
+                        ? response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail, 'updatedName' => $salesManager->name])
+                        : response()->json(['error' => 'Sales associate not found'], 404);
+                }
+
 
                 if ($key === 'team_name') {
                     $insuranceDetail->team_id = $newValue;
@@ -457,7 +470,7 @@ class SalesReportController extends Controller
                 }
 
                 // Fallback for generic fields
-                if (isset($insuranceDetail->$key)) {
+                if (array_key_exists($key, $insuranceDetail->getAttributes())) {
                     $insuranceDetail->$key = $newValue;
                     $insuranceDetail->save();
 
@@ -465,7 +478,62 @@ class SalesReportController extends Controller
                 }
 
                 return response()->json(['error' => 'Field name does not exist in the table or its relations'], 400);
+            case 'commission_details': {
+                $commissionDetail = $insuranceDetail->commissionDetail;
+                if ($commissionDetail) {
+                    $commissionDetail->$key = $newValue;
+                    $commissionDetail->save();
 
+                    return response()->json(['success' => 'Field updated successfully', 'updatedData' => $commissionDetail]);
+                } else {
+                    return response()->json(['error' => 'Assured record not found'], 404);
+                }
+            }
+            case 'insurance_commissioners': {
+                $insuranceCommissioners = $insuranceDetail->insuranceCommissioners;
+                if ($insuranceCommissioners) {
+                    $insuranceCommissioners->$key = $newValue;
+                    $insuranceCommissioners->save();
+
+                    return response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceCommissioners]);
+                } else {
+                    return response()->json(['error' => 'Assured record not found'], 404);
+                }
+            }
+            case 'collection_details': {
+                $collectionDetail = $insuranceDetail->collectionDetail;
+
+
+                if ($key === 'tele_name') {
+                    $collectionDetail->tele_id = $newValue;
+                    $collectionDetail->save();
+
+                    $teles = Tele::find($newValue);
+                    return $teles
+                        ? response()->json(['success' => 'Field updated successfully', 'updatedData' => $collectionDetail, 'updatedName' => $teles->name])
+                        : response()->json(['error' => 'Area not found'], 404);
+                }
+
+                if ($collectionDetail) {
+                    $collectionDetail->$key = $newValue;
+                    $collectionDetail->save();
+
+                    return response()->json(['success' => 'Field updated successfully', 'updatedData' => $collectionDetail]);
+                } else {
+                    return response()->json(['error' => 'Assured record not found'], 404);
+                }
+            }
+            case 'payment_details': {
+                $paymentDetail = $insuranceDetail->paymentDetail;
+                if ($paymentDetail) {
+                    $paymentDetail->$key = $newValue;
+                    $paymentDetail->save();
+
+                    return response()->json(['success' => 'Field updated successfully', 'updatedData' => $paymentDetail]);
+                } else {
+                    return response()->json(['error' => 'Assured record not found'], 404);
+                }
+            }
             default:
                 return response()->json(['error' => 'Invalid table or field name'], 400);
         }
