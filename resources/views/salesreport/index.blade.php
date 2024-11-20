@@ -72,51 +72,51 @@
 
 $(document).ready(function() {
     // Load the sales report data when the page loads
-    $.ajax({
-        url: '/api/sales-report',
-        method: 'GET',
-        success: function(data) {
-            var tableBody = $('#salesReportTable tbody');
-            tableBody.empty();
+        $.ajax({
+            url: '/api/sales-report',
+            method: 'GET',
+            success: function(data) {
+                var tableBody = $('#salesReportTable tbody');
+                tableBody.empty();
 
-            data.forEach(function(detail) {
-                var row = `<tr>
-                    <td>${detail.provider}</td>
-                    <td>${detail.issuance_code}</td>
-                    <td>${detail.name}</td>
-                    <td>${detail.contact_number} </br> ${detail.email}</td>
-                    
-                    
-                    <td>${detail.sales_associate} </br>( ${detail.sales_team} )</td>
-                    <td>${detail.source} </td>
-                    <td>${detail.subproduct}</td>
+                data.forEach(function(detail) {
+                    var row = `<tr>
+                        <td>${detail.provider}</td>
+                        <td>${detail.issuance_code}</td>
+                        <td>${detail.name}</td>
+                        <td>${detail.contact_number} </br> ${detail.email}</td>
+                        
+                        
+                        <td>${detail.sales_associate} </br>( ${detail.sales_team} )</td>
+                        <td>${detail.source} </td>
+                        <td>${detail.subproduct}</td>
 
-                    <td>${detail.sale_date} </br> ${detail.good_as_sales_date} </br> ${detail.policy_inception_date}</td>
-                    
-                    <td>${detail.sale_status}</td>
-                    <td><button class="btn btn-primary viewDetailBtn" data-id="${detail.id}" data-bs-toggle="offcanvas" data-bs-target="#detailOffCanvas">View</button></td>
-                </tr>`;
-                tableBody.append(row);
-            });
+                        <td>${detail.sale_date} </br> ${detail.good_as_sales_date} </br> ${detail.policy_inception_date}</td>
+                        
+                        <td>${detail.sale_status}</td>
+                        <td><button class="btn btn-primary viewDetailBtn" data-id="${detail.id}" data-bs-toggle="offcanvas" data-bs-target="#detailOffCanvas">View</button></td>
+                    </tr>`;
+                    tableBody.append(row);
+                });
 
-            // Add click event to "View" button
-            $('.viewDetailBtn').click(function() {
-                var insuranceDetailId = $(this).data('id');
-                fetchInsuranceDetail(insuranceDetailId); // Fetches data only
-            });
-        },
-        error: function(xhr, status, error) {
-            alert("Error loading sales report data: " + error);
-        }
+                // Add click event to "View" button
+                $('.viewDetailBtn').click(function() {
+                    var insuranceDetailId = $(this).data('id');
+                    fetchInsuranceDetail(insuranceDetailId); // Fetches data only
+                });
+            },
+            error: function(xhr, status, error) {
+                alert("Error loading sales report data: " + error);
+            }
+        });
+
+        // Event to clear off-canvas content after it is closed
+        $('#detailOffCanvas').on('hidden.bs.offcanvas', function () {
+            // Clear tabs and content
+            $('#insuranceTabs').empty();
+            $('#insuranceTabContent').empty();
+        });
     });
-
-    // Event to clear off-canvas content after it is closed
-    $('#detailOffCanvas').on('hidden.bs.offcanvas', function () {
-        // Clear tabs and content
-        $('#insuranceTabs').empty();
-        $('#insuranceTabContent').empty();
-    });
-});
 
 
     const salesAssociates = @json($sales_associates); //for sales_associate_name
@@ -131,47 +131,88 @@ $(document).ready(function() {
     const areas = @json($areas); //for area_name
     const alfcbranches = @json($alfcbranches); //for alfc_branch_name
     const modeofpayments = @json($modeofpayments); //for mode_of_payment_name
+    const teles = @json($teles); //for tele_name
 
     function fetchInsuranceDetail(insuranceDetailId) {
-    var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    $.ajax({
-        url: `/api/insurance/details/${insuranceDetailId}`,
-        method: 'GET',
-        headers: {
-            'X-CSRF-TOKEN': csrfToken
-        },
-        success: function (data) {
-            console.log(data);
-            var tabList = $('#insuranceTabs');
-            var tabContent = $('#insuranceTabContent');
-            tabList.empty();
-            tabContent.empty();
+        $.ajax({
+            url: `/api/insurance/details/${insuranceDetailId}`,
+            method: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken
+            },
+            success: function (data) {
+        console.log(data);
+        var tabList = $('#insuranceTabs');
+        var tabContent = $('#insuranceTabContent');
+        tabList.empty();
+        tabContent.empty();
 
-            if (Object.keys(data).length === 0) {
-                tabContent.append(`
-                    <div class="alert alert-info" role="alert">
-                        No details available for this insurance record.
-                    </div>
+        if (Object.keys(data).length === 0) {
+            tabContent.append(`
+                <div class="alert alert-info" role="alert">
+                    No details available for this insurance record.
+                </div>
+            `);
+        } else {
+            let isFirstTab = true;
+
+            for (const table in data) {
+                const tableData = data[table].data;
+                const editableFields = data[table].editable;
+                const tableName = table.replace('_', ' ').toUpperCase();
+                const tabId = `tab-${table}`;
+
+                tabList.append(`
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link ${isFirstTab ? 'active' : ''}" id="${tabId}-tab" data-bs-toggle="tab" data-bs-target="#${tabId}" type="button" role="tab" aria-controls="${tabId}" aria-selected="${isFirstTab}">
+                            ${tableName}
+                        </button>
+                    </li>
                 `);
-            } else {
-                let isFirstTab = true;
 
-                for (const table in data) {
-                    const tableData = data[table].data;
-                    const editableFields = data[table].editable;
-                    const tableName = table.replace('_', ' ').toUpperCase();
-                    const tabId = `tab-${table}`;
+                let tableContent = '';
 
-                    tabList.append(`
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link ${isFirstTab ? 'active' : ''}" id="${tabId}-tab" data-bs-toggle="tab" data-bs-target="#${tabId}" type="button" role="tab" aria-controls="${tabId}" aria-selected="${isFirstTab}">
-                                ${tableName}
-                            </button>
-                        </li>
-                    `);
-
-                    let tableContent = '<table class="table">';
+                if (table === 'insurance_commissioners') {
+                    // Custom rendering for `insurance_commissioners`
+                    tableContent = '<div class="row">';
+                    tableData.forEach((commissioner, index) => {
+                        tableContent += `
+                            <div class="col-md-4 mb-3">
+                                <label for="commissioner-title-${index}" class="form-label"><strong>Commissioner Title</strong></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="commissioner-title-${index}" data-key="commissioner_title-${index}" value="${commissioner.commissioner_title}" readonly>
+                                    <button class="btn btn-outline-primary edit-btn" data-key="commissioner-title-${index}" data-index="${index}" data-table="${table}">
+                                        Edit
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="commissioner-name-${index}" class="form-label"><strong>Commissioner Name</strong></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="commissioner-name-${index}" data-key="commissioner_name-${index}" value="${commissioner.commissioner_name}" readonly>
+                                    <button class="btn btn-outline-primary edit-btn" data-key="commissioner-name-${index}" data-index="${index}" data-table="${table}">
+                                        Edit
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="commissioner-amount-${index}" class="form-label"><strong>Amount</strong></label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="commissioner-amount-${index}" data-key="commissioner_amount-${index}" value="${commissioner.amount}" readonly>
+                                    <button class="btn btn-outline-primary edit-btn" data-key="commissioner-amount-${index}" data-index="${index}" data-table="${table}">
+                                        Edit
+                                    </button>
+                                </div>
+                            </div>
+                            <hr>
+                        `;
+                    });
+                    tableContent += '</div>';
+                } else {
+                    // Default rendering for other tables
+                    tableContent = '<table class="table">';
                     let count = 0;
 
                     for (const [key, value] of Object.entries(tableData)) {
@@ -208,123 +249,149 @@ $(document).ready(function() {
                     }
 
                     tableContent += '</table>';
-
-                    tabContent.append(`
-                        <div class="tab-pane fade ${isFirstTab ? 'show active' : ''}" id="${tabId}" role="tabpanel" aria-labelledby="${tabId}-tab">
-                            ${tableContent}
-                        </div>
-                    `);
-                    isFirstTab = false;
                 }
 
-                function attachEditHandlers() {
-                    $('.edit-btn').on('click', function () {
-                        const key = $(this).data('key');
-                        const inputField = $(`#${key}`);
-                        const originalValue = inputField.val();
-                        const editButton = $(this);
-                        const tableName = $(this).data('table');
+                tabContent.append(`
+                    <div class="tab-pane fade ${isFirstTab ? 'show active' : ''}" id="${tabId}" role="tabpanel" aria-labelledby="${tabId}-tab">
+                        ${tableContent}
+                    </div>
+                `);
+                isFirstTab = false;
+            }
+        
 
-                        const dropdownFields = {
-                            'sales_associate_name': salesAssociates,
-                            'team_name': teams,
-                            'sales_manager_name': salesManagers,
-                            'provider_name': providers,
-                            'product_name': products,
-                            'subproduct_name': subproducts,
-                            'source_name': sources,
-                            'source_branch_name': sourcebranches,
-                            'if_gdfi': ifgdfis,
-                            'area_name': areas,
-                            'alfc_branch_name': alfcbranches,
-                            'mode_of_payment_name': modeofpayments
-                        };
+                    function attachEditHandlers() {
+                        $('.edit-btn').on('click', function () {
+                            const key = $(this).data('key');
+                            const inputField = $(`#${key}`);
+                            const editButton = $(this);
+                            const tableName = $(this).data('table');
 
-                        if (key in dropdownFields) {
-                            let options = dropdownFields[key];
-                            let dropdownHtml = `<select class="form-select" id="${key}">`;
-                            options.forEach(option => {
-                                dropdownHtml += `
-                                    <option value="${option.id}" ${option.name === originalValue ? 'selected' : ''}>
-                                        ${option.name}
-                                    </option>
-                                `;
-                            });
-                            dropdownHtml += '</select>';
+                            // Define dropdown fields with lookup functionality
+                            const dropdownFields = {
+                                'sales_associate_name': salesAssociates,
+                                'team_name': teams,
+                                'sales_manager_name': salesManagers,
+                                'provider_name': providers,
+                                'product_name': products,
+                                'subproduct_name': subproducts,
+                                'source_name': sources,
+                                'source_branch_name': sourcebranches,
+                                'if_gdfi': ifgdfis,
+                                'area_name': areas,
+                                'alfc_branch_name': alfcbranches,
+                                'mode_of_payment_name': modeofpayments,
+                                'tele_name': teles
 
-                            inputField.replaceWith(dropdownHtml);
+                            };
 
-                            editButton.replaceWith(`
-                                <button class="btn btn-outline-success save-btn" data-key="${key}" data-table="${tableName}">Save</button>
-                                <button class="btn btn-outline-secondary cancel-btn" data-key="${key}" data-table="${tableName}">Cancel</button>
-                            `);
+                            let originalValue;
 
-                            attachSaveCancelHandlers(key, tableName, originalValue);
-                        } else {
-                            inputField.prop('readonly', false).focus();
-                            editButton.replaceWith(`
-                                <button class="btn btn-outline-success save-btn" data-key="${key}" data-table="${tableName}">Save</button>
-                                <button class="btn btn-outline-secondary cancel-btn" data-key="${key}" data-table="${tableName}">Cancel</button>
-                            `);
-                            attachSaveCancelHandlers(key, tableName, originalValue);
-                        }
-                    });
-                }
+                            if (key in dropdownFields) {
+                                // Fetch the current value from the input field
+                                const currentValue = inputField.val();
 
-                function attachSaveCancelHandlers(key, tableName, originalValue) {
-                    $(`.save-btn[data-key="${key}"]`).on('click', function () {
-                        const newValue = $(`#${key}`).val();
-                        const saveButton = $(this);
+                                // Convert ID to name if the currentValue is an ID
+                                const options = dropdownFields[key];
+                                const matchedOption = options.find(option => option.id == currentValue);
+                                originalValue = matchedOption ? matchedOption.name : currentValue;
 
-                        $.ajax({
-                            url: `/api/insurance/details/update`,
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': csrfToken
-                            },
-                            data: {
-                                table: tableName,
-                                field_name: key,
-                                value: newValue,
-                                insurance_detail_id: insuranceDetailId
-                            },
-                            success: function (response) {
-                                if (response.success) {
-                                    console.log('Field updated successfully:', response.updatedData);
+                                console.log(`Original value of ${key}:`, originalValue); // Log the name
+                            } else {
+                                // For non-dropdown fields, use the input field value
+                                originalValue = inputField.val();
+                                console.log(`Original value of ${key}:`, originalValue); // Log the value
+                            }
 
-                                    $(`#${key}`).replaceWith(`<input type="text" class="form-control" id="${key}" value="${response.updatedName || newValue}" readonly>`);
+                            // Replace input field with a dropdown if key is in dropdownFields
+                            if (key in dropdownFields) {
+                                let options = dropdownFields[key];
+                                let dropdownHtml = `<select class="form-select" id="${key}">`;
+                                options.forEach(option => {
+                                    dropdownHtml += `
+                                        <option value="${option.id}" ${option.name === originalValue ? 'selected' : ''}>
+                                            ${option.name}
+                                        </option>
+                                    `;
+                                });
+                                dropdownHtml += '</select>';
 
-                                    saveButton.replaceWith(`
-                                        <button class="btn btn-outline-primary edit-btn" data-key="${key}" data-table="${tableName}">Edit</button>
-                                    `);
-                                    $(`.cancel-btn[data-key="${key}"]`).remove();
-                                    attachEditHandlers();
-                                }
-                            },
-                            error: function (error) {
-                                console.log('Error updating field:', error);
+                                inputField.replaceWith(dropdownHtml);
+
+                                editButton.replaceWith(`
+                                    <button class="btn btn-outline-success save-btn" data-key="${key}" data-table="${tableName}">Save</button>
+                                    <button class="btn btn-outline-secondary cancel-btn" data-key="${key}" data-table="${tableName}">Cancel</button>
+                                `);
+
+                                attachSaveCancelHandlers(key, tableName, originalValue);
+                            } else {
+                                // For normal input fields
+                                inputField.prop('readonly', false).focus();
+                                editButton.replaceWith(`
+                                    <button class="btn btn-outline-success save-btn" data-key="${key}" data-table="${tableName}">Save</button>
+                                    <button class="btn btn-outline-secondary cancel-btn" data-key="${key}" data-table="${tableName}">Cancel</button>
+                                `);
+                                attachSaveCancelHandlers(key, tableName, originalValue);
                             }
                         });
-                    });
+                    }
 
-                    $(`.cancel-btn[data-key="${key}"]`).on('click', function () {
-                        $(`#${key}`).replaceWith(`<input type="text" class="form-control" id="${key}" value="${originalValue}" readonly>`);
-                        $(this).replaceWith(`
-                            <button class="btn btn-outline-primary edit-btn" data-key="${key}" data-table="${tableName}">Edit</button>
-                        `);
-                        $(`.save-btn[data-key="${key}"]`).remove();
-                        attachEditHandlers();
-                    });
+
+                    function attachSaveCancelHandlers(key, tableName, originalValue) {
+                        $(`.save-btn[data-key="${key}"]`).on('click', function () {
+                            const newValue = $(`#${key}`).val();
+                            const saveButton = $(this);
+
+                            $.ajax({
+                                url: `/api/insurance/details/update`,
+                                method: 'POST',
+                                headers: {
+                                    'X-CSRF-TOKEN': csrfToken
+                                },
+                                data: {
+                                    table: tableName,
+                                    field_name: key,
+                                    value: newValue,
+                                    insurance_detail_id: insuranceDetailId
+                                },
+                                success: function (response) {
+                                    if (response.success) {
+                                        console.log('Field updated successfully:', response.updatedData);
+
+                                        $(`#${key}`).replaceWith(`<input type="text" class="form-control" id="${key}" value="${response.updatedName || newValue}" readonly>`);
+
+                                        saveButton.replaceWith(`
+                                            <button class="btn btn-outline-primary edit-btn" data-key="${key}" data-table="${tableName}">Edit</button>
+                                        `);
+                                        $(`.cancel-btn[data-key="${key}"]`).remove();
+                                        attachEditHandlers();
+                                        fetchInsuranceDetail(insuranceDetailId);
+                                    }
+                                },
+                                error: function (error) {
+                                    console.log('Error updating field:', error);
+                                }
+                            });
+                        });
+
+                        $(`.cancel-btn[data-key="${key}"]`).on('click', function () {
+                            $(`#${key}`).replaceWith(`<input type="text" class="form-control" id="${key}" value="${originalValue}" readonly>`);
+                            $(this).replaceWith(`
+                                <button class="btn btn-outline-primary edit-btn" data-key="${key}" data-table="${tableName}">Edit</button>
+                            `);
+                            $(`.save-btn[data-key="${key}"]`).remove();
+                            attachEditHandlers();
+                        });
+                    }
+
+                    attachEditHandlers();
                 }
-
-                attachEditHandlers();
+            },
+            error: function () {
+                alert('Failed to fetch insurance details.');
             }
-        },
-        error: function () {
-            alert('Failed to fetch insurance details.');
-        }
-    });
-}
+        });
+    }
 
 
 
