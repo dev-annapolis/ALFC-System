@@ -58,9 +58,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-
-
-$(document).ready(function() {
+    $(document).ready(function() {
         // Load the sales report data when the page loads
         $.ajax({
             url: '/api/sales-report',
@@ -182,6 +180,7 @@ $(document).ready(function() {
         window.addEventListener('resize', setInitialWidth);
     });
 
+//============================================================================================================================
 
     const salesAssociates = @json($sales_associates); //for sales_associate_name
     const teams = @json($teams); //for team_name
@@ -197,6 +196,8 @@ $(document).ready(function() {
     const modeofpayments = @json($modeofpayments); //for mode_of_payment_name
     const teles = @json($teles); //for tele_name
 
+//============================================================================================================================
+
     function fetchInsuranceDetail(insuranceDetailId) {
         var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
@@ -207,121 +208,117 @@ $(document).ready(function() {
                 'X-CSRF-TOKEN': csrfToken
             },
             success: function (data) {
-        console.log(data);
-        var tabList = $('#insuranceTabs');
-        var tabContent = $('#insuranceTabContent');
-        tabList.empty();
-        tabContent.empty();
+                console.log(data);
+                var tabList = $('#insuranceTabs');
+                var tabContent = $('#insuranceTabContent');
+                tabList.empty();
+                tabContent.empty();
 
-        if (Object.keys(data).length === 0) {
-            tabContent.append(`
-                <div class="alert alert-info" role="alert">
-                    No details available for this insurance record.
-                </div>
-            `);
-        } else {
-            let isFirstTab = true;
-
-            for (const table in data) {
-                const tableData = data[table].data;
-                const editableFields = data[table].editable;
-                const tableName = table.replace('_', ' ').toUpperCase();
-                const tabId = `tab-${table}`;
-
-                tabList.append(`
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link ${isFirstTab ? 'active' : ''}" id="${tabId}-tab" data-bs-toggle="tab" data-bs-target="#${tabId}" type="button" role="tab" aria-controls="${tabId}" aria-selected="${isFirstTab}">
-                            ${tableName}
-                        </button>
-                    </li>
-                `);
-
-                let tableContent = '';
-
-                if (table === 'insurance_commissioners') {
-                    // Custom rendering for `insurance_commissioners`
-                    tableContent = '<div class="row">';
-                    tableData.forEach((commissioner, index) => {
-                        tableContent += `
-                            <div class="col-md-4 mb-3">
-                                <label for="commissioner-title-${index}" class="form-label"><strong>Commissioner Title</strong></label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="commissioner-title-${index}" data-key="commissioner_title-${index}" value="${commissioner.commissioner_title}" readonly>
-                                    <button class="btn btn-outline-primary edit-btn" data-key="commissioner-title-${index}" data-index="${index}" data-table="${table}">
-                                        Edit
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="commissioner-name-${index}" class="form-label"><strong>Commissioner Name</strong></label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="commissioner-name-${index}" data-key="commissioner_name-${index}" value="${commissioner.commissioner_name}" readonly>
-                                    <button class="btn btn-outline-primary edit-btn" data-key="commissioner-name-${index}" data-index="${index}" data-table="${table}">
-                                        Edit
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-md-4 mb-3">
-                                <label for="commissioner-amount-${index}" class="form-label"><strong>Amount</strong></label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="commissioner-amount-${index}" data-key="commissioner_amount-${index}" value="${commissioner.amount}" readonly>
-                                    <button class="btn btn-outline-primary edit-btn" data-key="commissioner-amount-${index}" data-index="${index}" data-table="${table}">
-                                        Edit
-                                    </button>
-                                </div>
-                            </div>
-                            <hr>
-                        `;
-                    });
-                    tableContent += '</div>';
+                if (Object.keys(data).length === 0) {
+                    tabContent.append(`
+                        <div class="alert alert-info" role="alert">
+                            No details available for this insurance record.
+                        </div>
+                    `);
                 } else {
-                    // Default rendering for other tables
-                    tableContent = '<table class="table">';
-                    let count = 0;
+                    let isFirstTab = true;
 
-                    for (const [key, value] of Object.entries(tableData)) {
-                        const isEditable = editableFields[key];
-                        const formattedKey = key.replace(/_/g, ' ').toUpperCase();
+                    for (const table in data) {
+                        const tableData = data[table].data;
+                        const editableFields = data[table].editable;
+                        const tableName = table.replace('_', ' ').toUpperCase();
+                        const tabId = `tab-${table}`;
 
-                        if (count % 2 === 0) {
-                            tableContent += '<tr>';
+                        tabList.append(`
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link ${isFirstTab ? 'active' : ''}" id="${tabId}-tab" data-bs-toggle="tab" data-bs-target="#${tabId}" type="button" role="tab" aria-controls="${tabId}" aria-selected="${isFirstTab}">
+                                    ${tableName}
+                                </button>
+                            </li>
+                        `);
+
+                        let tableContent = '';
+
+                        if (table === 'insurance_commissioners') {
+                            // Custom rendering for `insurance_commissioners`
+                            tableContent = '<div class="row">';
+                            tableData.forEach((commissioner, index) => {
+                                tableContent += `
+                                    <div class="col-md-4 mb-3">
+                                        <label for="commissioner-title-${index}" class="form-label"><strong>Commissioner Title</strong></label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="commissioner-title-${index}" data-key="commissioner_title-${index}" value="${commissioner.commissioner_title}" readonly>
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="commissioner-name-${index}" class="form-label"><strong>Commissioner Name</strong></label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="commissioner-name-${index}" data-key="commissioner_name-${index}" value="${commissioner.commissioner_name}" readonly>
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <label for="commissioner-amount-${index}" class="form-label"><strong>Amount</strong></label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="commissioner-amount-${index}" data-key="commissioner_amount-${index}" value="${commissioner.amount}" readonly>
+                                            <button class="btn btn-outline-primary edit-btn" data-key="commissioner-amount-${index}" data-index="${index}" data-table="${table}">
+                                                Edit
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                `;
+                            });
+                            tableContent += '</div>';
+                        } else {
+                            // Default rendering for other tables
+                            tableContent = '<table class="table">';
+                            let count = 0;
+
+                            for (const [key, value] of Object.entries(tableData)) {
+                                const isEditable = editableFields[key];
+                                const formattedKey = key.replace(/_/g, ' ').toUpperCase();
+
+                                if (count % 2 === 0) {
+                                    tableContent += '<tr>';
+                                }
+
+                                tableContent += `
+                                    <td>
+                                        <label><strong>${formattedKey}</strong></label>
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" id="${key}" value="${value}" readonly>
+                                            ${isEditable ? `
+                                                <button class="btn btn-outline-primary edit-btn" data-key="${key}" data-table="${table}">
+                                                    Edit
+                                                </button>
+                                            ` : ''}
+                                        </div>
+                                    </td>
+                                `;
+
+                                if (count % 2 === 1) {
+                                    tableContent += '</tr>';
+                                }
+
+                                count++;
+                            }
+
+                            if (count % 2 === 1) {
+                                tableContent += '<td></td></tr>';
+                            }
+
+                            tableContent += '</table>';
                         }
 
-                        tableContent += `
-                            <td>
-                                <label><strong>${formattedKey}</strong></label>
-                                <div class="input-group">
-                                    <input type="text" class="form-control" id="${key}" value="${value}" readonly>
-                                    ${isEditable ? `
-                                        <button class="btn btn-outline-primary edit-btn" data-key="${key}" data-table="${table}">
-                                            Edit
-                                        </button>
-                                    ` : ''}
-                                </div>
-                            </td>
-                        `;
-
-                        if (count % 2 === 1) {
-                            tableContent += '</tr>';
-                        }
-
-                        count++;
+                        tabContent.append(`
+                            <div class="tab-pane fade ${isFirstTab ? 'show active' : ''}" id="${tabId}" role="tabpanel" aria-labelledby="${tabId}-tab">
+                                ${tableContent}
+                            </div>
+                        `);
+                        isFirstTab = false;
                     }
-
-                    if (count % 2 === 1) {
-                        tableContent += '<td></td></tr>';
-                    }
-
-                    tableContent += '</table>';
-                }
-
-                tabContent.append(`
-                    <div class="tab-pane fade ${isFirstTab ? 'show active' : ''}" id="${tabId}" role="tabpanel" aria-labelledby="${tabId}-tab">
-                        ${tableContent}
-                    </div>
-                `);
-                isFirstTab = false;
-            }
         
 
                     function attachEditHandlers() {
