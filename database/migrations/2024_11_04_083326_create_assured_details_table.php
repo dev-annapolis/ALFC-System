@@ -14,7 +14,13 @@ return new class extends Migration {
             $table->id();
 
             $table->string('name')->nullable();
-            $table->string('address')->nullable();
+
+            $table->string('lot_number')->nullable();
+            $table->string('street')->nullable();
+            $table->string('barangay')->nullable();
+            $table->string('city')->nullable();
+            $table->string('country')->nullable();
+            
             $table->string('contact_number')->nullable();
             $table->string('email')->nullable();
 
