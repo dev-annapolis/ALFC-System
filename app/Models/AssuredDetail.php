@@ -8,7 +8,11 @@ class AssuredDetail extends Model
 {
     protected $fillable = [
         'name',
-        'address',
+        'lot_number',
+        'street',
+        'barangay',
+        'city',
+        'country',
         'contact_number',
         'email',
         'other_contact_number',
