@@ -30,6 +30,8 @@ use App\Models\Area;
 use App\Models\AlfcBranch;
 use App\Models\ModeOfPayment;
 use App\Models\Tele;
+use App\Models\Commissioner;
+
 
 
 class SalesReportController extends Controller
@@ -50,9 +52,11 @@ class SalesReportController extends Controller
         $alfcbranches = AlfcBranch::where('status', 'active')->get();
         $modeofpayments = ModeOfPayment::where('status', 'active')->get();
 
+        $commissioners = Commissioner::where('status', 'active')->get();
+
         $teles = Tele::where('status', 'active')->get();
 
-        return view('salesreport.index', compact('sales_associates', 'teams', 'sales_managers', 'providers', 'products', 'subproducts', 'sources', 'sourcebranches', 'ifgdfis', 'areas', 'alfcbranches', 'modeofpayments', 'teles'));
+        return view('salesreport.index', compact('sales_associates', 'teams', 'sales_managers', 'providers', 'products', 'subproducts', 'sources', 'sourcebranches', 'ifgdfis', 'areas', 'alfcbranches', 'modeofpayments', 'teles', 'commissioners'));
     }
 
     public function salesReportData()
@@ -359,7 +363,7 @@ class SalesReportController extends Controller
             'paymentDetail',
             'commissionDetail',
             'collectionDetail.tele',
-            'insurancecommissioner.commissioner',
+            'insuranceCommissioner.commissioner',
             'team',
         ])->find($insuranceDetailId);
 
@@ -382,7 +386,6 @@ class SalesReportController extends Controller
                 }
 
             case 'insurance_details':
-                // Handle field updates for related models
                 if ($key === 'sales_associate_name') {
                     $insuranceDetail->sales_associate_id = $newValue;
                     $insuranceDetail->save();
@@ -494,12 +497,35 @@ class SalesReportController extends Controller
                 }
             }
             case 'insurance_commissioners': {
-                $insuranceCommissioners = $insuranceDetail->insuranceCommissioners;
-                if ($insuranceCommissioners) {
-                    $insuranceCommissioners->$key = $newValue;
-                    $insuranceCommissioners->save();
+                $insurancecommissioners = $insuranceDetail->insuranceCommissioner;
+                if ($insurancecommissioners) {
+                    Log::info($insurancecommissioners);
+                    $fieldParts = explode('-', $key); // Assuming $key contains 'commissioner_name-0'
+                    $fieldName = $fieldParts[0] ?? null; // Get the field name, e.g., 'commissioner_name'
+                    $fieldIndex = isset($fieldParts[1]) ? (int)$fieldParts[1] : null; 
 
-                    return response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceCommissioners]);
+                    if ($fieldIndex !== null && isset($insurancecommissioners[$fieldIndex])) {
+
+                        if ($fieldName === 'commissioner_title') {
+                            $insurancecommissioners[$fieldIndex]->commissioner_id = $newValue;
+                            $insurancecommissioners[$fieldIndex]->save();
+        
+                            $commissioner = Commissioner::find($newValue);
+                            return $commissioner
+                                ? response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail, 'updatedName' => $commissioner->name])
+                                : response()->json(['error' => 'Mode of payment not found'], 404);
+                        } else {
+                            $insurancecommissioners[$fieldIndex]->$fieldName = $newValue;
+                            $insurancecommissioners[$fieldIndex]->save();
+
+                            return response()->json([
+                                'success' => 'Field updated successfully',
+                                'updatedData' => $insurancecommissioners[$fieldIndex],
+                            ]);
+                        }
+                    } else {
+                        return response()->json(['error' => 'Invalid field index or record not found'], 404);
+                    }
                 } else {
                     return response()->json(['error' => 'Assured record not found'], 404);
                 }
