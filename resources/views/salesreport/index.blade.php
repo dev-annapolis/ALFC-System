@@ -195,6 +195,7 @@
     const alfcbranches = @json($alfcbranches); //for alfc_branch_name
     const modeofpayments = @json($modeofpayments); //for mode_of_payment_name
     const teles = @json($teles); //for tele_name
+    const commissioners = @json($commissioners); //for commissioner_title
 
 //============================================================================================================================
 
@@ -245,26 +246,36 @@
                             tableData.forEach((commissioner, index) => {
                                 tableContent += `
                                     <div class="col-md-4 mb-3">
-                                        <label for="commissioner-title-${index}" class="form-label"><strong>Commissioner Title</strong></label>
+                                        <label for="commissioner_title-${index}" class="form-label"><strong>Commissioner Title</strong></label>
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="commissioner-title-${index}" data-key="commissioner_title-${index}" value="${commissioner.commissioner_title}" readonly>
-                                            
+                                            <input type="text" class="form-control" id="commissioner_title-${index}" value="${commissioner.commissioner_title}" readonly>
+                                            ${editableFields.commissioner_title ? `
+                                                <button class="btn btn-outline-primary edit-btn" data-key="commissioner_title-${index}" data-index="${index}" data-table="${table}">
+                                                    Edit
+                                                </button>
+                                            ` : ''}
                                         </div>
                                     </div>
                                     <div class="col-md-4 mb-3">
-                                        <label for="commissioner-name-${index}" class="form-label"><strong>Commissioner Name</strong></label>
+                                        <label for="commissioner_name-${index}" class="form-label"><strong>Commissioner Name</strong></label>
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="commissioner-name-${index}" data-key="commissioner_name-${index}" value="${commissioner.commissioner_name}" readonly>
-                                            
+                                            <input type="text" class="form-control" id="commissioner_name-${index}" value="${commissioner.commissioner_name}" readonly>
+                                            ${editableFields.commissioner_name ? `
+                                                <button class="btn btn-outline-primary edit-btn" data-key="commissioner_name-${index}" data-index="${index}" data-table="${table}">
+                                                    Edit
+                                                </button>
+                                            ` : ''}
                                         </div>
                                     </div>
                                     <div class="col-md-4 mb-3">
-                                        <label for="commissioner-amount-${index}" class="form-label"><strong>Amount</strong></label>
+                                        <label for="amount-${index}" class="form-label"><strong>Amount</strong></label>
                                         <div class="input-group">
-                                            <input type="text" class="form-control" id="commissioner-amount-${index}" data-key="commissioner_amount-${index}" value="${commissioner.amount}" readonly>
-                                            <button class="btn btn-outline-primary edit-btn" data-key="commissioner-amount-${index}" data-index="${index}" data-table="${table}">
-                                                Edit
-                                            </button>
+                                            <input type="text" class="form-control" id="amount-${index}" value="${commissioner.amount}" readonly>
+                                            ${editableFields.amount ? `
+                                                <button class="btn btn-outline-primary edit-btn" data-key="amount-${index}" data-index="${index}" data-table="${table}">
+                                                    Edit
+                                                </button>
+                                            ` : ''}
                                         </div>
                                     </div>
                                     <hr>
@@ -322,80 +333,84 @@
         
 
                     function attachEditHandlers() {
-                        $('.edit-btn').on('click', function () {
-                            const key = $(this).data('key');
-                            const inputField = $(`#${key}`);
-                            const editButton = $(this);
-                            const tableName = $(this).data('table');
+    $('.edit-btn').on('click', function () {
+        const fullKey = $(this).data('key'); // e.g., "commissioner_title-0"
+        const tableName = $(this).data('table');
+        const inputField = $(`#${fullKey}`); // The input field for this key
+        const editButton = $(this);
 
-                            // Define dropdown fields with lookup functionality
-                            const dropdownFields = {
-                                'sales_associate_name': salesAssociates,
-                                'team_name': teams,
-                                'sales_manager_name': salesManagers,
-                                'provider_name': providers,
-                                'product_name': products,
-                                'subproduct_name': subproducts,
-                                'source_name': sources,
-                                'source_branch_name': sourcebranches,
-                                'if_gdfi': ifgdfis,
-                                'area_name': areas,
-                                'alfc_branch_name': alfcbranches,
-                                'mode_of_payment_name': modeofpayments,
-                                'tele_name': teles
+        // Split the full key into baseKey and index
+        const [baseKey, index] = fullKey.split('-'); // "commissioner_title-0" -> ["commissioner_title", "0"]
 
-                            };
+        // Define dropdown fields with lookup functionality
+        const dropdownFields = {
+            'sales_associate_name': salesAssociates,
+            'team_name': teams,
+            'sales_manager_name': salesManagers,
+            'provider_name': providers,
+            'product_name': products,
+            'subproduct_name': subproducts,
+            'source_name': sources,
+            'source_branch_name': sourcebranches,
+            'if_gdfi': ifgdfis,
+            'area_name': areas,
+            'alfc_branch_name': alfcbranches,
+            'mode_of_payment_name': modeofpayments,
+            'tele_name': teles,
+            'commissioner_title': commissioners // Adjusted for indexed fields
+        };
 
-                            let originalValue;
+        let originalValue;
 
-                            if (key in dropdownFields) {
-                                // Fetch the current value from the input field
-                                const currentValue = inputField.val();
+        if (baseKey in dropdownFields) {
+            // Fetch the current value from the input field
+            const currentValue = inputField.val();
 
-                                // Convert ID to name if the currentValue is an ID
-                                const options = dropdownFields[key];
-                                const matchedOption = options.find(option => option.id == currentValue);
-                                originalValue = matchedOption ? matchedOption.name : currentValue;
+            // Convert ID to name if the currentValue is an ID
+            const options = dropdownFields[baseKey]; // Use baseKey for lookup
+            const matchedOption = options.find(option => option.id == currentValue);
+            originalValue = matchedOption ? matchedOption.name : currentValue;
 
-                                console.log(`Original value of ${key}:`, originalValue); // Log the name
-                            } else {
-                                // For non-dropdown fields, use the input field value
-                                originalValue = inputField.val();
-                                console.log(`Original value of ${key}:`, originalValue); // Log the value
-                            }
+            console.log(`Original value of ${fullKey}:`, originalValue); // Log the name
+        } else {
+            // For non-dropdown fields, use the input field value
+            originalValue = inputField.val();
+            console.log(`Original value of ${fullKey}:`, originalValue); // Log the value
+        }
 
-                            // Replace input field with a dropdown if key is in dropdownFields
-                            if (key in dropdownFields) {
-                                let options = dropdownFields[key];
-                                let dropdownHtml = `<select class="form-select" id="${key}">`;
-                                options.forEach(option => {
-                                    dropdownHtml += `
-                                        <option value="${option.id}" ${option.name === originalValue ? 'selected' : ''}>
-                                            ${option.name}
-                                        </option>
-                                    `;
-                                });
-                                dropdownHtml += '</select>';
+        // Replace input field with a dropdown if baseKey is in dropdownFields
+        if (baseKey in dropdownFields) {
+            let options = dropdownFields[baseKey];
+            let dropdownHtml = `<select class="form-select" id="${fullKey}">`; // Use fullKey to maintain unique IDs
+            options.forEach(option => {
+                dropdownHtml += `
+                    <option value="${option.id}" ${option.name === originalValue ? 'selected' : ''}>
+                        ${option.name}
+                    </option>
+                `;
+            });
+            dropdownHtml += '</select>';
 
-                                inputField.replaceWith(dropdownHtml);
+            inputField.replaceWith(dropdownHtml);
 
-                                editButton.replaceWith(`
-                                    <button class="btn btn-outline-success save-btn" data-key="${key}" data-table="${tableName}">Save</button>
-                                    <button class="btn btn-outline-secondary cancel-btn" data-key="${key}" data-table="${tableName}">Cancel</button>
-                                `);
+            editButton.replaceWith(`
+                <button class="btn btn-outline-success save-btn" data-key="${fullKey}" data-table="${tableName}">Save</button>
+                <button class="btn btn-outline-secondary cancel-btn" data-key="${fullKey}" data-table="${tableName}">Cancel</button>
+            `);
 
-                                attachSaveCancelHandlers(key, tableName, originalValue);
-                            } else {
-                                // For normal input fields
-                                inputField.prop('readonly', false).focus();
-                                editButton.replaceWith(`
-                                    <button class="btn btn-outline-success save-btn" data-key="${key}" data-table="${tableName}">Save</button>
-                                    <button class="btn btn-outline-secondary cancel-btn" data-key="${key}" data-table="${tableName}">Cancel</button>
-                                `);
-                                attachSaveCancelHandlers(key, tableName, originalValue);
-                            }
-                        });
-                    }
+            attachSaveCancelHandlers(fullKey, tableName, originalValue); // Pass the fullKey
+        } else {
+            // For normal input fields
+            inputField.prop('readonly', false).focus();
+            editButton.replaceWith(`
+                <button class="btn btn-outline-success save-btn" data-key="${fullKey}" data-table="${tableName}">Save</button>
+                <button class="btn btn-outline-secondary cancel-btn" data-key="${fullKey}" data-table="${tableName}">Cancel</button>
+            `);
+            attachSaveCancelHandlers(fullKey, tableName, originalValue); // Pass the fullKey
+        }
+    });
+}
+
 
 
                     function attachSaveCancelHandlers(key, tableName, originalValue) {
