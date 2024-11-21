@@ -1,33 +1,104 @@
 @extends('layouts.app')
 
 @section('content')
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.5.0/css/responsive.dataTables.min.css">
 <style>
+/* Container with neumorphic effect */
+.neumorphic-container {
+    background: var(--background-color);
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 8px 8px 16px var(--shadow-dark),
+                -8px -8px 16px var(--shadow-light);
+}
 
+/* Neumorphic table */
+.neumorphic-table {
+    background: var(--background-color);
+    border-radius: 12px;
+    color: var(--text-color);
+    box-shadow: inset 4px 4px 8px var(--shadow-dark),
+                inset -4px -4px 8px var(--shadow-light);
+    overflow: hidden;
+}
+
+/* Table header */
+.neumorphic-table thead tr {
+    background: linear-gradient(145deg, var(--shadow-light), var(--background-color));
+    box-shadow: inset 2px 2px 4px var(--shadow-dark),
+                inset -2px -2px 4px var(--shadow-light);
+}
+
+.neumorphic-table thead th {
+    color: var(--text-color);
+    font-weight: bold;
+    padding: 12px;
+    border-bottom: 2px solid var(--shadow-dark);
+}
+
+/* Table rows */
+.neumorphic-table tbody tr {
+    transition: background 0.3s, box-shadow 0.3s;
+}
+
+.neumorphic-table tbody tr:hover {
+    background: var(--shadow-light);
+    box-shadow: 4px 4px 8px var(--shadow-dark),
+                -4px -4px 8px var(--shadow-light);
+}
+
+/* Table cells */
+.neumorphic-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--shadow-dark);
+}
+
+/* Actions button */
+.neumorphic-table .btn-primary {
+    background: var(--background-color);
+    color: var(--text-color);
+    border: none;
+    border-radius: 8px;
+    box-shadow: 4px 4px 8px var(--shadow-dark),
+                -4px -4px 8px var(--shadow-light);
+    transition: all 0.3s ease;
+}
+
+.neumorphic-table .btn-primary:hover {
+    background: var( --primary-color-brighter-red);
+    box-shadow: 2px 2px 4px var(--shadow-dark),
+                -2px -2px 4px var(--shadow-light);
+}
+
+#salesReportTable th, 
+#salesReportTable td {
+    text-align: center; /* Center-align text */
+    vertical-align: middle; /* Vertically center the content */
+}
 </style>
 
 <div class="container-fluid mt-5">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <h2>Sales Report</h2>
+    
     
     <!-- Responsive wrapper for the table -->
-    <div class="table-responsive">
-        <table id="salesReportTable" class="table table-bordered">
+    <div class="table-responsive neumorphic-container">
+        <table id="salesReportTable" class="table table-striped table-bordered table-hover dt-responsive thin-horizontal-lines neumorphic-table" style="width:100%">
             <thead>
                 <tr>
-                    <th>Provider</th>
-                    <th>Issuance Code</th>
-                    <th>Assured Name</th>
-                    <th>Contact Number </br> Email</th>
-
-                    <th>Sales Associate </br>( Sales Team )</th>
-                    <th>Source </th>
-                    <th>Sroduct</th>
-
-                    <th>Sale Date </br> Good As Sales Date </br> Policy Inception Date</th>
-                    
-                    <th>Sale Status</th>
-                    <th>Actions</th> <!-- Added Actions column -->
+                    <th style="text-align: center;">Issuance Code</th>
+                    <th style="text-align: center;">Assured Name</th>
+                    <th style="text-align: center;">Contact Number </br> Email</th>
+                    <th style="text-align: center;">Sales Associate </br>( Sales Team )</th>
+                    <th style="text-align: center;">Provider</th>
+                    <th style="text-align: center;">Source</th>
+                    <th style="text-align: center;">Subproduct</th>
+                    <th style="text-align: center;">Sale Date </br> Good As Sales Date </br> Policy Inception Date</th>
+                    <th style="text-align: center;">Sale Status</th>
+                    <th style="text-align: center;">Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -35,11 +106,10 @@
             </tbody>
         </table>
     </div>
-</div>
 
 <div class="custom-offcanvas offcanvas offcanvas-end" tabindex="-1" id="detailOffCanvas" aria-labelledby="detailOffCanvasLabel" data-bs-backdrop="false">
     <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="detailOffCanvasLabel">Insurance Details</h5>
+        <h5 class="offcanvas-title" id="detailOffCanvasLabel"></h5>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
@@ -56,47 +126,76 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
 
 <script>
-    $(document).ready(function() {
-        // Load the sales report data when the page loads
-        $.ajax({
-            url: '/api/sales-report',
-            method: 'GET',
-            success: function(data) {
-                var tableBody = $('#salesReportTable tbody');
-                tableBody.empty();
+    $(document).ready(function () {
+    // Initialize DataTable
+            const table = $('#salesReportTable').DataTable({
+                responsive: true, 
+                autoWidth: false, 
+                order: [[0, 'asc']], 
+                dom: '<"row TOP-ROW"<"col-md-6 MASTER-LIST"><"col-md-6  SEARCHING"f>>t<"row"<"col-md-6 pt-3"l><"col-md-6 pt-2"p>>',
+                initComplete: function () {
+                    $('.MASTER-LIST').html('<h1 ><span style="color: #FF3832;"><b>Master</b></span> List</h1>');
+                },
+                columns: [
+                    { title: "Issuance Code" },
+                    { title: "Assured Name" },
+                    { title: "Contact Info" },
+                    { title: "Sales Associate" },
+                    { title: "Provider" },
+                    { title: "Source" },
+                    { title: "Subproduct" },
+                    { title: "Dates" },
+                    { title: "Status" },
+                    { title: "Actions", orderable: false } 
+                ]
+            });
 
-                data.forEach(function(detail) {
-                    var row = `<tr>
-                        <td>${detail.provider}</td>
-                        <td>${detail.issuance_code}</td>
-                        <td>${detail.name}</td>
-                        <td>${detail.contact_number} </br> ${detail.email}</td>
-                        
-                        
-                        <td>${detail.sales_associate} </br>( ${detail.sales_team} )</td>
-                        <td>${detail.source} </td>
-                        <td>${detail.subproduct}</td>
+            // Load the sales report data via AJAX
+            $.ajax({
+                url: '/api/sales-report',
+                method: 'GET',
+                success: function (data) {
+                    // Clear table before adding new rows
+                    table.clear();
 
-                        <td>${detail.sale_date} </br> ${detail.good_as_sales_date} </br> ${detail.policy_inception_date}</td>
-                        
-                        <td>${detail.sale_status}</td>
-                        <td><button class="btn btn-primary viewDetailBtn" data-id="${detail.id}" data-bs-toggle="offcanvas" data-bs-target="#detailOffCanvas">View</button></td>
-                    </tr>`;
-                    tableBody.append(row);
-                });
+                    // Populate table rows
+                    data.forEach(function (detail) {
+                        table.row.add([
+                            `<strong>${detail.issuance_code}</strong>`, // Make Issuance Code bold
+                            detail.name,
+                            `${detail.contact_number} </br> ${detail.email}`,
+                            `${detail.sales_associate} </br>( ${detail.sales_team} )`,
+                            detail.provider,
+                            detail.source,
+                            detail.subproduct,
+                            `${detail.sale_date ? `<div style="display: flex; justify-content: center; align-items: center; text-align: center;"><strong style="margin-right: 15px;">Sale Date:</strong> ${detail.sale_date} </div>` : ''}
+                            ${detail.good_as_sales_date ? `<div style="display: flex; justify-content: center; align-items: center; text-align: center;"><strong style="margin-right: 15px;">Good As Sales Date:</strong> ${detail.good_as_sales_date} </div>` : ''}
+                            ${detail.policy_inception_date ? `<div style="display: flex; justify-content: center; align-items: center; text-align: center;"><strong style="margin-right: 15px;">Policy Inception Date:</strong> ${detail.policy_inception_date}</div>` : ''}`,
+                            detail.sale_status,
+                            `<button class="btn btn-primary viewDetailBtn" data-id="${detail.id}" data-bs-toggle="offcanvas" data-bs-target="#detailOffCanvas"><strong>View</strong></button>`
+                        ]);
+                    });
 
-                // Add click event to "View" button
-                $('.viewDetailBtn').click(function() {
-                    var insuranceDetailId = $(this).data('id');
-                    fetchInsuranceDetail(insuranceDetailId); // Fetches data only
-                });
-            },
-            error: function(xhr, status, error) {
-                alert("Error loading sales report data: " + error);
-            }
+                    // Redraw the table with the new data
+                    table.draw();
+
+                    // Add click event to "View" button
+                    $('.viewDetailBtn').click(function () {
+                        var insuranceDetailId = $(this).data('id');
+                        fetchInsuranceDetail(insuranceDetailId); // Fetches data only
+                    });
+                },
+                error: function (xhr, status, error) {
+                    alert("Error loading sales report data: " + error);
+                }
+            });
         });
+    
+
 
         // Event to clear off-canvas content after it is closed
         $('#detailOffCanvas').on('hidden.bs.offcanvas', function () {
@@ -178,9 +277,8 @@
         // Call the initial setup and handle window resizing
         setInitialWidth();
         window.addEventListener('resize', setInitialWidth);
-    });
 
-//============================================================================================================================
+        //============================================================================================================================
 
     const salesAssociates = @json($sales_associates); //for sales_associate_name
     const teams = @json($teams); //for team_name
