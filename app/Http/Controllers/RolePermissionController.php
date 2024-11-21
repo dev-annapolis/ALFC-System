@@ -15,7 +15,11 @@ class RolePermissionController extends Controller
         $tables = [
             'assured_details' => [
                 'name',
-                'address',
+                'lot_number',
+                'street',
+                'barangay',
+                'city',
+                'country',
                 'contact_number',
                 'other_contact_number',
                 'email',
@@ -135,7 +139,11 @@ class RolePermissionController extends Controller
         $tables = [
             'assured_details' => [
                 'name',
-                'address',
+                'lot_number',
+                'street',
+                'barangay',
+                'city',
+                'country',
                 'contact_number',
                 'other_contact_number',
                 'email',
