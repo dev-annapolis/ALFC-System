@@ -1125,15 +1125,45 @@
         });
 
 
-
+        //Formatting of of number to put coma and decimal
         document.querySelectorAll('.formatted-input').forEach(input => {
-            input.addEventListener('input', formatInputWithCommas);
+            // Focus event: Show raw value without formatting
+            input.addEventListener('focus', function () {
+                this.value = this.dataset.rawValue || this.value;
+            });
+
+            // Input event: Capture raw value without commas for calculation
+            input.addEventListener('input', function () {
+                this.dataset.rawValue = this.value.replace(/,/g, ''); // Store raw value
+            });
+
+            // Blur event: Format value with commas and 2 decimal places
+            input.addEventListener('blur', function () {
+                let rawValue = this.dataset.rawValue || this.value;
+                let numberValue = parseFloat(rawValue);
+
+                // If the value is a valid number, format with commas and 2 decimal places
+                if (!isNaN(numberValue)) {
+                    this.value = numberValue.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                } else {
+                    this.value = '0'; // If it's not a number, clear the field
+                }
+            });
         });
+
 
         // Specific event listeners for individual fields
         grossPremiumInput.addEventListener('input', getNetOfDiscount);
         discountInput.addEventListener('input', getNetOfDiscount);
+        grossPremiumInput.addEventListener('input', getFullComm);
         amountDuetoProvider.addEventListener('input', getFullComm);
+        discountInput.addEventListener('input', getFullComm);
+
+
+
 
         travelIncentivesInput.addEventListener('input', getCommissionsValue);
         offSettingInput.addEventListener('input', getCommissionsValue);
@@ -1313,12 +1343,12 @@
 
 
         //SECOND FORM
-        formData.grossPremiumValue = grossPremiumInput.value;
-        formData.discountValue = discountInput.value;
-        formData.netOfDiscountValue = netOfDiscountInput.value;
+        formData.grossPremiumValue = removeCommas(grossPremiumInput.value);
+        formData.discountValue = removeCommas(discountInput.value);
+        formData.netOfDiscountValue = removeCommas(netOfDiscountInput.value);
 
-        formData.amountDuetoProviderValue = amountDuetoProviderInput.value;
-        formData.fullCommissionValue = fullCommissionInput.value;
+        formData.amountDuetoProviderValue = removeCommas(amountDuetoProviderInput.value);
+        formData.fullCommissionValue = removeCommas(fullCommissionInput.value);
 
         formData.commissionsSelect = getCommissionsValue();
 
@@ -1401,11 +1431,11 @@
 
 
             //SECOND FORM
-            grossPremiumInput.value = formData.grossPremiumValue || '';
-            discountInput.value = formData.discountValue || '';
-            netOfDiscountInput.value = formData.netOfDiscountValue || '';
-            amountDuetoProviderInput.value = formData.amountDuetoProviderValue || '';
-            fullCommissionInput.value = formData.fullCommissionValue || '';
+            grossPremiumInput.value = formatNumberWithCommas(formData.grossPremiumValue || '0');
+            discountInput.value = formatNumberWithCommas(formData.discountValue || '0');
+            netOfDiscountInput.value = formatNumberWithCommas(formData.netOfDiscountValue || '0');
+            amountDuetoProviderInput.value = formatNumberWithCommas(formData.amountDuetoProviderValue || '0');
+            fullCommissionInput.value = formatNumberWithCommas(formData.fullCommissionValue || '0');
 
 
 
@@ -1453,13 +1483,16 @@
 
                     // Populate the newly created fields with data from formData
                     if (commissionAmount && commissionName && commissionSelect) {
-                        commissionAmount.value = commission.commissionAmount || ''; // Default if not provided
+                        commissionAmount.value = formatNumberWithCommas(commission.commissionAmount || '0') // Default if not provided
                         commissionName.value = commission.commissionName || ''; // Default if not provided
                         commissionSelect.value = commission.commissionType || '';   // Default if not provided
                     }
 
 
                 });
+
+                reapplyFormattingListeners();
+
             }
 
 
@@ -1511,33 +1544,6 @@
         }
     }
 
-    // Function to format the input with commas for display purposes only
-    function formatInputWithCommas(event) {
-        let rawValue = event.target.value.replace(/,/g, ''); // Remove commas
-
-        // Check if there is a decimal point
-        if (rawValue.indexOf('.') !== -1) {
-            // Split into integer and decimal parts
-            let parts = rawValue.split('.');
-            let integerPart = parts[0]; // Integer part
-            let decimalPart = parts[1]; // Decimal part
-
-            // Format the integer part with commas
-            integerPart = Number(integerPart).toLocaleString('en-US');
-
-            // Reassemble the integer and decimal parts
-            rawValue = integerPart + '.' + decimalPart;
-        } else {
-            // If no decimal point, just format the entire number
-            rawValue = Number(rawValue).toLocaleString('en-US');
-        }
-
-        // Store the raw value in the data attribute
-        event.target.dataset.rawValue = rawValue.replace(/,/g, ''); // Store without commas
-
-        // Update the input field value with formatted commas
-        event.target.value = rawValue;
-    }
 
     function validatePaymentTerms() {
         let value = paymentTermsInputs.value;
@@ -1560,6 +1566,53 @@
         paymentTermsInput.setCustomValidity('');
     }
 
+    function reapplyFormattingListeners() {
+        document.querySelectorAll('.commissionAmount').forEach(input => {
+            // Focus event: Show raw value without formatting
+            input.addEventListener('focus', function () {
+                this.value = this.dataset.rawValue || this.value;
+            });
+
+            // Input event: Capture raw value without commas for calculation
+            input.addEventListener('input', function () {
+                this.dataset.rawValue = this.value.replace(/,/g, ''); // Store raw value
+            });
+
+            // Blur event: Format value with commas and 2 decimal places
+            input.addEventListener('blur', function () {
+                let rawValue = this.dataset.rawValue || this.value;
+                let numberValue = parseFloat(rawValue);
+
+                // If the value is a valid number, format with commas and 2 decimal places
+                if (!isNaN(numberValue)) {
+                    this.value = numberValue.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                } else {
+                    this.value = '0'; // If it's not a number, clear the field
+                }
+            });
+        });
+    }
+
+    // Function to format number with commas and two decimal places
+    function formatNumberWithCommas(value) {
+        if (value === null || value === undefined || isNaN(value)) return '0.00'; // Return '0.00' for null, undefined, or NaN
+        // Ensure the value is a number, and round to two decimal places
+        value = parseFloat(value).toFixed(2);
+        // Add commas and return the formatted number
+        return value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+
+
+    function removeCommas(value) {
+        // Check if value is not undefined or null
+        if (!value) return ''; // Handle empty or null values
+        return value.replace(/,/g, ''); // Remove commas
+    }
+
+
 
 
 
@@ -1568,14 +1621,13 @@
     // Function to calculate net of discount
     function getNetOfDiscount() {
         // Get raw values from data attributes
-        grossPremiumValue = parseFloat(grossPremiumInput.dataset.rawValue) || 0;
-        discountValue = parseFloat(discountInput.dataset.rawValue) || 0;
+        grossPremiumValue = parseFloat(removeCommas(grossPremiumInput.value)) || 0;
+        discountValue = parseFloat(removeCommas(discountInput.value)) || 0;
 
         // Calculate net value
         netOfDiscountValue = grossPremiumValue - discountValue;
 
         // Store the result in a data attribute and display it with commas
-        netOfDiscountInput.dataset.netOfDiscountValue = netOfDiscountValue;
         netOfDiscountInput.value = netOfDiscountValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
         getVatSalesCreditandPercentage();
@@ -1584,15 +1636,15 @@
     // Function to calculate full commission
     function getFullComm() {
         // Get raw values from data attributes
-        netOfDiscountValue = parseFloat(netOfDiscountInput.dataset.netOfDiscountValue) || 0;
-        amountDuetoProviderValue = parseFloat(amountDuetoProvider.dataset.rawValue) || 0;
+        netOfDiscountValue = parseFloat(removeCommas(netOfDiscountInput.value)) || 0;
+        amountDuetoProviderValue = parseFloat(removeCommas(amountDuetoProvider.value)) || 0;
 
         // Calculate full commission
         fullCommissionValue = netOfDiscountValue - amountDuetoProviderValue;
 
         // Store the result in a data attribute and display it with commas
-        fullCommissionInput.dataset.fullCommissionValue = fullCommissionValue;
         fullCommissionInput.value = fullCommissionValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        // fullCommissionInput.value = fullCommissionValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
         getVatSalesCreditandPercentage();
     }
@@ -1673,6 +1725,7 @@
             newnNameInput = newSection.querySelector(`#commissionName${index}`);
             newSelectInput = newSection.querySelector(`#commissionSelect${index}`);
             attachEventListeners();
+            reapplyFormattingListeners();
 
             // Increase the index for the next field
             index++;  // Increase the index after the field is added
@@ -1710,6 +1763,9 @@
                 });
             });
         }
+
+
+
     }
 
 
@@ -1741,7 +1797,7 @@
 
             // Ensure the select, name input, and amount input are valid
             if (select.value && amountInput && amountInput.value && nameInput && nameInput.value) {
-                const commissionAmount = parseFloat(amountInput.value) || 0; // Safely parse the commission amount
+                const commissionAmount = parseFloat(removeCommas(amountInput.value)) || 0; // Safely parse the commission amount
 
                 commissions.push({
                     commissionType: select.value,
