@@ -805,7 +805,7 @@
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-2 mb-sm-4">
                                 <label for="commDeductLabel" class="form-label fw-bold">Comm Deduct</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="commDeduct" placeholder="Enter Comm Deduct" required>
+                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="commDeduct" placeholder="Enter Comm Deduct" required>
                             </div>
                         </div>
 
@@ -1129,11 +1129,14 @@
         document.querySelectorAll('.formatted-input').forEach(input => {
             // Focus event: Show raw value without formatting
             input.addEventListener('focus', function () {
-                this.value = this.dataset.rawValue || this.value;
+                // Store the raw value to ensure it's available in case the user doesn't modify it
+                this.dataset.rawValue = this.dataset.rawValue || this.value.replace(/,/g, '');
+                this.value = this.dataset.rawValue;
             });
 
             // Input event: Capture raw value without commas for calculation
             input.addEventListener('input', function () {
+                // Store raw value without commas for calculation
                 this.dataset.rawValue = this.value.replace(/,/g, ''); // Store raw value
             });
 
@@ -1149,10 +1152,12 @@
                         maximumFractionDigits: 2
                     });
                 } else {
-                    this.value = '0'; // If it's not a number, clear the field
+                    this.value = '0.00'; // If not a valid number, set it to '0.00'
                 }
             });
         });
+
+
 
 
         // Specific event listeners for individual fields
@@ -1352,12 +1357,18 @@
 
         formData.commissionsSelect = getCommissionsValue();
 
-        formData.travelIncentivesValues = travelIncentivesInput.value;
-        formData.offSettingValues = offSettingInput.value;
-        formData.promoValues = promoInput.value;
+        formData.travelIncentivesValues = removeCommas(travelIncentivesInput.value);
+        formData.offSettingValues = removeCommas(offSettingInput.value);
+        formData.promoValues = removeCommas(promoInput.value);
 
-        formData.totalCommissionValues = totalCommissionInput.value;
-        formData.commDeductValues = commDeductInput.value;
+        formData.totalCommissionValues = removeCommas(totalCommissionInput.value);
+        formData.commDeductValues = removeCommas(commDeductInput.value);
+
+        formData.vatValues = removeCommas(vatInput.value);
+        formData.salesCreditValues = removeCommas(salesCreditInput.value);
+        formData.salesCreditPercentValues = salesCreditPercentInput.value;
+
+
 
         formData.paymentTermsValues = paymentTermsInputs.value;
         formData.dueDateStartValues = dueDateStartInputs.value;
@@ -1496,12 +1507,18 @@
             }
 
 
-            travelIncentivesInput.value = formData.travelIncentivesValues || '';
-            offSettingInput.value = formData.offSettingValues || '';
-            promoInput.value = formData.promoValues || '';
+            travelIncentivesInput.value = formatNumberWithCommas(formData.travelIncentivesValues || '0');
+            offSettingInput.value = formatNumberWithCommas(formData.offSettingValues || '0');
+            promoInput.value = formatNumberWithCommas(formData.promoValues || '0');
 
-            totalCommissionInput.value = formData.totalCommissionValues || '';
-            commDeductInput.value = formData.commDeductValues || '';
+            totalCommissionInput.value = formatNumberWithCommas(formData.totalCommissionValues || '0');
+            commDeductInput.value = formatNumberWithCommas(formData.commDeductValues || '0');
+
+            vatInput.value = formatNumberWithCommas(formData.vatValues || '0');
+            salesCreditInput.value = formatNumberWithCommas(formData.salesCreditValues || '0');
+            salesCreditPercentInput.value = formData.salesCreditPercentValues || '0';
+
+
 
             paymentTermsInputs.value = formData.paymentTermsValues || '';
             dueDateStartInputs.value = formData.dueDateStartValues || '';
@@ -1522,6 +1539,7 @@
 
 
         }
+
     }
 
 
@@ -1570,11 +1588,14 @@
         document.querySelectorAll('.commissionAmount').forEach(input => {
             // Focus event: Show raw value without formatting
             input.addEventListener('focus', function () {
-                this.value = this.dataset.rawValue || this.value;
+                // Store the raw value to ensure it's available in case the user doesn't modify it
+                this.dataset.rawValue = this.dataset.rawValue || this.value.replace(/,/g, '');
+                this.value = this.dataset.rawValue;
             });
 
             // Input event: Capture raw value without commas for calculation
             input.addEventListener('input', function () {
+                // Store raw value without commas for calculation
                 this.dataset.rawValue = this.value.replace(/,/g, ''); // Store raw value
             });
 
@@ -1590,9 +1611,10 @@
                         maximumFractionDigits: 2
                     });
                 } else {
-                    this.value = '0'; // If it's not a number, clear the field
+                    this.value = '0.00'; // If not a valid number, set it to '0.00'
                 }
             });
+
         });
     }
 
@@ -1775,42 +1797,40 @@
         let initialTotalCommission = 0;
 
         const container = document.getElementById('commissionContainer');
-        const commissionSelects = container.querySelectorAll('.commissionSelect'); // Select all dynamic select elements
-        const commissionInputs = container.querySelectorAll('.commissionAmount'); // Select all amount input elements
-        const commissionNames = container.querySelectorAll('.commissionName'); // Select all name input elements
+        const commissionSelects = container.querySelectorAll('.commissionSelect');
+        const commissionInputs = container.querySelectorAll('.commissionAmount');
+        const commissionNames = container.querySelectorAll('.commissionName');
 
         // Convert input values to numbers for the incentives (assuming they are global or already defined)
-        let travelIncentivesValues = parseFloat(travelIncentivesInput.value) || 0;
-        let offsettingValue = parseFloat(offSettingInput.value) || 0;
-        let promoValue = parseFloat(promoInput.value) || 0;
+        const travelIncentivesValues = parseFloat(removeCommas(travelIncentivesInput.value)) || 0;
+        const offsettingValue = parseFloat(removeCommas(offSettingInput.value)) || 0;
+        const promoValue = parseFloat(removeCommas(promoInput.value)) || 0;
 
         // Calculate the initial total commission (assuming this is the base value)
         initialTotalCommission = travelIncentivesValues + offsettingValue + promoValue;
 
         const commissions = [];
-        let totalCommission = initialTotalCommission; // Start total commission with the initial value
+        let totalCommission = initialTotalCommission;
 
-        // Loop through all the selects and corresponding input fields
         commissionSelects.forEach((select, index) => {
-            const amountInput = commissionInputs[index]; // The amount input corresponds to the same index
-            const nameInput = commissionNames[index];   // The name input corresponds to the same index
+            const amountInput = commissionInputs[index];
+            const nameInput = commissionNames[index];
 
-            // Ensure the select, name input, and amount input are valid
             if (select.value && amountInput && amountInput.value && nameInput && nameInput.value) {
                 const commissionAmount = parseFloat(removeCommas(amountInput.value)) || 0; // Safely parse the commission amount
 
                 commissions.push({
                     commissionType: select.value,
-                    commissionName: nameInput.value,   // Add the name entered by the user
+                    commissionName: nameInput.value,
                     commissionAmount: commissionAmount
                 });
 
-                totalCommission += commissionAmount; // Add to the total commission
+                totalCommission += commissionAmount;
             }
         });
 
         // Update the total commission input field with the total sum formatted to 2 decimal places
-        totalCommissionInput.value = totalCommission.toFixed(2); // Format to 2 decimal places
+        totalCommissionInput.value = totalCommission.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
         getVatSalesCreditandPercentage(); // Call any necessary functions after the calculation
         return commissions;
@@ -1819,17 +1839,20 @@
 
     function getVatSalesCreditandPercentage() {
 
-        vatValue = ((fullCommissionValue - totalCommissionInput.value) * 0.12) / 1.12;
-        vatInput.value = vatValue.toFixed(2);
+        const fullCommission = parseFloat(removeCommas(fullCommissionInput.value)) || 0;
+        const totalCommission = parseFloat(removeCommas(totalCommissionInput.value)) || 0;
 
-        salesCreditValue = fullCommissionValue - totalCommissionInput.value - vatValue;
-        salesCreditInput.value = salesCreditValue.toFixed(2);
+        vatValue = ((fullCommission - totalCommission) * 0.12) / 1.12;
+        vatInput.value = vatValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-        if (fullCommissionValue === 0 || !isFinite(salesCreditValue / fullCommissionValue)) {
+        salesCreditValue = fullCommission - totalCommission - vatValue;
+        salesCreditInput.value = salesCreditValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+        if (fullCommission === 0 || !isFinite(salesCreditValue / fullCommission)) {
             // Handle division by zero or invalid values
             salesCreditPercentValue = 0;
         } else {
-            salesCreditPercentValue = (salesCreditValue / fullCommissionValue) * 100;
+            salesCreditPercentValue = (salesCreditValue / fullCommission) * 100;
         }
 
         const formattedPercent = salesCreditPercentValue.toFixed(2) + '%';
@@ -1864,6 +1887,7 @@
         schedulePaymentContainer.innerHTML = ''; // Clear existing inputs
         const paymentInputs = []; // To track all payment inputs
         const paymentDateInputs = []; // To track all date inputs
+        grossPremiumValue = parseFloat(removeCommas(grossPremiumInput.value)) || 0;
 
         // Function to get the correct suffix for the number
         function getSuffix(i) {
