@@ -1310,7 +1310,11 @@ class DatabaseSeeder extends Seeder
         DB::table('assured_details')->insert([
             [
                 'name' => 'John Doe',
-                'address' => '123 Main St, Springfield',
+                'lot_number' => '123',
+                'street' => 'Main St',
+                'barangay' => 'Springfield',
+                'city' => 'Springfield',
+                'country' => 'Philippines',
                 'contact_number' => '123-456-7890',
                 'email' => 'assured1@test.com',
                 'other_contact_number' => '098-765-4321',
@@ -1322,7 +1326,11 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 'name' => 'Jane Smith',
-                'address' => '456 Elm St, Shelbyville',
+                'lot_number' => '456',
+                'street' => 'Elm St',
+                'barangay' => 'Shelbyville',
+                'city' => 'Shelbyville',
+                'country' => 'Philippines',
                 'contact_number' => '234-567-8901',
                 'email' => 'assured2@test.com',
                 'other_contact_number' => '876-543-2109',
