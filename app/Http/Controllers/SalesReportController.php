@@ -207,7 +207,11 @@ class SalesReportController extends Controller
             case 'assured_details':
                 return [
                     'name' => $insuranceDetail->assuredDetail->name ?? "N/A",
-                    'address' => $insuranceDetail->assuredDetail->address ?? "N/A",
+                    'lot_number' => $insuranceDetail->assuredDetail->lot_number ?? "N/A",
+                    'street' => $insuranceDetail->assuredDetail->street ?? "N/A",
+                    'barangay' => $insuranceDetail->assuredDetail->barangay ?? "N/A",
+                    'city' => $insuranceDetail->assuredDetail->city ?? "N/A",
+                    'country' => $insuranceDetail->assuredDetail->country ?? "N/A",
                     'contact_number' => $insuranceDetail->assuredDetail->contact_number ?? "N/A",
                     'other_contact_number' => $insuranceDetail->assuredDetail->other_contact_number ?? "N/A",
                     'email' => $insuranceDetail->assuredDetail->email ?? "N/A",
