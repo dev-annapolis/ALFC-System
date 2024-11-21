@@ -757,6 +757,7 @@
 
                     <div id="commissionContainer">
                     </div>
+
                     <div class="row mb-md-5">
                         <div class="col-md-4 mb-5 mb-md-5 mb-sm-5">
                             <button type="button" class="bg-secondary" id="addButton">ADD</button>
@@ -893,7 +894,7 @@
                         <div class="col-md-4 mt-md-5">
                             <div class="mb-4 mb-md-3 mb-sm-4">
                                 <label for="initialPaymentLabel" class="form-label fw-bold">Initial Payment</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="initialPayment" placeholder="Enter Initial Payment" required>
+                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="initialPayment" placeholder="Enter Initial Payment" required>
                             </div>
                         </div>
 
@@ -1058,6 +1059,7 @@
 
     const schedulePaymentInputs = document.getElementById('SchedulePayment1');
 
+
     const initialPaymentInputs = document.getElementById('initialPayment');
     const dateGoodSalesSelect = document.getElementById('dateGoodSales');
     const forBillingInputs = document.getElementById('forBilling');
@@ -1190,6 +1192,9 @@
         paymentTermsInputs.addEventListener('input', calculateSchedulePaymentsAmount);
         calculateDueDateEnd();
 
+
+
+        // calculateSchedulePaymentsAmount();
 
     });
 
@@ -1368,6 +1373,7 @@
         formData.salesCreditValues = removeCommas(salesCreditInput.value);
         formData.salesCreditPercentValues = salesCreditPercentInput.value;
 
+        formData.paymentTermsDate = getPaymentTerms();
 
 
         formData.paymentTermsValues = paymentTermsInputs.value;
@@ -1376,7 +1382,7 @@
 
 
 
-        formData.initialPaymentValues = initialPaymentInputs.value;
+        formData.initialPaymentValues = removeCommas(initialPaymentInputs.value);
         formData.dateGoodSalesValues = dateGoodSalesSelect.value;
         formData.forBillingValues = forBillingInputs.value;
         formData.overUnderPaymentValues = overUnderPaymentInputs.value;
@@ -1399,6 +1405,7 @@
 
         if (storedData) {
             const formData = JSON.parse(storedData);
+            const TermsValue = formData.paymentTermsValues || 0;
 
             // Load values into form inputs
             //FIRST FORM
@@ -1525,7 +1532,168 @@
             dueDateEndInputs.value = formData.dueDateEndValues || '';
 
 
-            initialPaymentInputs.value = formData.initialPaymentValues || '';
+
+            if (TermsValue > 0 && Array.isArray(formData.paymentTermsDate)) {
+                const schedulePaymentContainer = document.getElementById('schedulePaymentTerms');
+                schedulePaymentContainer.innerHTML = ''; // Clear any existing fields
+
+                const paymentAmountInputs = [];
+                const paymentDateInputs = [];
+                const grossPremiumValue = parseFloat(removeCommas(grossPremiumInput.value)) || 0;
+
+                for (let i = 1; i <= TermsValue; i++) {
+                    const paymentTerm = formData.paymentTermsDate[i - 1];
+                    if (paymentTerm) {
+                        const row = document.createElement('div');
+                        row.classList.add('row', 'mt-md-2');
+
+                        const colDate = document.createElement('div');
+                        colDate.classList.add('col-md-4');
+                        colDate.innerHTML = `
+                            <div class="mb-3">
+                                <label for="paymentDate${i}" class="form-label fw-bold">${i}${getSuffix(i)} Payment Date</label>
+                                <input type="date" id="paymentDate${i}" class="form-control rounded-0 border-1" required>
+                            </div>
+                        `;
+
+                        const colAmount = document.createElement('div');
+                        colAmount.classList.add('col-md-4');
+                        colAmount.innerHTML = `
+                            <div class="mb-3">
+                                <label for="paymentAmount${i}" class="form-label fw-bold">${i}${getSuffix(i)} Payment Amount</label>
+                                <input type="text" id="paymentAmount${i}" class="form-control rounded-0 border-1" placeholder="Enter ${i}${getSuffix(i)} Payment Amount" step="0.01" required>
+                            </div>
+                        `;
+
+                        row.appendChild(colDate);
+                        row.appendChild(colAmount);
+                        schedulePaymentContainer.appendChild(row);
+
+                        const paymentDateInput = document.getElementById(`paymentDate${i}`);
+                        const paymentAmountInput = document.getElementById(`paymentAmount${i}`);
+
+                        const dateKey = `${getOrdinal(i)}_payment_schedule_date`;
+                        const amountKey = `${getOrdinal(i)}_payment_schedule_amount`;
+
+                        const rawDate = paymentTerm[dateKey];
+                        const formattedDate = formatDateToISO(rawDate);
+
+                        paymentDateInput.value = formattedDate || '';
+                        // Use formatNumberWithCommas to format the amount value
+                        paymentAmountInput.value = formatNumber(paymentTerm[amountKey]) || '';
+
+                        paymentDateInputs.push(paymentDateInput);
+                        paymentAmountInputs.push(paymentAmountInput);
+
+                        reapplyFormattingListeners(paymentAmountInput);
+                    }
+                }
+
+                attachEventListeners();
+
+                function attachEventListeners() {
+                    paymentAmountInputs.forEach((input, index) => {
+                        input.addEventListener('input', function () {
+                            handlePaymentAmountChange(index);
+                            saveFormData();
+                        });
+                    });
+
+                    if (paymentDateInputs.length > 0) {
+                        paymentDateInputs[0].addEventListener('change', function () {
+                            const firstDate = new Date(this.value);
+
+                            for (let i = 1; i < paymentDateInputs.length; i++) {
+                                const nextDate = new Date(firstDate);
+                                nextDate.setMonth(firstDate.getMonth() + i);
+                                paymentDateInputs[i].value = nextDate.toISOString().split('T')[0];
+                            }
+                            saveFormData();
+                        });
+                    }
+                }
+
+                // Reapply the formatting listener on the payment amount inputs
+                function reapplyFormattingListeners(input) {
+                    input.addEventListener('focus', function () {
+                        this.dataset.rawValue = this.dataset.rawValue || this.value.replace(/,/g, '');
+                        this.value = this.dataset.rawValue;
+                    });
+
+                    input.addEventListener('input', function () {
+                        this.dataset.rawValue = this.value.replace(/,/g, '');
+                    });
+
+                    input.addEventListener('blur', function () {
+                        let rawValue = this.dataset.rawValue || this.value;
+                        let numberValue = parseFloat(rawValue);
+                        if (!isNaN(numberValue)) {
+                            this.value = numberValue.toLocaleString('en-US', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
+                        } else {
+                            this.value = '0.00';
+                        }
+                    });
+                }
+
+                function handlePaymentAmountChange(changedIndex) {
+                    let totalPaid = 0;
+
+                    for (let i = 0; i <= changedIndex; i++) {
+                        totalPaid += parseFloat(paymentAmountInputs[i].value.replace(/,/g, '')) || 0;
+                    }
+
+                    const remainingAmount = grossPremiumValue - totalPaid;
+                    const remainingTerms = TermsValue - (changedIndex + 1);
+
+                    if (remainingTerms > 0) {
+                        const recalculatedPayment = (remainingAmount / remainingTerms).toFixed(2);
+
+                        for (let i = changedIndex + 1; i < paymentAmountInputs.length; i++) {
+                            paymentAmountInputs[i].value = formatNumber(recalculatedPayment);
+                        }
+                    }
+                }
+
+                // Helper function to convert MM/DD/YYYY to YYYY-MM-DD
+                function formatDateToISO(dateString) {
+                    if (!dateString) return '';
+                    const [month, day, year] = dateString.split('/');
+                    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                }
+
+                function getSuffix(index) {
+                    const suffixes = ['th', 'st', 'nd', 'rd'];
+                    const value = index % 100;
+                    return (value - 20) % 10 === 0 || value >= 10 && value <= 20 ? suffixes[0] : suffixes[value % 10] || suffixes[0];
+                }
+
+                // Helper function to get ordinal names (first, second, etc.)
+                function getOrdinal(index) {
+                    const ordinals = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'];
+                    return ordinals[index - 1] || `${index}th`; // Fallback to `${index}th` if needed
+                }
+
+                // Helper function to format numbers with commas
+                function formatNumber(value) {
+                    if (value === null || value === undefined || isNaN(value)) return '0.00'; // Return '0.00' for null, undefined, or NaN
+                    // Ensure the value is a number, and round to two decimal places
+                    value = parseFloat(value).toFixed(2);
+                    // Add commas and return the formatted number
+                    return value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                }
+            }
+
+
+
+
+
+
+
+
+            initialPaymentInputs.value = formatNumberWithCommas(formData.initialPaymentValues || '0');
             dateGoodSalesSelect.value = formData.dateGoodSalesValues || '';
             forBillingInputs.value = formData.forBillingValues || '';
             overUnderPaymentInputs.value = formData.overUnderPaymentValues || '';
@@ -1536,6 +1704,7 @@
 
 
 
+            // calculateSchedulePaymentsAmount();
 
 
         }
@@ -1585,38 +1754,36 @@
     }
 
     function reapplyFormattingListeners() {
+
+        // Apply to commissionAmount inputs
         document.querySelectorAll('.commissionAmount').forEach(input => {
-            // Focus event: Show raw value without formatting
             input.addEventListener('focus', function () {
-                // Store the raw value to ensure it's available in case the user doesn't modify it
                 this.dataset.rawValue = this.dataset.rawValue || this.value.replace(/,/g, '');
                 this.value = this.dataset.rawValue;
             });
 
-            // Input event: Capture raw value without commas for calculation
             input.addEventListener('input', function () {
-                // Store raw value without commas for calculation
-                this.dataset.rawValue = this.value.replace(/,/g, ''); // Store raw value
+                this.dataset.rawValue = this.value.replace(/,/g, '');
             });
 
-            // Blur event: Format value with commas and 2 decimal places
             input.addEventListener('blur', function () {
                 let rawValue = this.dataset.rawValue || this.value;
                 let numberValue = parseFloat(rawValue);
-
-                // If the value is a valid number, format with commas and 2 decimal places
                 if (!isNaN(numberValue)) {
                     this.value = numberValue.toLocaleString('en-US', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
                     });
                 } else {
-                    this.value = '0.00'; // If not a valid number, set it to '0.00'
+                    this.value = '0.00';
                 }
             });
-
         });
+
+
+
     }
+
 
     // Function to format number with commas and two decimal places
     function formatNumberWithCommas(value) {
@@ -1897,6 +2064,40 @@
             return 'th';
         }
 
+        // Function to format input values with commas
+        function formatNumberWithCommas(value) {
+            if (value === null || value === undefined || isNaN(value)) return '0.00'; // Return '0.00' for null, undefined, or NaN
+            // Ensure the value is a number, and round to two decimal places
+            value = parseFloat(value).toFixed(2);
+            // Add commas and return the formatted number
+            return value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // Function to reapply the formatting listeners to the inputs
+        function reapplyFormattingListeners(input){
+            input.addEventListener('focus', function () {
+                this.dataset.rawValue = this.dataset.rawValue || this.value.replace(/,/g, '');
+                this.value = this.dataset.rawValue;
+            });
+
+            input.addEventListener('input', function () {
+                this.dataset.rawValue = this.value.replace(/,/g, '');
+            });
+
+            input.addEventListener('blur', function () {
+                let rawValue = this.dataset.rawValue || this.value;
+                let numberValue = parseFloat(rawValue);
+                if (!isNaN(numberValue)) {
+                    this.value = numberValue.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+                } else {
+                    this.value = '0.00';
+                }
+            });
+        }
+
         // Create payment fields dynamically
         for (let i = 1; i <= TermsValue; i++) {
             const row = document.createElement('div');
@@ -1918,7 +2119,7 @@
             colAmount.innerHTML = `
                 <div class="mb-3">
                     <label for="paymentAmount${i}" class="form-label fw-bold">${i}${getSuffix(i)} Payment Amount</label>
-                    <input type="number" id="paymentAmount${i}" class="form-control rounded-0 border-1" placeholder="Enter ${i}${getSuffix(i)} Payment Amount" step="0.01" required>
+                    <input type="text" id="paymentAmount${i}" class="form-control rounded-0 border-1" placeholder="Enter ${i}${getSuffix(i)} Payment Amount" step="0.01" required>
                 </div>
             `;
 
@@ -1929,13 +2130,15 @@
             // Store reference to the payment input for event handling
             paymentInputs.push(document.getElementById(`paymentAmount${i}`));
             paymentDateInputs.push(document.getElementById(`paymentDate${i}`));
+
+            // Reapply formatting to the new payment amount input
+            reapplyFormattingListeners(paymentInputs[i - 1]);
         }
 
         // Event listener for the first payment input
         if (paymentInputs.length > 0) {
-
             paymentInputs[0].addEventListener('input', function () {
-                const firstPaymentValue = parseFloat(this.value) || 0;
+                const firstPaymentValue = parseFloat(this.value.replace(/,/g, '')) || 0;
 
                 if (firstPaymentValue === 0 || this.value.trim() === "") {
                     // Clear all fields if first payment is invalid or empty
@@ -1946,9 +2149,12 @@
                 // Ensure the first payment does not exceed the gross premium
                 if (firstPaymentValue > grossPremiumValue) {
                     alert("First payment cannot exceed the gross premium.");
-                    this.value = grossPremiumValue.toFixed(2);
+                    this.value = ''; // Clear the value
+                    this.dataset.rawValue = ''; // Clear any stored raw value for formatting
+                    initialPaymentInputs.value = '';
                     return;
                 }
+
 
                 // Calculate the remaining amount and update other fields
                 const remainingAmount = grossPremiumValue - firstPaymentValue;
@@ -1956,10 +2162,11 @@
                 const monthlyPayment = (remainingAmount / remainingTerms).toFixed(2);
 
                 for (let i = 1; i < paymentInputs.length; i++) {
-                    paymentInputs[i].value = monthlyPayment;
+                    paymentInputs[i].value = formatNumberWithCommas(monthlyPayment);
                 }
 
-                initialPaymentInputs.value = firstPaymentValue;
+                initialPaymentInputs.value = firstPaymentValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });;
+                saveFormData();
 
             });
 
@@ -1969,7 +2176,7 @@
                     let totalPaid = 0;
 
                     for (let j = 0; j <= i; j++) {
-                        totalPaid += parseFloat(paymentInputs[j].value) || 0;
+                        totalPaid += parseFloat(paymentInputs[j].value.replace(/,/g, '')) || 0;
                     }
 
                     const remainingAmount = grossPremiumValue - totalPaid;
@@ -1979,13 +2186,12 @@
                         const recalculatedPayment = (remainingAmount / remainingTerms).toFixed(2);
 
                         for (let k = i + 1; k < paymentInputs.length; k++) {
-                            paymentInputs[k].value = recalculatedPayment;
+                            paymentInputs[k].value = formatNumberWithCommas(recalculatedPayment);
                         }
                     }
+                    saveFormData();
                 });
             }
-
-
         }
 
         // Add an event listener to the first payment date input
@@ -1999,11 +2205,62 @@
                     nextDate.setMonth(firstDate.getMonth() + i);
                     paymentDateInputs[i].value = nextDate.toISOString().split('T')[0];
                 }
+                saveFormData();
 
             });
         }
 
 
+
+
+
+
+    }
+
+    function getPaymentTerms() {
+        const paymentTerms = [];
+        const paymentInputs = document.querySelectorAll('[id^="paymentAmount"]'); // Get all payment amount inputs
+        const paymentDateInputs = document.querySelectorAll('[id^="paymentDate"]'); // Get all payment date inputs
+
+        const ordinalNames = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth', 'ninth', 'tenth'];
+
+        for (let i = 0; i < paymentInputs.length; i++) {
+            const paymentAmount = parseFloat(paymentInputs[i].value.replace(/,/g, '')) || 0;
+            const paymentDate = paymentDateInputs[i].value;
+
+            if (paymentAmount > 0 && paymentDate) {
+                const paymentObj = {};
+                const key = `${ordinalNames[i]}_payment_schedule`;
+
+                // Store both the date and amount in separate keys
+                paymentObj[`${key}_date`] = formatDate(paymentDate);
+                paymentObj[`${key}_amount`] = paymentAmount.toFixed(2);
+
+                paymentTerms.push(paymentObj);
+            }
+        }
+
+        return paymentTerms;
+    }
+
+    // Function to format date as 'MM/DD/YYYY'
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const day = String(date.getDate()).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${month}/${day}/${year}`;
+    }
+
+    function getSuffix(i) {
+        if (i % 10 === 1 && i % 100 !== 11) {
+            return 'st';
+        } else if (i % 10 === 2 && i % 100 !== 12) {
+            return 'nd';
+        } else if (i % 10 === 3 && i % 100 !== 13) {
+            return 'rd';
+        }
+        return 'th';
     }
 
 
