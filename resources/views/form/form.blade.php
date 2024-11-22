@@ -305,6 +305,10 @@
     }
 
 
+    input::placeholder {
+        font-size: 0.8em; /* Adjust the size as needed */
+        color: #6c757d; /* Optional: Add color for better visibility */
+    }
 
 </style>
 
@@ -358,7 +362,7 @@
 
                         <div class="col-md-6">
                             <div class="mb-3 mb-md-3 mt-md-3 mt-sm-5">
-                                <label for="assuredNameLabel" class="form-label fw-bold fw-bold">Assured/Client Name</label>
+                                <label for="assuredNameLabel" class="form-label fw-bold fw-bold">Client Name</label>
                                 <input type="text" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="assuredName" placeholder="Enter Assured Full Name" required>
                             </div>
                         </div>
@@ -945,7 +949,7 @@
                         <div class="col-md-4">
                             <div class="mb-4 mb-md-4 mb-sm-4">
                                 <label for="statusPaymentLabel" class="form-label fw-bold">Status</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="statusPayment" placeholder="Enter Status" required>
+                                <input type="text" class="form-control rounded-0 border-1" id="statusPayment" placeholder="Enter status, e.g., GOOD AS SALES or SJ-GMA092024-1" required>
                             </div>
                         </div>
 
@@ -1525,8 +1529,6 @@
             salesCreditInput.value = formatNumberWithCommas(formData.salesCreditValues || '0');
             salesCreditPercentInput.value = formData.salesCreditPercentValues || '0';
 
-
-
             paymentTermsInputs.value = formData.paymentTermsValues || '';
             dueDateStartInputs.value = formData.dueDateStartValues || '';
             dueDateEndInputs.value = formData.dueDateEndValues || '';
@@ -1685,11 +1687,6 @@
                     return value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                 }
             }
-
-
-
-
-
 
 
 
