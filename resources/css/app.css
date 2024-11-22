@@ -57,6 +57,11 @@
     --grey: #D2DDEC;
     --light-grey: #EDF1F5;
     --lightest-grey: #F5F7FA;
+   
+    --background-color: #EDF1F5;
+    --shadow-light: #ffffff;
+    --shadow-dark: #a3a3a3;
+    --text-color: #333;
 
 
 }
