@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use Log;
 use App\Models\SalesAssociate;
+use App\Models\SalesManager;
 use App\Models\Provider;
 use App\Models\Product;
 use App\Models\Subproduct;
@@ -26,25 +27,31 @@ class SalesProcessorController extends Controller
     public function showForm()
     {
 
-        $teams = Team::select('name', 'id')->get();
-        $salesAssociates = SalesAssociate::select('name', 'id')->get();
-        $providers = Provider::select('name', 'id')->get();
-        $products = Product::select('name', 'id')->get();
-        $subproducts = Subproduct::select('name', 'id')->get();
-        $sources = Source::select('name', 'id')->get();
-        $sourcebranches = SourceBranch::select('name', 'id')->get();
-        $ifGdfis = IfGdfi::select('name', 'id')->get();
-        $areas = Area::select('name', 'id')->get();
-        $alfcbranches = AlfcBranch::select('name', 'id')->get();
-        $mops = ModeOfPayment::select('name', 'id')->get();
-        $commissioners = Commissioner::select('name', 'id')->get();
+
+        $teams = Team::select('name', 'id')->where('status', 'active')->get();
+        $salesAssociates = SalesAssociate::select('name', 'id', 'team_id')->where('status', 'active')->get();
+        $salesManagers = SalesManager::select('name', 'id', 'team_id')->where('status', 'active')->get();
+
+
+
+        $providers = Provider::select('name', 'id')->where('status', 'active')->get();
+        $products = Product::select('name', 'id')->where('status', 'active')->get();
+        $subproducts = Subproduct::select('name', 'id')->where('status', 'active')->get();
+        $sources = Source::select('name', 'id')->where('status', 'active')->get();
+        $sourcebranches = SourceBranch::select('name', 'id')->where('status', 'active')->get();
+        $ifGdfis = IfGdfi::select('name', 'id')->where('status', 'active')->get();
+        $areas = Area::select('name', 'id')->where('status', 'active')->get();
+        $alfcbranches = AlfcBranch::select('name', 'id')->where('status', 'active')->get();
+        $mops = ModeOfPayment::select('name', 'id')->where('status', 'active')->get();
+        $commissioners = Commissioner::select('name', 'id')->where('status', 'active')->get();
 
 
         return view('form.form', compact(
 
             'teams',
             'salesAssociates',
-            'branchManagers',
+            'salesManagers',
+
             'providers',
             'products',
             'subproducts',
@@ -57,8 +64,7 @@ class SalesProcessorController extends Controller
             'commissioners',
 
 
-        )); // Adjust the path if necessary
-
+        ));
 
 
     }

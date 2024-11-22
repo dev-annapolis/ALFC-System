@@ -2,7 +2,7 @@
 
 @section('content')
 
-<style>
+{{-- <style>
 
     .container-form {
         /* padding: 15px; */
@@ -306,8 +306,317 @@
 
 
     input::placeholder {
-        font-size: 0.8em; /* Adjust the size as needed */
-        color: #6c757d; /* Optional: Add color for better visibility */
+        font-size: 0.8em;
+        color: #6c757d;
+    }
+
+    option::placeholder {
+        font-size: 0.8em;
+        color: #6c757d;
+    }
+
+    select::placeholder {
+        font-size: 0.8em;
+        color: #6c757d;
+    }
+
+</style> --}}
+
+
+<style>
+        /* General Container */
+    .container-form {
+        background-color: #ffffff;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    /* Title Styles */
+    .alfc-title {
+        font-size: 2.25rem; /* Equivalent to fs-6 */
+        margin-top: 3rem;
+    }
+
+    .main-title {
+        font-family: "Poppins-Bold";
+    }
+
+    /* Logo Styles */
+    .alfc-logo {
+        max-width: 50px;
+    }
+
+    @media (max-width: 767px) {
+        .alfc-logo {
+            max-width: 100px;
+        }
+    }
+
+    /* Responsive Title */
+    @media (min-width: 768px) {
+        .alfc-title {
+            font-size: 0.8rem; /* Equivalent to fs-1 */
+            margin-top: 0.5rem;
+        }
+    }
+
+
+
+    /* Steps Container */
+    .steps {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+
+    /* Connector Line */
+    .steps::before {
+        content: '';
+        position: absolute;
+        left: 30px;
+        top: 30px;
+        bottom: 0;
+        width: 2px;
+        background-color: #EFEFEF;
+        z-index: -1;
+        transition: background-color 0.3s;
+    }
+
+    /* Step Styles */
+    .step {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        margin: 10px 0;
+        font-size: 0.85em; /* Smaller font size */
+        color: #b0bec5;
+        position: relative;
+    }
+
+    .step input[type="radio"] {
+        display: none;
+    }
+
+    .step.active {
+        color: black;
+        font-weight: bold;
+    }
+
+    /* Step Circle */
+    .step::before {
+        content: '';
+        width: 20px;
+        height: 20px;
+        border: 0px solid #EFEFEF;
+        border-radius: 50%;
+        margin-right: 10px;
+        transition: background-color 0.1s, border-color 0.1s;
+        position: relative;
+        z-index: 1;
+        background-color: #EFEFEF;
+    }
+
+    .step.completed {
+        color: #EFEFEF;
+    }
+
+    .step.completed::before {
+        background-color: #EFEFEF;
+        border-color: #EFEFEF;
+    }
+
+    .step.active::before {
+        background-color: red;
+        border-color: #EFEFEF;
+        border-width: 4px;
+    }
+
+    .step:hover::before {
+        border-color: #007bff;
+    }
+
+    /* Form Input Styles */
+    .form-control {
+        background-color: #f3f3f3;
+    }
+
+    .uppercase-input {
+        text-transform: uppercase; /* Automatically converts text to uppercase */
+    }
+
+    .form-control:disabled {
+        background-color: #bdbdbd;
+    }
+
+    .form-control:focus {
+        border-color: #8a8a8a4b;
+        box-shadow: 0 0 0 0.2rem #8a8a8a4b;
+    }
+
+    /* Uppercase Input */
+    .uppercase-input {
+        text-transform: uppercase;
+    }
+
+    .uppercase-input::placeholder {
+        text-transform: none;
+    }
+
+    /* Input Fields */
+    form input {
+        background-color: red;
+    }
+
+    form select,
+    form button {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1em;
+    }
+
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        margin: 0;
+    }
+
+    /* Placeholder Styles */
+    input::placeholder,
+    option::placeholder,
+    select::placeholder {
+        font-size: 0.8em;
+        color: #6c757d;
+    }
+
+    /* Button Styles */
+    .button-container {
+        margin-top: 170px;
+        display: flex;
+        justify-content: flex-end;
+        right: 20px;
+    }
+
+    .submit-button,
+    .next-button {
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 15px;
+        font-size: 1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .submit-button {
+        width: 100px;
+        height: 25px;
+    }
+
+    .submit-button:hover {
+        background-color: darkred;
+    }
+
+    .next-button {
+        width: 200px;
+        height: 35px;
+    }
+
+    .next-button:hover {
+        background-color: darkred;
+    }
+
+    /* Previous Button */
+    .prev-button {
+        background-color: transparent;
+        color: #333;
+        border: none;
+        cursor: pointer;
+        font-size: 1rem;
+        width: 100px;
+        height: 25px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .prev-button:hover {
+        text-decoration: underline;
+    }
+
+    /* Form Step Visibility */
+    .form-step {
+        display: none;
+    }
+
+    .form-step.active {
+        display: block;
+    }
+
+    /* Form Content */
+    .form-content {
+        padding: 20px;
+        padding-bottom: 0;
+    }
+
+    /* Heading */
+    h3 {
+        margin-bottom: 5px;
+    }
+
+    /* Select2 Styles */
+    .select2 {
+        width: 100% !important;
+    }
+
+    .select2-selection {
+        height: 2.25rem !important;
+        background-color: #f3f3f3 !important;
+        border: 1px solid #dddddd !important;
+        border-radius: 0 !important;
+        padding-top: 0.125rem;
+    }
+
+    .select2-selection__arrow {
+        padding-top: 1.95rem;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 768px) {
+        .steps {
+            flex-direction: row;
+            justify-content: space-between;
+            padding-left: 0;
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+
+        .steps::before {
+            display: none;
+            width: 50px;
+            height: 50px;
+        }
+
+        .step {
+            flex-direction: column;
+            text-align: center;
+            margin: 0;
+            font-size: 1.75rem;
+        }
+
+        .step::before {
+            height: 30px;
+            width: 30px;
+            margin: 0 auto 5px;
+        }
     }
 
 </style>
@@ -362,10 +671,11 @@
 
                         <div class="col-md-6">
                             <div class="mb-3 mb-md-3 mt-md-3 mt-sm-5">
-                                <label for="assuredNameLabel" class="form-label fw-bold fw-bold">Client Name</label>
-                                <input type="text" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="assuredName" placeholder="Enter Assured Full Name" required>
+                                <label for="assuredNameLabel" class="form-label fw-bold">Client Name</label>
+                                <input type="text" class="form-control uppercase-input rounded-0 border-1" id="assuredName" placeholder="Enter Client's Name" required>
                             </div>
                         </div>
+
 
                     </div>
 
@@ -515,12 +825,13 @@
                                 <label for="salesManagerLabel" class="form-label fw-bold fs-6">SM</label>
                                 <select class="form-control rounded-0 border-1 m-0" id="salesManager">
                                     <option value="" selected>SM</option>
-                                    @foreach($salesAssociates as $salesAssociate)
-                                        <option value="{{ $salesAssociate->id }}">{{ $salesAssociate->name }}</option>
+                                    @foreach($salesManagers as $salesManager)
+                                        <option value="{{ $salesManager->id }}">{{ $salesManager->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
+
                     </div>
 
                     {{-- Provider --}}
@@ -918,14 +1229,14 @@
                         <div class="col-md-4">
                             <div class="mb-4 mb-md-4 mb-sm-4 mt-md-3">
                                 <label for="forBillingLabel" class="form-label fw-bold">For Billing</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="forBilling" placeholder="Enter For Billing" required>
+                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="forBilling" placeholder="Enter For Billing" required>
                             </div>
                         </div>
 
                         <div class="col-md-4">
                             <div class="mb-4 mb-md-4 mb-sm-4 mt-md-3">
                                 <label for="overUnderPaymentLabel" class="form-label fw-bold">Over (Under) Payment</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="overUnderPayment" placeholder="Enter Over or Under Payment" required>
+                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="overUnderPayment" placeholder="Enter Over or Under Payment" required>
                             </div>
                         </div>
 
@@ -964,10 +1275,6 @@
                     </div>
                 </form>
             </div>
-
-
-
-
 
         </div>
 
@@ -1318,7 +1625,7 @@
         const formData = {};
 
         //FIRST FORM
-        formData.assuredNameValue = assuredNameInput.value;
+        formData.assuredNameValue = assuredNameInput.value.toUpperCase();
         formData.fullAddressValue = fullAddressInput.value;
         formData.unitNoValue = unitNoInput.value;
         formData.streetValue = streetInput.value;
@@ -1388,8 +1695,8 @@
 
         formData.initialPaymentValues = removeCommas(initialPaymentInputs.value);
         formData.dateGoodSalesValues = dateGoodSalesSelect.value;
-        formData.forBillingValues = forBillingInputs.value;
-        formData.overUnderPaymentValues = overUnderPaymentInputs.value;
+        formData.forBillingValues = removeCommas(forBillingInputs.value);
+        formData.overUnderPaymentValues = removeCommas(overUnderPaymentInputs.value);
         formData.prNumberValues = prNumberInputs.value;
         formData.statusPaymentValues = statusPaymentInputs.value;
 
@@ -1474,8 +1781,8 @@
                                 <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0 commissionSelect" id="commissionSelect${index}">
                                     <option value="" disabled selected>Select Commissions</option>
-                                    @foreach($commisioners as $commisioner)
-                                        <option value="{{ $commisioner->id }}">{{ $commisioner->name }}</option>
+                                    @foreach($commissioners as $commissioner)
+                                        <option value="{{ $commissioner->id }}">{{ $commissioner->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -1587,7 +1894,7 @@
                         paymentDateInputs.push(paymentDateInput);
                         paymentAmountInputs.push(paymentAmountInput);
 
-                        reapplyFormattingListeners(paymentAmountInput);
+                        reapplyFormattingListenersPayments(paymentAmountInput);
                     }
                 }
 
@@ -1616,7 +1923,7 @@
                 }
 
                 // Reapply the formatting listener on the payment amount inputs
-                function reapplyFormattingListeners(input) {
+                function reapplyFormattingListenersPayments(input) {
                     input.addEventListener('focus', function () {
                         this.dataset.rawValue = this.dataset.rawValue || this.value.replace(/,/g, '');
                         this.value = this.dataset.rawValue;
@@ -1692,8 +1999,8 @@
 
             initialPaymentInputs.value = formatNumberWithCommas(formData.initialPaymentValues || '0');
             dateGoodSalesSelect.value = formData.dateGoodSalesValues || '';
-            forBillingInputs.value = formData.forBillingValues || '';
-            overUnderPaymentInputs.value = formData.overUnderPaymentValues || '';
+            forBillingInputs.value = formatNumberWithCommas(formData.forBillingValues || '0');
+            overUnderPaymentInputs.value = formatNumberWithCommas(formData.overUnderPaymentValues || '0')
             prNumberInputs.value = formData.prNumberValues || '';
             statusPaymentInputs.value = formData.statusPaymentValues || '';
 
@@ -1879,16 +2186,24 @@
             // For the newly added row, do not add mt-5
             newSection.innerHTML = `
                 <div class="col-md-4">
+
                     <div class="mb-3 mb-md-4 mb-sm-4">
                         <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
-                        <select class="form-control form-select rounded-0 border-1 rounded-0 m-0 commissionSelect" id="commissionSelect${index}">
+                        <select class="form-control rounded-0 border-1 rounded-0 m-0 commissionSelect" id="commissionSelect${index}">
                             <option value="" disabled selected>Select Commissions</option>
-                            @foreach($commisioners as $commisioner)
+                            @foreach($commissioners as $commisioner)
                                 <option value="{{ $commisioner->id }}">{{ $commisioner->name }}</option>
                             @endforeach
                         </select>
                     </div>
+
+
+
+
+
+
                 </div>
+
                 <div class="col-md-4">
                     <div class="mb-3 mb-md-4 mb-sm-4">
                         <label for="commissionNameLabel" class="form-label fw-bold">Name</label>
