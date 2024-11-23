@@ -1281,6 +1281,31 @@
     </div>
 </div>
 
+<script>
+    // Handle team selection change
+    $('#team').on('select2:select', function(e) {
+        const teamId = e.params.data.id; // Get the selected team's ID
+
+        // Get the sales associates dropdown
+        const $salesAssociateSelect = $('#salesAssociate');
+
+        // Reset options in sales associate dropdown
+        $salesAssociateSelect.empty().append('<option value="" selected>SA</option>');
+
+        // Filter the sales associates based on the selected team
+        const allSalesAssociates = @json($salesAssociates); // Passing PHP array to JS
+        const filteredAssociates = allSalesAssociates.filter(associate => associate.team_id == teamId);
+
+        // Add filtered options to the sales associate dropdown
+        filteredAssociates.forEach(associate => {
+            const newOption = new Option(associate.name, associate.id, false, false);
+            $salesAssociateSelect.append(newOption);
+        });
+
+        // Refresh the Select2 plugin for the updated options
+        $salesAssociateSelect.trigger('change.select2');
+    });
+</script>
 
 
 <script>
