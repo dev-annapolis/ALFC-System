@@ -619,6 +619,8 @@
         }
     }
 
+
+
 </style>
 
 
@@ -667,17 +669,28 @@
                 <form id="step1 mt-md-5 mb-md-5">
 
                     {{-- Assured Name --}}
-                    <div class="row ">
-
-                        <div class="col-md-6">
+                    <div class="row">
+                        <div class="col-md-4">
                             <div class="mb-3 mb-md-3 mt-md-3 mt-sm-5">
                                 <label for="assuredNameLabel" class="form-label fw-bold">Client Name</label>
-                                <input type="text" class="form-control uppercase-input rounded-0 border-1" id="assuredName" placeholder="Enter Client's Name" required>
+                                <input type="text"
+                                       class="form-control uppercase-input rounded-0 border-1"
+                                       id="assuredName"
+                                       placeholder="Enter Client's Name"
+                                       autocomplete="off"
+                                       required>
+
                             </div>
+                            <ul id="suggestions" class="list-group mt-2 w-25" style="display: none; position: absolute; z-index: 1000;">
+                                <!-- Suggestions will appear here -->
+                            </ul>
                         </div>
+
+                        <input type="hidden" id="clientId" name="clientId">
 
 
                     </div>
+
 
                     {{-- Lot Number, Street, and Barangay --}}
                     <div class="row">
@@ -883,9 +896,9 @@
 
                     {{-- Product, Sub-Product, and Product Type --}}
                     <div class="row">
-                        <div class="col-md-4 ">
+                        <div class="col-md-4">
                             <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
-                                <label for="productLabel" class="form-label fw-bold fw-bold fs-6">Product</label>
+                                <label for="productLabel" class="form-label fw-bold fs-6">Product</label>
                                 <select class="form-control rounded-0 border-1 m-0" id="product" required>
                                     <option value="" selected>Select Products</option>
                                     @foreach($products as $product)
@@ -895,18 +908,15 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 ">
+                        <div class="col-md-4">
                             <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
-                                <label for="subProductLabel" class="form-label fw-bold fw-bold fs-6">Sub-Product</label>
-
+                                <label for="subProductLabel" class="form-label fw-bold fs-6">Sub-Product</label>
                                 <select class="form-control rounded-0 border-1 m-0" id="subProduct" required>
                                     <option value="" disabled selected>Select Sub-Product</option>
-                                    @foreach($subproducts as $subproduct)
-                                        <option value="{{ $subproduct->id }}">{{ $subproduct->name }}</option>
-                                    @endforeach
                                 </select>
                             </div>
                         </div>
+
 
                         <div class="col-md-4 ">
                             <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
@@ -1281,31 +1291,9 @@
     </div>
 </div>
 
-<script>
-    // Handle team selection change
-    $('#team').on('select2:select', function(e) {
-        const teamId = e.params.data.id; // Get the selected team's ID
 
-        // Get the sales associates dropdown
-        const $salesAssociateSelect = $('#salesAssociate');
 
-        // Reset options in sales associate dropdown
-        $salesAssociateSelect.empty().append('<option value="" selected>SA</option>');
 
-        // Filter the sales associates based on the selected team
-        const allSalesAssociates = @json($salesAssociates); // Passing PHP array to JS
-        const filteredAssociates = allSalesAssociates.filter(associate => associate.team_id == teamId);
-
-        // Add filtered options to the sales associate dropdown
-        filteredAssociates.forEach(associate => {
-            const newOption = new Option(associate.name, associate.id, false, false);
-            $salesAssociateSelect.append(newOption);
-        });
-
-        // Refresh the Select2 plugin for the updated options
-        $salesAssociateSelect.trigger('change.select2');
-    });
-</script>
 
 
 <script>
@@ -1431,9 +1419,14 @@
         loadFormData();
 
 
+
+
+
+        autoCompletePersonalDetails();
+
         selecDropdownIds.forEach(select => {
             $(select).select2({
-                allowClear: false,
+                allowClear: true,
                 minimumResultsForSearch: 5,
                 dropdownPosition: 'below'
             });
@@ -1442,6 +1435,65 @@
             $(select).on('select2:select', function() {
                 saveFormData();
             });
+        });
+
+        // Handle team selection change
+        $('#team').on('select2:select', function(e) {
+            const teamId = e.params.data.id; // Get the selected team's ID
+
+            // Get the sales associates and sales managers dropdowns
+            const $salesAssociateSelect = $('#salesAssociate');
+            const $salesManagerSelect = $('#salesManager');
+
+            // Reset options in sales associate and sales manager dropdowns
+            $salesAssociateSelect.empty().append('<option value="" selected>SA</option>');
+            $salesManagerSelect.empty().append('<option value="" selected>SM</option>');
+
+            // Filter the sales associates and managers based on the selected team
+            const allSalesAssociates = @json($salesAssociates); // Passing PHP array to JS
+            const allSalesManagers = @json($salesManagers); // Assuming $salesManagers is passed to JS
+
+            const filteredAssociates = allSalesAssociates.filter(associate => associate.team_id == teamId);
+            const filteredManagers = allSalesManagers.filter(manager => manager.team_id == teamId);
+
+            // Add filtered options to the sales associate dropdown
+            filteredAssociates.forEach(associate => {
+                const newOption = new Option(associate.name, associate.id, false, false);
+                $salesAssociateSelect.append(newOption);
+            });
+
+            // Add filtered options to the sales manager dropdown
+            filteredManagers.forEach(manager => {
+                const newOption = new Option(manager.name, manager.id, false, false);
+                $salesManagerSelect.append(newOption);
+            });
+
+            // Refresh the Select2 plugin for the updated options
+            $salesAssociateSelect.trigger('change.select2');
+            $salesManagerSelect.trigger('change.select2');
+        });
+
+        $('#product').on('change', function() {
+            const productId = $(this).val(); // Get the selected product ID
+
+            // Get the sub-product dropdown
+            const $subProductSelect = $('#subProduct');
+
+            // Reset options in the sub-product dropdown
+            $subProductSelect.empty().append('<option value="" disabled selected>Select Sub-Product</option>');
+
+            // Filter the sub-products based on the selected product
+            const allSubProducts = @json($subproducts); // Passing PHP array to JS
+            const filteredSubProducts = allSubProducts.filter(subProduct => subProduct.product_id == productId);
+
+            // Add filtered options to the sub-product dropdown
+            filteredSubProducts.forEach(subProduct => {
+                const newOption = new Option(subProduct.name, subProduct.id, false, false);
+                $subProductSelect.append(newOption);
+            });
+
+            // Refresh the Select2 plugin for the updated options (if using Select2)
+            $subProductSelect.trigger('change.select2');
         });
 
 
@@ -1533,6 +1585,8 @@
         // calculateSchedulePaymentsAmount();
 
     });
+
+
 
 
     //STEPS FUNCTIONS
@@ -2044,6 +2098,77 @@
 
 
     //FORMATTING FUNCTIONS
+
+
+    function autoCompletePersonalDetails() {
+        const assuredNameInput = $('#assuredName');
+        const suggestionsBox = $('#suggestions');
+
+        assuredNameInput.on('input', function () {
+            const query = $(this).val();
+
+            if (query.length > 1) {
+                $.ajax({
+                    url: "{{ route('clients.search') }}",
+                    method: 'GET',
+                    data: { query: query },
+                    success: function (data) {
+                        suggestionsBox.empty().show();
+
+                        if (data.length === 0) {
+                            suggestionsBox.append('<li class="list-group-item">No results found</li>');
+                        } else {
+                            data.forEach(client => {
+                                suggestionsBox.append(`
+                                    <li class="list-group-item list-group-item-action" style="cursor: pointer;"
+                                        data-client='${JSON.stringify(client)}'>
+                                        ${client.name}
+                                    </li>
+                                `);
+                            });
+                        }
+                    }
+                });
+            } else {
+                suggestionsBox.hide();
+            }
+        });
+
+        $(document).click(function (e) {
+            if (!$(e.target).closest('#suggestions, #assuredName').length) {
+                suggestionsBox.hide();
+            }
+        });
+
+        // Add the click handler for suggestions
+        $(document).on('click', '#suggestions li', function () {
+            const client = $(this).data('client');
+            fillInput(client);
+            saveFormData();
+        });
+    }
+
+    function fillInput(client) {
+        // Fill the input fields with the client data
+        $('#clientId').val(client.id);
+        $('#assuredName').val(client.name);
+        $('#unitNo').val(client.lot_number);
+        $('#street').val(client.street);
+        $('#barangay').val(client.barangay);
+        $('#city').val(client.city);
+        $('#country').val(client.country);
+        $('#assuredEmail').val(client.email);
+        $('#assuredContactNumber').val(client.contact_number);
+
+        // Optional: Update the fullAddress field if needed
+        // $('#fullAddress').val(`${client.lot_number} ${client.street}, ${client.barangay}, ${client.city}, ${client.country}`);
+
+        // Hide the suggestions box after selection
+        $('#suggestions').hide();
+    }
+
+
+
     function updateFullAddress() {
         const fullAddress = `${unitNoInput.value}, ${streetInput.value}, ${barangayInput.value}, ${cityInput.value}, ${countryInput.value}`;
         fullAddressInput.value = fullAddress;
