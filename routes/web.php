@@ -53,5 +53,6 @@ Route::post('/api/insurance/details/update', [SalesReportController::class, 'upd
 
 use App\Http\Controllers\DropdownController;
 Route::get('/teamsIndex', [DropdownController::class, 'teamsIndex'])->name('teams.index');
-Route::post('/teams/store', [DropdownController::class, 'store'])->name('teams.store');
-Route::put('/teams/update', [DropdownController::class, 'update'])->name('teams.update');
+Route::post('/teamsStore', [DropdownController::class, 'teamsStore'])->name('teams.store');
+Route::put('/teamsUpdate', [DropdownController::class, 'teamsUpdate'])->name('teams.update');
+Route::patch('/teamsChangeStatus/{id}', [DropdownController::class, 'teamsChangeStatus'])->name('teams.changeStatus');
