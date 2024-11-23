@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use Log;
+
+use App\Models\AssuredDetail;
 use App\Models\SalesAssociate;
 use App\Models\SalesManager;
 use App\Models\Provider;
@@ -27,6 +29,10 @@ class SalesProcessorController extends Controller
     public function showForm()
     {
 
+        $clients = AssuredDetail::all();
+
+
+        // dd($clients);
 
         $teams = Team::select('name', 'id')->where('status', 'active')->get();
         $salesAssociates = SalesAssociate::select('name', 'id', 'team_id')->where('status', 'active')->get();
@@ -35,8 +41,10 @@ class SalesProcessorController extends Controller
 
 
         $providers = Provider::select('name', 'id')->where('status', 'active')->get();
+
         $products = Product::select('name', 'id')->where('status', 'active')->get();
-        $subproducts = Subproduct::select('name', 'id')->where('status', 'active')->get();
+        $subproducts = Subproduct::select('name', 'id', 'product_id')->where('status', 'active')->get();
+
         $sources = Source::select('name', 'id')->where('status', 'active')->get();
         $sourcebranches = SourceBranch::select('name', 'id')->where('status', 'active')->get();
         $ifGdfis = IfGdfi::select('name', 'id')->where('status', 'active')->get();
@@ -47,7 +55,7 @@ class SalesProcessorController extends Controller
 
 
         return view('form.form', compact(
-
+            'clients',
             'teams',
             'salesAssociates',
             'salesManagers',
@@ -68,4 +76,21 @@ class SalesProcessorController extends Controller
 
 
     }
+
+
+    public function searchClients(Request $request)
+    {
+        $clientName = $request->input('query');  // Fix the typo in the input name ('quclientNameery' => 'query')
+
+        // Fetch the relevant client data
+        $clients = AssuredDetail::where('name', 'like', '%' . $clientName . '%')
+            ->select('id', 'name', 'lot_number', 'street', 'barangay', 'city', 'country', 'email', 'contact_number') // Fetch necessary fields
+            ->get();
+
+        return response()->json($clients); // Return all necessary data for autofill
+    }
+
+
+
+
 }
