@@ -1365,6 +1365,25 @@
     let index = 0;
     const commissions = [];
 
+    const placeholderMap = {
+        classification: "Select Classification",
+        saleStatus: "Select Sale Status",
+        team: "Select Team",
+        salesAssociate: "Select Sale Associate",
+        salesManager: "Select Sale Manager",
+        provider: "Select Provider",
+        productType: "Select Product Type",
+        subProduct: "Select Sub-Product",
+        product: "Select Product",
+        selectSources: "Select Source",
+        sourceBranch: "Select Source Branch",
+        ifGdfi: "Select GDFI",
+        area: "Select Area",
+        alfcBranch: "Select ALFC Branch",
+        mop: "Select Mode of Payment"
+    };
+
+
     const inputs = document.querySelectorAll('input, select, change');
 
     const formSteps = document.querySelectorAll('.form-step');
@@ -1499,49 +1518,8 @@
         autoCompletePersonalDetails();
 
         selecDropdownIds.forEach(select => {
-            let placeholderText = "Select an option";
-
-            if ($(select).attr('id') === 'classification') {
-                placeholderText = "Select Classification";
-            }else if ($(select).attr('id') === 'saleStatus') {
-                placeholderText = "Select Sale Status";
-            } else if ($(select).attr('id') === 'team') {
-                placeholderText = "Select Team";
-            } else if ($(select).attr('id') === 'team') {
-                placeholderText = "Select Team";
-            } else if ($(select).attr('id') === 'salesAssociate') {
-                placeholderText = "Select Sale Associate";
-            } else if ($(select).attr('id') === 'salesManager') {
-                placeholderText = "Select Sale Manager";
-            } else if ($(select).attr('id') === 'provider') {
-                placeholderText = "Select Provider";
-            } else if ($(select).attr('id') === 'productType') {
-                placeholderText = "Select Product Type";
-            } else if ($(select).attr('id') === 'subProduct') {
-                placeholderText = "Select Sub-Product";
-            } else if ($(select).attr('id') === 'product') {
-                placeholderText = "Select Product";
-            } else if ($(select).attr('id') === 'selectSources') {
-                placeholderText = "Select Source";
-            } else if ($(select).attr('id') === 'sourceBranch') {
-                placeholderText = "Select Source Branch";
-            } else if ($(select).attr('id') === 'ifGdfi') {
-                placeholderText = "Select GDFI";
-            } else if ($(select).attr('id') === 'area') {
-                placeholderText = "Select Area";
-            } else if ($(select).attr('id') === 'alfcBranch') {
-                placeholderText = "Select ALFC Branch";
-            } else if ($(select).attr('id') === 'mop') {
-                placeholderText = "Select Mode of Payment";
-            }
-
-
-
-
-
-
-
-
+            const id = $(select).attr('id');
+            const placeholderText = placeholderMap[id] || "Default Placeholder";
 
             $(select).select2({
                 allowClear: true,
