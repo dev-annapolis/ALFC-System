@@ -913,6 +913,9 @@
                                 <label for="subProductLabel" class="form-label fw-bold fs-6">Sub-Product</label>
                                 <select class="form-control rounded-0 border-1 m-0" id="subProduct" required>
                                     <option value="" disabled selected>Select Sub-Product</option>
+                                    @foreach($subproducts as $subproduct)
+                                        <option value="{{ $subproduct->id }}">{{ $subproduct->name }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -1475,6 +1478,7 @@
             // Refresh the Select2 plugin for the updated options
             $salesAssociateSelect.trigger('change.select2');
             $salesManagerSelect.trigger('change.select2');
+            saveFormData();
         });
 
         $('#product').on('change', function() {
@@ -1498,6 +1502,8 @@
 
             // Refresh the Select2 plugin for the updated options (if using Select2)
             $subProductSelect.trigger('change.select2');
+            saveFormData();
+
         });
 
 
