@@ -21,6 +21,14 @@
     box-shadow: inset 4px 4px 8px var(--shadow-dark),
                 inset -4px -4px 8px var(--shadow-light);
     overflow: hidden;
+    white-space: nowrap;        /* Prevent text wrapping */
+    text-overflow: ellipsis;    /* Add ellipsis for overflowing text */
+
+}
+.neumorphic-table th {
+    white-space: nowrap;        /* Prevent text wrapping for header */
+    text-overflow: ellipsis;    /* Optional for headers if they have fixed width */
+    overflow: hidden;           /* Hide overflow */
 }
 
 /* Table header */
@@ -56,28 +64,35 @@
 }
 
 /* Actions button */
-.neumorphic-table .btn-primary {
-    background: var(--background-color);
-    color: var(--text-color);
-    border: none;
-    border-radius: 8px;
-    box-shadow: 4px 4px 8px var(--shadow-dark),
-                -4px -4px 8px var(--shadow-light);
-    transition: all 0.3s ease;
+.dropdown-toggle::after {
+    display: none !important; /* Hides the default Bootstrap caret icon */
+}
+.dropdown-menu {
+    text-align: center;            /* Center the text within the dropdown */
 }
 
-.neumorphic-table .btn-primary:hover {
-    background: var( --primary-color-brighter-red);
-    box-shadow: 2px 2px 4px var(--shadow-dark),
-                -2px -2px 4px var(--shadow-light);
+.dropdown-item {
+    display: flex;                 /* Use flexbox for better alignment */
+    justify-content: center;       /* Horizontally center content */
+    align-items: center;           /* Vertically center content */
+    padding: 10px 15px;            /* Adjust padding for a balanced look */
 }
 
+.dropdown-item i {
+    margin-right: 5px;             /* Add space between the icon and text */
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;     /* Slight background change on hover */
+    color: #007bff;                /* Text and icon color on hover */
+}
 #salesReportTable th, 
 #salesReportTable td {
     text-align: center; /* Center-align text */
     vertical-align: middle; /* Vertically center the content */
 }
 </style>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
 <div class="container-fluid mt-5">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -136,7 +151,7 @@
                 responsive: true, 
                 autoWidth: false, 
                 order: [[0, 'asc']], 
-                dom: '<"row TOP-ROW"<"col-md-6 MASTER-LIST"><"col-md-6  SEARCHING"f>>t<"row"<"col-md-6 pt-3"l><"col-md-6 pt-2"p>>',
+                dom: '<"row TOP-ROW"<"col-md-6 MASTER-LIST"><"col-md-6 pb-3 SEARCHING"f>>t<"row"<"col-md-6 pt-3"l><"col-md-6 pt-2"p>>',
                 initComplete: function () {
                     $('.MASTER-LIST').html('<h1 ><span style="color: #FF3832;"><b>Master</b></span> List</h1>');
                 },
@@ -161,9 +176,22 @@
                 success: function (data) {
                     // Clear table before adding new rows
                     table.clear();
+                    const statusColors = {
+                        'Pending': '#ffc107',   // Yellow
+                        'Approved': '#28a745',  // Green
+                        'Cancelled': '#dc3545', // Red
+                        'In Progress': '#17a2b8' // Blue
+                    };
+
+                    // Function to determine the color based on the status
+                    function getStatusColor(status) {
+                        return statusColors[status] || '#6c757d'; // Default to gray if status is unknown
+                    }
 
                     // Populate table rows
                     data.forEach(function (detail) {
+                        const backgroundColor = getStatusColor(detail.sale_status);
+
                         table.row.add([
                             `<strong>${detail.issuance_code}</strong>`, // Make Issuance Code bold
                             detail.name,
@@ -175,8 +203,31 @@
                             `${detail.sale_date ? `<div style="display: flex; justify-content: center; align-items: center; text-align: center;"><strong style="margin-right: 15px;">Sale Date:</strong> ${detail.sale_date} </div>` : ''}
                             ${detail.good_as_sales_date ? `<div style="display: flex; justify-content: center; align-items: center; text-align: center;"><strong style="margin-right: 15px;">Good As Sales Date:</strong> ${detail.good_as_sales_date} </div>` : ''}
                             ${detail.policy_inception_date ? `<div style="display: flex; justify-content: center; align-items: center; text-align: center;"><strong style="margin-right: 15px;">Policy Inception Date:</strong> ${detail.policy_inception_date}</div>` : ''}`,
-                            detail.sale_status,
-                            `<button class="btn btn-primary viewDetailBtn" data-id="${detail.id}" data-bs-toggle="offcanvas" data-bs-target="#detailOffCanvas"><strong>View</strong></button>`
+                            `<span class="status-text"
+                                style="color: ${getStatusColor(detail.sale_status)}; 
+                                        font-size: 1.1em; /* Slightly larger text */
+                                        font-weight: bold; /* Make text bold */
+                                        text-align: center;">
+                                ${detail.sale_status}
+                            </span>`,
+                            `<div class="dropdown">
+                               <button class="btn dropdown-toggle p-2 border-0 bg-transparent circular-btn" type="button" id="dropdownMenuButton${detail.id}" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </button>
+                               <ul class="dropdown-menu text-center" aria-labelledby="dropdownMenuButton${detail.id}">
+                                    <li>
+                                        <a 
+                                            class="dropdown-item viewDetailBtn d-flex justify-content-center align-items-center" 
+                                            href="#" 
+                                            data-id="${detail.id}" 
+                                            data-bs-toggle="offcanvas" 
+                                            data-bs-target="#detailOffCanvas">
+                                            <i class="fa-regular fa-eye me-2"></i> View
+                                        </a>
+                                    </li>
+                                    <!-- Add more dropdown items here if needed -->
+                                </ul>
+                            </div>`
                         ]);
                     });
 
