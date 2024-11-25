@@ -1280,9 +1280,10 @@
 
                     <div class="button-container mb-md-5 mb-mt-5">
                         <button type="button" class="prev-button" onclick="prevStep()">Back</button>
-                        <button type="submit" class="next-button">Submit</button>
-
+                        <button type="button" class="submit-button" onclick="submitForm(event)">Submit</button>
                     </div>
+
+
                 </form>
             </div>
 
@@ -1311,6 +1312,9 @@
 
     //FIRST FORM
     const assuredNameInput = document.getElementById('assuredName');
+    const assuredNameID = document.getElementById('clientId');
+
+
 
     const fullAddressInput = document.getElementById('fullAddress');
     const unitNoInput = document.getElementById('unitNo');
@@ -1705,6 +1709,8 @@
 
         //FIRST FORM
         formData.assuredNameValue = assuredNameInput.value.toUpperCase();
+        formData.assuredIdValue = assuredNameID.value;
+
         formData.fullAddressValue = fullAddressInput.value;
         formData.unitNoValue = unitNoInput.value;
         formData.streetValue = streetInput.value;
@@ -1800,6 +1806,8 @@
             // Load values into form inputs
             //FIRST FORM
             assuredNameInput.value = formData.assuredNameValue || '';
+            formData.assuredIdValue = assuredNameID.value;
+
             fullAddressInput.value = formData.fullAddressValue || '';
             unitNoInput.value = formData.unitNoValue || '';
             streetInput.value = formData.streetValue || '';
@@ -2098,14 +2106,15 @@
 
 
     //FORMATTING FUNCTIONS
-
-
     function autoCompletePersonalDetails() {
         const assuredNameInput = $('#assuredName');
         const suggestionsBox = $('#suggestions');
 
         assuredNameInput.on('input', function () {
             const query = $(this).val();
+
+            // Clear all fields on any input (edit or deletion)
+            clearInputs();
 
             if (query.length > 1) {
                 $.ajax({
@@ -2121,12 +2130,15 @@
                             data.forEach(client => {
                                 suggestionsBox.append(`
                                     <li class="list-group-item list-group-item-action" style="cursor: pointer;"
-                                        data-client='${JSON.stringify(client)}'>
-                                        ${client.name}
+                                        data-client='${encodeURIComponent(JSON.stringify(client))}'>
+                                        ${client.name} (${client.city || 'Unknown'})
                                     </li>
                                 `);
                             });
                         }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error fetching client data:', error);
                     }
                 });
             } else {
@@ -2140,33 +2152,39 @@
             }
         });
 
-        // Add the click handler for suggestions
         $(document).on('click', '#suggestions li', function () {
-            const client = $(this).data('client');
+            const client = JSON.parse(decodeURIComponent($(this).data('client')));
             fillInput(client);
             saveFormData();
         });
     }
 
-    function fillInput(client) {
-        // Fill the input fields with the client data
-        $('#clientId').val(client.id);
-        $('#assuredName').val(client.name);
-        $('#unitNo').val(client.lot_number);
-        $('#street').val(client.street);
-        $('#barangay').val(client.barangay);
-        $('#city').val(client.city);
-        $('#country').val(client.country);
-        $('#assuredEmail').val(client.email);
-        $('#assuredContactNumber').val(client.contact_number);
-
-        // Optional: Update the fullAddress field if needed
-        // $('#fullAddress').val(`${client.lot_number} ${client.street}, ${client.barangay}, ${client.city}, ${client.country}`);
-
-        // Hide the suggestions box after selection
+    // Clear input fields function
+    function clearInputs() {
+        $('#clientId').val('');
+        $('#unitNo').val('');
+        $('#street').val('');
+        $('#barangay').val('');
+        $('#city').val('');
+        $('#country').val('');
+        $('#assuredEmail').val('');
+        $('#assuredContactNumber').val('');
         $('#suggestions').hide();
     }
 
+    // Fill input fields function
+    function fillInput(client) {
+        $('#clientId').val(client.encrypted_id || '');
+        $('#assuredName').val(client.name || '');
+        $('#unitNo').val(client.lot_number || '');
+        $('#street').val(client.street || '');
+        $('#barangay').val(client.barangay || '');
+        $('#city').val(client.city || '');
+        $('#country').val(client.country || '');
+        $('#assuredEmail').val(client.email || '');
+        $('#assuredContactNumber').val(client.contact_number || '');
+        $('#suggestions').hide();
+    }
 
 
     function updateFullAddress() {
@@ -2724,6 +2742,42 @@
         }
         return 'th';
     }
+
+
+
+
+
+    //SUBMIT FUNCTION
+
+    function submitForm(event) {
+        // Prevent the form from submitting (page refresh)
+        event.preventDefault();
+
+        const storedData = sessionStorage.getItem('formData');
+
+        if (storedData) {
+            const formData = JSON.parse(storedData);
+            console.log(formData);
+
+            // Send the form data to the backend (Laravel)
+            fetch('/forms/submitForm', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'), // CSRF token for Laravel
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Form data submitted successfully:', data);
+            })
+            .catch(error => {
+                console.error('Error submitting form:', error);
+            });
+        }
+    }
+
 
 
 </script>

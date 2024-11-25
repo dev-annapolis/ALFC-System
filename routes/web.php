@@ -19,6 +19,7 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 // Sale Processor
 Route::get('/forms', [SalesProcessorController::class, 'showForm'])->name('form.show');
 Route::get('/clients/search', [SalesProcessorController::class, 'searchClients'])->name('clients.search');
+Route::post('/forms/submitForm', [SalesProcessorController::class, 'submitForm'])->name('form.submit');
 
 
 
