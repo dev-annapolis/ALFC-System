@@ -21,6 +21,7 @@ use App\Models\AlfcBranch;
 use App\Models\Team;
 use App\Models\ModeOfPayment;
 use App\Models\Commissioner;
+use Illuminate\Support\Facades\Crypt;
 
 
 
@@ -29,10 +30,8 @@ class SalesProcessorController extends Controller
     public function showForm()
     {
 
+
         $clients = AssuredDetail::all();
-
-
-        // dd($clients);
 
         $teams = Team::select('name', 'id')->where('status', 'active')->get();
         $salesAssociates = SalesAssociate::select('name', 'id', 'team_id')->where('status', 'active')->get();
@@ -80,16 +79,44 @@ class SalesProcessorController extends Controller
 
     public function searchClients(Request $request)
     {
-        $clientName = $request->input('query');  // Fix the typo in the input name ('quclientNameery' => 'query')
+        $clientName = $request->input('query'); // Assuming the input field name is 'query'
 
-        // Fetch the relevant client data
         $clients = AssuredDetail::where('name', 'like', '%' . $clientName . '%')
-            ->select('id', 'name', 'lot_number', 'street', 'barangay', 'city', 'country', 'email', 'contact_number') // Fetch necessary fields
+            ->select('id', 'name', 'lot_number', 'street', 'barangay', 'city', 'country', 'email', 'contact_number') // Select only needed columns
             ->get();
 
-        return response()->json($clients); // Return all necessary data for autofill
+        $clients->transform(function ($client) {
+            $client->encrypted_id = Crypt::encryptString($client->id);
+            return $client;
+        });
+
+        return response()->json($clients);
     }
 
+
+    public function submitForm(Request $request)
+    {
+        // Capture the form data
+        $formData = $request->all();
+
+        // Decrypt the assuredIdValue
+        if (isset($formData['assuredIdValue'])) {
+            try {
+                // Decrypt the assuredIdValue
+                $decryptedId = Crypt::decryptString($formData['assuredIdValue']);
+                Log::info('Decrypted Assured ID:', ['id' => $decryptedId]);
+            } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+                // Handle decryption failure
+                Log::error('Decryption failed:', ['error' => $e->getMessage()]);
+            }
+        }
+
+        // Log the form data
+        Log::info('Form Data Submitted:', $formData);
+
+        // Optionally, you can return a response if needed
+        return response()->json(['message' => 'Form data received successfully.']);
+    }
 
 
 
