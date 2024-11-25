@@ -896,17 +896,19 @@
 
                     {{-- Product, Sub-Product, and Product Type --}}
                     <div class="row">
+
                         <div class="col-md-4">
                             <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
                                 <label for="productLabel" class="form-label fw-bold fs-6">Product</label>
                                 <select class="form-control rounded-0 border-1 m-0" id="product" required>
-                                    <option value="" selected>Select Products</option>
+                                    <option value="" selected disabled>Select Products</option>
                                     @foreach($products as $product)
                                         <option value="{{ $product->id }}">{{ $product->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
+
 
                         <div class="col-md-4">
                             <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
@@ -1422,27 +1424,38 @@
 
         showStep(currentStep);
         attachRadioChangeHandlers();
-        checkIfGDFI();
         loadFormData();
-
-
-
+        checkIfGDFI();
 
 
         autoCompletePersonalDetails();
 
         selecDropdownIds.forEach(select => {
+            // Get the id of the select element to dynamically set the placeholder
+            let placeholderText = "Select an option"; // Default placeholder text
+
+
             $(select).select2({
                 allowClear: true,
+                placeholder: placeholderText,  // Set dynamic placeholder here
                 minimumResultsForSearch: 5,
-                dropdownPosition: 'below'
+                dropdownPosition: 'below',
+                debug: true
             });
 
-            // Manually call saveFormData when the select is changed via select2
+            // Handle select change
             $(select).on('select2:select', function() {
                 saveFormData();
             });
+
+            // Handle select clear
+            $(select).on('select2:unselect', function() {
+                saveFormData();  // Ensure session is updated when cleared
+            });
+
+
         });
+
 
         // Handle team selection change
         $('#team').on('select2:select', function(e) {
@@ -1510,6 +1523,7 @@
 
         $('#selectSources').on('change', function() {
             checkIfGDFI();
+            saveFormData();
         });
 
 
@@ -2200,12 +2214,18 @@
 
     function checkIfGDFI() {
         const source = document.getElementById('selectSources').value;
+        const storedData = sessionStorage.getItem('formData');
+
         if (source == 2) {
             // Show the div
             document.getElementById('gdficol').style.display = "block";
+            saveFormData();
         } else {
             // Hide the div
             document.getElementById('gdficol').style.display = "none";
+            ifGdfiSelect.value = "";
+            storedData.ifGdfiValue = '';
+            saveFormData();
         }
     }
 
