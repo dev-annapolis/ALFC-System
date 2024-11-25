@@ -49,8 +49,23 @@ use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\DropdownController;
 
 Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
+    // ROLES
+    // TEAMS
     Route::get('/teamsIndex', [DropdownController::class, 'teamsIndex'])->name('teams.index');
     Route::post('/teamsStore', [DropdownController::class, 'teamsStore'])->name('teams.store');
     Route::put('/teamsUpdate', [DropdownController::class, 'teamsUpdate'])->name('teams.update');
     Route::patch('/teamsChangeStatus/{id}', [DropdownController::class, 'teamsChangeStatus'])->name('teams.changeStatus');
+    // PRODUCTS
+    // SUBPRODUCTS
+    // SOURCES
+    // SOURCE BRANCHES
+    // IF GDFI
+    // AREAS
+    // ALFC BRANCHES
+    // MODE OF PAYMENTS
+    // PROVIDERS
+    // COMMISIONERS
+    // TELES
 });
+
+
