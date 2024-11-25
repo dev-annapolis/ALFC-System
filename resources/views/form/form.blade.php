@@ -753,7 +753,7 @@
 
                     </div>
 
-                    {{-- Issuance Code and Sale Date --}}
+                    {{-- Issuance Code --}}
                     <div class="row ">
 
 
@@ -800,7 +800,9 @@
                             <div class="mb-3 mb-md-3 mb-sm-4 mt-md-2">
                                 <label for="saleDateLabel" class="form-label fw-bold fw-bold">Sale Date</label>
                                 <input type="date" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="saleDate"  required>
+
                             </div>
+
                         </div>
 
 
@@ -878,7 +880,7 @@
                             <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
 
                                 <label for="policyInceptionLabel" class="form-label fw-bold fw-bold fs-6">Policy Inception Date</label>
-                                <input type="date" class="form-control rounded-0 rounded-0 border-1" id="policyInception" placeholder="Enter Policy Inisu" required>
+                                <input type="date" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="policyInception" placeholder="Enter Policy Inisu" required>
 
                             </div>
                         </div>
@@ -887,7 +889,7 @@
                         <div class="col-md-5">
                             <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
                                 <label for="expiryDateLabel" class="form-label fw-bold fw-bold fs-6">Expiry Date</label>
-                                <input type="date" class="form-control rounded-0 rounded-0 border-1" id="expiryDate" placeholder="Enter Policy Number" required>
+                                <input type="date" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="expiryDate" placeholder="Enter Policy Number" required>
                             </div>
                         </div>
 
@@ -1197,14 +1199,14 @@
                         <div class="col-md-4">
                             <div class="mb-4 mb-md-4 mb-sm-4">
                                 <label for="dueDateStartLabel" class="form-label fw-bold">Due Date Start</label>
-                                <input type="date" class="form-control rounded-0 border-1" id="dueDateStart" required>
+                                <input type="date" class="form-control uppercase-input rounded-0 border-1" id="dueDateStart" required>
                             </div>
                         </div>
 
                         <div class="col-md-4">
                             <div class="mb-4 mb-md-4 mb-sm-4">
                                 <label for="dueDateEndLabel" class="form-label fw-bold">Due Date End</label>
-                                <input type="date" class="form-control rounded-0 border-1" id="dueDateEnd" required>
+                                <input type="date" class="form-control uppercase-input rounded-0 border-1" id="dueDateEnd" required>
                             </div>
                         </div>
 
@@ -1237,7 +1239,7 @@
                         <div class="col-md-4">
                             <div class="mb-4 mb-md-4 mb-sm-4 mt-md-3">
                                 <label for="dateGoodSalesLabel" class="form-label fw-bold">Date of Good as Sales</label>
-                                <input type="date" class="form-control rounded-0 border-1" id="dateGoodSales" placeholder="Enter Date of Good as Sales" required>
+                                <input type="date" class="form-control uppercase-input rounded-0 border-1" id="dateGoodSales" placeholder="Enter Date of Good as Sales" required>
                             </div>
                         </div>
 
@@ -1431,8 +1433,46 @@
         autoCompletePersonalDetails();
 
         selecDropdownIds.forEach(select => {
-            // Get the id of the select element to dynamically set the placeholder
-            let placeholderText = "Select an option"; // Default placeholder text
+            let placeholderText = "Select an option";
+
+            if ($(select).attr('id') === 'classification') {
+                placeholderText = "Select Classification";
+            }else if ($(select).attr('id') === 'saleStatus') {
+                placeholderText = "Select Sale Status";
+            } else if ($(select).attr('id') === 'team') {
+                placeholderText = "Select Team";
+            } else if ($(select).attr('id') === 'team') {
+                placeholderText = "Select Team";
+            } else if ($(select).attr('id') === 'salesAssociate') {
+                placeholderText = "Select Sale Associate";
+            } else if ($(select).attr('id') === 'salesManager') {
+                placeholderText = "Select Sale Manager";
+            } else if ($(select).attr('id') === 'provider') {
+                placeholderText = "Select Provider";
+            } else if ($(select).attr('id') === 'productType') {
+                placeholderText = "Select Product Type";
+            } else if ($(select).attr('id') === 'subProduct') {
+                placeholderText = "Select Sub-Product";
+            } else if ($(select).attr('id') === 'product') {
+                placeholderText = "Select Product";
+            } else if ($(select).attr('id') === 'selectSources') {
+                placeholderText = "Select Source";
+            } else if ($(select).attr('id') === 'sourceBranch') {
+                placeholderText = "Select Source Branch";
+            } else if ($(select).attr('id') === 'ifGdfi') {
+                placeholderText = "Select GDFI";
+            } else if ($(select).attr('id') === 'area') {
+                placeholderText = "Select Area";
+            } else if ($(select).attr('id') === 'alfcBranch') {
+                placeholderText = "Select ALFC Branch";
+            }
+
+
+
+
+
+
+
 
 
             $(select).select2({
@@ -1968,7 +2008,7 @@
                         colDate.innerHTML = `
                             <div class="mb-3">
                                 <label for="paymentDate${i}" class="form-label fw-bold">${i}${getSuffix(i)} Payment Date</label>
-                                <input type="date" id="paymentDate${i}" class="form-control rounded-0 border-1" required>
+                                <input type="date" id="paymentDate${i}" class="form-control uppercase-input rounded-0 border-1" required>
                             </div>
                         `;
 
@@ -2615,7 +2655,7 @@
             colDate.innerHTML = `
                 <div class="mb-3">
                     <label for="paymentDate${i}" class="form-label fw-bold">${i}${getSuffix(i)} Payment Date</label>
-                    <input type="date" id="paymentDate${i}" class="form-control rounded-0 border-1" required>
+                    <input type="date" id="paymentDate${i}" class="form-control uppercase-input rounded-0 border-1" required>
                 </div>
             `;
 
