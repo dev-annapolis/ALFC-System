@@ -8,7 +8,7 @@ class InsuranceCommissioner extends Model
 {
     protected $fillable = [
         'insurance_detail_id',
-        'commisioner_id',
+        'commissioner_id',
         'commissioner_name',
         'amount'
     ];
