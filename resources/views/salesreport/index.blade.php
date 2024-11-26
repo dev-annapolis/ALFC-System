@@ -124,14 +124,15 @@
 <div class="container-fluid mt-5">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas" aria-controls="myOffcanvas">
+    {{-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas" aria-controls="myOffcanvas">
         Open Offcanvas
     </button>
-    
+     --}}
     <!-- Responsive wrapper for the table -->
  
     <div class="table-responsive neumorphic-container">
         <table id="salesReportTable" class="table table-striped table-bordered table-hover dt-responsive thin-horizontal-lines neumorphic-table" style="width:100%">
+
             <thead>
                 <tr>
                     <th style="text-align: center;">Issuance Code</th>
@@ -203,10 +204,23 @@
             responsive: true,
             autoWidth: false,
             order: [[0, 'asc']], // Default sorting on the first column
-            dom: '<"row TOP-ROW"<"col-md-6 MASTER-LIST"><"col-md-6 pb-3 SEARCHING"f>>t<"row"<"col-md-6 pt-3"l><"col-md-6 pt-2"p>>',
-            initComplete: function () {
-                $('.MASTER-LIST').html('<h1><span style="color: #FF3832;"><b>Master</b></span> List</h1>');
-            },
+            dom: '<"row TOP-ROW"<"col-md-6 MASTER-LIST"><"col-md-6 pb-3 SEARCHING "f>>t<"row"<"col-md-6 pt-3"l><"col-md-6 pt-2"p>>',
+                initComplete: function () {
+                    // Add the header to the MASTER-LIST column
+                    $('.MASTER-LIST').html('<h1><span style="color: #FF3832;"><b>Master</b></span> List</h1>');
+
+                    // Wrap the search field and button in a flex container
+                    $('.SEARCHING').html(
+                        '<div class="d-flex align-items-center justify-content-end">' +
+                            '<div class="dataTables_filter me-2">' +
+                                $('.dataTables_filter').html() + // Preserve the original search bar
+                            '</div>' +
+                            '<button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas" aria-controls="myOffcanvas">' +
+                                '<i class="fa-solid fa-filter"></i>' +
+                            '</button>' +
+                        '</div>'
+                    );
+                },
             columns: [
                 { title: "Issuance Code" },  // Column 0
                 { title: "Assured Name" },   // Column 1
