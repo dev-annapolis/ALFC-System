@@ -82,7 +82,7 @@ class SalesReportController extends Controller
                     'sale_date' => $insuranceDetail->sale_date,
                     'good_as_sales_date' => $insuranceDetail->paymentDetail->date_of_good_as_sales ?? null,
                     'sales_associate' => $insuranceDetail->salesAssociate->name ?? null,
-                    'sales_team' => $insuranceDetail->salesAssociate->team->name ?? null,
+                    'sales_team' => $insuranceDetail->team->name ?? null,
                     // 'branch_manager' => $insuranceDetail->branchManager->name ?? null,
                     'source' => $insuranceDetail->source->name ?? null,
                     'subproduct' => $insuranceDetail->subproduct->name ?? null,
@@ -502,14 +502,14 @@ class SalesReportController extends Controller
                     Log::info($insurancecommissioners);
                     $fieldParts = explode('-', $key); // Assuming $key contains 'commissioner_name-0'
                     $fieldName = $fieldParts[0] ?? null; // Get the field name, e.g., 'commissioner_name'
-                    $fieldIndex = isset($fieldParts[1]) ? (int)$fieldParts[1] : null; 
+                    $fieldIndex = isset($fieldParts[1]) ? (int) $fieldParts[1] : null;
 
                     if ($fieldIndex !== null && isset($insurancecommissioners[$fieldIndex])) {
 
                         if ($fieldName === 'commissioner_title') {
                             $insurancecommissioners[$fieldIndex]->commissioner_id = $newValue;
                             $insurancecommissioners[$fieldIndex]->save();
-        
+
                             $commissioner = Commissioner::find($newValue);
                             return $commissioner
                                 ? response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail, 'updatedName' => $commissioner->name])
