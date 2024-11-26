@@ -849,10 +849,89 @@
 
                     </div>
 
+
+
+                    <div class="row">
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4 mt-md-5">
+                                <label for="plateConductionNumberLabel" class="form-label fw-bold fw-bold fs-6">Plate / Conduction Number</label>
+                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="plateConductionNumber" placeholder="Enter Plate Conduction Number" required>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-4 ">
+                            <div class="mb-5 mb-md-4 mb-sm-4 mt-md-5">
+                                <label for="descriptionLabel" class="form-label fw-bold fw-bold fs-6">Description</label>
+                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="description" placeholder="Enter Description" required>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="row">
+
+                        <div class="col-md-4 ">
+                            <div class="mb-4 mb-md-4 mb-sm-4">
+                                <label for="loanAmountLabel" class="form-label fw-bold fw-bold fs-6">Loan Amount</label>
+                                <input type="text" class="form-control formatted-input rounded-0 rounded-0 border-1" id="loanAmount" placeholder="Enter Loan Amount" required>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-4 ">
+                            <div class="mb-4 mb-md-4 mb-sm-4">
+                                <label for="totalSumInsuredLabel" class="form-label fw-bold fw-bold fs-6">Total Sum Insured </label>
+                                <input type="text" class="form-control formatted-input rounded-0 rounded-0 border-1" id="totalSumInsured" placeholder="Enter Total Sum Insured" required>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4 ">
+                            <div class="mb-4 mb-md-4 mb-sm-4">
+                                <label for="mopLabel" class="form-label fw-bold fw-bold fs-6">Mode of Payment</label>
+                                <select class="form-control rounded-0 border-1 m-0" id="mop">
+                                    <option value="" disabled selected>Select Mode of Payment</option>
+                                    @foreach($mops as $mop)
+                                        <option value="{{ $mop->id }}">{{ $mop->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+
+
+
+                    {{-- Policy Inception Date and Expiry Date --}}
+                    <div class="row ">
+
+                        <div class="col-md-4">
+                            <div class="mb-5 mb-md-5 mb-sm-4 mt-md-2">
+
+                                <label for="policyInceptionLabel" class="form-label fw-bold fw-bold fs-6">Policy Inception Date</label>
+                                <input type="date" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="policyInception" placeholder="Enter Policy Inisu" required>
+
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-4">
+                            <div class="mb-5 mb-md-5 mb-sm-4 mt-md-2">
+                                <label for="expiryDateLabel" class="form-label fw-bold fw-bold fs-6">Expiry Date</label>
+                                <input type="date" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="expiryDate" placeholder="Enter Policy Number" required>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
                     {{-- Provider --}}
                     <div class="row">
 
-                        <div class="col-md-5">
+                        <div class="col-md-4">
                             <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
                                 <label for="providerlabel" class="form-label fw-bold fw-bold fs-6">Provider</label>
                                 <select class="form-control rounded-0 border-1 m-0" id="provider" required>
@@ -864,7 +943,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-7">
+                        <div class="col-md-6">
                             <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
                                 <label for="policyNumberLabel" class="form-label fw-bold fw-bold fs-6">Policy Number</label>
                                 <input type="text" class="form-control rounded-0 rounded-0 border-1" id="policyNumber" placeholder="Enter Policy Number" required>
@@ -872,35 +951,11 @@
                         </div>
 
                     </div>
-
-                    {{-- Policy Inception Date and Expiry Date --}}
-                    <div class="row ">
-
-                        <div class="col-md-5">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
-
-                                <label for="policyInceptionLabel" class="form-label fw-bold fw-bold fs-6">Policy Inception Date</label>
-                                <input type="date" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="policyInception" placeholder="Enter Policy Inisu" required>
-
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-5">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
-                                <label for="expiryDateLabel" class="form-label fw-bold fw-bold fs-6">Expiry Date</label>
-                                <input type="date" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="expiryDate" placeholder="Enter Policy Number" required>
-                            </div>
-                        </div>
-
-
-                    </div>
-
                     {{-- Product, Sub-Product, and Product Type --}}
                     <div class="row">
 
                         <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
+                            <div class="mb-4 mb-md-4 mb-sm-4">
                                 <label for="productLabel" class="form-label fw-bold fs-6">Product</label>
                                 <select class="form-control rounded-0 border-1 m-0" id="product" required>
                                     <option value="" selected disabled>Select Products</option>
@@ -913,7 +968,7 @@
 
 
                         <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
+                            <div class="mb-4 mb-md-4 mb-sm-4">
                                 <label for="subProductLabel" class="form-label fw-bold fs-6">Sub-Product</label>
                                 <select class="form-control rounded-0 border-1 m-0" id="subProduct" required>
                                     <option value="" disabled selected>Select Sub-Product</option>
@@ -926,7 +981,7 @@
 
 
                         <div class="col-md-4 ">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
+                            <div class="mb-4 mb-md-4 mb-sm-4">
                                 <label for="productTypeLabel" class="form-label fw-bold fw-bold fs-6">Product Type</label>
                                 <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="productType">
                                     <option value="" disabled selected>Select Product Type</option>
@@ -1310,6 +1365,25 @@
     let index = 0;
     const commissions = [];
 
+    const placeholderMap = {
+        classification: "Select Classification",
+        saleStatus: "Select Sale Status",
+        team: "Select Team",
+        salesAssociate: "Select Sale Associate",
+        salesManager: "Select Sale Manager",
+        provider: "Select Provider",
+        productType: "Select Product Type",
+        subProduct: "Select Sub-Product",
+        product: "Select Product",
+        selectSources: "Select Source",
+        sourceBranch: "Select Source Branch",
+        ifGdfi: "Select GDFI",
+        area: "Select Area",
+        alfcBranch: "Select ALFC Branch",
+        mop: "Select Mode of Payment"
+    };
+
+
     const inputs = document.querySelectorAll('input, select, change');
 
     const formSteps = document.querySelectorAll('.form-step');
@@ -1346,6 +1420,20 @@
 
     const providerSelect = document.getElementById('provider');
     const policyNumberInput = document.getElementById('policyNumber');
+
+
+    const plateConductionNumberInput = document.getElementById('plateConductionNumber');
+    const descriptionInput = document.getElementById('description');
+    const loanAmountInput = document.getElementById('loanAmount');
+    const totalSumInsuredInput = document.getElementById('totalSumInsured');
+    const mopSelect = document.getElementById('mop');
+
+
+
+
+
+
+
 
     const policyInceptionDateSelect = document.getElementById('policyInception');
     const expiryDateSelect = document.getElementById('expiryDate');
@@ -1406,9 +1494,6 @@
 
 
 
-
-
-
     $(document).ready(function() {
 
         const savedStep = sessionStorage.getItem('currentStep');
@@ -1433,47 +1518,8 @@
         autoCompletePersonalDetails();
 
         selecDropdownIds.forEach(select => {
-            let placeholderText = "Select an option";
-
-            if ($(select).attr('id') === 'classification') {
-                placeholderText = "Select Classification";
-            }else if ($(select).attr('id') === 'saleStatus') {
-                placeholderText = "Select Sale Status";
-            } else if ($(select).attr('id') === 'team') {
-                placeholderText = "Select Team";
-            } else if ($(select).attr('id') === 'team') {
-                placeholderText = "Select Team";
-            } else if ($(select).attr('id') === 'salesAssociate') {
-                placeholderText = "Select Sale Associate";
-            } else if ($(select).attr('id') === 'salesManager') {
-                placeholderText = "Select Sale Manager";
-            } else if ($(select).attr('id') === 'provider') {
-                placeholderText = "Select Provider";
-            } else if ($(select).attr('id') === 'productType') {
-                placeholderText = "Select Product Type";
-            } else if ($(select).attr('id') === 'subProduct') {
-                placeholderText = "Select Sub-Product";
-            } else if ($(select).attr('id') === 'product') {
-                placeholderText = "Select Product";
-            } else if ($(select).attr('id') === 'selectSources') {
-                placeholderText = "Select Source";
-            } else if ($(select).attr('id') === 'sourceBranch') {
-                placeholderText = "Select Source Branch";
-            } else if ($(select).attr('id') === 'ifGdfi') {
-                placeholderText = "Select GDFI";
-            } else if ($(select).attr('id') === 'area') {
-                placeholderText = "Select Area";
-            } else if ($(select).attr('id') === 'alfcBranch') {
-                placeholderText = "Select ALFC Branch";
-            }
-
-
-
-
-
-
-
-
+            const id = $(select).attr('id');
+            const placeholderText = placeholderMap[id] || "Default Placeholder";
 
             $(select).select2({
                 allowClear: true,
@@ -1807,6 +1853,15 @@
 
 
 
+        formData.plateConductionNumberValue = plateConductionNumberInput.value;
+        formData.descriptionValue = descriptionInput.value;
+        formData.loanAmountValue = removeCommas(loanAmountInput.value);
+        formData.totalSumInsuredValue = removeCommas(totalSumInsuredInput.value);
+        formData.mopValue = mopSelect.value;
+
+
+
+
 
         //SECOND FORM
         formData.grossPremiumValue = removeCommas(grossPremiumInput.value);
@@ -1901,6 +1956,15 @@
             mortgageeInput.value = formData.mortgageeValue || '';
             areaSelect.value = formData.areaValue || '';
             alfcBranchSelect.value = formData.alfcBranchValue || '';
+
+
+            plateConductionNumberInput.value = formData.plateConductionNumberValue || '';
+            descriptionInput.value = formData.descriptionValue || '';
+            loanAmountInput.value = formatNumberWithCommas(formData.loanAmountValue || '0');
+            totalSumInsuredInput.value = formatNumberWithCommas(formData.totalSumInsuredValue || '0');
+            mopSelect.value = formData.mopValue || '';
+
+
 
 
 
