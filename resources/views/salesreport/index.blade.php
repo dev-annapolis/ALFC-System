@@ -217,6 +217,7 @@
                 { title: "Actions", orderable: false } // Column 10
             ]
         });
+        
 
         // Fetch sales report data
         $.ajax({
@@ -253,7 +254,24 @@
                         `<span style="color: ${getStatusColor(detail.sale_status)}; font-weight: bold;">
                             ${detail.sale_status}
                         </span>`,
-                        `<button class="btn btn-sm btn-primary viewDetailBtn" data-id="${detail.id}">View</button>`
+                        `<div class="dropdown">
+                               <button class="btn dropdown-toggle p-2 border-0 bg-transparent circular-btn" type="button" id="dropdownMenuButton${detail.id}" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa-solid fa-ellipsis"></i>
+                            </button>
+                               <ul class="dropdown-menu text-center" aria-labelledby="dropdownMenuButton${detail.id}">
+                                    <li>
+                                        <a 
+                                            class="dropdown-item viewDetailBtn d-flex justify-content-center align-items-center" 
+                                            href="#" 
+                                            data-id="${detail.id}" 
+                                            data-bs-toggle="offcanvas" 
+                                            data-bs-target="#detailOffCanvas">
+                                            <i class="fa-regular fa-eye me-2"></i> View
+                                        </a>
+                                    </li>
+                                    <!-- Add more dropdown items here if needed -->
+                                </ul>
+                            </div>`
                     ]);
                 });
 
@@ -262,10 +280,9 @@
 
                 // Add event listener to "View" buttons
                 $('.viewDetailBtn').click(function () {
-                    const id = $(this).data('id');
-                    console.log(`View details for ID: ${id}`);
-                    // Add your fetchInsuranceDetail logic here
-                });
+                        var insuranceDetailId = $(this).data('id');
+                        fetchInsuranceDetail(insuranceDetailId); // Fetches data only
+                    });
 
                 // Populate dropdown filters
                 populateFilters(data);
