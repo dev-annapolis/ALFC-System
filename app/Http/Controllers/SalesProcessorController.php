@@ -8,6 +8,11 @@ use Illuminate\Http\Request;
 use Log;
 
 use App\Models\AssuredDetail;
+use App\Models\InsuranceDetail;
+use App\Models\CommissionDetail;
+use App\Models\PaymentDetail;
+use App\Models\InsuranceCommissioner;
+
 use App\Models\SalesAssociate;
 use App\Models\SalesManager;
 use App\Models\Provider;
@@ -29,15 +34,11 @@ class SalesProcessorController extends Controller
 {
     public function showForm()
     {
-
-
         $clients = AssuredDetail::all();
 
         $teams = Team::select('name', 'id')->where('status', 'active')->get();
         $salesAssociates = SalesAssociate::select('name', 'id', 'team_id')->where('status', 'active')->get();
         $salesManagers = SalesManager::select('name', 'id', 'team_id')->where('status', 'active')->get();
-
-
 
         $providers = Provider::select('name', 'id')->where('status', 'active')->get();
 
@@ -58,7 +59,6 @@ class SalesProcessorController extends Controller
             'teams',
             'salesAssociates',
             'salesManagers',
-
             'providers',
             'products',
             'subproducts',
@@ -69,11 +69,7 @@ class SalesProcessorController extends Controller
             'alfcbranches',
             'mops',
             'commissioners',
-
-
         ));
-
-
     }
 
 
@@ -96,28 +92,140 @@ class SalesProcessorController extends Controller
 
     public function submitForm(Request $request)
     {
-        // Capture the form data
-        $formData = $request->all();
+        DB::beginTransaction();
+        try {
+            $AssuredDetailId = null;
 
-        // Decrypt the assuredIdValue
-        if (isset($formData['assuredIdValue'])) {
-            try {
-                // Decrypt the assuredIdValue
-                $decryptedId = Crypt::decryptString($formData['assuredIdValue']);
-                Log::info('Decrypted Assured ID:', ['id' => $decryptedId]);
-            } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
-                // Handle decryption failure
-                Log::error('Decryption failed:', ['error' => $e->getMessage()]);
+            if (!is_null($request->assuredIdValue)) {
+                try {
+                    $AssuredDetailId = Crypt::decryptString($request->assuredIdValue);
+                } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+                    Log::error('Decryption failed:', ['error' => $e->getMessage()]);
+                }
             }
+
+            if (is_null($AssuredDetailId)) {
+                $AssuredDetail = AssuredDetail::create([
+                    'name' => $request->assuredNameValue,
+                    'lot_number' => $request->unitNoValue,
+                    'street' => $request->streetValue,
+                    'barangay' => $request->barangayValue,
+                    'city' => $request->cityValue,
+                    'country' => $request->countryValue,
+                    'contact_number' => $request->assuredContactNumberValue,
+                    'email' => $request->assuredEmailValue,
+                ]);
+                $AssuredDetailId = $AssuredDetail->id;
+            } 
+
+            $InsuranceDetail = InsuranceDetail::create([
+                'assured_detail_id' => $AssuredDetailId,
+                'issuance_code' => $request->IssuanceCodeValue,
+                'sale_date' => $request->saleDateValue,
+                'classification' => $request->classificationValue,
+                'insurance_status' => $request->saleStatusValue,
+                'team_id' => $request->teamValue,
+                'sales_associate_id' => $request->salesAssociateValue,
+                'sales_manager_id' => $request->salesManagerValue,
+                // 'book_number' => $request->assuredNameValue,
+                // 'filing_number' => $request->assuredNameValue,
+                // 'database_remarks' => $request->assuredNameValue,
+                // 'pid_received_date' => $request->assuredNameValue,
+                // 'pid_completion_date' => $request->assuredNameValue,
+                // 'pid_status' => $request->assuredNameValue,
+                'provider_id' => $request->providerValue,
+                'product_id' => $request->productValue,
+                'subproduct_id' => $request->subProductValue,
+                'product_type' => $request->productTypeValue,
+                'source_id' => $request->sourceValue,
+                'source_branch_id' => $request->sourceBranchValue,
+                'if_gdfi_id' => $request->ifGdfiValue,
+                'mortgagee' => $request->mortgageeValue,
+                'area_id' => $request->areaValue,
+                'alfc_branch_id' => $request->alfcBranchValue,
+                'policy_number' => $request->policyNumberValue,
+                'plate_conduction_number' => $request->plateConductionNumberValue,
+                'description' => $request->descriptionValue,
+                'policy_inception_date' => $request->policyInceptionValue,
+                'expiry_date' => $request->expiryDateValue,
+                'mode_of_payment_id' => $request->mopValue,
+                'loan_amount' => $request->loanAmountValue,
+                'total_sum_insured' => $request->totalSumInsuredValue,
+                // 'policy_expiration_aging' => $request->assuredNameValue,
+            ]);
+            $InsuranceDetailId = $InsuranceDetail->id;
+
+            $CommissionDetail = CommissionDetail::create([
+                'insurance_detail_id' => $InsuranceDetailId,
+                'gross_premium' => $request->grossPremiumValue,
+                'discount' => $request->discountValue,
+                'gross_premium_net_discounted' => $request->netOfDiscountValue,
+                'amount_due_to_provider' => $request->amountDuetoProviderValue,
+                'full_commission' => $request->fullCommissionValue,
+                'travel_incentives' => $request->travelIncentivesValues,
+                'offsetting' => $request->offSettingValues,
+                'promo' => $request->promoValues,
+                'vat' => $request->vatValues,
+                'sales_credit' => $request->salesCreditValues,
+                'sales_credit_percent' => $request->salesCreditPercentValues,
+                'comm_deduct' => $request->commDeductValues,
+                'total_commission' => $request->totalCommissionValues,
+            ]);
+
+            $PaymentDetail = PaymentDetail::create([
+                'insurance_detail_id' => $InsuranceDetailId,
+                'payment_terms' => $request->paymentTermsValues,
+                'due_date_start' => $request->dueDateStartValues,
+                'due_date_end' => $request->dueDateEndValues,
+                'first_payment_schedule' => $request->paymentTermsDate[0]['first_payment_schedule_date'] ?? null,
+                'first_payment_amount' => $request->paymentTermsDate[0]['first_payment_schedule_amount'] ?? null,
+                'second_payment_schedule' => $request->paymentTermsDate[1]['second_payment_schedule_date'] ?? null,
+                'second_payment_amount' => $request->paymentTermsDate[1]['second_payment_schedule_amount'] ?? null,
+                'third_payment_schedule' => $request->paymentTermsDate[2]['third_payment_schedule_date'] ?? null,
+                'third_payment_amount' => $request->paymentTermsDate[2]['third_payment_schedule_amount'] ?? null,
+                'fourth_payment_schedule' => $request->paymentTermsDate[3]['fourth_payment_schedule_date'] ?? null,
+                'fourth_payment_amount' => $request->paymentTermsDate[3]['fourth_payment_schedule_amount'] ?? null,
+                'fifth_payment_schedule' => $request->paymentTermsDate[4]['fifth_payment_schedule_date'] ?? null,
+                'fifth_payment_amount' => $request->paymentTermsDate[4]['fifth_payment_schedule_amount'] ?? null,
+                'sixth_payment_schedule' => $request->paymentTermsDate[5]['sixth_payment_schedule_date'] ?? null,
+                'sixth_payment_amount' => $request->paymentTermsDate[5]['sixth_payment_schedule_amount'] ?? null,
+                'seventh_payment_schedule' => $request->paymentTermsDate[6]['seventh_payment_schedule_date'] ?? null,
+                'seventh_payment_amount' => $request->paymentTermsDate[6]['seventh_payment_schedule_amount'] ?? null,
+                'eight_payment_schedule' => $request->paymentTermsDate[7]['eighth_payment_schedule_date'] ?? null,
+                'eight_payment_amount' => $request->paymentTermsDate[7]['eighth_payment_schedule_amount'] ?? null,
+                'provision_receipt' => $request->prNumberValues,
+                'initial_payment' => $request->initialPaymentValues,
+                'for_billing' => $request->forBillingValues,
+                'over_under_payment' => $request->overUnderPaymentValues,
+                'date_of_good_as_sales' => $request->dateGoodSalesValues,
+                'payment_status' => $request->statusPaymentValues,
+            ]);
+
+            foreach ($request->commissionsSelect as $commission) {
+                $InsuranceCommissioner = InsuranceCommissioner::create([
+                    'insurance_detail_id' => $InsuranceDetailId,
+                    'commissioner_id' => $commission['commissionType'],
+                    'commissioner_name' => $commission['commissionName'],
+                    'amount' => $commission['commissionAmount'],
+                ]);
+            }
+
+
+
+            DB::commit();
+            return response()->json([
+                'message' => 'Form data received successfully.',
+                'AssuredDetailId' => $AssuredDetailId,
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Transaction failed:', ['error' => $e->getMessage()]);
+
+            return response()->json([
+                'message' => 'An error occurred while processing the form data.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
-
-        // Log the form data
-        Log::info('Form Data Submitted:', $formData);
-
-        // Optionally, you can return a response if needed
-        return response()->json(['message' => 'Form data received successfully.']);
     }
-
-
 
 }
