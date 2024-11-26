@@ -10,6 +10,8 @@ use Log;
 use App\Models\AssuredDetail;
 use App\Models\InsuranceDetail;
 use App\Models\CommissionDetail;
+use App\Models\PaymentDetail;
+use App\Models\InsuranceCommissioner;
 
 use App\Models\SalesAssociate;
 use App\Models\SalesManager;
@@ -32,15 +34,11 @@ class SalesProcessorController extends Controller
 {
     public function showForm()
     {
-
-
         $clients = AssuredDetail::all();
 
         $teams = Team::select('name', 'id')->where('status', 'active')->get();
         $salesAssociates = SalesAssociate::select('name', 'id', 'team_id')->where('status', 'active')->get();
         $salesManagers = SalesManager::select('name', 'id', 'team_id')->where('status', 'active')->get();
-
-
 
         $providers = Provider::select('name', 'id')->where('status', 'active')->get();
 
@@ -61,7 +59,6 @@ class SalesProcessorController extends Controller
             'teams',
             'salesAssociates',
             'salesManagers',
-
             'providers',
             'products',
             'subproducts',
@@ -72,11 +69,7 @@ class SalesProcessorController extends Controller
             'alfcbranches',
             'mops',
             'commissioners',
-
-
         ));
-
-
     }
 
 
