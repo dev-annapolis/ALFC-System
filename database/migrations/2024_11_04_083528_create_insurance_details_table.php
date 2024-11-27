@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('issuance_code');
             $table->string('sale_date')->nullable();
             $table->string('classification');
-            $table->string('insurance_status')->nullable();
+            $table->string('insurance_status')->default('sale');
             $table->foreignId('team_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('sales_associate_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('sales_manager_id')->nullable()->constrained()->onDelete('cascade');
@@ -52,6 +52,12 @@ return new class extends Migration {
             $table->string('total_sum_insured')->nullable();
 
             $table->string('policy_expiration_aging')->nullable();
+
+            $table->string('ra_comments')->nullable();
+            $table->string('admin_assistant_remarks')->nullable();
+            $table->string('tracking_number')->nullable();
+            $table->string('policy_received_by')->nullable();
+            $table->string('verification_status')->default('for_ra_verification');
             
             $table->timestamps();
         });
