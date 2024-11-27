@@ -5,7 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\SalesReportController;
 use App\Http\Controllers\SalesProcessorController;
-
+use App\Http\Controllers\RevenueAssistantController;
 Route::get('/', function () {
     return view('landing-page');
 });
@@ -35,14 +35,16 @@ Route::post('/permissions/update', [RolePermissionController::class, 'update'])-
 
 
 Route::get('/testusers', [TestController::class, 'userIndex'])->name('users.index');
-Route::get('/users/{id}', action: [TestController::class, 'show'])->name('users.show');
+Route::get('/users/{id}', [TestController::class, 'show'])->name('users.show');
 
-Route::get('/salesreport/index', action: [SalesReportController::class, 'salesReportIndex'])->name('salesreport.index');
+Route::get('/salesreport/index', [SalesReportController::class, 'salesReportIndex'])->name('salesreport.index');
 Route::get('/api/sales-report', [SalesReportController::class, 'salesReportData']);
 // Route::get('/api/insurance-detail/{id}', [SalesReportController::class, 'fetchInsuranceDetail']);
 Route::get('/api/insurance/details/{id}', [SalesReportController::class, 'showInsuranceDetails']);
 Route::post('/api/insurance/details/update', [SalesReportController::class, 'updateInsuranceDetail']);
 
+Route::get('/ra/index', [RevenueAssistantController::class, 'RevenueAssistantIndex'])->name('ra.index');
+Route::get('/api/ra-index', [RevenueAssistantController::class, 'raIndexData']);
 
 
 
