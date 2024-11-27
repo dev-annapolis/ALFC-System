@@ -1153,7 +1153,7 @@
 
 
                     {{-- Travel Incentives, Offsetting, and Promo --}}
-                    <div class="row">
+                    <!-- <div class="row">
 
                         <div class="col-md-4">
                             <div class="mb-3 mb-md-4 mb-sm-4 mt-md-2">
@@ -1176,7 +1176,7 @@
                             </div>
                         </div>
 
-                    </div>
+                    </div> -->
 
 
 
@@ -1458,9 +1458,9 @@
     const amountDuetoProviderInput = document.getElementById('amountDuetoProvider');
     const fullCommissionInput = document.getElementById('fullCommission');
 
-    const travelIncentivesInput = document.getElementById('travelIncentives');
-    const offSettingInput = document.getElementById('offSetting');
-    const promoInput = document.getElementById('promo');
+    // const travelIncentivesInput = document.getElementById('travelIncentives');
+    // const offSettingInput = document.getElementById('offSetting');
+    // const promoInput = document.getElementById('promo');
     const commDeductInput = document.getElementById('commDeduct');
 
     let fullCommissionValue = 0;
@@ -1670,9 +1670,9 @@
 
 
 
-        travelIncentivesInput.addEventListener('input', getCommissionsValue);
-        offSettingInput.addEventListener('input', getCommissionsValue);
-        promoInput.addEventListener('input', getCommissionsValue);
+        // travelIncentivesInput.addEventListener('input', getCommissionsValue);
+        // offSettingInput.addEventListener('input', getCommissionsValue);
+        // promoInput.addEventListener('input', getCommissionsValue);
 
 
         addCommissionsInput();
@@ -1873,9 +1873,9 @@
 
         formData.commissionsSelect = getCommissionsValue();
 
-        formData.travelIncentivesValues = removeCommas(travelIncentivesInput.value);
-        formData.offSettingValues = removeCommas(offSettingInput.value);
-        formData.promoValues = removeCommas(promoInput.value);
+        // formData.travelIncentivesValues = removeCommas(travelIncentivesInput.value);
+        // formData.offSettingValues = removeCommas(offSettingInput.value);
+        // formData.promoValues = removeCommas(promoInput.value);
 
         formData.totalCommissionValues = removeCommas(totalCommissionInput.value);
         formData.commDeductValues = removeCommas(commDeductInput.value);
@@ -2036,9 +2036,9 @@
             }
 
 
-            travelIncentivesInput.value = formatNumberWithCommas(formData.travelIncentivesValues || '0');
-            offSettingInput.value = formatNumberWithCommas(formData.offSettingValues || '0');
-            promoInput.value = formatNumberWithCommas(formData.promoValues || '0');
+            // travelIncentivesInput.value = formatNumberWithCommas(formData.travelIncentivesValues || '0');
+            // offSettingInput.value = formatNumberWithCommas(formData.offSettingValues || '0');
+            // promoInput.value = formatNumberWithCommas(formData.promoValues || '0');
 
             totalCommissionInput.value = formatNumberWithCommas(formData.totalCommissionValues || '0');
             commDeductInput.value = formatNumberWithCommas(formData.commDeductValues || '0');
@@ -2579,9 +2579,9 @@
         const commissionNames = container.querySelectorAll('.commissionName');
 
         // Convert input values to numbers for the incentives (assuming they are global or already defined)
-        const travelIncentivesValues = parseFloat(removeCommas(travelIncentivesInput.value)) || 0;
-        const offsettingValue = parseFloat(removeCommas(offSettingInput.value)) || 0;
-        const promoValue = parseFloat(removeCommas(promoInput.value)) || 0;
+        // const travelIncentivesValues = parseFloat(removeCommas(travelIncentivesInput.value)) || 0;
+        // const offsettingValue = parseFloat(removeCommas(offSettingInput.value)) || 0;
+        // const promoValue = parseFloat(removeCommas(promoInput.value)) || 0;
 
         // Calculate the initial total commission (assuming this is the base value)
         initialTotalCommission = travelIncentivesValues + offsettingValue + promoValue;
