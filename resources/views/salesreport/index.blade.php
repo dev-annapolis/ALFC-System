@@ -124,17 +124,22 @@
 <div class="container-fluid mt-5">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    
-    
+    {{-- <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas" aria-controls="myOffcanvas">
+        Open Offcanvas
+    </button>
+     --}}
     <!-- Responsive wrapper for the table -->
+ 
     <div class="table-responsive neumorphic-container">
         <table id="salesReportTable" class="table table-striped table-bordered table-hover dt-responsive thin-horizontal-lines neumorphic-table" style="width:100%">
+
             <thead>
                 <tr>
                     <th style="text-align: center;">Issuance Code</th>
                     <th style="text-align: center;">Assured Name</th>
                     <th style="text-align: center;">Contact Number </br> Email</th>
-                    <th style="text-align: center;">Sales Associate </br>( Sales Team )</th>
+                    <th style="text-align: center;">Sales Associate</th>
+                    <th style="text-align: center;">Sales Team </th>
                     <th style="text-align: center;">Provider</th>
                     <th style="text-align: center;">Source</th>
                     <th style="text-align: center;">Subproduct</th>
@@ -166,82 +171,110 @@
         </div>
     </div>
 </div>
+<div class="offcanvas offcanvas-start" tabindex="-1" id="myOffcanvas" aria-labelledby="myOffcanvasLabel" data-bs-backdrop="false">
+    <div class="offcanvas-header">
+        <h5 id="myOffcanvasLabel">Custom Filter</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        
+        <form id="filterForm">
+            <!-- Dropdown filters will be inserted here dynamically -->
+            <div id="filterDropdowns"></div>
+        </form>
+
+    </div>
+</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
+<!-- Choices.js CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+<!-- Choices.js JS -->
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<!-- Daterangepicker JS -->
+<script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script>
-    $(document).ready(function () {
-    // Initialize DataTable
-            const table = $('#salesReportTable').DataTable({
-                responsive: true, 
-                autoWidth: false, 
-                order: [[0, 'asc']], 
-                dom: '<"row TOP-ROW"<"col-md-6 MASTER-LIST"><"col-md-6 pb-3 SEARCHING"f>>t<"row"<"col-md-6 pt-3"l><"col-md-6 pt-2"p>>',
+   $(document).ready(function () {
+        const table = $('#salesReportTable').DataTable({
+            responsive: true,
+            autoWidth: false,
+            order: [[0, 'asc']], // Default sorting on the first column
+            dom: '<"row TOP-ROW"<"col-md-6 MASTER-LIST"><"col-md-6 pb-3 SEARCHING "f>>t<"row"<"col-md-6 pt-3"l><"col-md-6 pt-2"p>>',
                 initComplete: function () {
-                    $('.MASTER-LIST').html('<h1 ><span style="color: #FF3832;"><b>Master</b></span> List</h1>');
+                    // Add the header to the MASTER-LIST column
+                    $('.MASTER-LIST').html('<h1><span style="color: #FF3832;"><b>Master</b></span> List</h1>');
+
+                    // Wrap the search field and button in a flex container
+                    $('.SEARCHING').html(
+                        '<div class="d-flex align-items-center justify-content-end">' +
+                            '<div class="dataTables_filter me-2">' +
+                                $('.dataTables_filter').html() + // Preserve the original search bar
+                            '</div>' +
+                            '<button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas" aria-controls="myOffcanvas">' +
+                                '<i class="fa-solid fa-filter"></i>' +
+                            '</button>' +
+                        '</div>'
+                    );
                 },
-                columns: [
-                    { title: "Issuance Code" },
-                    { title: "Assured Name" },
-                    { title: "Contact Info" },
-                    { title: "Sales Associate" },
-                    { title: "Provider" },
-                    { title: "Source" },
-                    { title: "Subproduct" },
-                    { title: "Dates" },
-                    { title: "Status" },
-                    { title: "Actions", orderable: false } 
-                ]
-            });
+            columns: [
+                { title: "Issuance Code" },  // Column 0
+                { title: "Assured Name" },   // Column 1
+                { title: "Contact Info" },   // Column 2
+                { title: "Sales Associate" },// Column 3
+                { title: "Teams" },          // Column 4
+                { title: "Provider" },       // Column 5
+                { title: "Source" },         // Column 6
+                { title: "Subproduct" },     // Column 7
+                { title: "Dates" },          // Column 8
+                { title: "Status" },         // Column 9
+                { title: "Actions", orderable: false } // Column 10
+            ]
+        });
 
-            // Load the sales report data via AJAX
-            $.ajax({
-                url: '/api/sales-report',
-                method: 'GET',
-                success: function (data) {
-                    // Clear table before adding new rows
-                    table.clear();
-                    const statusColors = {
-                        'Pending': '#ffc107',   // Yellow
-                        'Approved': '#28a745',  // Green
-                        'Cancelled': '#dc3545', // Red
-                        'In Progress': '#17a2b8' // Blue
-                    };
+        $.ajax({
+            url: '/api/sales-report',
+            method: 'GET',
+            success: function (data) {
+                table.clear();
 
-                    // Function to determine the color based on the status
-                    function getStatusColor(status) {
-                        return statusColors[status] || '#6c757d'; // Default to gray if status is unknown
-                    }
+                const statusColors = {
+                    'Pending': '#ffc107',
+                    'Approved': '#28a745',
+                    'Cancelled': '#dc3545',
+                    'In Progress': '#17a2b8'
+                };
 
-                    // Populate table rows
-                    data.forEach(function (detail) {
-                        const backgroundColor = getStatusColor(detail.sale_status);
+                function getStatusColor(status) {
+                    return statusColors[status] || '#6c757d'; // Default to gray
+                }
 
-                        table.row.add([
-                            `<strong>${detail.issuance_code}</strong>`, // Make Issuance Code bold
-                            detail.name,
-                            `${detail.contact_number} </br> ${detail.email}`,
-                            `${detail.sales_associate} </br>( ${detail.sales_team} )`,
-                            detail.provider,
-                            detail.source,
-                            detail.subproduct,
-                            `${detail.sale_date ? `<div style="display: flex; justify-content: center; align-items: center; text-align: center;"><strong style="margin-right: 15px;">Sale Date:</strong> ${detail.sale_date} </div>` : ''}
-                            ${detail.good_as_sales_date ? `<div style="display: flex; justify-content: center; align-items: center; text-align: center;"><strong style="margin-right: 15px;">Good As Sales Date:</strong> ${detail.good_as_sales_date} </div>` : ''}
-                            ${detail.policy_inception_date ? `<div style="display: flex; justify-content: center; align-items: center; text-align: center;"><strong style="margin-right: 15px;">Policy Inception Date:</strong> ${detail.policy_inception_date}</div>` : ''}`,
-                            `<span class="status-text"
-                                style="color: ${getStatusColor(detail.sale_status)}; 
-                                        font-size: 1.1em; /* Slightly larger text */
-                                        font-weight: bold; /* Make text bold */
-                                        text-align: center;">
-                                ${detail.sale_status}
-                            </span>`,
-                            `<div class="dropdown">
-                               <button class="btn dropdown-toggle p-2 border-0 bg-transparent circular-btn" type="button" id="dropdownMenuButton${detail.id}" data-bs-toggle="dropdown" aria-expanded="false">
+                data.forEach(function (detail) {
+                    const saleDates = `
+                        ${detail.sale_date ? `<div><strong>Sale Date:</strong> ${detail.sale_date}</div>` : ''}
+                        ${detail.good_as_sales_date ? `<div><strong>Good As Sales Date:</strong> ${detail.good_as_sales_date}</div>` : ''}
+                        ${detail.policy_inception_date ? `<div><strong>Policy Inception Date:</strong> ${detail.policy_inception_date}</div>` : ''}
+                    `;
+                    table.row.add([
+                        `<strong>${detail.issuance_code}</strong>`,
+                        `<strong>${detail.name}</strong>`,
+                        `${detail.contact_number} <br> ${detail.email}`,
+                        `${detail.sales_associate}`,
+                        `${detail.sales_team}`,
+                        detail.provider,
+                        detail.source,
+                        detail.subproduct,
+                        saleDates,
+                        `<span style="color: ${getStatusColor(detail.sale_status)}; font-weight: bold;">${detail.sale_status}</span>`,
+                        `<div class="dropdown">
+                            <button class="btn dropdown-toggle p-2 border-0 bg-transparent circular-btn" type="button" id="dropdownMenuButton${detail.id}" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fa-solid fa-ellipsis"></i>
                             </button>
-                               <ul class="dropdown-menu text-center" aria-labelledby="dropdownMenuButton${detail.id}">
+                            <ul class="dropdown-menu text-center" aria-labelledby="dropdownMenuButton${detail.id}">
                                     <li>
                                         <a 
                                             class="dropdown-item viewDetailBtn d-flex justify-content-center align-items-center" 
@@ -252,27 +285,160 @@
                                             <i class="fa-regular fa-eye me-2"></i> View
                                         </a>
                                     </li>
-                                    <!-- Add more dropdown items here if needed -->
                                 </ul>
                             </div>`
-                        ]);
-                    });
+                    ]);
+                });
 
-                    // Redraw the table with the new data
-                    table.draw();
+                table.draw();
 
-                    // Add click event to "View" button
-                    $('.viewDetailBtn').click(function () {
-                        var insuranceDetailId = $(this).data('id');
-                        fetchInsuranceDetail(insuranceDetailId); // Fetches data only
-                    });
-                },
-                error: function (xhr, status, error) {
-                    alert("Error loading sales report data: " + error);
+                // Add event listener to "View" buttons
+                $('.viewDetailBtn').click(function () {
+                    var insuranceDetailId = $(this).data('id');
+                    fetchInsuranceDetail(insuranceDetailId); // Fetches data only
+                });
+
+                populateFilters(data);
+            },
+            error: function (xhr, status, error) {
+                alert("Error loading sales report data: " + error);
+            }
+        });
+
+        // Populate dropdown filters dynamically
+        function populateFilters(data) {
+            const uniqueColumns = ['sales_associate', 'sales_team', 'provider', 'source', 'subproduct'];
+            const filterDropdowns = $('#filterDropdowns');
+            filterDropdowns.empty(); // Clear existing filters
+
+            uniqueColumns.forEach(function (column) {
+                let distinctValues = [...new Set(data.map(item => item[column]?.trim()))];
+                const options = [''].concat(distinctValues); // "All" as an empty string is always at the top
+
+                const dropdown = `
+                    <div class="mb-3">
+                        <label for="${column}Filter">${column.charAt(0).toUpperCase() + column.slice(1)}</label>
+                        <select class="form-select" id="${column}Filter">
+                            ${options.map(value => `<option value="${value}">${value || "All"}</option>`).join('')}
+                        </select>
+                    </div>`;
+                filterDropdowns.append(dropdown);
+
+                const choices = new Choices(`#${column}Filter`, {
+                    searchEnabled: true,
+                    removeItemButton: false,
+                    itemSelectText: '',
+                    placeholder: true,
+                    placeholderValue: `Select ${column}`,
+                    sorter: (a, b) => {
+                        if (a.value === "" || b.value === "") {
+                            return a.value === "" ? -1 : 1; 
+                        }
+                        return a.value.localeCompare(b.value);
+                    }
+                });
+            });
+
+            // Add separate date filter dropdowns
+            $('#filterDropdowns').append(`
+                <div class="mb-3">
+                    <label for="saleDateFilter">Sale Date</label>
+                    <input type="text" id="saleDateFilter" class="form-control" placeholder="Select sale date" readonly />
+                </div>
+                <div class="mb-3">
+                    <label for="goodAsSaleDateFilter">Good As Sales Date</label>
+                    <input type="text" id="goodAsSaleDateFilter" class="form-control" placeholder="Select good as sales date" readonly />
+                </div>
+                <div class="mb-3">
+                    <label for="policyInceptionDateFilter">Policy Inception Date</label>
+                    <input type="text" id="policyInceptionDateFilter" class="form-control" placeholder="Select policy inception date" readonly />
+                </div>
+            `);
+
+            // Initialize date range pickers
+            $('#saleDateFilter, #goodAsSaleDateFilter, #policyInceptionDateFilter').daterangepicker({
+                autoUpdateInput: false,
+                locale: {
+                    cancelLabel: 'Clear'
                 }
             });
+
+            // Set event listeners for applying date filters
+            $('#saleDateFilter, #goodAsSaleDateFilter, #policyInceptionDateFilter').on('apply.daterangepicker', function (ev, picker) {
+                const startDate = picker.startDate.format('YYYY-MM-DD');
+                const endDate = picker.endDate.format('YYYY-MM-DD');
+                $(this).val(`${startDate} - ${endDate}`);
+                table.draw(); // Trigger the table redraw
+            });
+
+            // Clear date range filters
+            $('#saleDateFilter, #goodAsSaleDateFilter, #policyInceptionDateFilter').on('cancel.daterangepicker', function () {
+                $(this).val('');
+                table.draw(); // Trigger the table redraw
+            });
+
+            // Attach change event to other filters
+            filterDropdowns.find('select').change(function () {
+                const selectedFilters = getSelectedFilters();
+                applyFilters(selectedFilters);
+            });
+        }
+
+        // Add date range filtering for each individual date field
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            const saleDateRange = $('#saleDateFilter').val();
+            const goodAsSaleDateRange = $('#goodAsSaleDateFilter').val();
+            const policyInceptionDateRange = $('#policyInceptionDateFilter').val();
+
+            const saleDate = data[8].match(/Sale Date: (\d{4}-\d{2}-\d{2})/);
+            const goodAsSaleDate = data[8].match(/Good As Sales Date: (\d{4}-\d{2}-\d{2})/);
+            const policyInceptionDate = data[8].match(/Policy Inception Date: (\d{4}-\d{2}-\d{2})/);
+
+            const dateFilters = [
+                { value: saleDateRange, date: saleDate },
+                { value: goodAsSaleDateRange, date: goodAsSaleDate },
+                { value: policyInceptionDateRange, date: policyInceptionDate }
+            ];
+
+            return dateFilters.every(function (filter) {
+                if (!filter.value) return true; // No filter applied
+                const [startDate, endDate] = filter.value.split(' - ');
+                const dateMoment = moment(filter.date ? filter.date[1] : "", 'YYYY-MM-DD'); 
+                return dateMoment.isBetween(moment(startDate, 'YYYY-MM-DD'), moment(endDate, 'YYYY-MM-DD'), null, '[]');
+            });
         });
-    
+
+        // Function to collect all selected filters
+        function getSelectedFilters() {
+            const filters = {};
+            $('#filterDropdowns select').each(function () {
+                const column = $(this).attr('id').replace('Filter', '');
+                const value = $(this).val();
+                filters[column] = value || "";
+            });
+            return filters;
+        }
+
+        // Apply filters to DataTable
+        function applyFilters(filters) {
+            const columnMap = {
+                'sales_associate': 3,
+                'sales_team': 4,
+                'provider': 5,
+                'source': 6,
+                'subproduct': 7
+            };
+
+            Object.keys(filters).forEach(function (key) {
+                const columnIndex = columnMap[key];
+                const value = filters[key];
+                if (columnIndex !== undefined) {
+                    table.column(columnIndex).search(value, false, false).draw();
+                }
+            });
+        }
+    });
+
 
 
         // Event to clear off-canvas content after it is closed
