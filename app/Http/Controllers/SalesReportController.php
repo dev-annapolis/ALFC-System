@@ -6,11 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\AssuredDetail;
 use Illuminate\Http\Request;
 use App\Models\InsuranceDetail;
-use App\Models\CommissionDetail;
-use App\Models\InsuranceCommissioner;
-use App\Models\CollectionDetail;
-use App\Models\Assured;
-use App\Models\PaymentDetail;
 use App\Models\RolePermission;
 
 use Log;
@@ -91,7 +86,7 @@ class SalesReportController extends Controller
                     'sale_status' => $insuranceDetail->insurance_status ?? null,
                 ];
             })
-            ->unique('id'); // Remove duplicates based on 'id' field
+            ->unique(key: 'id'); // Remove duplicates based on 'id' field
 
         // Return data as JSON response
         return response()->json($insuranceDetails->values()); // Reset keys after unique filtering
@@ -282,7 +277,7 @@ class SalesReportController extends Controller
                 foreach ($insuranceDetail->insuranceCommissioner as $commissionerDetail) {
                     $commissionersData[] = [
                         'commissioner_title' => $commissionerDetail->commissioner->name ?? "N/A",
-                        'commissioner_name' => $commissionerDetail->commissioner_name ?? "N/A",
+                        'commissioner_name' => $commissionerDetail->commissioner_name ?? " ",
                         'amount' => $commissionerDetail->amount ?? "N/A"
                     ];
                 }
