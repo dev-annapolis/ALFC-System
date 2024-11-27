@@ -1081,7 +1081,19 @@ class DatabaseSeeder extends Seeder
             [
                 // 'id' => 16
                 'name' => 'Referral Fee Program',
-            ]
+            ],
+            [
+                // 'id' => 17
+                'name' => 'Off Setting',
+            ],
+            [
+                // 'id' => 18
+                'name' => 'Promo',
+            ],
+            [
+                // 'id' => 18
+                'name' => 'Travel Incentives',
+            ],
         ]);
 
         DB::table('teles')->insert([
@@ -1346,7 +1358,7 @@ class DatabaseSeeder extends Seeder
 
         DB::table('insurance_details')->insert([
             [
-                'assured_detail_id' => 2,
+                'assured_detail_id' => 1,
                 'issuance_code' => 'IC002',
                 'sale_date' => '2023-03-01',
                 'classification' => 'Auto Insurance',
@@ -1379,6 +1391,11 @@ class DatabaseSeeder extends Seeder
                 'loan_amount' => '75000',
                 'total_sum_insured' => '150000',
                 'policy_expiration_aging' => '1 year',
+                'ra_comments' => null,
+                'admin_assistant_remarks' => null,
+                'tracking_number' => null,
+                'policy_received_by' => null,
+
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -1416,6 +1433,10 @@ class DatabaseSeeder extends Seeder
                 'loan_amount' => '100000',
                 'total_sum_insured' => '200000',
                 'policy_expiration_aging' => '1 year',
+                'ra_comments' => null,
+                'admin_assistant_remarks' => null,
+                'tracking_number' => null,
+                'policy_received_by' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -1491,9 +1512,6 @@ class DatabaseSeeder extends Seeder
                 'gross_premium_net_discounted' => '4500',
                 'amount_due_to_provider' => '4000',
                 'full_commission' => '1000',
-                'travel_incentives' => '200',
-                'offsetting' => '100',
-                'promo' => '50',
                 'vat' => '12',
                 'sales_credit' => '900',
                 'sales_credit_percent' => '20',
@@ -1507,9 +1525,6 @@ class DatabaseSeeder extends Seeder
                 'gross_premium_net_discounted' => '9000',
                 'amount_due_to_provider' => '8500',
                 'full_commission' => '1500',
-                'travel_incentives' => '300',
-                'offsetting' => '150',
-                'promo' => '75',
                 'vat' => '12',
                 'sales_credit' => '1350',
                 'sales_credit_percent' => '25',
@@ -1536,6 +1551,73 @@ class DatabaseSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'insurance_detail_id' => 1,
+                'commissioner_id' => 16,
+                'commissioner_name' => null,
+                'amount' => '1000',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'insurance_detail_id' => 1,
+                'commissioner_id' => 17,
+                'commissioner_name' => null,
+                'amount' => '1000',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'insurance_detail_id' => 1,
+                'commissioner_id' => 18,
+                'commissioner_name' => null,
+                'amount' => '1000',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+
+
+            [
+                'insurance_detail_id' => 2,
+                'commissioner_id' => 1,
+                'commissioner_name' => 'James Villamin',
+                'amount' => 1000,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'insurance_detail_id' => 2,
+                'commissioner_id' => 2,
+                'commissioner_name' => 'Jang Fernando',
+                'amount' => '1000',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'insurance_detail_id' => 2,
+                'commissioner_id' => 16,
+                'commissioner_name' => null,
+                'amount' => '1000',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'insurance_detail_id' => 2,
+                'commissioner_id' => 17,
+                'commissioner_name' => null,
+                'amount' => '1000',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'insurance_detail_id' => 2,
+                'commissioner_id' => 18,
+                'commissioner_name' => null,
+                'amount' => '1000',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+
 
         ]);
 
