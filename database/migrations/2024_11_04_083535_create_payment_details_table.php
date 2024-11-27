@@ -52,11 +52,6 @@ return new class extends Migration
             $table->string('date_of_good_as_sales')->nullable();
             $table->string('payment_status')->nullable();
 
-            // $table->string('ra_comments')->nullable();
-            // $table->string('admin_assistant_remarks')->nullable();
-            // $table->string('tracking_number')->nullable();
-            // $table->string('policy_received_by')->nullable();
-
             $table->timestamps();
         });
     }

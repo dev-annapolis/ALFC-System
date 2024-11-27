@@ -39,7 +39,12 @@ class InsuranceDetail extends Model
         'mode_of_payment_id',
         'loan_amount',
         'total_sum_insured',
-        'policy_expiration_aging'
+        'policy_expiration_aging',
+        'ra_comments',
+        'admin_assistant_remarks',
+        'tracking_number',
+        'policy_received_by',
+        'verification_status',
     ];
 
     public function salesAssociate()
