@@ -1,5 +1,6 @@
 @extends('layouts.app')
 @section('content')
+
 <style>
     .table-responsive {
         padding:0 auto;
@@ -103,6 +104,9 @@
     }
 
 </style>
+
+
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
 
@@ -227,54 +231,32 @@
 
 
 
-
-
-
-
-
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
 
 
-<!-- JavaScript to fade out the alert after 1 second -->
 <script>
-    // Show the success alert if it's present
-    var successAlert = document.getElementById('success-alert');
-    if (successAlert) {
-        successAlert.style.display = 'block';  // Make alert visible
-        setTimeout(function() {
-            successAlert.classList.remove('show');
-            successAlert.classList.add('fade');
-        }, 1200);  // 1 second delay before fading out
-    }
-</script>
+    document.addEventListener('DOMContentLoaded', function() {
 
-<script>
-    // Handle Edit Button Click
-    document.getElementById('editTeamModal').addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget;
-        var id = button.getAttribute('data-id');
-        var name = button.getAttribute('data-name');
-        document.getElementById('editTeamId').value = id;
-        document.getElementById('editTeamName').value = name;
-    });
-</script>
+        // Show the success alert if it's present
+        var successAlert = document.getElementById('success-alert');
+        if (successAlert) {
+            successAlert.style.display = 'block';  // Make alert visible
+            setTimeout(function() {
+                successAlert.classList.remove('show');
+                successAlert.classList.add('fade');
+            }, 1075);  // 1 second delay before fading out
+        }
 
 
-
-<script>
-    $(document).ready(function() {
-        // Initialize DataTable
         var table = $('#teamsTable').DataTable({
             paging: true,
             searching: true, // Ensure search is enabled
             info: false,
-            order: [[0, 'asc']],
+            order: [[1, 'asc']],
             pageLength: 10,
             lengthChange: false, // Hide the "Show entries" dropdown
-
             columnDefs: [
                 { orderable: false, targets: [2] } // Disable sorting on Actions column
             ],
@@ -283,19 +265,24 @@
             }
         });
 
-        // Move the search box to .SEARCHING
+        // .SEARCHING
         var searchBox = $('div.dataTables_filter');
-        if (searchBox.length > 0) {
-            searchBox.appendTo('.SEARCHING').css({
-                'float': 'right',
-                'text-align': 'right'
-            });
+        searchBox.appendTo('.SEARCHING').css({
+            'float': 'right',
+            'text-align': 'right'
+        });
+        searchBox.find('input').addClass('form-control').attr('placeholder', 'Search Teams').css('width', '100%');
 
-            searchBox.find('input').addClass('form-control').attr('placeholder', 'Search Teams').css('width', '100%');
-            console.log("Search box moved successfully!");
-        } else {
-            console.error("Search box (dataTables_filter) not found!");
-        }
+
+        // Handle Edit Button Click
+        document.getElementById('editTeamModal').addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var id = button.getAttribute('data-id');
+            var name = button.getAttribute('data-name');
+            document.getElementById('editTeamId').value = id;
+            document.getElementById('editTeamName').value = name;
+        });
+
     });
 </script>
 
