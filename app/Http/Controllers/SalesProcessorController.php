@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use Log;
+use DB;
 
 use App\Models\AssuredDetail;
 use App\Models\InsuranceDetail;
@@ -213,6 +214,7 @@ class SalesProcessorController extends Controller
 
 
             DB::commit();
+            Log::info("Created ". $AssuredDetail->name);
             return response()->json([
                 'message' => 'Form data received successfully.',
                 'AssuredDetailId' => $AssuredDetailId,
