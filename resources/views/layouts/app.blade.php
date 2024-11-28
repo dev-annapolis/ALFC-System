@@ -12,6 +12,7 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
     <!-- Scripts -->
     @vite('resources/sass/app.scss')
@@ -41,13 +42,15 @@
                             </li>
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    {{ __('DROPDOWNS') }}
+                                    {{ __('Masterlist') }}
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('teams.index') }}">{{ __('TEAMS') }}</a>
+                                    <a class="dropdown-item" href="{{ route('teams.index') }}">{{ __('Teams') }}</a>
+                                    <a class="dropdown-item" href="{{ route('providers.index') }}">{{ __('Provider') }}</a>
+
                                 </div>
                             </li>
-                        @endguest
+                        @endguest   
                     </ul>
 
                     <!-- Right Side Of Navbar -->
