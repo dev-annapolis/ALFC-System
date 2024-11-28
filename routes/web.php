@@ -45,6 +45,7 @@ Route::post('/api/insurance/details/update', [SalesReportController::class, 'upd
 
 Route::get('/ra/index', [RevenueAssistantController::class, 'RevenueAssistantIndex'])->name('ra.index');
 Route::get('/api/ra-index', [RevenueAssistantController::class, 'raIndexData']);
+Route::get('/api/view-commission/{insurance_details_id}', [RevenueAssistantController::class, 'viewCommission']);
 
 
 

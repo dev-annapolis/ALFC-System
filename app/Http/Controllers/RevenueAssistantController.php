@@ -17,56 +17,89 @@ use App\Models\AlfcBranch;
 use App\Models\ModeOfPayment;
 use App\Models\Tele;
 use App\Models\Commissioner;
+use App\Models\InsuranceCommissioner;
 use App\Models\InsuranceDetail;
 use App\Models\RolePermission;
 
 use Illuminate\Http\Request;
 use Log;
 use Auth;
-
+use DB;
 class RevenueAssistantController extends Controller
 {
     public function RevenueAssistantIndex()
     {
-        return view('ra.index');
+        $teams = Team::all();
+
+
+        return view('ra.index', compact('teams'));
     }
 
-    public function raIndexData()
+    public function raIndexData(Request $request)
     {
-        $insuranceDetails = InsuranceDetail::with([
-            'assuredDetail', // Load assureds with their related assuredDetails
-            'paymentDetail',
-            'commissionDetail',
-            'salesAssociate.team',
-            'modeOfPayment',
-            'source',
-            'subproduct',
-            'provider',
-        ])
-            ->get()
-            ->map(function ($insuranceDetail) {
-                return [
-                    'id' => $insuranceDetail->id ?? null,
-                    'issuance_code' => $insuranceDetail->issuance_code ?? null,
-                    'name' => $insuranceDetail->assuredDetail->name ?? null,
-                    'sale_date' => $insuranceDetail->sale_date ?? null,
-                    'policy_number' => $insuranceDetail->policy_number ?? null,
-                    'plate_conduction_number' => $insuranceDetail->plate_conduction_number ?? null,
-                    'mode_of_payment' => $insuranceDetail->modeOfPayment->name ?? null,
-                    'pr_number' => $insuranceDetail->paymentDetail->provision_receipt ?? null,
-                    'gross_premium' => $insuranceDetail->commissionDetail->gross_premium ?? null,
-                    'discount' => $insuranceDetail->commissionDetail->discount ?? null,
-                    'amount_due_to_provider' => $insuranceDetail->commissionDetail->amount_due_to_provider ?? null,
-                    'sales_credit' => $insuranceDetail->commissionDetail->sales_credit ?? null,
-                    'sales_credit_percent' => $insuranceDetail->commissionDetail->sales_credit_percent ?? null,
-                    'date_of_good_as_sales' => $insuranceDetail->paymentDetail->date_of_good_as_sales ?? null,
-                    'status' => $insuranceDetail->insurance_status ?? null,
-                    'ra_comments' => $insuranceDetail->ra_comments ?? null,
-                ];
-            })
-            ->unique(key: 'id'); // Remove duplicates based on 'id' field
+        $teamIds = $request->input('team_ids', []);
 
-        // Return data as JSON response
-        return response()->json($insuranceDetails->values()); // Reset keys after unique filtering
+        // Query logic (replace with your actual query)
+        $insuranceDetails = InsuranceDetail::with(['assuredDetail', 'paymentDetail', 'commissionDetail'])
+            ->when(!empty($teamIds), function ($query) use ($teamIds) {
+                $query->whereIn('team_id', $teamIds);
+            })
+            ->get();
+
+        // Prepare data for DataTable
+        $data = $insuranceDetails->map(function ($insuranceDetail) {
+            return [
+                'id' => $insuranceDetail->id,
+                'issuance_code' => $insuranceDetail->issuance_code ?? 'N/A',
+                'name' => $insuranceDetail->assuredDetail->name ?? 'N/A',
+                'policy_number' => $insuranceDetail->policy_number ?? 'N/A',
+                'plate_conduction_number' => $insuranceDetail->plate_conduction_number ?? 'N/A',
+                'mode_of_payment' => $insuranceDetail->modeOfPayment->name ?? 'N/A',
+                'pr_number' => $insuranceDetail->paymentDetail->provision_receipt ?? 'N/A',
+                'gross_premium' => $insuranceDetail->commissionDetail->gross_premium ?? 'N/A',
+                'discount' => $insuranceDetail->commissionDetail->discount ?? 'N/A',
+                'amount_due_to_provider' => $insuranceDetail->commissionDetail->amount_due_to_provider ?? 'N/A',
+                'sales_associate' => $insuranceDetail->salesAssociate->name ?? null,
+                'sales_team' => $insuranceDetail->team->name ?? null,
+                'sales_credit' => $insuranceDetail->commissionDetail->sales_credit ?? 'N/A',
+                'sales_credit_percent' => $insuranceDetail->commissionDetail->sales_credit_percent ?? 'N/A',
+                'sale_date' => $insuranceDetail->sale_date ?? 'N/A',
+                'date_of_good_as_sales' => $insuranceDetail->paymentDetail->date_of_good_as_sales ?? 'N/A',
+                'status' => $insuranceDetail->insurance_status ?? 'N/A',
+                'ra_comments' => $insuranceDetail->ra_comments ?? ' ',
+            ];
+        });
+
+        return response()->json([
+            'draw' => $request->input('draw'),
+            'recordsTotal' => $insuranceDetails->count(),
+            'recordsFiltered' => $insuranceDetails->count(),
+            'data' => $data,
+        ]);
     }
+
+    public function viewCommission($insuranceDetailsId)
+    {
+        // Fetch data using Eloquent with relationships
+        $commissioners = InsuranceCommissioner::with('commissioner') // Eager load the commissioner relationship
+            ->where('insurance_detail_id', $insuranceDetailsId)
+            ->get();
+
+        // Return as JSON with formatted data
+        return response()->json([
+            'success' => true,
+            'data' => $commissioners->map(function ($commissionerDetail) {
+                return [
+                    // Using the commissioner relationship to get the name and return a fallback value
+                    'commissioner_title' => $commissionerDetail->commissioner->name ?? "N/A", // From the related Commissioner model
+                    'commissioner_name' => $commissionerDetail->commissioner_name ?? " ", // Direct from InsuranceCommissioner table
+                    'amount' => $commissionerDetail->amount ?? "N/A", // From the InsuranceCommissioner model
+                ];
+            }),
+        ]);
+    }
+
+
+
+
 }
