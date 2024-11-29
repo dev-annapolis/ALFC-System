@@ -59,6 +59,17 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
     Route::post('/teamsStore', [DropdownController::class, 'teamsStore'])->name('teams.store');
     Route::put('/teamsUpdate', [DropdownController::class, 'teamsUpdate'])->name('teams.update');
     Route::patch('/teamsChangeStatus/{id}', [DropdownController::class, 'teamsChangeStatus'])->name('teams.changeStatus');
+
+    // PROVIDERS
+    Route::get('/providersIndex', [DropdownController::class, 'providersIndex'])->name('providers.index');
+    Route::post('/providersStore', [DropdownController::class, 'providersStore'])->name('providers.store');
+    Route::put('/providersUpdate', [DropdownController::class, 'providersUpdate'])->name('providers.update');
+    Route::patch('/providersChangeStatus/{id}', [DropdownController::class, 'providersChangeStatus'])->name('providers.changeStatus');
+
+
+
+
+
     // PRODUCTS
     // SUBPRODUCTS
     // SOURCES
@@ -67,7 +78,6 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
     // AREAS
     // ALFC BRANCHES
     // MODE OF PAYMENTS
-    // PROVIDERS
     // COMMISIONERS
     // TELES
 });

@@ -115,14 +115,14 @@
     @endif
 
     <div class="row TOP-ROW mb-3">
-        <div class="col-md-6 TEAMS-MASTERLIST">
-            <h1 class="fs-2 fw-medium">Master List of <strong>Teams</strong></h1>
+        <div class="col-md-6 PROVIDERS-MASTERLIST">
+            <h1 class="fs-2 fw-medium">Master List of <strong>Providers</strong></h1>
         </div>
         <div class="col-md-6 SEARCHING d-flex align-items-center justify-content-end">
-            <!-- Add Team Button -->
-            <button class="btn btn-sm btn-primary fs-6 pe-3 me-3" data-bs-toggle="modal" data-bs-target="#addTeamModal">
+            <!-- Add Provider Button -->
+            <button class="btn btn-sm btn-primary fs-6 pe-3 me-3" data-bs-toggle="modal" data-bs-target="#addProviderModal">
                 <i class="me-2 ms-2 fa-solid fa-plus"></i>
-                Add Team
+                Add Provider
             </button>
             <!-- Search box will be initialized by DataTables -->
         </div>
@@ -131,7 +131,7 @@
     <div class="table-container">
 
         <div class="table-responsive">
-            <table class="table dt-responsive shadow-sm " id="teamsTable">
+            <table class="table dt-responsive shadow-sm " id="providersTable">
                 <thead class="fw-medium">
                     <tr class="fs-6">
                         <th style="width: 33%;">Name</th>
@@ -140,22 +140,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($teams as $team)
+                    @foreach ($providers as $provider)
                         <tr class="fs-6 shadow-sm">
-                            <td class="text-secondary fw-medium">{{ $team->name }}</td>
+                            <td class="text-secondary fw-medium">{{ $provider->name }}</td>
                             <td>
-                                <span class="badge {{ $team->status === 'active' ? 'bg-active' : 'bg-inactive' }}">
-                                    {{ ucfirst($team->status) }}
+                                <span class="badge {{ $provider->status === 'active' ? 'bg-active' : 'bg-inactive' }}">
+                                    {{ ucfirst($provider->status) }}
                                 </span>
                             </td>
                             <td>
-                                <form method="POST" action="{{ route('teams.changeStatus', $team->id) }}" class="d-inline" >
+                                <form method="POST" action="{{ route('providers.changeStatus', $provider->id) }}" class="d-inline" >
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" class="btn btn-change-status btn-sm">Change Status</button>
                                 </form>
 
-                                <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#editTeamModal" data-id="{{ $team->id }}" data-name="{{ $team->name }}" style="margin-left: 0.5rem;">
+                                <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#editProviderModal" data-id="{{ $provider->id }}" data-name="{{ $provider->name }}" style="margin-left: 0.5rem;">
                                     Edit
                                 </button>
                             </td>
@@ -173,47 +173,47 @@
 
 </div>
 
-<!-- Add Team Modal -->
-<div class="modal fade" id="addTeamModal" tabindex="-1" aria-labelledby="addTeamModalLabel" aria-hidden="true">
+<!-- Add Provider Modal -->
+<div class="modal fade" id="addProviderModal" tabindex="-1" aria-labelledby="addProviderModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form method="POST" action="{{ route('teams.store') }}">
+        <form method="POST" action="{{ route('providers.store') }}">
             @csrf
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addTeamModalLabel">Add Team</h5>
+                    <h5 class="modal-title" id="addProviderModalLabel">Add Provider</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="teamName" class="form-label">Team Name</label>
-                        <input type="text" class="form-control" id="teamName" name="name" required>
+                        <label for="providerName" class="form-label">Provider Name</label>
+                        <input type="text" class="form-control" id="providerName" name="name" required>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Add Team</button>
+                    <button type="submit" class="btn btn-primary">Add Provider</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Edit Team Modal -->
-<div class="modal fade" id="editTeamModal" tabindex="-1" aria-labelledby="editTeamModalLabel" aria-hidden="true">
+<!-- Edit Provider Modal -->
+<div class="modal fade" id="editProviderModal" tabindex="-1" aria-labelledby="editProviderModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form method="POST" action="{{ route('teams.update') }}">
+        <form method="POST" action="{{ route('providers.update') }}">
             @csrf
             @method('PUT')
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editTeamModalLabel">Edit Team</h5>
+                    <h5 class="modal-title" id="editProviderModalLabel">Edit Provider</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" id="editTeamId" name="id">
+                    <input type="hidden" id="editProviderId" name="id">
                     <div class="mb-3">
-                        <label for="editTeamName" class="form-label">Team Name</label>
-                        <input type="text" class="form-control" id="editTeamName" name="name" required>
+                        <label for="editProviderName" class="form-label">Provider Name</label>
+                        <input type="text" class="form-control" id="editProviderName" name="name" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -246,7 +246,7 @@
         }
 
 
-        var table = $('#teamsTable').DataTable({
+        var table = $('#providersTable').DataTable({
             paging: true,
             searching: true, // Ensure search is enabled
             info: false,
@@ -267,16 +267,16 @@
             'float': 'right',
             'text-align': 'right'
         });
-        searchBox.find('input').addClass('form-control').attr('placeholder', 'Search Teams').css('width', '100%');
+        searchBox.find('input').addClass('form-control').attr('placeholder', 'Search Providers').css('width', '100%');
 
 
         // Handle Edit Button Click
-        document.getElementById('editTeamModal').addEventListener('show.bs.modal', function (event) {
+        document.getElementById('editProviderModal').addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
             var id = button.getAttribute('data-id');
             var name = button.getAttribute('data-name');
-            document.getElementById('editTeamId').value = id;
-            document.getElementById('editTeamName').value = name;
+            document.getElementById('editProviderId').value = id;
+            document.getElementById('editProviderName').value = name;
         });
 
     });
