@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Models\Team;
 use App\Models\Provider;
+use App\Models\AlfcBranch;
 
 
 class DropdownController extends Controller
@@ -104,6 +105,58 @@ class DropdownController extends Controller
         $provider->save();
 
         return redirect()->back()->with('success', 'Provider status updated successfully!');
+    }
+
+
+
+
+
+
+    // Display a list of ALFC branches
+    public function alfcBranchesIndex()
+    {
+        $alfcBranches = AlfcBranch::orderBy('status', 'asc')->get();
+        return view('dropdown.alfcBranches', compact('alfcBranches'));
+    }
+
+    // Store a new ALFC branch
+    public function alfcBranchesStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:alfc_branches,name',
+        ]);
+
+        AlfcBranch::create([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'ALFC Branch added successfully!');
+    }
+
+    // Update an existing ALFC branch
+    public function alfcBranchesUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:alfc_branches,id',
+            'name' => 'required|string|max:255|unique:alfc_branches,name,' . $request->id,
+        ]);
+
+        $alfcBranch = AlfcBranch::findOrFail($validated['id']);
+        $alfcBranch->update([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'ALFC Branch updated successfully!');
+    }
+
+    // Change the status of an ALFC branch
+    public function alfcBranchesChangeStatus($id)
+    {
+        $alfcBranch = AlfcBranch::findOrFail($id);
+        $alfcBranch->status = $alfcBranch->status === 'active' ? 'inactive' : 'active';
+        $alfcBranch->save();
+
+        return redirect()->back()->with('success', 'ALFC Branch status updated successfully!');
     }
 
 

@@ -2874,11 +2874,7 @@
     }
 
 
-
-
-
     //SUBMIT FUNCTION
-
     function submitForm(event) {
         // Prevent the form from submitting (page refresh)
         event.preventDefault();

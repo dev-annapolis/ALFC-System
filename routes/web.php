@@ -66,6 +66,11 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
     Route::put('/providersUpdate', [DropdownController::class, 'providersUpdate'])->name('providers.update');
     Route::patch('/providersChangeStatus/{id}', [DropdownController::class, 'providersChangeStatus'])->name('providers.changeStatus');
 
+    // ALFC BRANCHES
+    Route::get('/alfcBranchesIndex', [DropdownController::class, 'alfcBranchesIndex'])->name('alfcBranches.index');
+    Route::post('/alfcBranchesStore', [DropdownController::class, 'alfcBranchesStore'])->name('alfcBranches.store');
+    Route::put('/alfcBranchesUpdate', [DropdownController::class, 'alfcBranchesUpdate'])->name('alfcBranches.update');
+    Route::patch('/alfcBranchesChangeStatus/{id}', [DropdownController::class, 'alfcBranchesChangeStatus'])->name('alfcBranches.changeStatus');
 
 
 
