@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Team;
 use App\Models\Provider;
 use App\Models\AlfcBranch;
+use App\Models\Product;
+
+
 
 
 class DropdownController extends Controller
@@ -158,6 +161,57 @@ class DropdownController extends Controller
 
         return redirect()->back()->with('success', 'ALFC Branch status updated successfully!');
     }
+
+
+
+
+
+    public function productsIndex()
+    {
+        $products = Product::orderBy('status', 'asc')->get();
+        return view('dropdown.products', compact('products'));
+    }
+
+    public function productsStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:products,name',
+        ]);
+
+        Product::create([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Product added successfully!');
+    }
+
+    public function productsUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:products,id',
+            'name' => 'required|string|max:255|unique:products,name,' . $request->id,
+        ]);
+
+        $product = Product::findOrFail($validated['id']);
+        $product->update([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Product updated successfully!');
+    }
+
+    public function productsChangeStatus($id)
+    {
+        $product = Product::findOrFail($id);
+        $product->status = $product->status === 'active' ? 'inactive' : 'active';
+        $product->save();
+
+        return redirect()->back()->with('success', 'Product status updated successfully!');
+    }
+
+
+
+
 
 
 

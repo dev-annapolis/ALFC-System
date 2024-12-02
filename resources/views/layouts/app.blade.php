@@ -48,6 +48,7 @@
                                     <a class="dropdown-item" href="{{ route('teams.index') }}">{{ __('Teams') }}</a>
                                     <a class="dropdown-item" href="{{ route('providers.index') }}">{{ __('Provider') }}</a>
                                     <a class="dropdown-item" href="{{ route('alfcBranches.index') }}">{{ __('ALFC Branches') }}</a>
+                                    <a class="dropdown-item" href="{{ route('products.index') }}">{{ __('Products') }}</a>
 
 
                                 </div>
