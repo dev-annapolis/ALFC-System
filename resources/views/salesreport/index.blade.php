@@ -131,8 +131,7 @@
     <!-- Responsive wrapper for the table -->
  
     <div class="table-responsive neumorphic-container">
-        <table id="salesReportTable" class="table table-striped table-bordered table-hover dt-responsive thin-horizontal-lines neumorphic-table" style="width:100%">
-
+        <table id="salesReportTable" class="table table-striped dt-responsive thin-horizontal-lines neumorphic-table" style="width:100%">
             <thead>
                 <tr>
                     <th style="text-align: center;">Issuance Code</th>
@@ -154,37 +153,37 @@
         </table>
     </div>
 
-<div class="custom-offcanvas offcanvas offcanvas-end" tabindex="-1" id="detailOffCanvas" aria-labelledby="detailOffCanvasLabel" data-bs-backdrop="false">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="detailOffCanvasLabel"></h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-        <!-- Nav tabs for tables -->
-        <ul class="nav nav-tabs" id="insuranceTabs" role="tablist">
-            <!-- Tabs will be dynamically inserted here -->
-        </ul>
+    <div class="custom-offcanvas offcanvas offcanvas-end" tabindex="-1" id="detailOffCanvas" aria-labelledby="detailOffCanvasLabel" data-bs-backdrop="false">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="detailOffCanvasLabel"></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <!-- Nav tabs for tables -->
+            <ul class="nav nav-tabs" id="insuranceTabs" role="tablist">
+                <!-- Tabs will be dynamically inserted here -->
+            </ul>
 
-        <!-- Tab content area -->
-        <div class="tab-content mt-3" id="insuranceTabContent">
-            <!-- Tab panes will be dynamically inserted here -->
+            <!-- Tab content area -->
+            <div class="tab-content mt-3" id="insuranceTabContent">
+                <!-- Tab panes will be dynamically inserted here -->
+            </div>
         </div>
     </div>
-</div>
-<div class="offcanvas offcanvas-start" tabindex="-1" id="myOffcanvas" aria-labelledby="myOffcanvasLabel" data-bs-backdrop="false">
-    <div class="offcanvas-header">
-        <h5 id="myOffcanvasLabel">Custom Filter</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-        
-        <form id="filterForm">
-            <!-- Dropdown filters will be inserted here dynamically -->
-            <div id="filterDropdowns"></div>
-        </form>
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="myOffcanvas" aria-labelledby="myOffcanvasLabel" data-bs-backdrop="false">
+        <div class="offcanvas-header">
+            <h5 id="myOffcanvasLabel">Custom Filter</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            
+            <form id="filterForm">
+                <!-- Dropdown filters will be inserted here dynamically -->
+                <div id="filterDropdowns"></div>
+            </form>
 
+        </div>
     </div>
-</div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -210,16 +209,14 @@
                     $('.MASTER-LIST').html('<h1><span style="color: #FF3832;"><b>Master</b></span> List</h1>');
 
                     // Wrap the search field and button in a flex container
-                    $('.SEARCHING').html(
-                        '<div class="d-flex align-items-center justify-content-end">' +
-                            '<div class="dataTables_filter me-2">' +
-                                $('.dataTables_filter').html() + // Preserve the original search bar
-                            '</div>' +
-                            '<button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas" aria-controls="myOffcanvas">' +
-                                '<i class="fa-solid fa-filter"></i>' +
-                            '</button>' +
-                        '</div>'
-                    );
+                    $('.SEARCHING').addClass('d-flex align-items-center justify-content-end');
+            
+                    // Append the button next to the search bar
+                    $('.SEARCHING').append(`
+                        <button class="btn  ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#myOffcanvas" aria-controls="myOffcanvas">
+                            <i class="fa-solid fa-filter"></i>
+                        </button>
+                    `);
                 },
             columns: [
                 { title: "Issuance Code" },  // Column 0

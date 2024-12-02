@@ -8,6 +8,27 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
 <style>
+
+    .neumorphic-container {
+        background: var(--background-color);
+        border-radius: 12px;
+        padding: 15px;
+        box-shadow: 8px 8px 16px var(--shadow-dark),
+                    -8px -8px 16px var(--shadow-light);
+    }
+
+    .neumorphic-table {
+        background: var(--background-color);
+        border-radius: 12px;
+        color: var(--text-color);
+        box-shadow: inset 4px 4px 8px var(--shadow-dark),
+                    inset -4px -4px 8px var(--shadow-light);
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        
+    }
+  
     /* Prevent wrapping and show ellipsis for ra_comments */
     .nowrap-ellipsis {
         white-space: nowrap;
@@ -19,55 +40,45 @@
     .dropdown-toggle::after {
         display: none !important; /* Hides the default Bootstrap caret icon */
     }
-    
+
+    .text-center{
+        text-align: center;
+    }
+    .text-center-bold{
+        text-align: center;
+        font-weight:bold;
+    }
+    #raTable th,
+    #raTable td{
+        text-align: center; /* Center-align text */
+    vertical-align: middle; /* Vertically center the content */
+    }
 
 </style>
-<div class="container-fluid" style=" overflow: auto;"> 
-    
-    
-    <h2>Revenue Assistant Data</h2>
-    <div class="table-responsive" style="width: 100%; overflow-x: auto; overflow-y: auto;"> 
-        <div class="dropdown mb-3">
-            <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                Filter by Teams
-            </button>
-            <div class="dropdown-menu p-3">
-                @foreach($teams as $team)
-                <div class="form-check">
-                    <input 
-                        type="checkbox" 
-                        class="form-check-input team-filter" 
-                        value="{{ $team->id }}" 
-                        id="team_{{ $team->id }}"
-                    />
-                    <label class="form-check-label" for="team_{{ $team->id }}">{{ $team->name }}</label>
-                </div>
-                @endforeach
-                <button id="applyFilter" class="btn btn-success mt-3 w-100">Apply Filter</button>
-            </div>
-        </div>
-        <table id="raTable" class="display nowrap" style="width:100%">
+<div class="container-fluid mt-5" > 
+    <div class="table-responsive neumorphic-container"> 
+        <table id="raTable" class="table table-striped dt-responsive thin-horizontal-lines neumorphic-table" style="width:100%">
             <thead>
                 <tr>
-                    <th>Issuance<br> Code</th>
-                    <th>Name</th>
-                    <th>Policy & <br>Plate Details<br>PR Number</th>
-                    <th>Mode of <br>Payment</th>
-                    <th>SA&<br>Team</th>
-                    <th>Premium Details <br>(Gross, Discount, Amount Due)</th>
-                    <th>Sales Credit <br>(Amount & Percent)</th>
-                    <th>Sale Dates <br>(Sale Date & Good as Sales)</th>
-                    <th>Status</th>
-                    <th>RA Comments</th>    
-                    <th>Actions</th>    
+                    <th style="text-align: center;">Issuance<br> Code</th>
+                    <th style="text-align: center;">Name</th>
+                    <th style="text-align: center;">Policy, Plate <br>Details & PR Number</th>
+                    <th style="text-align: center;">Mode of <br>Payment</th>
+                    <th style="text-align: center;">SA & Team</th>
+                    <th style="text-align: center;">Premium Details <br>(Gross, Discount,<br> Amount Due)</th>
+                    <th style="text-align: center;">Sales Credit <br>(Amount & Percent)</th>
+                    <th style="text-align: center;">Sale Dates <br>(Sale Date & Good as Sales)</th>
+                    <th style="text-align: center;">Status</th>
+                    <th style="text-align: center;">Actions</th>
                 </tr>
             </thead>
             <tbody>
-                
+                <!-- Dynamic content from DataTable -->
             </tbody>
         </table>
     </div>
 </div>
+
 <div id="commentModal" class="modal fade" tabindex="-1" aria-labelledby="commentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -122,9 +133,11 @@
 
   $(document).ready(function () {
     // Initialize DataTable
+    
     let table = $('#raTable').DataTable({
         processing: true,
-        serverSide: true,
+        serverSide: false,
+        searching: true,
         ajax: {
             url: '/api/ra-index',
             type: 'GET',
@@ -132,63 +145,131 @@
                 d.team_ids = getSelectedTeamIds(); // Send selected team IDs
             },
         },
+        dom: '<"row TOP-ROW"<"col-md-6 MASTER-LIST"><"col-md-6 pb-3 SEARCHING "f>>t<"row"<"col-md-6 pt-3"l><"col-md-6 pt-2"p>>',
+        initComplete: function () {
+            // Add the header to the MASTER-LIST column
+            $('.MASTER-LIST').html('<h1><span style="color: #FF3832;"><b>RA</b></span> Masterlist</h1>');
+
+            // Wrap the search field and button in a flex container
+            $('.SEARCHING').addClass('d-flex align-items-center justify-content-end');
+            $('.SEARCHING').append(`
+                <div class="dropdown ms-2 custom-dropdown">
+                    <button class="btn btn-primary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"
+                        style="cursor: pointer; 
+                            outline: 0; 
+                            display: inline-block; 
+                            font-weight: 400; 
+                            line-height: 1; 
+                            text-align: center; 
+                            background-color: transparent; 
+                            border: 2px solid #0d6efd; 
+                            padding: 6px 12px; 
+                            font-size: 1rem; 
+                            border-radius: 1rem; 
+                            transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out; 
+                            color: #0d6efd;">
+                        Filter by Teams
+                    </button>
+                    <div class="dropdown-menu p-3 custom-dropdown-menu">
+                        @foreach($teams as $team)
+                        <div class="form-check">
+                            <input type="checkbox" class="form-check-input team-filter" value="{{ $team->id }}" id="team_{{ $team->id }}" />
+                            <label class="form-check-label" for="team_{{ $team->id }}">{{ $team->name }}</label>
+                        </div>
+                        @endforeach
+                        <button id="applyFilter" class="btn btn-success mt-3 w-100">Apply Filter</button>
+                    </div>
+                </div>
+            `);
+            $(document).on('click', '#applyFilter', function () {
+                table.ajax.reload(); // Reload the table with the new filter criteria
+            });
+        },
+        
         columns: [
-            { data: 'issuance_code' },
-            { data: 'name' },
+            { data: 'issuance_code', className: 'text-center-bold', searchable: true },
+            { data: 'name', className: 'text-center-bold', searchable: true },
             {
-                data: null,
-                render: function (data) {
-                    const policyNumber = data.policy_number ?? 'N/A';
-                    const plateNumber = data.plate_conduction_number ?? 'N/A';
-                    const prNumber = data.pr_number ?? 'N/A';
-                    return `Policy Number: ${policyNumber}<br>Plate/Conduction: ${plateNumber}<br>PR Number: ${prNumber}`;
+                data: 'policy_number',
+                render: function (data, type) {
+                    if (type === 'display') {
+                        return `<span class="text-muted">Policy Number: </span><strong>${data ?? 'N/A'}</strong>`;
+                    }
+                    return data ?? ''; // Raw data for search
                 },
+                searchable: true,
             },
-            { data: 'mode_of_payment' },
+            { data: 'mode_of_payment', className: 'text-center', searchable: true },
             {
                 data: null,
-                render: function (data) {
-                    const salesAssociate = data.sales_associate ?? 'N/A';
-                    const team = data.sales_team ?? 'N/A';
-                    return `${salesAssociate}<br> ${team}`;
+                render: function (data, type) {
+                    if (type === 'display') {
+                        return `<strong>${data.sales_associate ?? 'N/A'}</strong><br><span class="text-muted">(${data.sales_team ?? 'N/A'})</span>`;
+                    }
+                    return `${data.sales_associate ?? ''} ${data.sales_team ?? ''}`; // Raw data for search
                 },
-            },
-            {
-                data: null,
-                render: function (data) {
-                    const grossPremium = data.gross_premium ?? 'N/A';
-                    const discount = data.discount ?? 'N/A';
-                    const amountDue = data.amount_due_to_provider ?? 'N/A';
-                    return `Gross Premium: ${grossPremium}<br>Discount: ${discount}<br>Amount Due: ${amountDue}`;
-                },
+                searchable: true,
+                className: 'text-center',
             },
             {
                 data: null,
-                render: function (data) {
-                    const credit = data.sales_credit ?? 'N/A';
-                    const percent = data.sales_credit_percent ? `${data.sales_credit_percent}%` : 'N/A';
-                    return `${credit} (${percent})`;
+                render: function (data, type) {
+                    if (type === 'display') {
+                        const grossPremium = data.gross_premium ?? 'N/A';
+                        const discount = data.discount ?? 'N/A';
+                        const amountDue = data.amount_due_to_provider ?? 'N/A';
+                        return `<span class="text-muted">Gross Premium: </span><strong>${grossPremium}</strong><br><span class="text-muted">Discount: </span><strong>${discount}</strong><br><span class="text-muted">Amount Due: </span><strong>${amountDue}</strong>`;
+                    }
+                    return `${data.gross_premium ?? ''} ${data.discount ?? ''} ${data.amount_due_to_provider ?? ''}`; // Raw data for search
                 },
+                searchable: true,
             },
             {
                 data: null,
-                render: function (data) {
-                    const saleDate = data.sale_date ?? 'N/A';
-                    const goodAsSalesDate = data.date_of_good_as_sales ?? 'N/A';
-                    return `Sale Date: ${saleDate}<br>Good as Sales Date: ${goodAsSalesDate}`;
+                render: function (data, type) {
+                    if (type === 'display') {
+                        return `<strong>${data.sales_credit ?? 'N/A'}</strong> (${data.sales_credit_percent ?? '0'}%)`;
+                    }
+                    return `${data.sales_credit ?? ''} ${data.sales_credit_percent ?? ''}`; // Raw data for search
                 },
+                searchable: true,
+                className: 'text-center',
             },
-            { data: 'status' },
             {
-                data: 'ra_comments',
-                createdCell: function (td, cellData) {
-                    $(td).addClass('nowrap-ellipsis');
-                    $(td).attr('title', cellData); 
-                    $(td).on('click', function() {
-                        $('#commentText').text(cellData); 
-                        $('#commentModal').modal('show');
-                    });
-                }
+                data: null,
+                render: function (data, type) {
+                    if (type === 'display') {
+                        const formatDate = (date) => {
+                            if (!date) return 'N/A'; // Handle null or undefined dates
+                            const parsedDate = new Date(date);
+                            if (isNaN(parsedDate)) return 'N/A'; // Handle invalid dates
+                            return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric', year: 'numeric' }).format(parsedDate);
+                        };
+
+                        const saleDate = formatDate(data.sale_date);
+                        const goodAsSalesDate = formatDate(data.date_of_good_as_sales);
+
+                        return `<span class="text-muted">Sale Date: </span><strong>${saleDate}</strong><br><span class="text-muted">Good as Sales Date: </span><strong>${goodAsSalesDate}</strong>`;
+                    }
+                    return `${data.sale_date ?? ''} ${data.date_of_good_as_sales ?? ''}`; // Raw data for search
+                },
+                searchable: true,
+            },
+            {
+                data: 'status',
+                render: function (data) {
+                    const statusColors = {
+                        'Pending': '#ffc107',
+                        'Approved': '#28a745',
+                        'Cancelled': '#dc3545',
+                        'In Progress': '#17a2b8',
+                    };
+
+                    const color = statusColors[data] || '#000'; // Default color is black if status doesn't match
+                    return `<span style="color: ${color}; font-weight: bold;">${data}</span>`;
+                },
+                className: 'text-center',
+                searchable: true,
             },
             {
                 data: null,
@@ -213,10 +294,13 @@
                             </ul>
                         </div>
                     `;
-                }
-            }
+                },
+                className: 'text-center',
+            },
         ],
     });
+
+
 
 // Populate modal table
 $(document).on('click', '.dropdown-item.view-commission', function () {
@@ -324,18 +408,14 @@ $('#saveChanges').on('click', function () {
 
     // Function to get selected team IDs
     function getSelectedTeamIds() {
-            let teamIds = [];
-            $('.team-filter:checked').each(function () {
-                teamIds.push($(this).val());
-                console.log(teamIds);
-            });
-            return teamIds.length > 0 ? teamIds : null; // Return null if no teams selected
-        }
-
-        // Reload DataTable when Apply Filter is clicked
-        $('#applyFilter').on('click', function () {
-            table.ajax.reload();
+        let teamIds = [];
+        $('.team-filter:checked').each(function () {
+            teamIds.push($(this).val());
+            console.log(teamIds); // Debugging: Ensure the correct IDs are logged
         });
+        return teamIds.length > 0 ? teamIds : null; // Return null if no teams selected
+    }
+        // Reload DataTable when Apply Filter is clicked
     });
 
 
