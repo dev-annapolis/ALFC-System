@@ -30,9 +30,9 @@ class RevenueAssistantController extends Controller
     public function RevenueAssistantIndex()
     {
         $teams = Team::all();
+        $commissioners = Commissioner::all();
 
-
-        return view('ra.index', compact('teams'));
+        return view('ra.index', compact('teams','commissioners'));
     }
 
     public function raIndexData(Request $request)
@@ -79,25 +79,25 @@ class RevenueAssistantController extends Controller
     }
 
     public function viewCommission($insuranceDetailsId)
-    {
-        // Fetch data using Eloquent with relationships
-        $commissioners = InsuranceCommissioner::with('commissioner') // Eager load the commissioner relationship
-            ->where('insurance_detail_id', $insuranceDetailsId)
-            ->get();
+{
+    $commissioners = InsuranceCommissioner::with('commissioner')
+        ->where('insurance_detail_id', $insuranceDetailsId)
+        ->get();
 
-        // Return as JSON with formatted data
-        return response()->json([
-            'success' => true,
-            'data' => $commissioners->map(function ($commissionerDetail) {
-                return [
-                    // Using the commissioner relationship to get the name and return a fallback value
-                    'commissioner_title' => $commissionerDetail->commissioner->name ?? "N/A", // From the related Commissioner model
-                    'commissioner_name' => $commissionerDetail->commissioner_name ?? " ", // Direct from InsuranceCommissioner table
-                    'amount' => $commissionerDetail->amount ?? "N/A", // From the InsuranceCommissioner model
-                ];
-            }),
-        ]);
-    }
+    return response()->json([
+        'success' => true,
+        'data' => $commissioners->map(function ($commissionerDetail) {
+            return [
+                'id' => $commissionerDetail->id ?? " ",
+                'commissioner_id' => $commissionerDetail->commissioner_id ?? " ",
+                'commissioner_title' => $commissionerDetail->commissioner->name ?? "N/A",
+                'commissioner_name' => $commissionerDetail->commissioner_name ?? " ",
+                'amount' => $commissionerDetail->amount ?? "N/A",
+            ];
+        }),
+    ]);
+}
+
 
 
 

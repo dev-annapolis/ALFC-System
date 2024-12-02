@@ -96,22 +96,30 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>Commissioner Title</th> <!-- Updated heading -->
-                            <th>Commissioner Name</th> <!-- Updated heading -->
+                            <th>Commissioner Title</th>
+                            <th>Commissioner Name</th>
                             <th>Amount</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="commissionTableBody">
-                        <!-- Populated dynamically using AJAX -->
+                        <!-- Rows populated dynamically -->
                     </tbody>
                 </table>
+                <button class="btn btn-primary" id="addCommissioner">Add Commissioner</button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="saveChanges">Save Changes</button>
             </div>
         </div>
     </div>
 </div>
 
 
+
 <script>
+    const allCommissioners = @json($commissioners);
+
   $(document).ready(function () {
     // Initialize DataTable
     let table = $('#raTable').DataTable({
@@ -210,40 +218,110 @@
         ],
     });
 
-    $(document).on('click', '.dropdown-item.view-commission', function () {
-        const insuranceDetailsId = $(this).closest('tr').data('insurance-details-id'); // Get the insurance details ID from the row
-        console.log(insuranceDetailsId);
-        $.ajax({
-            url: `/api/view-commission/${insuranceDetailsId}`,
-            method: 'GET',
-            success: function (response) {
-                if (response.success) {
-                    // Clear the modal content
-                    $('#commissionTableBody').empty();
-
-                    // Use forEach to populate the modal with the fetched data
-                    response.data.forEach(commission => {
-                        const row = `
-                            <tr>
-                                <td>${commission.commissioner_title}</td> <!-- Commissioner's name from Commissioner model -->
-                                <td>${commission.commissioner_name}</td> <!-- Commissioner's name from InsuranceCommissioner table -->
-                                <td>${commission.amount}</td>
-                            </tr>
-                        `;
-                        $('#commissionTableBody').append(row);
-                    });
-
-                    // Show the modal
-                    $('#commissionModal').modal('show');
-                } else {
-                    alert('Failed to fetch data.');
-                }
-            },
-            error: function () {
-                alert('An error occurred while fetching data.');
+// Populate modal table
+$(document).on('click', '.dropdown-item.view-commission', function () {
+    const insuranceDetailsId = $(this).closest('tr').data('insurance-details-id');
+    $.ajax({
+        url: `/api/view-commission/${insuranceDetailsId}`,
+        method: 'GET',
+        success: function (response) {
+            if (response.success) {
+                $('#commissionTableBody').empty();
+                response.data.forEach(commission => {
+                    const dropdown = generateTitleDropdown(
+                        commission.commissioner_id, 
+                        allCommissioners
+                    );
+                    const row = `
+                        <tr data-id="${commission.id}">
+                            <td>${dropdown}</td>
+                            <td contenteditable="true" class="commissioner-name">${commission.commissioner_name}</td>
+                            <td contenteditable="true" class="commission-amount">${commission.amount}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm delete-commissioner">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+                    $('#commissionTableBody').append(row);
+                });
+                $('#commissionModal').modal('show');
+            } else {
+                alert('Failed to fetch data.');
             }
+        },
+        error: function () {
+            alert('An error occurred while fetching data.');
+        }
+    });
+});
+
+// Generate dropdown for Commissioner Title
+function generateTitleDropdown(selectedId, commissioners) {
+    let options = commissioners.map(comm => {
+        return `<option value="${comm.id}" ${comm.id == selectedId ? 'selected' : ''}>${comm.name}</option>`;
+    }).join('');
+    return `<select class="form-select commissioner-title">${options}</select>`;
+}
+
+// Add Commissioner
+$('#addCommissioner').on('click', function () {
+    const dropdown = generateTitleDropdown(null, allCommissioners);
+    const newRow = `
+        <tr>
+            <td>${dropdown}</td>
+            <td contenteditable="true" class="commissioner-name">New Name</td>
+            <td contenteditable="true" class="commission-amount">0</td>
+            <td>
+                <button class="btn btn-danger btn-sm delete-commissioner">Delete</button>
+            </td>
+        </tr>
+    `;
+    $('#commissionTableBody').append(newRow);
+});
+
+// Delete Commissioner
+$(document).on('click', '.delete-commissioner', function () {
+    $(this).closest('tr').remove();
+});
+
+// Save Changes
+$('#saveChanges').on('click', function () {
+    const updatedData = [];
+    $('#commissionTableBody tr').each(function () {
+        const row = $(this);
+        updatedData.push({
+            id: row.data('id'),
+            commissioner_id: row.find('.commissioner-title').val(), // Dropdown value
+            commissioner_name: row.find('.commissioner-name').text(), // Editable string
+            amount: row.find('.commission-amount').text(), // Editable string
         });
     });
+
+    const insuranceDetailsId = $('#commissionModal').data('insurance-details-id');
+
+    $.ajax({
+        url: `/api/update-commission/${insuranceDetailsId}`,
+        method: 'POST',
+        data: {
+            commissioners: updatedData,
+            _token: $('meta[name="csrf-token"]').attr('content'),
+        },
+        success: function (response) {
+            if (response.success) {
+                alert('Changes saved successfully!');
+                $('#commissionModal').modal('hide');
+            } else {
+                alert('Failed to save changes.');
+            }
+        },
+        error: function () {
+            alert('An error occurred while saving changes.');
+        }
+    });
+});
+
+
+
     // Function to get selected team IDs
     function getSelectedTeamIds() {
             let teamIds = [];
