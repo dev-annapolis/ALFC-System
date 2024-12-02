@@ -120,7 +120,7 @@
         </div>
         <div class="col-md-6 SEARCHING d-flex align-items-center justify-content-end">
             <!-- Add ALFC Branches Button -->
-            <button class="btn btn-sm btn-primary fs-6 pe-3 me-3" data-bs-toggle="modal" data-bs-target="#addAlfcBranchesModal">
+            <button class="btn btn-sm btn-primary fs-6 pe-3 me-3" data-bs-toggle="modal" data-bs-target="#addAlfcBranchModal">
                 <i class="me-2 ms-2 fa-solid fa-plus"></i>
                 Add Branches
             </button>
