@@ -10,6 +10,7 @@ use App\Models\Provider;
 use App\Models\AlfcBranch;
 use App\Models\Product;
 
+use App\Models\Area;
 
 
 
@@ -207,6 +208,52 @@ class DropdownController extends Controller
         $product->save();
 
         return redirect()->back()->with('success', 'Product status updated successfully!');
+    }
+
+
+
+
+    public function areasIndex()
+    {
+        $areas = Area::orderBy('status', 'asc')->get();
+        return view('dropdown.areas', compact('areas'));
+    }
+
+    public function areasStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:areas,name',
+        ]);
+
+        Area::create([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Area added successfully!');
+    }
+
+    public function areasUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:products,id',
+            'name' => 'required|string|max:255|unique:areas,name,' . $request->id,
+        ]);
+
+        $area = Area::findOrFail($validated['id']);
+        $area->update([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Area updated successfully!');
+    }
+
+    public function areasChangeStatus($id)
+    {
+        $area = Area::findOrFail($id);
+        $area->status = $area->status === 'active' ? 'inactive' : 'active';
+        $area->save();
+
+        return redirect()->back()->with('success', 'Area status updated successfully!');
     }
 
 
