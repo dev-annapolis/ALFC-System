@@ -329,6 +329,7 @@ $(document).on('click', '.dropdown-item.view-commission', function () {
                     $('#commissionTableBody').append(row);
                 });
                 $('#commissionModal').modal('show');
+                $('#commissionModal').data('insurance-details-id', insuranceDetailsId);
             } else {
                 alert('Failed to fetch data.');
             }
@@ -353,7 +354,7 @@ $('#addCommissioner').on('click', function () {
     const newRow = `
         <tr>
             <td>${dropdown}</td>
-            <td contenteditable="true" class="commissioner-name">New Name</td>
+            <td contenteditable="true" class="commissioner-name"> </td>
             <td contenteditable="true" class="commission-amount">0</td>
             <td>
                 <button class="btn btn-danger btn-sm delete-commissioner">Delete</button>
