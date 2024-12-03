@@ -115,14 +115,14 @@
     @endif
 
     <div class="row TOP-ROW mb-3">
-        <div class="col-md-6 ALFC-BRANCHES-MASTERLIST">
-            <h1 class="fs-2 fw-medium">Master List of <strong>Branches</strong></h1>
+        <div class="col-md-6 AREAS-MASTERLIST">
+            <h1 class="fs-2 fw-medium">Master List of <strong>Areas</strong></h1>
         </div>
         <div class="col-md-6 SEARCHING d-flex align-items-center justify-content-end">
-            <!-- Add ALFC Branches Button -->
-            <button class="btn btn-sm btn-primary fs-6 pe-3 me-3" data-bs-toggle="modal" data-bs-target="#addAlfcBranchModal">
+            <!-- Add Area Button -->
+            <button class="btn btn-sm btn-primary fs-6 pe-3 me-3" data-bs-toggle="modal" data-bs-target="#addAreaModal">
                 <i class="me-2 ms-2 fa-solid fa-plus"></i>
-                Add Branches
+                Add Area
             </button>
             <!-- Search box will be initialized by DataTables -->
         </div>
@@ -131,7 +131,7 @@
     <div class="table-container">
 
         <div class="table-responsive">
-            <table class="table dt-responsive shadow-sm " id="alfcBranchesTable">
+            <table class="table dt-responsive shadow-sm " id="areasTable">
                 <thead class="fw-medium">
                     <tr class="fs-6">
                         <th style="width: 33%;">Name</th>
@@ -140,22 +140,22 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($alfcBranches as $alfcBranch)
+                    @foreach ($areas as $area)
                         <tr class="fs-6 shadow-sm">
-                            <td class="text-secondary fw-medium">{{ $alfcBranch->name }}</td>
+                            <td class="text-secondary fw-medium">{{ $area->name }}</td>
                             <td>
-                                <span class="badge {{ $alfcBranch->status === 'active' ? 'bg-active' : 'bg-inactive' }}">
-                                    {{ ucfirst($alfcBranch->status) }}
+                                <span class="badge {{ $area->status === 'active' ? 'bg-active' : 'bg-inactive' }}">
+                                    {{ ucfirst($area->status) }}
                                 </span>
                             </td>
                             <td>
-                                <form method="POST" action="{{ route('alfcBranches.changeStatus', $alfcBranch->id) }}" class="d-inline" >
+                                <form method="POST" action="{{ route('areas.changeStatus', $area->id) }}" class="d-inline" >
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" class="btn btn-change-status btn-sm">Change Status</button>
                                 </form>
 
-                                <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#editAlfcBranchModal" data-id="{{ $alfcBranch->id }}" data-name="{{ $alfcBranch->name }}" style="margin-left: 0.5rem;">
+                                <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#editAreaModal" data-id="{{ $area->id }}" data-name="{{ $area->name }}" style="margin-left: 0.5rem;">
                                     Edit
                                 </button>
                             </td>
@@ -173,47 +173,47 @@
 
 </div>
 
-<!-- Add Branch Modal -->
-<div class="modal fade" id="addAlfcBranchModal" tabindex="-1" aria-labelledby="addAlfcBranchModalLabel" aria-hidden="true">
+<!-- Add Area Modal -->
+<div class="modal fade" id="addAreaModal" tabindex="-1" aria-labelledby="addAreaModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form method="POST" action="{{ route('alfcBranches.store') }}">
+        <form method="POST" action="{{ route('areas.store') }}">
             @csrf
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addAlfcBranchModalLabel">Add Branch</h5>
+                    <h5 class="modal-title" id="addAreaModalLabel">Add Area</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="alfcBranchName" class="form-label">Branch Name</label>
-                        <input type="text" class="form-control" id="alfcBranchName" name="name" required>
+                        <label for="areaName" class="form-label">Area Name</label>
+                        <input type="text" class="form-control" id="areaName" name="name" required>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Add Branch</button>
+                    <button type="submit" class="btn btn-primary">Add Area</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Edit Branch Modal -->
-<div class="modal fade" id="editAlfcBranchModal" tabindex="-1" aria-labelledby="editAlfcBranchModalLabel" aria-hidden="true">
+<!-- Edit Area Modal -->
+<div class="modal fade" id="editAreaModal" tabindex="-1" aria-labelledby="editAreaModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form method="POST" action="{{ route('alfcBranches.update') }}">
+        <form method="POST" action="{{ route('areas.update') }}">
             @csrf
             @method('PUT')
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editAlfcBranchModalLabel">Edit Branch</h5>
+                    <h5 class="modal-title" id="editAreaModalLabel">Edit Area</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" id="editalfcBranchId" name="editAlfcBranchId">
+                    <input type="hidden" id="editAreaId" name="id">
                     <div class="mb-3">
-                        <label for="editAlfcBranchName" class="form-label">Branch Name</label>
-                        <input type="text" class="form-control" id="editAlfcBranchName" name="name" required>
+                        <label for="editAreaName" class="form-label">Area Name</label>
+                        <input type="text" class="form-control" id="editAreaName" name="name" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -246,7 +246,7 @@
         }
 
 
-        var table = $('#alfcBranchesTable').DataTable({
+        var table = $('#areasTable').DataTable({
             paging: true,
             searching: true, // Ensure search is enabled
             info: false,
@@ -267,16 +267,16 @@
             'float': 'right',
             'text-align': 'right'
         });
-        searchBox.find('input').addClass('form-control').attr('placeholder', 'Search Branch').css('width', '100%');
+        searchBox.find('input').addClass('form-control').attr('placeholder', 'Search Areas').css('width', '100%');
 
 
         // Handle Edit Button Click
-        document.getElementById('editAlfcBranchModal').addEventListener('show.bs.modal', function (event) {
+        document.getElementById('editAreaModal').addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
             var id = button.getAttribute('data-id');
             var name = button.getAttribute('data-name');
-            document.getElementById('editalfcBranchId').value = id;
-            document.getElementById('editAlfcBranchName').value = name;
+            document.getElementById('editAreaId').value = id;
+            document.getElementById('editAreaName').value = name;
         });
 
     });

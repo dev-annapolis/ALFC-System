@@ -72,15 +72,28 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
     Route::put('/alfcBranchesUpdate', [DropdownController::class, 'alfcBranchesUpdate'])->name('alfcBranches.update');
     Route::patch('/alfcBranchesChangeStatus/{id}', [DropdownController::class, 'alfcBranchesChangeStatus'])->name('alfcBranches.changeStatus');
 
-
-
-
     // PRODUCTS
+    Route::get('/productsIndex', [DropdownController::class, 'productsIndex'])->name('products.index');
+    Route::post('/productsStore', [DropdownController::class, 'productsStore'])->name('products.store');
+    Route::put('/productsUpdate', [DropdownController::class, 'productsUpdate'])->name('products.update');
+    Route::patch('/productsChangeStatus/{id}', [DropdownController::class, 'productsChangeStatus'])->name('products.changeStatus');
+
+
+    // AREAS
+    Route::get('/areasIndex', [DropdownController::class, 'areasIndex'])->name('areas.index');
+    Route::post('/areasStore', [DropdownController::class, 'areasStore'])->name('areas.store');
+    Route::put('/areasUpdate', [DropdownController::class, 'areasUpdate'])->name('areas.update');
+    Route::patch('/areasChangeStatus/{id}', [DropdownController::class, 'areasChangeStatus'])->name('areas.changeStatus');
+
+
+
+
+
+
     // SUBPRODUCTS
     // SOURCES
     // SOURCE BRANCHES
     // IF GDFI
-    // AREAS
     // ALFC BRANCHES
     // MODE OF PAYMENTS
     // COMMISIONERS
