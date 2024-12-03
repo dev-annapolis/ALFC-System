@@ -47,6 +47,8 @@ Route::get('/ra/index', [RevenueAssistantController::class, 'RevenueAssistantInd
 Route::get('/api/ra-index', [RevenueAssistantController::class, 'raIndexData']);
 Route::get('/api/view-commission/{insurance_details_id}', [RevenueAssistantController::class, 'viewCommission']);
 Route::post('/api/update-commission/{insurance_details_id}', [RevenueAssistantController::class, 'updateCommission']);
+Route::post('/api/ra/{id}/comments', [RevenueAssistantController::class, 'postComment']);
+Route::post('/api/ra/verify/{id}', [RevenueAssistantController::class, 'verifyInsuranceDetail']);
 
 
 use App\Http\Middleware\RoleMiddleware;
