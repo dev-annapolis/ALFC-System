@@ -2584,7 +2584,7 @@
         // const promoValue = parseFloat(removeCommas(promoInput.value)) || 0;
 
         // Calculate the initial total commission (assuming this is the base value)
-        initialTotalCommission = travelIncentivesValues + offsettingValue + promoValue;
+        // initialTotalCommission = travelIncentivesValues + offsettingValue + promoValue;
 
         const commissions = [];
         let totalCommission = initialTotalCommission;
