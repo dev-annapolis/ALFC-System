@@ -79,24 +79,62 @@ class RevenueAssistantController extends Controller
     }
 
     public function viewCommission($insuranceDetailsId)
-{
-    $commissioners = InsuranceCommissioner::with('commissioner')
-        ->where('insurance_detail_id', $insuranceDetailsId)
-        ->get();
+    {
+        $commissioners = InsuranceCommissioner::with('commissioner')
+            ->where('insurance_detail_id', $insuranceDetailsId)
+            ->get();
 
-    return response()->json([
-        'success' => true,
-        'data' => $commissioners->map(function ($commissionerDetail) {
-            return [
-                'id' => $commissionerDetail->id ?? " ",
-                'commissioner_id' => $commissionerDetail->commissioner_id ?? " ",
-                'commissioner_title' => $commissionerDetail->commissioner->name ?? "N/A",
-                'commissioner_name' => $commissionerDetail->commissioner_name ?? " ",
-                'amount' => $commissionerDetail->amount ?? "N/A",
-            ];
-        }),
-    ]);
-}
+        return response()->json([
+            'success' => true,
+            'data' => $commissioners->map(function ($commissionerDetail) {
+                return [
+                    'id' => $commissionerDetail->id ?? " ",
+                    'commissioner_id' => $commissionerDetail->commissioner_id ?? " ",
+                    'commissioner_title' => $commissionerDetail->commissioner->name ?? "N/A",
+                    'commissioner_name' => $commissionerDetail->commissioner_name ?? " ",
+                    'amount' => $commissionerDetail->amount ?? "N/A",
+                ];
+            }),
+        ]);
+    }
+
+    public function updateCommission($insuranceDetailsId, Request $request)
+    {
+        $updatedData = $request->input('commissioners');
+        $existingIds = InsuranceCommissioner::where('insurance_detail_id', $insuranceDetailsId)
+            ->pluck('id')
+            ->toArray();
+
+        foreach ($updatedData as $commission) {
+            if (!empty($commission['id'])) {
+                // Update existing record
+                $commissioner = InsuranceCommissioner::find($commission['id']);
+                $commissioner->update([
+                    'commissioner_id' => $commission['commissioner_id'],
+                    'commissioner_name' => $commission['commissioner_name'],
+                    'amount' => $commission['amount'],
+                ]);
+                $processedIds[] = $commissioner->id; // Track this ID
+            } else {
+                // Add new record
+                $newCommissioner = InsuranceCommissioner::create([
+                    'insurance_detail_id' => $insuranceDetailsId,
+                    'commissioner_id' => $commission['commissioner_id'],
+                    'commissioner_name' => $commission['commissioner_name'],
+                    'amount' => $commission['amount'],
+                ]);
+                $processedIds[] = $newCommissioner->id; // Track new ID
+            }
+        }
+
+        $toDelete = array_diff($existingIds, $processedIds);
+        InsuranceCommissioner::destroy($toDelete);        
+        
+        return response()->json([
+            'success' => true,
+            'message' => 'Commissioners updated successfully.',
+        ]);
+    }
 
 
 
