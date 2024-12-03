@@ -309,10 +309,9 @@
                 data: 'status',
                 render: function (data) {
                     const statusColors = {
-                        'Pending': '#ffc107',
-                        'Approved': '#28a745',
-                        'Cancelled': '#dc3545',
-                        'In Progress': '#17a2b8',
+                        'reinstated': '#ffc107',
+                        'sale': '#28a745',
+                        'cancelled': '#dc3545',
                     };
 
                     const color = statusColors[data] || '#000'; // Default color is black if status doesn't match
