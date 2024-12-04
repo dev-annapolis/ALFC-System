@@ -23,6 +23,7 @@
     overflow: hidden;
     white-space: nowrap;        /* Prevent text wrapping */
     text-overflow: ellipsis;    /* Add ellipsis for overflowing text */
+    font-size:12px;
 
 }
 .neumorphic-table th {
@@ -240,10 +241,9 @@
                 table.clear();
 
                 const statusColors = {
-                    'Pending': '#ffc107',
-                    'Approved': '#28a745',
-                    'Cancelled': '#dc3545',
-                    'In Progress': '#17a2b8'
+                    'reinstated': '#ffc107',
+                        'sale': '#28a745',
+                        'cancelled': '#dc3545',
                 };
 
                 function getStatusColor(status) {

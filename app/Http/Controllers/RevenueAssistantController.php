@@ -32,7 +32,7 @@ class RevenueAssistantController extends Controller
         $teams = Team::all();
         $commissioners = Commissioner::all();
 
-        return view('ra.index', compact('teams','commissioners'));
+        return view('ra.index', compact('teams', 'commissioners'));
     }
 
     public function raIndexData(Request $request)
@@ -44,6 +44,7 @@ class RevenueAssistantController extends Controller
             ->when(!empty($teamIds), function ($query) use ($teamIds) {
                 $query->whereIn('team_id', $teamIds);
             })
+            ->where('verification_status', 'for_ra_verification')
             ->get();
 
         // Prepare data for DataTable
@@ -131,8 +132,8 @@ class RevenueAssistantController extends Controller
         }
 
         $toDelete = array_diff($existingIds, $processedIds);
-        InsuranceCommissioner::destroy($toDelete);        
-        
+        InsuranceCommissioner::destroy($toDelete);
+
         return response()->json([
             'success' => true,
             'message' => 'Changes saved successfully! Total: ' . $totalAmount,
@@ -141,6 +142,50 @@ class RevenueAssistantController extends Controller
 
 
 
+    public function postComment(Request $request, $id)
+    {
+        // Validate the incoming comment
+        $request->validate([
+            'comment' => 'required|string|max:1000',
+        ]);
 
+        // Find the insurance detail by ID
+        $insuranceDetail = InsuranceDetail::findOrFail($id);
+
+        // Append the new comment to the existing comments (or initialize it if empty)
+        $existingComments = $insuranceDetail->ra_comments ?? ''; // Existing comments, if any
+        $newComment = auth()->user()->name . ' (' . now()->format('M j, Y') . '): ' . $request->comment;
+        $insuranceDetail->ra_comments = trim($existingComments . "\n" . $newComment);
+
+        // Save the updated comments
+        $insuranceDetail->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Comment added successfully!',
+            'ra_comments' => $insuranceDetail->ra_comments, // Return updated comments for the frontend
+        ]);
+    }
+    public function verifyInsuranceDetail(Request $request, $id)
+    {
+        // Validate incoming data
+        $request->validate([
+            'verification_status' => 'required|string|max:255',
+        ]);
+
+        // Find the insurance detail by ID
+        $insuranceDetail = InsuranceDetail::findOrFail($id);
+
+        // Set the verification status to "for_sps_verification"
+        $insuranceDetail->verification_status = 'for_sps_verification';  // Hardcoded status
+
+        // Save the changes
+        $insuranceDetail->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Insurance detail status updated for SPS Verification successfully!',
+        ]);
+    }
 
 }

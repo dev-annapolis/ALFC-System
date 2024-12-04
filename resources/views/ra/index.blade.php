@@ -23,9 +23,10 @@
         color: var(--text-color);
         box-shadow: inset 4px 4px 8px var(--shadow-dark),
                     inset -4px -4px 8px var(--shadow-light);
-        overflow: hidden;
+        overflow: visible;
         white-space: nowrap;
         text-overflow: ellipsis;
+        font-size:13px;
         
     }
   
@@ -53,6 +54,7 @@
         text-align: center; /* Center-align text */
     vertical-align: middle; /* Vertically center the content */
     }
+    
 
 </style>
 <div class="container-fluid mt-5" > 
@@ -60,14 +62,13 @@
         <table id="raTable" class="table table-striped dt-responsive thin-horizontal-lines neumorphic-table" style="width:100%">
             <thead>
                 <tr>
-                    <th style="text-align: center;">Issuance<br> Code</th>
-                    <th style="text-align: center;">Name</th>
+                    <th style="text-align: center;">Name &<br>Issuance Code</th>
                     <th style="text-align: center;">Policy, Plate <br>Details & PR Number</th>
                     <th style="text-align: center;">Mode of <br>Payment</th>
                     <th style="text-align: center;">SA & Team</th>
                     <th style="text-align: center;">Premium Details <br>(Gross, Discount,<br> Amount Due)</th>
                     <th style="text-align: center;">Sales Credit <br>(Amount & Percent)</th>
-                    <th style="text-align: center;">Sale Dates <br>(Sale Date & Good as Sales)</th>
+                    <th style="text-align: center;">Sale Date & <br>Good as Sales</th>
                     <th style="text-align: center;">Status</th>
                     <th style="text-align: center;">Actions</th>
                 </tr>
@@ -125,7 +126,43 @@
         </div>
     </div>
 </div>
+{{-- comment modal --}}
+<div id="addCommentModal" class="modal fade" tabindex="-1" aria-labelledby="addCommentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCommentModalLabel">Add Comment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <textarea id="commentInput" class="form-control" rows="4" placeholder="Enter your comment here..."></textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="saveComment" class="btn btn-primary">Save Comment</button>
+            </div>
+        </div>
+    </div>
+</div>
 
+<!-- Confirmation Modal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmationModalLabel">Confirm Verification</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to verify this insurance detail?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="confirmVerifyButton">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <script>
@@ -187,16 +224,29 @@
         },
         
         columns: [
-            { data: 'issuance_code', className: 'text-center-bold', searchable: true },
-            { data: 'name', className: 'text-center-bold', searchable: true },
             {
-                data: 'policy_number',
+                data: null,
                 render: function (data, type) {
                     if (type === 'display') {
-                        return `<span class="text-muted">Policy Number: </span><strong>${data ?? 'N/A'}</strong>`;
+                        return `<strong>${data.name ?? 'N/A'}</strong><br><span class="text-muted">(${data.issuance_code ?? 'N/A'})</span>`;
                     }
-                    return data ?? ''; // Raw data for search
+                    return `${data.name ?? ''} ${data.issuance_code ?? ''}`; // Raw data for search
                 },
+                searchable: true,
+                className: 'text-center',
+            },
+            {
+                data: null, // Combine policy_number and plate_conduction_number
+                    render: function (data) {
+                        const policyNumber = data.policy_number ?? 'N/A';
+                        const plateNumber = data.plate_conduction_number ?? 'N/A';
+                        const prNumber = data.pr_number ?? 'N/A';
+                        return `
+                            Policy Number: <strong>${policyNumber}</strong><br>
+                            Plate/Conduction: <strong>${plateNumber}</strong><br>
+                            PR Number: <strong>${prNumber}</strong>
+                        `;
+                    },
                 searchable: true,
             },
             { data: 'mode_of_payment', className: 'text-center', searchable: true },
@@ -249,7 +299,7 @@
                         const saleDate = formatDate(data.sale_date);
                         const goodAsSalesDate = formatDate(data.date_of_good_as_sales);
 
-                        return `<span class="text-muted">Sale Date: </span><strong>${saleDate}</strong><br><span class="text-muted">Good as Sales Date: </span><strong>${goodAsSalesDate}</strong>`;
+                        return `<span class="text-muted">Sale Date: </span><strong>${saleDate}</strong><br><span class="text-muted">Good as Sales: </span><strong>${goodAsSalesDate}</strong>`;
                     }
                     return `${data.sale_date ?? ''} ${data.date_of_good_as_sales ?? ''}`; // Raw data for search
                 },
@@ -259,10 +309,9 @@
                 data: 'status',
                 render: function (data) {
                     const statusColors = {
-                        'Pending': '#ffc107',
-                        'Approved': '#28a745',
-                        'Cancelled': '#dc3545',
-                        'In Progress': '#17a2b8',
+                        'reinstated': '#ffc107',
+                        'sale': '#28a745',
+                        'cancelled': '#dc3545',
                     };
 
                     const color = statusColors[data] || '#000'; // Default color is black if status doesn't match
@@ -283,14 +332,22 @@
                             <button class="btn dropdown-toggle p-2 border-0 bg-transparent circular-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="fa-solid fa-ellipsis"></i>
                             </button>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu ">
                                 <li>
                                     <a class="dropdown-item view-commission" href="#" data-insurance-id="${row.id}">
                                         View Commission
                                     </a>
                                 </li>
-                                <li><a class="dropdown-item" href="#">Action 2</a></li>
-                                <li><a class="dropdown-item" href="#">Action 3</a></li>
+                                <li>
+                                    <a class="dropdown-item add-comment" href="#" data-insurance-id="${row.id}">
+                                        Add Comments
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#" id="verifyButton" data-insurance-detail-id="${row.id}">
+                                        Verify
+                                    </a>
+                                </li>
                             </ul>
                         </div>
                     `;
@@ -369,6 +426,8 @@ $(document).on('click', '.delete-commissioner', function () {
     $(this).closest('tr').remove();
 });
 
+
+
 // Save Changes
 $('#saveChanges').on('click', function () {
     const updatedData = [];
@@ -418,7 +477,93 @@ $('#saveChanges').on('click', function () {
     }
         // Reload DataTable when Apply Filter is clicked
     });
+// RA Comments
+    $(document).on('click', '.add-comment', function (e) {
+        e.preventDefault();
 
+        // Get the insurance details ID from the clicked element
+        const insuranceDetailsId = $(this).data('insurance-id');
+        
+        // Store the ID in the modal for reference
+        $('#addCommentModal').data('insurance-id', insuranceDetailsId);
 
+        // Clear the textarea and show the modal
+        $('#commentInput').val('');
+        $('#addCommentModal').modal('show');
+    });
+
+    $('#saveComment').on('click', function () {
+        const insuranceDetailsId = $('#addCommentModal').data('insurance-id');
+        const comment = $('#commentInput').val();
+
+        if (!comment.trim()) {
+            alert('Comment cannot be empty.');
+            return;
+        }
+
+        // Perform an AJAX request to save the comment
+        $.ajax({
+            url: `/api/ra/${insuranceDetailsId}/comments`,
+            method: 'POST',
+            data: {
+                comment: comment,
+                _token: $('meta[name="csrf-token"]').attr('content'), // Include CSRF token for security
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert('Comment added successfully!');
+                    $('#addCommentModal').modal('hide');
+
+                    // Optionally update the displayed comments on the table
+                    $(`tr[data-insurance-details-id="${insuranceDetailsId}"]`).find('.comments-cell').text(response.ra_comments);
+                } else {
+                    alert('Failed to save the comment.');
+                }
+            },
+            error: function () {
+                alert('An error occurred while saving the comment.');
+            }
+        });
+    });
+
+    //Verification For Ra 
+
+    $(document).on('click', '#verifyButton', function (e) {
+        e.preventDefault();
+
+        // Get the insurance detail ID from the button's data attribute
+        const insuranceDetailId = $(this).data('insurance-detail-id');
+
+        // Store the ID in the modal for later use
+        $('#confirmationModal').data('insurance-detail-id', insuranceDetailId).modal('show');
+    });
+    $('#confirmVerifyButton').on('click', function () {
+        // Retrieve the stored insurance detail ID from the modal
+        const insuranceDetailId = $('#confirmationModal').data('insurance-detail-id');
+        const table = $('#raTable').DataTable();
+        // Perform the AJAX request to verify the insurance detail
+        $.ajax({
+            url: `/api/ra/verify/${insuranceDetailId}`,
+            method: 'POST',
+            data: {
+                verification_status: 'for_sps_verification',
+                _token: $('meta[name="csrf-token"]').attr('content') // Include CSRF token for security
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert(response.message);
+
+                    $('#confirmationModal').modal('hide');
+                    table.ajax.reload();
+
+                } else {
+                    alert('Failed to verify insurance detail.');
+                }
+            },
+            error: function () {
+                alert('An error occurred while verifying the insurance detail.');
+            }
+        });
+    });
 </script>
 @endsection
