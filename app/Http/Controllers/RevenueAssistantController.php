@@ -105,6 +105,8 @@ class RevenueAssistantController extends Controller
             ->pluck('id')
             ->toArray();
 
+        $totalAmount = 0;
+
         foreach ($updatedData as $commission) {
             if (!empty($commission['id'])) {
                 // Update existing record
@@ -125,6 +127,7 @@ class RevenueAssistantController extends Controller
                 ]);
                 $processedIds[] = $newCommissioner->id; // Track new ID
             }
+            $totalAmount += $commission['amount'];
         }
 
         $toDelete = array_diff($existingIds, $processedIds);
@@ -132,7 +135,7 @@ class RevenueAssistantController extends Controller
         
         return response()->json([
             'success' => true,
-            'message' => 'Commissioners updated successfully.',
+            'message' => 'Changes saved successfully! Total: ' . $totalAmount,
         ]);
     }
 
