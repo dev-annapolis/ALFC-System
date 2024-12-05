@@ -96,16 +96,16 @@
 .input-custom {
     box-sizing: border-box;
     font-family: inherit;
-    font-size: 14px;
+    font-size: 12px;
     vertical-align: baseline;
-    font-weight: 400;
+    font-weight: 600;
     line-height: 1.29;
     letter-spacing: 0.16px;
     border-radius: 0;
     outline: 2px solid transparent;
     outline-offset: -2px;
     width: 100%;
-    height: 40px;
+    height: 30px;
     border: none;
     border-bottom: 1px solid #8d8d8d;
     background-color: #f4f4f4;
@@ -117,8 +117,24 @@
 .input-custom:focus {
     outline: 2px solid #0f62fe;
     outline-offset: -2px;
+    height: 30px;
+
 }
 
+.custom-offcanvas{
+    font-size:13px;
+}
+
+.edit-btn,
+.save-btn,
+.cancel-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px; /* Adjust as needed */
+    width: 30px;  /* Adjust as needed */
+    padding: 0;
+}
 </style>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
@@ -199,7 +215,11 @@
 <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <script>
+
+
    $(document).ready(function () {
+
+    //TABLE
         const table = $('#salesReportTable').DataTable({
             responsive: true,
             autoWidth: false,
@@ -301,225 +321,11 @@
                 alert("Error loading sales report data: " + error);
             }
         });
-
-        // Populate dropdown filters dynamically
-        function populateFilters(data) {
-            const uniqueColumns = ['sales_associate', 'sales_team', 'provider', 'source', 'subproduct'];
-            const filterDropdowns = $('#filterDropdowns');
-            filterDropdowns.empty(); // Clear existing filters
-
-            uniqueColumns.forEach(function (column) {
-                let distinctValues = [...new Set(data.map(item => item[column]?.trim()))];
-                const options = [''].concat(distinctValues); // "All" as an empty string is always at the top
-
-                const dropdown = `
-                    <div class="mb-3">
-                        <label for="${column}Filter">${column.charAt(0).toUpperCase() + column.slice(1)}</label>
-                        <select class="form-select" id="${column}Filter">
-                            ${options.map(value => `<option value="${value}">${value || "All"}</option>`).join('')}
-                        </select>
-                    </div>`;
-                filterDropdowns.append(dropdown);
-
-                const choices = new Choices(`#${column}Filter`, {
-                    searchEnabled: true,
-                    removeItemButton: false,
-                    itemSelectText: '',
-                    placeholder: true,
-                    placeholderValue: `Select ${column}`,
-                    sorter: (a, b) => {
-                        if (a.value === "" || b.value === "") {
-                            return a.value === "" ? -1 : 1; 
-                        }
-                        return a.value.localeCompare(b.value);
-                    }
-                });
-            });
-
-            // Add separate date filter dropdowns
-            $('#filterDropdowns').append(`
-                <div class="mb-3">
-                    <label for="saleDateFilter">Sale Date</label>
-                    <input type="text" id="saleDateFilter" class="form-control" placeholder="Select sale date" readonly />
-                </div>
-                <div class="mb-3">
-                    <label for="goodAsSaleDateFilter">Good As Sales Date</label>
-                    <input type="text" id="goodAsSaleDateFilter" class="form-control" placeholder="Select good as sales date" readonly />
-                </div>
-                <div class="mb-3">
-                    <label for="policyInceptionDateFilter">Policy Inception Date</label>
-                    <input type="text" id="policyInceptionDateFilter" class="form-control" placeholder="Select policy inception date" readonly />
-                </div>
-            `);
-
-            // Initialize date range pickers
-            $('#saleDateFilter, #goodAsSaleDateFilter, #policyInceptionDateFilter').daterangepicker({
-                autoUpdateInput: false,
-                locale: {
-                    cancelLabel: 'Clear'
-                }
-            });
-
-            // Set event listeners for applying date filters
-            $('#saleDateFilter, #goodAsSaleDateFilter, #policyInceptionDateFilter').on('apply.daterangepicker', function (ev, picker) {
-                const startDate = picker.startDate.format('YYYY-MM-DD');
-                const endDate = picker.endDate.format('YYYY-MM-DD');
-                $(this).val(`${startDate} - ${endDate}`);
-                table.draw(); // Trigger the table redraw
-            });
-
-            // Clear date range filters
-            $('#saleDateFilter, #goodAsSaleDateFilter, #policyInceptionDateFilter').on('cancel.daterangepicker', function () {
-                $(this).val('');
-                table.draw(); // Trigger the table redraw
-            });
-
-            // Attach change event to other filters
-            filterDropdowns.find('select').change(function () {
-                const selectedFilters = getSelectedFilters();
-                applyFilters(selectedFilters);
-            });
-        }
-
-        // Add date range filtering for each individual date field
-        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
-            const saleDateRange = $('#saleDateFilter').val();
-            const goodAsSaleDateRange = $('#goodAsSaleDateFilter').val();
-            const policyInceptionDateRange = $('#policyInceptionDateFilter').val();
-
-            const saleDate = data[8].match(/Sale Date: (\d{4}-\d{2}-\d{2})/);
-            const goodAsSaleDate = data[8].match(/Good As Sales Date: (\d{4}-\d{2}-\d{2})/);
-            const policyInceptionDate = data[8].match(/Policy Inception Date: (\d{4}-\d{2}-\d{2})/);
-
-            const dateFilters = [
-                { value: saleDateRange, date: saleDate },
-                { value: goodAsSaleDateRange, date: goodAsSaleDate },
-                { value: policyInceptionDateRange, date: policyInceptionDate }
-            ];
-
-            return dateFilters.every(function (filter) {
-                if (!filter.value) return true; // No filter applied
-                const [startDate, endDate] = filter.value.split(' - ');
-                const dateMoment = moment(filter.date ? filter.date[1] : "", 'YYYY-MM-DD'); 
-                return dateMoment.isBetween(moment(startDate, 'YYYY-MM-DD'), moment(endDate, 'YYYY-MM-DD'), null, '[]');
-            });
-        });
-
-        // Function to collect all selected filters
-        function getSelectedFilters() {
-            const filters = {};
-            $('#filterDropdowns select').each(function () {
-                const column = $(this).attr('id').replace('Filter', '');
-                const value = $(this).val();
-                filters[column] = value || "";
-            });
-            return filters;
-        }
-
-        // Apply filters to DataTable
-        function applyFilters(filters) {
-            const columnMap = {
-                'sales_associate': 3,
-                'sales_team': 4,
-                'provider': 5,
-                'source': 6,
-                'subproduct': 7
-            };
-
-            Object.keys(filters).forEach(function (key) {
-                const columnIndex = columnMap[key];
-                const value = filters[key];
-                if (columnIndex !== undefined) {
-                    table.column(columnIndex).search(value, false, false).draw();
-                }
-            });
-        }
-    });
+        //END TABLE
 
 
-
-        // Event to clear off-canvas content after it is closed
-        $('#detailOffCanvas').on('hidden.bs.offcanvas', function () {
-            // Clear tabs and content
-            $('#insuranceTabs').empty();
-            $('#insuranceTabContent').empty();
-        });
-
-        const offcanvas = document.getElementById('detailOffCanvas');
-
-        // Create and style the resize handle
-        const resizeHandle = document.createElement('div');
-        resizeHandle.style.width = '10px';
-        resizeHandle.style.height = '100%';
-        resizeHandle.style.background = '#ccc';
-        resizeHandle.style.cursor = 'ew-resize';
-        resizeHandle.style.position = 'absolute';
-        resizeHandle.style.top = '0';
-        resizeHandle.style.left = '-5px'; /* Slight overlap for better usability */
-        resizeHandle.style.zIndex = '1050';
-
-        offcanvas.appendChild(resizeHandle);
-
-        let isDragging = false;
-        let startX = 0;
-        let startWidth = 0;
-
-        // Helper to calculate dynamic min and max width based on screen size
-        function getDynamicMinWidth() {
-            return 200; // Set your minimum width in pixels
-        }
-
-        function getDynamicMaxWidth() {
-            return window.innerWidth < 992 ? window.innerWidth : Math.floor(window.innerWidth * 0.65);
-        }
-
-        // Start resizing on mousedown
-        resizeHandle.addEventListener('mousedown', function (e) {
-            isDragging = true;
-            startX = e.clientX;
-            startWidth = offcanvas.offsetWidth;
-
-            // Disable text selection while resizing
-            document.body.style.userSelect = 'none';
-            document.body.style.cursor = 'ew-resize';
-        });
-
-        // Resize the offcanvas on mousemove
-        document.addEventListener('mousemove', function (e) {
-            if (!isDragging) return;
-
-            const deltaX = startX - e.clientX; // Calculate the change in mouse position
-            let newWidth = startWidth + deltaX;
-
-            // Constrain the width to min and max values
-            newWidth = Math.max(getDynamicMinWidth(), Math.min(getDynamicMaxWidth(), newWidth));
-
-            offcanvas.style.width = newWidth + 'px';
-        });
-
-        // Stop resizing on mouseup
-        document.addEventListener('mouseup', function () {
-            if (isDragging) {
-                isDragging = false;
-                document.body.style.userSelect = ''; // Restore text selection
-                document.body.style.cursor = ''; // Restore default cursor
-            }
-        });
-
-        // Set initial width based on screen size
-        function setInitialWidth() {
-            if (window.innerWidth >= 992) {
-                offcanvas.style.width = '35%'; // Default 35% for large screens
-            } else {
-                offcanvas.style.width = '100%'; // Default 100% for small screens
-            }
-        }
-
-        // Call the initial setup and handle window resizing
-        setInitialWidth();
-        window.addEventListener('resize', setInitialWidth);
-
-        //============================================================================================================================
+    //OFF CANVASS DETAILS FUNCTION WITH EDIT
+    //============================================================================================================================
 
     const salesAssociates = @json($sales_associates); //for sales_associate_name
     const teams = @json($teams); //for team_name
@@ -536,7 +342,7 @@
     const teles = @json($teles); //for tele_name
     const commissioners = @json($commissioners); //for commissioner_title
 
-//============================================================================================================================
+    //============================================================================================================================
 
     function fetchInsuranceDetail(insuranceDetailId) {
         var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -808,6 +614,228 @@
             }
         });
     }
+    //END OFF CANVASS DETAILS FUNCTION WITH EDIT
+
+    //FILTER ON OFF CANVASS
+        function populateFilters(data) {
+            const uniqueColumns = ['sales_associate', 'sales_team', 'provider', 'source', 'subproduct'];
+            const filterDropdowns = $('#filterDropdowns');
+            filterDropdowns.empty();
+
+            uniqueColumns.forEach(function (column) {
+                let distinctValues = [...new Set(data.map(item => item[column]?.trim()))];
+                const options = [''].concat(distinctValues); // "All" as an empty string is always at the top
+
+                const dropdown = `
+                    <div class="mb-3">
+                        <label for="${column}Filter">${column.charAt(0).toUpperCase() + column.slice(1)}</label>
+                        <select class="form-select" id="${column}Filter">
+                            ${options.map(value => `<option value="${value}">${value || "All"}</option>`).join('')}
+                        </select>
+                    </div>`;
+                filterDropdowns.append(dropdown);
+
+                const choices = new Choices(`#${column}Filter`, {
+                    searchEnabled: true,
+                    removeItemButton: false,
+                    itemSelectText: '',
+                    placeholder: true,
+                    placeholderValue: `Select ${column}`,
+                    sorter: (a, b) => {
+                        if (a.value === "" || b.value === "") {
+                            return a.value === "" ? -1 : 1; 
+                        }
+                        return a.value.localeCompare(b.value);
+                    }
+                });
+            });
+
+            // Add separate date filter dropdowns
+            $('#filterDropdowns').append(`
+                <div class="mb-3">
+                    <label for="saleDateFilter">Sale Date</label>
+                    <input type="text" id="saleDateFilter" class="form-control" placeholder="Select sale date" readonly />
+                </div>
+                <div class="mb-3">
+                    <label for="goodAsSaleDateFilter">Good As Sales Date</label>
+                    <input type="text" id="goodAsSaleDateFilter" class="form-control" placeholder="Select good as sales date" readonly />
+                </div>
+                <div class="mb-3">
+                    <label for="policyInceptionDateFilter">Policy Inception Date</label>
+                    <input type="text" id="policyInceptionDateFilter" class="form-control" placeholder="Select policy inception date" readonly />
+                </div>
+            `);
+
+            // Initialize date range pickers
+            $('#saleDateFilter, #goodAsSaleDateFilter, #policyInceptionDateFilter').daterangepicker({
+                autoUpdateInput: false,
+                locale: {
+                    cancelLabel: 'Clear'
+                }
+            });
+
+            // Set event listeners for applying date filters
+            $('#saleDateFilter, #goodAsSaleDateFilter, #policyInceptionDateFilter').on('apply.daterangepicker', function (ev, picker) {
+                const startDate = picker.startDate.format('YYYY-MM-DD');
+                const endDate = picker.endDate.format('YYYY-MM-DD');
+                $(this).val(`${startDate} - ${endDate}`);
+                table.draw(); // Trigger the table redraw
+            });
+
+            // Clear date range filters
+            $('#saleDateFilter, #goodAsSaleDateFilter, #policyInceptionDateFilter').on('cancel.daterangepicker', function () {
+                $(this).val('');
+                table.draw(); // Trigger the table redraw
+            });
+
+            // Attach change event to other filters
+            filterDropdowns.find('select').change(function () {
+                const selectedFilters = getSelectedFilters();
+                applyFilters(selectedFilters);
+            });
+        }
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            const saleDateRange = $('#saleDateFilter').val();
+            const goodAsSaleDateRange = $('#goodAsSaleDateFilter').val();
+            const policyInceptionDateRange = $('#policyInceptionDateFilter').val();
+
+            const saleDate = data[8].match(/Sale Date: (\d{4}-\d{2}-\d{2})/);
+            const goodAsSaleDate = data[8].match(/Good As Sales Date: (\d{4}-\d{2}-\d{2})/);
+            const policyInceptionDate = data[8].match(/Policy Inception Date: (\d{4}-\d{2}-\d{2})/);
+
+            const dateFilters = [
+                { value: saleDateRange, date: saleDate },
+                { value: goodAsSaleDateRange, date: goodAsSaleDate },
+                { value: policyInceptionDateRange, date: policyInceptionDate }
+            ];
+
+            return dateFilters.every(function (filter) {
+                if (!filter.value) return true; // No filter applied
+                const [startDate, endDate] = filter.value.split(' - ');
+                const dateMoment = moment(filter.date ? filter.date[1] : "", 'YYYY-MM-DD'); 
+                return dateMoment.isBetween(moment(startDate, 'YYYY-MM-DD'), moment(endDate, 'YYYY-MM-DD'), null, '[]');
+            });
+        });
+
+        function getSelectedFilters() {
+            const filters = {};
+            $('#filterDropdowns select').each(function () {
+                const column = $(this).attr('id').replace('Filter', '');
+                const value = $(this).val();
+                filters[column] = value || "";
+            });
+            return filters;
+        }
+
+        function applyFilters(filters) {
+            const columnMap = {
+                'sales_associate': 3,
+                'sales_team': 4,
+                'provider': 5,
+                'source': 6,
+                'subproduct': 7
+            };
+
+            Object.keys(filters).forEach(function (key) {
+                const columnIndex = columnMap[key];
+                const value = filters[key];
+                if (columnIndex !== undefined) {
+                    table.column(columnIndex).search(value, false, false).draw();
+                }
+            });
+        }
+    });
+    //END FILTER
+
+    //OFF CANVASS RESIZE LOGIC
+        // Event to clear off-canvas content after it is closed
+        $('#detailOffCanvas').on('hidden.bs.offcanvas', function () {
+            // Clear tabs and content
+            $('#insuranceTabs').empty();
+            $('#insuranceTabContent').empty();
+        });
+
+        const offcanvas = document.getElementById('detailOffCanvas');
+
+        // Create and style the resize handle
+        const resizeHandle = document.createElement('div');
+        resizeHandle.style.width = '10px';
+        resizeHandle.style.height = '100%';
+        resizeHandle.style.background = '#ccc';
+        resizeHandle.style.cursor = 'ew-resize';
+        resizeHandle.style.position = 'absolute';
+        resizeHandle.style.top = '0';
+        resizeHandle.style.left = '-5px'; /* Slight overlap for better usability */
+        resizeHandle.style.zIndex = '1050';
+
+        offcanvas.appendChild(resizeHandle);
+
+        let isDragging = false;
+        let startX = 0;
+        let startWidth = 0;
+
+        // Helper to calculate dynamic min and max width based on screen size
+        function getDynamicMinWidth() {
+            return 200; // Set your minimum width in pixels
+        }
+
+        function getDynamicMaxWidth() {
+            return window.innerWidth < 992 ? window.innerWidth : Math.floor(window.innerWidth * 0.65);
+        }
+
+        // Start resizing on mousedown
+        resizeHandle.addEventListener('mousedown', function (e) {
+            isDragging = true;
+            startX = e.clientX;
+            startWidth = offcanvas.offsetWidth;
+
+            // Disable text selection while resizing
+            document.body.style.userSelect = 'none';
+            document.body.style.cursor = 'ew-resize';
+        });
+
+        // Resize the offcanvas on mousemove
+        document.addEventListener('mousemove', function (e) {
+            if (!isDragging) return;
+
+            const deltaX = startX - e.clientX; // Calculate the change in mouse position
+            let newWidth = startWidth + deltaX;
+
+            // Constrain the width to min and max values
+            newWidth = Math.max(getDynamicMinWidth(), Math.min(getDynamicMaxWidth(), newWidth));
+
+            offcanvas.style.width = newWidth + 'px';
+        });
+
+        // Stop resizing on mouseup
+        document.addEventListener('mouseup', function () {
+            if (isDragging) {
+                isDragging = false;
+                document.body.style.userSelect = ''; // Restore text selection
+                document.body.style.cursor = ''; // Restore default cursor
+            }
+        });
+
+        // Set initial width based on screen size
+        function setInitialWidth() {
+            if (window.innerWidth >= 992) {
+                offcanvas.style.width = '35%'; // Default 35% for large screens
+            } else {
+                offcanvas.style.width = '100%'; // Default 100% for small screens
+            }
+        }
+
+        // Call the initial setup and handle window resizing
+        setInitialWidth();
+        window.addEventListener('resize', setInitialWidth);
+
+
+
+    //END OFF CANVASS RESIZE LOGIC
+
+
+    
 
 
 
