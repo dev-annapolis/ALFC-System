@@ -1149,7 +1149,12 @@
                         <div class="col-md-4 mb-5 mb-md-5 mb-sm-5">
                             <button type="button" class="bg-secondary" id="addButton">ADD</button>
                         </div>
+                        <div class="col-md-4 mb-5 mb-md-5 mb-sm-5">
+                            <!-- Initially hidden remove button -->
+                            <button type="button" class="bg-danger" id="removeButton" style="display: none;">REMOVE</button>
+                        </div>
                     </div>
+
 
 
                     {{-- Travel Incentives, Offsetting, and Promo --}}
@@ -2316,21 +2321,29 @@
         fullAddressInput.value = fullAddress;
     }
 
+
     function checkIfGDFI() {
         const source = document.getElementById('selectSources').value;
-        const storedData = sessionStorage.getItem('formData');
+        const ifGdfiSelect = document.getElementById('ifGdfiSelect'); // Ensure this element exists
+        const gdficol = document.getElementById('gdficol');
+
+        // Retrieve stored data and parse it or initialize as an empty object
+        let storedData = JSON.parse(sessionStorage.getItem('formData')) || {};
 
         if (source == 2) {
             // Show the div
-            document.getElementById('gdficol').style.display = "block";
-            saveFormData();
+            gdficol.style.display = "block";
         } else {
             // Hide the div
-            document.getElementById('gdficol').style.display = "none";
-            ifGdfiSelect.value = "";
-            storedData.ifGdfiValue = '';
-            saveFormData();
+            gdficol.style.display = "none";
+            if (ifGdfiSelect) {
+                ifGdfiSelect.value = "";
+            }
+            storedData.ifGdfiValue = ''; // Safely set the value
         }
+
+        // Save updated data back to sessionStorage
+        sessionStorage.setItem('formData', JSON.stringify(storedData));
     }
 
 
@@ -2440,6 +2453,9 @@
         getVatSalesCreditandPercentage();
     }
 
+
+
+
     function addCommissionsInput() {
         let newAmountInput, newnNameInput, newSelectInput;
         let index = 0;
@@ -2447,13 +2463,19 @@
         const existingFields = document.querySelectorAll('.commissionAmount, .commissionSelect');
         const container = document.getElementById('commissionContainer');
         const initialSection = document.createElement('div');
+        const addButton = document.getElementById('addButton');
+        const removeButton = document.getElementById('removeButton'); // Get the remove button
+        const storedData = sessionStorage.getItem('formData');
 
         const firstRow = container.querySelector('.row');
+        // removeButton.style.display = 'none';
+
         if (firstRow) {
             firstRow.querySelectorAll('.col-md-4').forEach(col => {
                 col.classList.add('mt-5');
-                console.log("existing")
             });
+            removeButton.style.display = 'inline-block'; // Show Remove button when the first row is added
+
         } else {
             // Create the initial section and add it above the container
             initialSection.innerHTML = `
@@ -2465,26 +2487,33 @@
             `;
             // Append the initialSection above the container
             container.prepend(initialSection);
+
         }
 
+        // Show the "Remove" button when the page loads, but keep it hidden
+
         // Event listener for "Add" button click
-        document.getElementById('addButton').addEventListener('click', function () {
+        addButton.addEventListener('click', function () {
             initialSection.remove();
+
+            // Show the "Remove" button after the first addition
+            if (container.querySelectorAll('.row').length === 0) {
+                removeButton.style.display = 'inline-block'; // Show Remove button when the first row is added
+            }
 
             // Create a new div element with the same structure
             const newSection = document.createElement('div');
 
             // Check if it's the first row being added
             if (container.querySelectorAll('.row').length === 0) {
-                newSection.classList.add('row', 'mt-5');  // Apply mt-5 to the first row
+                newSection.classList.add('row', 'mt-5'); // Apply mt-5 to the first row
             } else {
-                newSection.classList.add('row');  // No mt-5 for subsequent rows
+                newSection.classList.add('row'); // No mt-5 for subsequent rows
             }
 
             // For the newly added row, do not add mt-5
             newSection.innerHTML = `
                 <div class="col-md-4">
-
                     <div class="mb-3 mb-md-4 mb-sm-4">
                         <label for="commissionsLabel" class="form-label fw-bold">Commissions</label>
                         <select class="form-control rounded-0 border-1 rounded-0 m-0 commissionSelect" id="commissionSelect${index}">
@@ -2494,12 +2523,6 @@
                             @endforeach
                         </select>
                     </div>
-
-
-
-
-
-
                 </div>
 
                 <div class="col-md-4">
@@ -2527,26 +2550,44 @@
             reapplyFormattingListeners();
 
             // Increase the index for the next field
-            index++;  // Increase the index after the field is added
+            index++; // Increase the index after the field is added
+        });
+
+        // Event listener for "Remove" button
+        removeButton.addEventListener('click', function () {
+            const rows = container.querySelectorAll('.row');
+            if (rows.length > 0) {
+                rows[rows.length - 1].remove(); // Remove the last row
+            }
+
+            // Hide "Remove" button if no rows remain
+            if (container.querySelectorAll('.row').length === 0) {
+                removeButton.style.display = 'none';
+                initialSection.innerHTML = `
+                    <div class="row mt-md-5" id="initialCommissionsTitle">
+                        <div class="col-md-4">
+                            <label for="commissionsTitle" class="form-label fw-bold">Commissions</label>
+                        </div>
+                    </div>
+                `;
+                // Append the initialSection above the container
+                container.prepend(initialSection);
+            }
+
+            if (storedData) {
+                let parsedData = JSON.parse(storedData);
+                if (parsedData.commissionsSelect && parsedData.commissionsSelect.length > 0) {
+                    parsedData.commissionsSelect.pop(); // Remove the last element from the commissionsSelect array
+                    sessionStorage.setItem('formData', JSON.stringify(parsedData)); // Save the updated data
+                }
+            }
         });
 
         // Attach event listeners to any commission input fields that already exist or newly added fields
-        attachEventListeners();
-
         function attachEventListeners() {
-            // Attach event listeners to all commissionAmount, commissionName, commissionSelect elements
             const amountInputs = document.querySelectorAll('.commissionAmount');
             const nameInputs = document.querySelectorAll('.commissionName');
             const selectInputs = document.querySelectorAll('.commissionSelect');
-
-            // For each of the commissionAmount inputs
-            amountInputs.forEach(input => {
-                input.addEventListener('input', function () {
-                    getCommissionsValue();
-                    saveFormData();
-                    getVatSalesCreditandPercentage();
-                });
-            });
 
             // For each of the commissionName inputs
             nameInputs.forEach(input => {
@@ -2561,16 +2602,33 @@
                     saveFormData(); // Save data whenever the select value changes
                 });
             });
+
+            amountInputs.forEach(input => {
+                input.addEventListener('input', function () {
+                    getCommissionsValue();
+                    saveFormData();
+                    getVatSalesCreditandPercentage();
+                });
+            });
         }
 
-
-
+        attachEventListeners();
     }
+
+
+
+
+
+
+
+
+
+
+
 
 
     // Function to get all values from the commission fields
     function getCommissionsValue() {
-
         let initialTotalCommission = 0;
 
         const container = document.getElementById('commissionContainer');
@@ -2578,27 +2636,19 @@
         const commissionInputs = container.querySelectorAll('.commissionAmount');
         const commissionNames = container.querySelectorAll('.commissionName');
 
-        // Convert input values to numbers for the incentives (assuming they are global or already defined)
-        // const travelIncentivesValues = parseFloat(removeCommas(travelIncentivesInput.value)) || 0;
-        // const offsettingValue = parseFloat(removeCommas(offSettingInput.value)) || 0;
-        // const promoValue = parseFloat(removeCommas(promoInput.value)) || 0;
-
-        // Calculate the initial total commission (assuming this is the base value)
-        // initialTotalCommission = travelIncentivesValues + offsettingValue + promoValue;
-
         const commissions = [];
         let totalCommission = initialTotalCommission;
 
         commissionSelects.forEach((select, index) => {
             const amountInput = commissionInputs[index];
-            const nameInput = commissionNames[index];
+            const nameInput = commissionNames[index]; // Optional
 
-            if (select.value && amountInput && amountInput.value && nameInput && nameInput.value) {
+            if (select.value && amountInput && amountInput.value) {
                 const commissionAmount = parseFloat(removeCommas(amountInput.value)) || 0; // Safely parse the commission amount
 
                 commissions.push({
                     commissionType: select.value,
-                    commissionName: nameInput.value,
+                    commissionName: nameInput ? nameInput.value : "", // Default to empty string if no name is provided
                     commissionAmount: commissionAmount
                 });
 
