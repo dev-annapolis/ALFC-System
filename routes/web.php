@@ -6,6 +6,8 @@ use App\Http\Controllers\TestController;
 use App\Http\Controllers\SalesReportController;
 use App\Http\Controllers\SalesProcessorController;
 use App\Http\Controllers\RevenueAssistantController;
+use App\Http\Controllers\SalesProcessorSupervisorController;
+
 Route::get('/', function () {
     return view('landing-page');
 });
@@ -49,6 +51,10 @@ Route::get('/api/view-commission/{insurance_details_id}', [RevenueAssistantContr
 Route::post('/api/update-commission/{insurance_details_id}', [RevenueAssistantController::class, 'updateCommission']);
 Route::post('/api/ra/{id}/comments', [RevenueAssistantController::class, 'postComment']);
 Route::post('/api/ra/verify/{id}', [RevenueAssistantController::class, 'verifyInsuranceDetail']);
+
+Route::get('/sps/index', [SalesProcessorSupervisorController::class, 'SalesProcessorSupervisorIndex'])->name('sps.index');
+Route::get('/api/sps-index', [SalesProcessorSupervisorController::class, 'spsIndexData']);
+
 
 
 use App\Http\Middleware\RoleMiddleware;

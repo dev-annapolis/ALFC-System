@@ -20,7 +20,7 @@
     color: var(--text-color);
     box-shadow: inset 4px 4px 8px var(--shadow-dark),
                 inset -4px -4px 8px var(--shadow-light);
-    overflow: hidden;
+    overflow: visible;
     white-space: nowrap;        /* Prevent text wrapping */
     text-overflow: ellipsis;    /* Add ellipsis for overflowing text */
     font-size:12px;
@@ -135,6 +135,21 @@
     width: 30px;  /* Adjust as needed */
     padding: 0;
 }
+
+.ra-comments {
+    max-width: 150px; /* Set your desired width */
+    white-space: nowrap; /* Prevent text from wrapping to the next line */
+    overflow: hidden; /* Hide the overflow text */
+    text-overflow: ellipsis; /* Show ellipsis (...) when text is truncated */
+}
+
+.contact-info {
+    max-width: 150px; /* Adjust based on your table layout */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block; /* Ensures the ellipsis is applied correctly */
+}
 </style>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
 
@@ -151,15 +166,15 @@
         <table id="salesReportTable" class="table table-striped dt-responsive thin-horizontal-lines neumorphic-table" style="width:100%">
             <thead>
                 <tr>
-                    <th style="text-align: center;">Issuance Code</th>
-                    <th style="text-align: center;">Assured Name</th>
+                    <th style="text-align: center;">Assured Name<br>(Issuance Code)</th>
                     <th style="text-align: center;">Contact Number </br> Email</th>
-                    <th style="text-align: center;">Sales Associate</th>
+                    <th style="text-align: center;">Sales Associate<</th>
                     <th style="text-align: center;">Sales Team </th>
                     <th style="text-align: center;">Provider</th>
                     <th style="text-align: center;">Source</th>
                     <th style="text-align: center;">Subproduct</th>
                     <th style="text-align: center;">Sale Date </br> Good As Sales Date </br> Policy Inception Date</th>
+                    <th style="text-align: center;">RA Comments</th>
                     <th style="text-align: center;">Sale Status</th>
                     <th style="text-align: center;">Actions</th>
                 </tr>
@@ -201,7 +216,23 @@
 
         </div>
     </div>
-
+    {{-- comment modal --}}
+    <div id="addCommentModal" class="modal fade" tabindex="-1" aria-labelledby="addCommentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addCommentModalLabel">RA Comment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea id="commentInput" class="form-control" rows="4" placeholder="Enter your comment here..." readonly></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
@@ -227,7 +258,7 @@
             dom: '<"row TOP-ROW"<"col-md-6 MASTER-LIST"><"col-md-6 pb-3 SEARCHING "f>>t<"row"<"col-md-6 pt-3"l><"col-md-6 pt-2"p>>',
                 initComplete: function () {
                     // Add the header to the MASTER-LIST column
-                    $('.MASTER-LIST').html('<h1><span style="color: #FF3832;"><b>Master</b></span> List</h1>');
+                    $('.MASTER-LIST').html('<h1><span style="color: #FF3832;"><b>SPS</b></span> Masterlist</h1>');
 
                     // Wrap the search field and button in a flex container
                     $('.SEARCHING').addClass('d-flex align-items-center justify-content-end');
@@ -240,22 +271,22 @@
                     `);
                 },
             columns: [
-                { title: "Issuance Code" },  // Column 0
-                { title: "Assured Name" },   // Column 1
-                { title: "Contact Info" },   // Column 2
-                { title: "Sales Associate" },// Column 3
-                { title: "Teams" },          // Column 4
-                { title: "Provider" },       // Column 5
-                { title: "Source" },         // Column 6
-                { title: "Subproduct" },     // Column 7
-                { title: "Dates" },          // Column 8
+                { title: "Assured &<br> Issuance Code" },  // Column 0
+                { title: "Contact Info" },   // Column 1
+                { title: "Sales Associate" },// Column 2
+                { title: "Teams" },          // Column 3
+                { title: "Provider" },       // Column 4
+                { title: "Source" },         // Column 5
+                { title: "Subproduct" },     // Column 6
+                { title: "Dates" },          // Column 7
+                { title: "RA Comments" },    // Column 8
                 { title: "Status" },         // Column 9
                 { title: "Actions", orderable: false } // Column 10
             ]
         });
 
         $.ajax({
-            url: '/api/sales-report',
+            url: '/api/sps-index',
             method: 'GET',
             success: function (data) {
                 table.clear();
@@ -277,15 +308,19 @@
                         ${detail.policy_inception_date ? `<div><strong>Policy Inception Date:</strong> ${detail.policy_inception_date}</div>` : ''}
                     `;
                     table.row.add([
-                        `<strong>${detail.issuance_code}</strong>`,
-                        `<strong>${detail.name}</strong>`,
-                        `${detail.contact_number} <br> ${detail.email}`,
+                        `<strong>${detail.name}</strong> <br>${detail.issuance_code}`,
+                        `<div class="contact-info" title="${detail.contact_number} \n${detail.email}">
+                            ${detail.contact_number} <br> ${detail.email}
+                        </div>`,
                         `${detail.sales_associate}`,
                         `${detail.sales_team}`,
                         detail.provider,
                         detail.source,
                         detail.subproduct,
                         saleDates,
+                        `<div class="ra-comments" title="${detail.ra_comments}" data-bs-toggle="modal" data-bs-target="#addCommentModal" data-comment="${detail.ra_comments}">
+                            ${detail.ra_comments}
+                        </div>`,
                         `<span style="color: ${getStatusColor(detail.sale_status)}; font-weight: bold;">${detail.sale_status}</span>`,
                         `<div class="dropdown">
                             <button class="btn dropdown-toggle p-2 border-0 bg-transparent circular-btn" type="button" id="dropdownMenuButton${detail.id}" data-bs-toggle="dropdown" aria-expanded="false">
@@ -730,13 +765,13 @@
 
         function applyFilters(filters) {
             const columnMap = {
-                'sales_associate': 3,
-                'sales_team': 4,
-                'provider': 5,
-                'source': 6,
-                'subproduct': 7
+                'sales_associate': 2,
+                'sales_team': 3,
+                'provider': 4,
+                'source': 5,
+                'subproduct': 6
             };
-
+            
             Object.keys(filters).forEach(function (key) {
                 const columnIndex = columnMap[key];
                 const value = filters[key];
@@ -835,9 +870,12 @@
     //END OFF CANVASS RESIZE LOGIC
 
 
-    
-
-
+    //COMMENT MODAL
+    $(document).on('click', '.ra-comments', function () {
+        const comment = $(this).data('comment'); // Fetch the comment text
+        $('#commentInput').val(comment); // Set the textarea with the comment
+    });
+    //END COMMENT MODAL
 
 
 
@@ -845,3 +883,4 @@
 </script>
 
 @endsection
+
