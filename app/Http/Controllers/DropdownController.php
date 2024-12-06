@@ -7,12 +7,14 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Models\Team;
 use App\Models\Provider;
-use App\Models\AlfcBranch;
 use App\Models\Product;
-
 use App\Models\Area;
-
 use App\Models\Source;
+use App\Models\SourceBranch;
+
+use App\Models\AlfcBranch;
+
+
 
 
 class DropdownController extends Controller
@@ -302,6 +304,53 @@ class DropdownController extends Controller
         $source->save();
 
         return redirect()->back()->with('success', 'Source status updated successfully!');
+    }
+
+
+
+
+
+    public function sourceBranchesIndex()
+    {
+        $sourceBranches = SourceBranch::orderBy('status', 'asc')->get();
+        return view('dropdown.source_branches', compact('sourceBranches'));
+    }
+
+    public function sourceBranchesStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:source_branches,name',
+        ]);
+
+        SourceBranch::create([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Source Branch added successfully!');
+    }
+
+    public function sourceBranchesUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:source_branches,id',
+            'name' => 'required|string|max:255|unique:source_branches,name,' . $request->id,
+        ]);
+
+        $sourceBranch = SourceBranch::findOrFail($validated['id']);
+        $sourceBranch->update([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Source Branch updated successfully!');
+    }
+
+    public function sourceBranchesChangeStatus($id)
+    {
+        $sourceBranch = SourceBranch::findOrFail($id);
+        $sourceBranch->status = $sourceBranch->status === 'active' ? 'inactive' : 'active';
+        $sourceBranch->save();
+
+        return redirect()->back()->with('success', 'Source Branch status updated successfully!');
     }
 
 

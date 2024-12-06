@@ -94,17 +94,25 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
     Route::patch('/areasChangeStatus/{id}', [DropdownController::class, 'areasChangeStatus'])->name('areas.changeStatus');
 
 
+    // SOURCES
     Route::get('/sourcesIndex', [DropdownController::class, 'sourcesIndex'])->name('sources.index');
     Route::post('/sourcesStore', [DropdownController::class, 'sourcesStore'])->name('sources.store');
     Route::put('/sourcesUpdate', [DropdownController::class, 'sourcesUpdate'])->name('sources.update');
     Route::patch('/sourcesChangeStatus/{id}', [DropdownController::class, 'sourcesChangeStatus'])->name('sources.changeStatus');
 
 
+    // SOURCE BRANCHES
+    Route::get('/sourceBranchesIndex', [DropdownController::class, 'sourceBranchesIndex'])->name('source_branches.index');
+    Route::post('/sourceBranchesStore', [DropdownController::class, 'sourceBranchesStore'])->name('source_branches.store');
+    Route::put('/sourceBranchesUpdate', [DropdownController::class, 'sourceBranchesUpdate'])->name('source_branches.update');
+    Route::patch('/sourceBranchesChangeStatus/{id}', [DropdownController::class, 'sourceBranchesChangeStatus'])->name('source_branches.changeStatus');
+
+
+
+
 
 
     // SUBPRODUCTS
-    // SOURCES
-    // SOURCE BRANCHES
     // IF GDFI
     // ALFC BRANCHES
     // MODE OF PAYMENTS

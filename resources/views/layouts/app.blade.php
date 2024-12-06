@@ -51,6 +51,7 @@
                                     <a class="dropdown-item" href="{{ route('products.index') }}">{{ __('Products') }}</a>
                                     <a class="dropdown-item" href="{{ route('areas.index') }}">{{ __('Areas') }}</a>
                                     <a class="dropdown-item" href="{{ route('sources.index') }}">{{ __('Sources') }}</a>
+                                    <a class="dropdown-item" href="{{ route('source_branches.index') }}">{{ __('Source Branches') }}</a>
 
 
                                 </div>
