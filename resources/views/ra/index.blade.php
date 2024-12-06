@@ -385,6 +385,29 @@ $(document).on('click', '.dropdown-item.view-commission', function () {
                     `;
                     $('#commissionTableBody').append(row);
                 });
+
+                // Restrict "commission-amount" column to only allow numbers and decimals
+                $('#commissionTableBody').on('keypress', '.commission-amount', function (e) {
+                    const charCode = e.which || e.keyCode;
+
+                    // Allow numbers, backspace, delete, and decimal point
+                    if (
+                        (charCode < 48 || charCode > 57) && // Not a number (0-9)
+                        charCode !== 46 &&                 // Not a decimal point
+                        charCode !== 8 &&                  // Not backspace
+                        charCode !== 37 && charCode !== 39 // Not left or right arrow keys
+                    ) {
+                        e.preventDefault();
+                    }
+
+                    // Prevent multiple decimals
+                    if (charCode === 46 && $(this).text().includes('.')) {
+                        e.preventDefault();
+                    }
+                });
+
+
+
                 $('#commissionModal').modal('show');
                 $('#commissionModal').data('insurance-details-id', insuranceDetailsId);
             } else {
