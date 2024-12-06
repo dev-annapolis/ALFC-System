@@ -110,12 +110,15 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
 
 
 
-
+    // MODE OF PAYMENTS
+    Route::get('/modeOfPaymentsIndex', [DropdownController::class, 'modeOfPaymentsIndex'])->name('mode_of_payments.index');
+    Route::post('/modeOfPaymentsStore', [DropdownController::class, 'modeOfPaymentsStore'])->name('mode_of_payments.store');
+    Route::put('/modeOfPaymentsUpdate', [DropdownController::class, 'modeOfPaymentsUpdate'])->name('mode_of_payments.update');
+    Route::patch('/modeOfPaymentsChangeStatus/{id}', [DropdownController::class, 'modeOfPaymentsChangeStatus'])->name('mode_of_payments.changeStatus');
 
     // SUBPRODUCTS
     // IF GDFI
     // ALFC BRANCHES
-    // MODE OF PAYMENTS
     // COMMISIONERS
     // TELES
 });

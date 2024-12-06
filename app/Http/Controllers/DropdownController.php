@@ -13,6 +13,7 @@ use App\Models\Source;
 use App\Models\SourceBranch;
 
 use App\Models\AlfcBranch;
+use App\Models\ModeOfPayment;
 
 
 
@@ -309,7 +310,6 @@ class DropdownController extends Controller
 
 
 
-
     public function sourceBranchesIndex()
     {
         $sourceBranches = SourceBranch::orderBy('status', 'asc')->get();
@@ -352,6 +352,57 @@ class DropdownController extends Controller
 
         return redirect()->back()->with('success', 'Source Branch status updated successfully!');
     }
+
+
+
+
+    public function modeOfPaymentsIndex()
+    {
+        $modeOfPayments = ModeOfPayment::orderBy('status', 'asc')->get();
+        return view('dropdown.mode_of_payments', compact('modeOfPayments'));
+    }
+
+    public function modeOfPaymentsStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:mode_of_payments,name',
+        ]);
+
+        ModeOfPayment::create([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Mode of Payment added successfully!');
+    }
+
+    public function modeOfPaymentsUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:mode_of_payments,id',
+            'name' => 'required|string|max:255|unique:mode_of_payments,name,' . $request->id,
+        ]);
+
+        $modeOfPayment = ModeOfPayment::findOrFail($validated['id']);
+        $modeOfPayment->update([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Mode of Payment updated successfully!');
+    }
+
+    public function modeOfPaymentsChangeStatus($id)
+    {
+        $modeOfPayment = ModeOfPayment::findOrFail($id);
+        $modeOfPayment->status = $modeOfPayment->status === 'active' ? 'inactive' : 'active';
+        $modeOfPayment->save();
+
+        return redirect()->back()->with('success', 'Mode of Payment status updated successfully!');
+    }
+
+
+
+
+
 
 
 
