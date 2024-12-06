@@ -94,6 +94,10 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
     Route::patch('/areasChangeStatus/{id}', [DropdownController::class, 'areasChangeStatus'])->name('areas.changeStatus');
 
 
+    Route::get('/sourcesIndex', [DropdownController::class, 'sourcesIndex'])->name('sources.index');
+    Route::post('/sourcesStore', [DropdownController::class, 'sourcesStore'])->name('sources.store');
+    Route::put('/sourcesUpdate', [DropdownController::class, 'sourcesUpdate'])->name('sources.update');
+    Route::patch('/sourcesChangeStatus/{id}', [DropdownController::class, 'sourcesChangeStatus'])->name('sources.changeStatus');
 
 
 

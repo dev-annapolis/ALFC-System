@@ -12,6 +12,7 @@ use App\Models\Product;
 
 use App\Models\Area;
 
+use App\Models\Source;
 
 
 class DropdownController extends Controller
@@ -256,6 +257,52 @@ class DropdownController extends Controller
         return redirect()->back()->with('success', 'Area status updated successfully!');
     }
 
+
+
+
+
+    public function sourcesIndex()
+    {
+        $sources = Source::orderBy('status', 'asc')->get();
+        return view('dropdown.sources', compact('sources'));
+    }
+
+    public function sourcesStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:sources,name',
+        ]);
+
+        Source::create([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Source added successfully!');
+    }
+
+    public function sourcesUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:sources,id',
+            'name' => 'required|string|max:255|unique:sources,name,' . $request->id,
+        ]);
+
+        $source = Source::findOrFail($validated['id']);
+        $source->update([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Source updated successfully!');
+    }
+
+    public function sourcesChangeStatus($id)
+    {
+        $source = Source::findOrFail($id);
+        $source->status = $source->status === 'active' ? 'inactive' : 'active';
+        $source->save();
+
+        return redirect()->back()->with('success', 'Source status updated successfully!');
+    }
 
 
 
