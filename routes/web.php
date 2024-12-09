@@ -124,13 +124,20 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
     Route::patch('/subproductsChangeStatus/{id}', [DropdownController::class, 'subproductsChangeStatus'])->name('subproducts.changeStatus');
 
 
-
-
-
-
-
     // IF GDFI
-    // ALFC BRANCHES
+    Route::get('/ifGdfis', [DropdownController::class, 'ifGdfiIndex'])->name('gdfis.index');
+    Route::post('/ifGdfiStore', [DropdownController::class, 'ifGdfiStore'])->name('gdfis.store');
+    Route::put('/ifGdfiUpdate', [DropdownController::class, 'ifGdfiUpdate'])->name('gdfis.update');
+    Route::patch('/ifGdfiChangeStatus/{id}', [DropdownController::class, 'ifGdfiChangeStatus'])->name('gdfis.changeStatus');
+
+
+
+
+
+
+
+
+
     // COMMISIONERS
     // TELES
 });

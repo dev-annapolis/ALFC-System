@@ -18,6 +18,7 @@ use App\Models\ModeOfPayment;
 use App\Models\Subproduct;
 
 
+use App\Models\IfGdfi;
 
 class DropdownController extends Controller
 {
@@ -466,6 +467,51 @@ class DropdownController extends Controller
 
 
 
+
+
+
+    public function ifGdfiIndex()
+    {
+        $ifGdfis = IfGdfi::orderBy('status', 'asc')->get();
+        return view('dropdown.ifGdfis', compact('ifGdfis'));
+    }
+
+    public function ifGdfiStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:if_gdfis,name',
+        ]);
+
+        IfGdfi::create([
+            'name' => $validated['name']
+        ]);
+
+        return redirect()->back()->with('success', 'IfGdfi added successfully!');
+    }
+
+    public function ifGdfiUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:if_gdfis,id',
+            'name' => 'required|string|max:255|unique:if_gdfis,name,' . $request->id,
+        ]);
+
+        $ifGdfi = IfGdfi::findOrFail($validated['id']);
+        $ifGdfi->update([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'IfGdfi updated successfully!');
+    }
+
+    public function ifGdfiChangeStatus($id)
+    {
+        $ifGdfi = IfGdfi::findOrFail($id);
+        $ifGdfi->status = $ifGdfi->status === 'active' ? 'inactive' : 'active';
+        $ifGdfi->save();
+
+        return redirect()->back()->with('success', 'IfGdfi status updated successfully!');
+    }
 
 
 

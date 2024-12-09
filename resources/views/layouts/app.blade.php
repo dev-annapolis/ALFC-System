@@ -54,6 +54,7 @@
                                     <a class="dropdown-item" href="{{ route('source_branches.index') }}">{{ __('Source Branches') }}</a>
                                     <a class="dropdown-item" href="{{ route('mode_of_payments.index') }}">{{ __('Mode of Payment') }}</a>
                                     <a class="dropdown-item" href="{{ route('subproducts.index') }}">{{ __('Sub-Products') }}</a>
+                                    <a class="dropdown-item" href="{{ route('gdfis.index') }}">{{ __('GDFI') }}</a>
 
 
                                 </div>
