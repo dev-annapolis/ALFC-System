@@ -15,6 +15,7 @@ use App\Models\SourceBranch;
 use App\Models\AlfcBranch;
 use App\Models\ModeOfPayment;
 
+use App\Models\Subproduct;
 
 
 
@@ -359,7 +360,10 @@ class DropdownController extends Controller
     public function modeOfPaymentsIndex()
     {
         $modeOfPayments = ModeOfPayment::orderBy('status', 'asc')->get();
-        return view('dropdown.mode_of_payments', compact('modeOfPayments'));
+
+        return view('dropdown.mode_of_payments', compact(
+            'modeOfPayments'
+        ));
     }
 
     public function modeOfPaymentsStore(Request $request)
@@ -400,6 +404,63 @@ class DropdownController extends Controller
     }
 
 
+
+
+
+
+
+    public function subproductsIndex()
+    {
+        $subproducts = Subproduct::with('product')->orderBy('status', 'asc')->get();
+        $products = Product::all(); // Fetch all products for the dropdown
+
+        return view('dropdown.sub_product', compact(
+            'subproducts',
+            'products'
+
+        ));
+    }
+
+    public function subproductsStore(Request $request)
+    {
+        $validated = $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'name' => 'required|string|max:255|unique:subproducts,name',
+        ]);
+
+        Subproduct::create([
+            'product_id' => $validated['product_id'],
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Subproduct added successfully!');
+    }
+
+    public function subproductsUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:subproducts,id',
+            'product_id' => 'required|exists:products,id',
+            'name' => 'required|string|max:255|unique:subproducts,name,' . $request->id,
+        ]);
+
+        $subproduct = Subproduct::findOrFail($validated['id']);
+        $subproduct->update([
+            'product_id' => $validated['product_id'],
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Subproduct updated successfully!');
+    }
+
+    public function subproductsChangeStatus($id)
+    {
+        $subproduct = Subproduct::findOrFail($id);
+        $subproduct->status = $subproduct->status === 'active' ? 'inactive' : 'active';
+        $subproduct->save();
+
+        return redirect()->back()->with('success', 'Subproduct status updated successfully!');
+    }
 
 
 

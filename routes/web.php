@@ -116,7 +116,19 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
     Route::put('/modeOfPaymentsUpdate', [DropdownController::class, 'modeOfPaymentsUpdate'])->name('mode_of_payments.update');
     Route::patch('/modeOfPaymentsChangeStatus/{id}', [DropdownController::class, 'modeOfPaymentsChangeStatus'])->name('mode_of_payments.changeStatus');
 
+
     // SUBPRODUCTS
+    Route::get('/subproductsIndex', [DropdownController::class, 'subproductsIndex'])->name('subproducts.index');
+    Route::post('/subproductsStore', [DropdownController::class, 'subproductsStore'])->name('subproducts.store');
+    Route::put('/subproductsUpdate', [DropdownController::class, 'subproductsUpdate'])->name('subproducts.update');
+    Route::patch('/subproductsChangeStatus/{id}', [DropdownController::class, 'subproductsChangeStatus'])->name('subproducts.changeStatus');
+
+
+
+
+
+
+
     // IF GDFI
     // ALFC BRANCHES
     // COMMISIONERS
