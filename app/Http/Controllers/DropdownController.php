@@ -7,12 +7,18 @@ use Illuminate\Support\Facades\Auth;
 
 use App\Models\Team;
 use App\Models\Provider;
-use App\Models\AlfcBranch;
 use App\Models\Product;
-
 use App\Models\Area;
+use App\Models\Source;
+use App\Models\SourceBranch;
+
+use App\Models\AlfcBranch;
+use App\Models\ModeOfPayment;
+
+use App\Models\Subproduct;
 
 
+use App\Models\IfGdfi;
 
 class DropdownController extends Controller
 {
@@ -258,6 +264,254 @@ class DropdownController extends Controller
 
 
 
+
+
+    public function sourcesIndex()
+    {
+        $sources = Source::orderBy('status', 'asc')->get();
+        return view('dropdown.sources', compact('sources'));
+    }
+
+    public function sourcesStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:sources,name',
+        ]);
+
+        Source::create([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Source added successfully!');
+    }
+
+    public function sourcesUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:sources,id',
+            'name' => 'required|string|max:255|unique:sources,name,' . $request->id,
+        ]);
+
+        $source = Source::findOrFail($validated['id']);
+        $source->update([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Source updated successfully!');
+    }
+
+    public function sourcesChangeStatus($id)
+    {
+        $source = Source::findOrFail($id);
+        $source->status = $source->status === 'active' ? 'inactive' : 'active';
+        $source->save();
+
+        return redirect()->back()->with('success', 'Source status updated successfully!');
+    }
+
+
+
+
+    public function sourceBranchesIndex()
+    {
+        $sourceBranches = SourceBranch::orderBy('status', 'asc')->get();
+        return view('dropdown.source_branches', compact('sourceBranches'));
+    }
+
+    public function sourceBranchesStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:source_branches,name',
+        ]);
+
+        SourceBranch::create([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Source Branch added successfully!');
+    }
+
+    public function sourceBranchesUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:source_branches,id',
+            'name' => 'required|string|max:255|unique:source_branches,name,' . $request->id,
+        ]);
+
+        $sourceBranch = SourceBranch::findOrFail($validated['id']);
+        $sourceBranch->update([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Source Branch updated successfully!');
+    }
+
+    public function sourceBranchesChangeStatus($id)
+    {
+        $sourceBranch = SourceBranch::findOrFail($id);
+        $sourceBranch->status = $sourceBranch->status === 'active' ? 'inactive' : 'active';
+        $sourceBranch->save();
+
+        return redirect()->back()->with('success', 'Source Branch status updated successfully!');
+    }
+
+
+
+
+    public function modeOfPaymentsIndex()
+    {
+        $modeOfPayments = ModeOfPayment::orderBy('status', 'asc')->get();
+
+        return view('dropdown.mode_of_payments', compact(
+            'modeOfPayments'
+        ));
+    }
+
+    public function modeOfPaymentsStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:mode_of_payments,name',
+        ]);
+
+        ModeOfPayment::create([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Mode of Payment added successfully!');
+    }
+
+    public function modeOfPaymentsUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:mode_of_payments,id',
+            'name' => 'required|string|max:255|unique:mode_of_payments,name,' . $request->id,
+        ]);
+
+        $modeOfPayment = ModeOfPayment::findOrFail($validated['id']);
+        $modeOfPayment->update([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Mode of Payment updated successfully!');
+    }
+
+    public function modeOfPaymentsChangeStatus($id)
+    {
+        $modeOfPayment = ModeOfPayment::findOrFail($id);
+        $modeOfPayment->status = $modeOfPayment->status === 'active' ? 'inactive' : 'active';
+        $modeOfPayment->save();
+
+        return redirect()->back()->with('success', 'Mode of Payment status updated successfully!');
+    }
+
+
+
+
+
+
+
+    public function subproductsIndex()
+    {
+        $subproducts = Subproduct::with('product')->orderBy('status', 'asc')->get();
+        $products = Product::all(); // Fetch all products for the dropdown
+
+        return view('dropdown.sub_product', compact(
+            'subproducts',
+            'products'
+
+        ));
+    }
+
+    public function subproductsStore(Request $request)
+    {
+        $validated = $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'name' => 'required|string|max:255|unique:subproducts,name',
+        ]);
+
+        Subproduct::create([
+            'product_id' => $validated['product_id'],
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Subproduct added successfully!');
+    }
+
+    public function subproductsUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:subproducts,id',
+            'product_id' => 'required|exists:products,id',
+            'name' => 'required|string|max:255|unique:subproducts,name,' . $request->id,
+        ]);
+
+        $subproduct = Subproduct::findOrFail($validated['id']);
+        $subproduct->update([
+            'product_id' => $validated['product_id'],
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Subproduct updated successfully!');
+    }
+
+    public function subproductsChangeStatus($id)
+    {
+        $subproduct = Subproduct::findOrFail($id);
+        $subproduct->status = $subproduct->status === 'active' ? 'inactive' : 'active';
+        $subproduct->save();
+
+        return redirect()->back()->with('success', 'Subproduct status updated successfully!');
+    }
+
+
+
+
+
+
+
+
+    public function ifGdfiIndex()
+    {
+        $ifGdfis = IfGdfi::orderBy('status', 'asc')->get();
+        return view('dropdown.ifGdfis', compact('ifGdfis'));
+    }
+
+    public function ifGdfiStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:if_gdfis,name',
+        ]);
+
+        IfGdfi::create([
+            'name' => $validated['name']
+        ]);
+
+        return redirect()->back()->with('success', 'IfGdfi added successfully!');
+    }
+
+    public function ifGdfiUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:if_gdfis,id',
+            'name' => 'required|string|max:255|unique:if_gdfis,name,' . $request->id,
+        ]);
+
+        $ifGdfi = IfGdfi::findOrFail($validated['id']);
+        $ifGdfi->update([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'IfGdfi updated successfully!');
+    }
+
+    public function ifGdfiChangeStatus($id)
+    {
+        $ifGdfi = IfGdfi::findOrFail($id);
+        $ifGdfi->status = $ifGdfi->status === 'active' ? 'inactive' : 'active';
+        $ifGdfi->save();
+
+        return redirect()->back()->with('success', 'IfGdfi status updated successfully!');
+    }
 
 
 

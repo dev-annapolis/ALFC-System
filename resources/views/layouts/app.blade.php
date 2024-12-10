@@ -49,7 +49,12 @@
                                     <a class="dropdown-item" href="{{ route('providers.index') }}">{{ __('Provider') }}</a>
                                     <a class="dropdown-item" href="{{ route('alfcBranches.index') }}">{{ __('ALFC Branches') }}</a>
                                     <a class="dropdown-item" href="{{ route('products.index') }}">{{ __('Products') }}</a>
-                                    <a class="dropdown-item" href="{{ route('areas.index') }}">{{ __('Area') }}</a>
+                                    <a class="dropdown-item" href="{{ route('areas.index') }}">{{ __('Areas') }}</a>
+                                    <a class="dropdown-item" href="{{ route('sources.index') }}">{{ __('Sources') }}</a>
+                                    <a class="dropdown-item" href="{{ route('source_branches.index') }}">{{ __('Source Branches') }}</a>
+                                    <a class="dropdown-item" href="{{ route('mode_of_payments.index') }}">{{ __('Mode of Payment') }}</a>
+                                    <a class="dropdown-item" href="{{ route('subproducts.index') }}">{{ __('Sub-Products') }}</a>
+                                    <a class="dropdown-item" href="{{ route('gdfis.index') }}">{{ __('GDFI') }}</a>
 
 
                                 </div>
