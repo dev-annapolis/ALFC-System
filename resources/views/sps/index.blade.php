@@ -233,6 +233,26 @@
             </div>
         </div>
     </div>
+    <!-- Checklist Modal -->
+        <div class="modal fade" id="checklistModal" tabindex="-1" aria-labelledby="checklistModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="checklistModalLabel">Checklist</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Add your checklist content here -->
+                        <p>This is Body</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
@@ -323,22 +343,37 @@
                         </div>`,
                         `<span style="color: ${getStatusColor(detail.sale_status)}; font-weight: bold;">${detail.sale_status}</span>`,
                         `<div class="dropdown">
-                            <button class="btn dropdown-toggle p-2 border-0 bg-transparent circular-btn" type="button" id="dropdownMenuButton${detail.id}" data-bs-toggle="dropdown" aria-expanded="false">
+                            <button class="btn dropdown-toggle p-2 border-0 bg-transparent circular-btn" 
+                                    type="button" 
+                                    id="dropdownMenuButton${detail.id}" 
+                                    data-bs-toggle="dropdown" 
+                                    aria-expanded="false">
                                 <i class="fa-solid fa-ellipsis"></i>
                             </button>
                             <ul class="dropdown-menu text-center" aria-labelledby="dropdownMenuButton${detail.id}">
-                                    <li>
-                                        <a 
-                                            class="dropdown-item viewDetailBtn d-flex justify-content-center align-items-center" 
-                                            href="#" 
-                                            data-id="${detail.id}" 
-                                            data-bs-toggle="offcanvas" 
-                                            data-bs-target="#detailOffCanvas">
-                                            <i class="fa-regular fa-eye me-2"></i> View
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>`
+                                <li>
+                                    <a 
+                                        class="dropdown-item viewDetailBtn d-flex justify-content-center align-items-center" 
+                                        href="#" 
+                                        data-id="${detail.id}" 
+                                        data-bs-toggle="offcanvas" 
+                                        data-bs-target="#detailOffCanvas">
+                                        <i class="fa-regular fa-eye me-2"></i> View
+                                    </a>
+                                </li>
+                                <li>
+                                    <a 
+                                        class="dropdown-item checklistBtn d-flex justify-content-center align-items-center" 
+                                        href="#" 
+                                        data-id="${detail.id}" 
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#checklistModal">
+                                        <i class="fa-regular fa fa-list-alt me-2"></i> Checklist
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        `
                     ]);
                 });
 
@@ -349,6 +384,15 @@
                     var insuranceDetailId = $(this).data('id');
                     fetchInsuranceDetail(insuranceDetailId); // Fetches data only
                 });
+
+                document.querySelectorAll('.checklistBtn').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const detailId = this.getAttribute('data-id');
+                        document.getElementById('checklistDetailId').textContent = detailId;
+                        // Additional logic to fetch and display data can go here
+                    });
+                });
+
 
                 populateFilters(data);
             },
