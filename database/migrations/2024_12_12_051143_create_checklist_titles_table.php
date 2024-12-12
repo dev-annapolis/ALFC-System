@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('checklist_titles', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('status')->default('active');
             $table->timestamps();
         });
     }
