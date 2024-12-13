@@ -234,24 +234,24 @@
         </div>
     </div>
     <!-- Checklist Modal -->
-        <div class="modal fade" id="checklistModal" tabindex="-1" aria-labelledby="checklistModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="checklistModalLabel">Checklist</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Add your checklist content here -->
-                        <p>This is Body</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
-                    </div>
+    <div class="modal fade" id="checklistModal" tabindex="-1" aria-labelledby="checklistModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="checklistModalLabel">Checklist</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="checklistContainer">
+                    <!-- Checklist items will be dynamically loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
                 </div>
             </div>
         </div>
+    </div>
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -265,6 +265,12 @@
 <!-- Daterangepicker JS -->
 <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<!-- Add these in the <head> section or before the closing </body> tag -->
+<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script> -->
+
+
 <script>
 
 
@@ -385,13 +391,20 @@
                     fetchInsuranceDetail(insuranceDetailId); // Fetches data only
                 });
 
-                document.querySelectorAll('.checklistBtn').forEach(button => {
-                    button.addEventListener('click', function () {
-                        const detailId = this.getAttribute('data-id');
-                        document.getElementById('checklistDetailId').textContent = detailId;
-                        // Additional logic to fetch and display data can go here
-                    });
+                $(document).on('click', '.checklistBtn', function () {
+                    const insuranceDetailId = $(this).data('id');
+                    fetchChecklist(insuranceDetailId);
                 });
+
+
+                // document.querySelectorAll('.checklistBtn').forEach(button => {
+                //     button.addEventListener('click', function () {
+                //         const detailId = this.getAttribute('data-id');
+                //         document.getElementById('checklistDetailId').textContent = detailId;
+                //         fetchChecklist(detailId); 
+                //         // Additional logic to fetch and display data can go here
+                //     });
+                // });
 
 
                 populateFilters(data);
@@ -422,6 +435,48 @@
     const commissioners = @json($commissioners); //for commissioner_title
 
     //============================================================================================================================
+
+    function fetchChecklist(detailId) {
+        console.log(detailId);
+        $.ajax({
+            url: `/api/checklist/${detailId}`,
+            method: 'GET',
+            success: function (data) {
+                const checklistContainer = document.getElementById('checklistContainer');
+                checklistContainer.innerHTML = '';
+
+                // Group data by titles
+                const groupedByTitle = data.reduce((acc, item) => {
+                    const title = item.checklist_option.checklist_title.name;
+                    acc[title] = acc[title] || [];
+                    acc[title].push(item);
+                    return acc;
+                }, {});
+
+                // Render each title and its options
+                for (const [title, options] of Object.entries(groupedByTitle)) {
+                    checklistContainer.innerHTML += `
+                        <h5>${title}</h5>
+                        ${options.map(option => `
+                            <div class="form-check">
+                                <input 
+                                    class="form-check-input checklist-item" 
+                                    type="checkbox" 
+                                    data-id="${option.id}" 
+                                    ${option.completed ? 'checked' : ''}
+                                >
+                                <label class="form-check-label">${option.checklist_option.name}</label>
+                            </div>
+                        `).join('')}
+                    `;
+                }
+            },
+            error: function (xhr, status, error) {
+                alert("Error loading checklist: " + error);
+            }
+        });
+    }
+
 
     function fetchInsuranceDetail(insuranceDetailId) {
         var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
