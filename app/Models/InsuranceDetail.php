@@ -129,4 +129,9 @@ class InsuranceDetail extends Model
     {
         return $this->belongsTo(Team::class);
     }
+
+    public function checklistOption()
+    {
+        return $this->belongsTo(ChecklistOption::class);
+    }
 }
