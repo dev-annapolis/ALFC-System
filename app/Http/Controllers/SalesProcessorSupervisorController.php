@@ -100,32 +100,68 @@ class SalesProcessorSupervisorController extends Controller
     public function fetchChecklist($insuranceDetailId)
     {
         Log::info($insuranceDetailId);
-        // Get all checklist options grouped by title
-        $checklistTitles = ChecklistTitle::with('checklistOptions')->get();
 
-        // Create missing InsuranceChecklist entries
-        foreach ($checklistTitles as $title) {
-            foreach ($title->checklistOptions as $option) {
-                InsuranceChecklist::firstOrCreate(
-                    [
-                        'insurance_detail_id' => $insuranceDetailId,
-                        'checklist_option_id' => $option->id,
-                    ],
-                    [
-                        'completed' => false,
-                    ]
-                );
-            }
-        }
-
-        // Fetch all checklist items for the insurance detail
+        // Check if there are any insurance checklist records
         $insuranceChecklists = InsuranceChecklist::where('insurance_detail_id', $insuranceDetailId)
             ->with('checklistOption.checklistTitle')
             ->get();
 
+        if ($insuranceChecklists->isEmpty()) {
+            // Return empty array if no records found
+            return response()->json([]);
+        }
 
-            Log::info($insuranceChecklists);
+        Log::info($insuranceChecklists);
         return response()->json($insuranceChecklists);
     }
-    
+
+    public function fetchChecklistTitles()
+    {
+        $checklistTitles = ChecklistTitle::all();
+        return response()->json($checklistTitles);
+    }
+    public function fetchChecklistOptions($titleId)
+    {
+        $options = ChecklistOption::where('checklist_title_id', $titleId)->get();
+        return response()->json($options);
+    }
+    public function saveChecklist(Request $request)
+    {
+        Log::info($request->all());
+
+        $validatedData = $request->validate([
+            'insurance_detail_id' => 'required|integer|exists:insurance_details,id',
+            'options' => 'nullable|array',
+            'options.*.checklist_option_id' => 'required|integer|exists:checklist_options,id',
+        ]);
+
+        $insuranceDetailId = $validatedData['insurance_detail_id'];
+        $selectedOptions = collect($validatedData['options'] ?? []);
+
+        // Get all options associated with the insurance detail
+        $allOptions = ChecklistOption::whereHas('checklistTitle', function ($query) use ($insuranceDetailId) {
+            $query->where('insurance_detail_id', $insuranceDetailId);
+        })->get();
+
+        foreach ($allOptions as $option) {
+            // Check if the option is selected
+            $isSelected = $selectedOptions->contains('checklist_option_id', $option->id);
+
+            // Update or create the checklist entry
+            InsuranceChecklist::updateOrCreate(
+                [
+                    'insurance_detail_id' => $insuranceDetailId,
+                    'checklist_option_id' => $option->id,
+                ],
+                [
+                    'completed' => $isSelected ? 1 : 0, // Mark as completed (1) if selected, otherwise set to 0
+                ]
+            );
+        }
+
+        return response()->json(['message' => 'Checklist updated successfully.']);
+    }
+
+
+
 }

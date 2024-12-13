@@ -436,6 +436,7 @@
 
     //============================================================================================================================
 
+   // JavaScript: Modify fetchChecklist function
     function fetchChecklist(detailId) {
         console.log(detailId);
         $.ajax({
@@ -445,37 +446,133 @@
                 const checklistContainer = document.getElementById('checklistContainer');
                 checklistContainer.innerHTML = '';
 
-                // Group data by titles
-                const groupedByTitle = data.reduce((acc, item) => {
-                    const title = item.checklist_option.checklist_title.name;
-                    acc[title] = acc[title] || [];
-                    acc[title].push(item);
-                    return acc;
-                }, {});
+                if (data.length === 0) {
+                    // No data found, show dropdown for checklist titles
+                    $.ajax({
+                        url: '/api/checklist-titles',
+                        method: 'GET',
+                        success: function (titles) {
+                            checklistContainer.innerHTML = `
+                                <label for="checklistTitleDropdown">Select Checklist Title:</label>
+                                <select id="checklistTitleDropdown" class="form-select">
+                                    <option value="">-- Select --</option>
+                                    ${titles.map(title => `<option value="${title.id}">${title.name}</option>`).join('')}
+                                </select>
+                                <div id="checklistOptionsContainer"></div>
+                                <button id="saveChecklist" class="btn btn-primary mt-3">Save Checklist</button>
+                            `;
 
-                // Render each title and its options
-                for (const [title, options] of Object.entries(groupedByTitle)) {
-                    checklistContainer.innerHTML += `
-                        <h5>${title}</h5>
-                        ${options.map(option => `
-                            <div class="form-check">
-                                <input 
-                                    class="form-check-input checklist-item" 
-                                    type="checkbox" 
-                                    data-id="${option.id}" 
-                                    ${option.completed ? 'checked' : ''}
-                                >
-                                <label class="form-check-label">${option.checklist_option.name}</label>
-                            </div>
-                        `).join('')}
-                    `;
+                            const titleDropdown = document.getElementById('checklistTitleDropdown');
+                            titleDropdown.addEventListener('change', function () {
+                                const selectedTitleId = this.value;
+                                if (selectedTitleId) {
+                                    fetchChecklistOptions(selectedTitleId);
+                                }
+                            });
+
+                            document.getElementById('saveChecklist').addEventListener('click', function () {
+                                saveChecklist(detailId);
+                            });
+                        },
+                        error: function () {
+                            alert("Error fetching checklist titles.");
+                        }
+                    });
+                } else {
+                    // Data found, group and display as before
+                    const groupedByTitle = data.reduce((acc, item) => {
+                        const title = item.checklist_option.checklist_title.name;
+                        acc[title] = acc[title] || [];
+                        acc[title].push(item);
+                        return acc;
+                    }, {});
+
+                    for (const [title, options] of Object.entries(groupedByTitle)) {
+                        checklistContainer.innerHTML += `
+                            <h5>${title}</h5>
+                            ${options.map(option => `
+                                <div class="form-check">
+                                    <input 
+                                        class="form-check-input checklist-item" 
+                                        type="checkbox" 
+                                        data-id="${option.id}" 
+                                        ${option.completed ? 'checked' : ''}
+                                    >
+                                    <label class="form-check-label">${option.checklist_option.name}</label>
+                                </div>
+                            `).join('')}
+                        `;
+                    }
+
+                    checklistContainer.innerHTML += `<button id="saveChecklist" class="btn btn-primary mt-3">Save Checklist</button>`;
+                    document.getElementById('saveChecklist').addEventListener('click', function () {
+                        saveChecklist(detailId);
+                    });
                 }
             },
-            error: function (xhr, status, error) {
-                alert("Error loading checklist: " + error);
+            error: function () {
+                alert("Error loading checklist.");
             }
         });
     }
+
+    function fetchChecklistOptions(titleId) {
+        const checklistOptionsContainer = document.getElementById('checklistOptionsContainer');
+        checklistOptionsContainer.innerHTML = '';
+
+        $.ajax({
+            url: `/api/checklist-options/${titleId}`,
+            method: 'GET',
+            success: function (options) {
+                console.log("Checklist Options:");
+                options.forEach(option => console.log(option.name)); // Log names to the console
+
+                checklistOptionsContainer.innerHTML = options.map(option => `
+                    <div class="form-check">
+                        <input 
+                            class="form-check-input checklist-option" 
+                            type="checkbox" 
+                            data-id="${option.id}">
+                        <label class="form-check-label">${option.name}</label>
+                    </div>
+                `).join('');
+            },
+            error: function () {
+                alert("Error fetching checklist options.");
+            }
+        });
+    }
+
+
+    function saveChecklist(detailId) {
+    // Collect only selected (checked) checklist option IDs
+        const selectedOptions = Array.from(document.querySelectorAll('.checklist-option:checked')).map(option => ({
+            checklist_option_id: option.dataset.id
+        }));
+
+        console.log("Selected Checklist Options:", selectedOptions);
+        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        $.ajax({
+            url: `/api/checklist/save`,
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': csrfToken
+            },
+            contentType: 'application/json',
+            data: JSON.stringify({
+                insurance_detail_id: detailId,
+                options: selectedOptions // Pass only the checked options
+            }),
+            
+            success: function () {
+                alert("Checklist saved successfully.");
+            },
+            error: function () {
+                alert("Error saving checklist.");
+            }
+        });
+    }
+
 
 
     function fetchInsuranceDetail(insuranceDetailId) {

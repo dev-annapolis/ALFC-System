@@ -54,7 +54,12 @@ Route::post('/api/ra/verify/{id}', [RevenueAssistantController::class, 'verifyIn
 
 Route::get('/sps/index', [SalesProcessorSupervisorController::class, 'SalesProcessorSupervisorIndex'])->name('sps.index');
 Route::get('/api/sps-index', [SalesProcessorSupervisorController::class, 'spsIndexData']);
-Route::get('/api/checklist/{insurance_details_id}', [SalesProcessorSupervisorController::class, 'fetchChecklist']);
+
+Route::get('/api/checklist/{insuranceDetailId}', [SalesProcessorSupervisorController::class, 'fetchChecklist']);
+Route::get('/api/checklist-titles', [SalesProcessorSupervisorController::class, 'fetchChecklistTitles']);
+Route::get('/api/checklist-options/{titleId}', [SalesProcessorSupervisorController::class, 'fetchChecklistOptions']);
+Route::post('/api/checklist/save', [SalesProcessorSupervisorController::class, 'saveChecklist']);
+
 
 
 
