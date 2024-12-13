@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('checklist_options', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('checklist_title_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('name');
+            $table->string('status')->default('active');
             $table->timestamps();
         });
     }

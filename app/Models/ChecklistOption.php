@@ -6,5 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class ChecklistOption extends Model
 {
-    //
+    protected $fillable = ['name', 'status', 'checklist_title_id'];
+
+    public function checklistTitle()
+    {
+        return $this->belongsTo(ChecklistTitle::class);
+    }
+
+    public function insuranceChecklists()
+    {
+        return $this->hasMany(InsuranceChecklist::class);
+    }
 }
