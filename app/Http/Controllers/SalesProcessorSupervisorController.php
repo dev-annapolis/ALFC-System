@@ -27,6 +27,10 @@ use App\Models\ModeOfPayment;
 use App\Models\Tele;
 use App\Models\Commissioner;
 
+use App\Models\ChecklistTitle;
+use App\Models\ChecklistOption;
+use App\Models\InsuranceChecklist;
+
 class SalesProcessorSupervisorController extends Controller
 {
     public function SalesProcessorSupervisorIndex()
@@ -92,4 +96,36 @@ class SalesProcessorSupervisorController extends Controller
         // Return data as JSON response
         return response()->json($insuranceDetails->values()); // Reset keys after unique filtering
     }
+
+    public function fetchChecklist($insuranceDetailId)
+    {
+        Log::info($insuranceDetailId);
+        // Get all checklist options grouped by title
+        $checklistTitles = ChecklistTitle::with('checklistOptions')->get();
+
+        // Create missing InsuranceChecklist entries
+        foreach ($checklistTitles as $title) {
+            foreach ($title->checklistOptions as $option) {
+                InsuranceChecklist::firstOrCreate(
+                    [
+                        'insurance_detail_id' => $insuranceDetailId,
+                        'checklist_option_id' => $option->id,
+                    ],
+                    [
+                        'completed' => false,
+                    ]
+                );
+            }
+        }
+
+        // Fetch all checklist items for the insurance detail
+        $insuranceChecklists = InsuranceChecklist::where('insurance_detail_id', $insuranceDetailId)
+            ->with('checklistOption.checklistTitle')
+            ->get();
+
+
+            Log::info($insuranceChecklists);
+        return response()->json($insuranceChecklists);
+    }
+    
 }
