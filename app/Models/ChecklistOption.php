@@ -10,6 +10,11 @@ class ChecklistOption extends Model
 
     public function checklistTitle()
     {
-        return $this->belongsTo(Team::class);
+        return $this->belongsTo(ChecklistTitle::class);
+    }
+
+    public function insuranceChecklists()
+    {
+        return $this->hasMany(InsuranceChecklist::class);
     }
 }
