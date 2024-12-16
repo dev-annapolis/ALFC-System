@@ -339,11 +339,16 @@
         // Display success alert if present
         var successAlert = document.getElementById('success-alert');
         if (successAlert) {
-            successAlert.style.display = 'block'; // Show alert
+            successAlert.style.display = 'block';  // Make alert visible
             setTimeout(function() {
                 successAlert.classList.remove('show');
                 successAlert.classList.add('fade');
-            }, 2000); // Dismiss after 2 seconds
+
+                // Set a timeout for when the alert should be fully hidden
+                setTimeout(function() {
+                    successAlert.style.display = 'none'; // Hide the alert after fade
+                }, 1500);  // Adjust the time (in ms) to match the fade-out duration
+            }, 1075);  // 1 second delay before fading out
         }
 
         // Initialize DataTable for Sales Managers
