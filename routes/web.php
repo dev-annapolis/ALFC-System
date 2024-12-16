@@ -134,15 +134,42 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
     Route::patch('/ifGdfiChangeStatus/{id}', [DropdownController::class, 'ifGdfiChangeStatus'])->name('gdfis.changeStatus');
 
 
-
-
-
-
+    // IF GDFI
+    Route::get('/subproductsIndex', [DropdownController::class, 'subproductsIndex'])->name('subproducts.index');
+    Route::post('/subproductsStore', [DropdownController::class, 'subproductsStore'])->name('subproducts.store');
+    Route::put('/subproductsUpdate', [DropdownController::class, 'subproductsUpdate'])->name('subproducts.update');
+    Route::patch('/subproductsChangeStatus/{id}', [DropdownController::class, 'subproductsChangeStatus'])->name('subproducts.changeStatus');
 
 
 
     // COMMISIONERS
+    Route::get('/commissionersIndex', [DropdownController::class, 'commissionersIndex'])->name('commissioners.index');
+    Route::post('/commissionersStore', [DropdownController::class, 'commissionersStore'])->name('commissioners.store');
+    Route::put('/commissionersUpdate', [DropdownController::class, 'commissionersUpdate'])->name('commissioners.update');
+    Route::patch('/commissionersChangeStatus/{id}', [DropdownController::class, 'commissionersChangeStatus'])->name('commissioners.changeStatus');
+
+
+    //Sales Manager
+    Route::get('/salesManagersIndex', [DropdownController::class, 'salesManagersIndex'])->name('salesManagers.index');
+    Route::post('/salesManagersStore', [DropdownController::class, 'salesManagersStore'])->name('salesManagers.store');
+    Route::put('/salesManagersUpdate', [DropdownController::class, 'salesManagersUpdate'])->name('salesManagers.update');
+    Route::patch('/salesManagersChangeStatus/{id}', [DropdownController::class, 'salesManagersChangeStatus'])->name('salesManagers.changeStatus');
+
+
+
     // TELES
+    Route::get('/telesIndex', [DropdownController::class, 'telesIndex'])->name('teles.index');
+    Route::post('/telesStore', [DropdownController::class, 'telesStore'])->name('teles.store');
+    Route::put('/telesUpdate', [DropdownController::class, 'telesUpdate'])->name('teles.update');
+    Route::patch('/telesChangeStatus/{id}', [DropdownController::class, 'telesChangeStatus'])->name('teles.changeStatus');
+
+
+
+
+
+
+
+
 });
 
 

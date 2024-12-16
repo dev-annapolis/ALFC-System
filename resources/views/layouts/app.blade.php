@@ -20,6 +20,7 @@
 
 </head>
 <body>
+
     <div id="app">
         @if (!in_array(request()->route()->getName(), ['form.show']))
             <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm ps-5 pe-5">
@@ -55,6 +56,9 @@
                                     <a class="dropdown-item" href="{{ route('mode_of_payments.index') }}">{{ __('Mode of Payment') }}</a>
                                     <a class="dropdown-item" href="{{ route('subproducts.index') }}">{{ __('Sub-Products') }}</a>
                                     <a class="dropdown-item" href="{{ route('gdfis.index') }}">{{ __('GDFI') }}</a>
+                                    <a class="dropdown-item" href="{{ route('commissioners.index') }}">{{ __('Commissioners') }}</a>
+                                    <a class="dropdown-item" href="{{ route('salesManagers.index') }}">{{ __('Sales Manager') }}</a>
+                                    <a class="dropdown-item" href="{{ route('teles.index') }}">{{ __('Tele Collector') }}</a>
 
 
                                 </div>
