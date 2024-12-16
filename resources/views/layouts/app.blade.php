@@ -57,6 +57,7 @@
                                     <a class="dropdown-item" href="{{ route('subproducts.index') }}">{{ __('Sub-Products') }}</a>
                                     <a class="dropdown-item" href="{{ route('gdfis.index') }}">{{ __('GDFI') }}</a>
                                     <a class="dropdown-item" href="{{ route('commissioners.index') }}">{{ __('Commissioners') }}</a>
+                                    <a class="dropdown-item" href="{{ route('salesManagers.index') }}">{{ __('Sales Manager') }}</a>
 
 
                                 </div>

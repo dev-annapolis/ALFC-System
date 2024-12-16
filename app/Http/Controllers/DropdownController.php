@@ -11,15 +11,15 @@ use App\Models\Product;
 use App\Models\Area;
 use App\Models\Source;
 use App\Models\SourceBranch;
-
 use App\Models\AlfcBranch;
 use App\Models\ModeOfPayment;
-
 use App\Models\Subproduct;
 use App\Models\IfGdfi;
-
 use App\Models\Commissioner;
+use App\Models\SalesManager;
+use App\Models\User;
 
+use Illuminate\Support\Facades\Log;
 
 
 class DropdownController extends Controller
@@ -564,6 +564,133 @@ class DropdownController extends Controller
     }
 
 
+
+
+
+
+    // Display a list of Sales Managers
+    public function salesManagersIndex()
+    {
+        $salesManagers = SalesManager::with(['user', 'team'])->orderBy('status', 'asc')->get();
+        $users = User::all(); // Fetch all users for the dropdown
+        $teams = Team::all(); // Fetch all teams for the dropdown
+
+        return view('dropdown.salesManager', compact(
+            'salesManagers',
+            'users',
+            'teams'
+        ));
+    }
+
+    // Store a new Sales Manager
+    public function salesManagersStore(Request $request)
+    {
+        try {
+            // Validate the incoming request
+            $validated = $request->validate([
+                'username' => 'required|string|max:255|unique:users,username',
+                'password' => 'required|string|min:8|confirmed',
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|max:255|unique:users,email',
+                'viber_number' => 'nullable|string|max:20',
+                'team_id' => 'required|exists:teams,id',
+            ]);
+
+            // Create a new user
+            $user = User::create([
+                'username' => $validated['username'],
+                'password' => bcrypt($validated['password']),
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'viber_number' => $validated['viber_number'] ?? null,
+                'role_id' => 9,  // Automatically set role_id to 9
+                'status' => 'active',  // Automatically set status to active
+            ]);
+
+            // Create the Sales Manager and associate it with the user and team
+            SalesManager::create([
+                'user_id' => $user->id,
+                'team_id' => $validated['team_id'],
+                'name' => $validated['name'],
+            ]);
+
+            return redirect()->back()->with('success', 'Sales Manager added successfully!');
+        } catch (\Exception $e) {
+            Log::error('Error adding Sales Manager: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred while adding the Sales Manager.');
+        }
+    }
+
+    public function salesManagersUpdate(Request $request)
+    {
+        try {
+            // Get the current sales manager
+            $salesManager = SalesManager::findOrFail($request->id);
+
+            // Get the associated user
+            $user = $salesManager->user;
+
+            // Validate the incoming request
+            $validated = $request->validate([
+                'id' => 'required|exists:sales_managers,id',
+                'name' => 'required|string|max:255',
+                'password' => 'nullable|string|min:8|confirmed', // Password is optional
+                'viber_number' => 'nullable|string|max:20',
+                'team_id' => 'required|exists:teams,id', // Ensure valid team ID
+            ]);
+
+            // Only validate and update the username if it has changed
+            if ($request->username !== $user->username) {
+                $request->validate([
+                    'username' => 'required|string|max:255|unique:users,username',
+                ]);
+            }
+
+            // Only validate and update the email if it has changed
+            if ($request->email !== $user->email) {
+                $request->validate([
+                    'email' => 'required|email|max:255|unique:users,email',
+                ]);
+            }
+
+            // Update the user information only if something has changed
+            $user->update(array_filter([
+                'username' => $request->username !== $user->username ? $request->username : null,
+                'password' => $request->password ? bcrypt($request->password) : null,
+                'name' => $request->name !== $user->name ? $request->name : null,
+                'email' => $request->email !== $user->email ? $request->email : null,
+                'viber_number' => $request->viber_number !== $user->viber_number ? $request->viber_number : null,
+                'role_id' => 9,  // Role is kept as 9
+                'status' => 'active', // Keep status as active
+            ]));
+
+            // Update the Sales Manager's team information if team_id or name is changed
+            $salesManager->update(array_filter([
+                'team_id' => $request->team_id !== $salesManager->team_id ? $request->team_id : null,
+                'name' => $request->name !== $salesManager->name ? $request->name : null,
+            ]));
+
+            // Success message
+            return redirect()->back()->with('success', 'Sales Manager updated successfully!');
+        } catch (\Exception $e) {
+            // Log error details for debugging
+            Log::error('Error updating Sales Manager: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred while updating the Sales Manager.');
+        }
+    }
+
+
+
+
+    // Change the status of a Sales Manager
+    public function salesManagersChangeStatus($id)
+    {
+        $salesManager = SalesManager::findOrFail($id);
+        $salesManager->status = $salesManager->status === 'active' ? 'inactive' : 'active';
+        $salesManager->save();
+
+        return redirect()->back()->with('success', 'Sales Manager status updated successfully!');
+    }
 
 
 

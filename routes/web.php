@@ -148,6 +148,13 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
 
 
     // TELES
+
+    Route::get('/salesManagersIndex', [DropdownController::class, 'salesManagersIndex'])->name('salesManagers.index');
+    Route::post('/salesManagersStore', [DropdownController::class, 'salesManagersStore'])->name('salesManagers.store');
+    Route::put('/salesManagersUpdate', [DropdownController::class, 'salesManagersUpdate'])->name('salesManagers.update');
+    Route::patch('/salesManagersChangeStatus/{id}', [DropdownController::class, 'salesManagersChangeStatus'])->name('salesManagers.changeStatus');
+
+
 });
 
 
