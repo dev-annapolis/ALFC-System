@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 use App\Models\Team;
 use App\Models\Provider;
@@ -17,9 +18,10 @@ use App\Models\Subproduct;
 use App\Models\IfGdfi;
 use App\Models\Commissioner;
 use App\Models\SalesManager;
+use App\Models\Tele;
+
 use App\Models\User;
 
-use Illuminate\Support\Facades\Log;
 
 
 class DropdownController extends Controller
@@ -568,7 +570,7 @@ class DropdownController extends Controller
 
 
 
-    // Display a list of Sales Managers
+    //Sales Managers
     public function salesManagersIndex()
     {
         $salesManagers = SalesManager::with(['user', 'team'])->orderBy('status', 'asc')->get();
@@ -582,7 +584,6 @@ class DropdownController extends Controller
         ));
     }
 
-    // Store a new Sales Manager
     public function salesManagersStore(Request $request)
     {
         try {
@@ -679,10 +680,6 @@ class DropdownController extends Controller
         }
     }
 
-
-
-
-    // Change the status of a Sales Manager
     public function salesManagersChangeStatus($id)
     {
         $salesManager = SalesManager::findOrFail($id);
@@ -691,6 +688,57 @@ class DropdownController extends Controller
 
         return redirect()->back()->with('success', 'Sales Manager status updated successfully!');
     }
+
+
+    public function telesIndex()
+    {
+        $teles = Tele::orderBy('status', 'asc')->get();
+        return view('dropdown.teles', compact('teles'));
+    }
+
+    public function telesStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:teles,name',
+        ]);
+
+        Tele::create([
+            'name' => $validated['name']
+        ]);
+
+        return redirect()->back()->with('success', 'Tele added successfully!');
+    }
+
+    public function telesUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:teles,id',
+            'name' => 'required|string|max:255|unique:teles,name,' . $request->id,
+        ]);
+
+        $tele = Tele::findOrFail($validated['id']);
+        $tele->update([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Tele updated successfully!');
+    }
+
+    public function telesChangeStatus($id)
+    {
+        $tele = Tele::findOrFail($id);
+        $tele->status = $tele->status === 'active' ? 'inactive' : 'active';
+        $tele->save();
+
+        return redirect()->back()->with('success', 'Tele status updated successfully!');
+    }
+
+
+
+
+
+
+
 
 
 

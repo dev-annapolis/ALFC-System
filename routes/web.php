@@ -146,13 +146,25 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
     Route::patch('/commissionersChangeStatus/{id}', [DropdownController::class, 'commissionersChangeStatus'])->name('commissioners.changeStatus');
 
 
-
-    // TELES
-
+    //Sales Manager
     Route::get('/salesManagersIndex', [DropdownController::class, 'salesManagersIndex'])->name('salesManagers.index');
     Route::post('/salesManagersStore', [DropdownController::class, 'salesManagersStore'])->name('salesManagers.store');
     Route::put('/salesManagersUpdate', [DropdownController::class, 'salesManagersUpdate'])->name('salesManagers.update');
     Route::patch('/salesManagersChangeStatus/{id}', [DropdownController::class, 'salesManagersChangeStatus'])->name('salesManagers.changeStatus');
+
+
+
+    // TELES
+    Route::get('/telesIndex', [DropdownController::class, 'telesIndex'])->name('teles.index');
+    Route::post('/telesStore', [DropdownController::class, 'telesStore'])->name('teles.store');
+    Route::put('/telesUpdate', [DropdownController::class, 'telesUpdate'])->name('teles.update');
+    Route::patch('/telesChangeStatus/{id}', [DropdownController::class, 'telesChangeStatus'])->name('teles.changeStatus');
+
+
+
+
+
+
 
 
 });
