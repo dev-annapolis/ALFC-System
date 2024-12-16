@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class InsuranceChecklist extends Model
 {
-    protected $fillable = ['insurance_detail_id', 'checklist_option_id', 'completed'];
+    protected $fillable = ['insurance_detail_id', 'payment_checklist_id', 'completed'];
 
-    public function checklistOption()
+    public function paymentChecklist()
     {
-        return $this->belongsTo(ChecklistOption::class);
+        return $this->belongsTo(PaymentChecklist::class);
     }
 }
