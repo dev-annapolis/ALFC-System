@@ -20,9 +20,9 @@ use App\Models\Commissioner;
 use App\Models\SalesManager;
 use App\Models\Tele;
 use App\Models\PaymentChecklist;
+use App\Models\SalesAssociate;
 
 use App\Models\User;
-
 
 
 class DropdownController extends Controller
@@ -691,6 +691,15 @@ class DropdownController extends Controller
     }
 
 
+
+
+
+
+
+
+
+
+
     public function telesIndex()
     {
         $teles = Tele::orderBy('status', 'asc')->get();
@@ -790,6 +799,128 @@ class DropdownController extends Controller
 
         return redirect()->back()->with('success', 'Payment checklist status updated successfully!');
     }
+
+
+
+
+
+
+
+
+
+    // Index function to display Sales Associates
+    public function salesAssociatesIndex()
+    {
+        $salesAssociates = SalesAssociate::with(['user', 'team'])->orderBy('status', 'asc')->get();
+        $users = User::all(); // Fetch all users for the dropdown
+        $teams = Team::all(); // Fetch all teams for the dropdown
+
+        return view('dropdown.salesAssociates', compact(
+            'salesAssociates',
+            'users',
+            'teams'
+        ));
+    }
+
+    // Store function to add a new Sales Associate
+    public function salesAssociatesStore(Request $request)
+    {
+        try {
+            // Validate the incoming request
+            $validated = $request->validate([
+                'username' => 'required|string|max:255|unique:users,username',
+                'password' => 'required|string|min:8|confirmed',
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|max:255|unique:users,email',
+                'team_id' => 'required|exists:teams,id',
+            ]);
+
+            // Create a new user
+            $user = User::create([
+                'username' => $validated['username'],
+                'password' => bcrypt($validated['password']),
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'role_id' => 8,  // Role ID for Sales Associate
+                'status' => 'active',
+            ]);
+
+            // Create the Sales Associate
+            SalesAssociate::create([
+                'user_id' => $user->id,
+                'team_id' => $validated['team_id'],
+                'name' => $validated['name'],
+                'status' => 'active',
+            ]);
+
+            return redirect()->back()->with('success', 'Sales Associate added successfully!');
+        } catch (\Exception $e) {
+            Log::error('Error adding Sales Associate: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred while adding the Sales Associate.');
+        }
+    }
+
+    // Update function to modify a Sales Associate
+    public function salesAssociatesUpdate(Request $request)
+    {
+        try {
+            $salesAssociate = SalesAssociate::findOrFail($request->id);
+            $user = $salesAssociate->user;
+
+            // Validate the request
+            $validated = $request->validate([
+                'id' => 'required|exists:sales_associates,id',
+                'name' => 'required|string|max:255',
+                'password' => 'nullable|string|min:8|confirmed',
+                'team_id' => 'required|exists:teams,id',
+            ]);
+
+            // Validate username and email if changed
+            if ($request->username !== $user->username) {
+                $request->validate([
+                    'username' => 'required|string|max:255|unique:users,username',
+                ]);
+            }
+
+            if ($request->email !== $user->email) {
+                $request->validate([
+                    'email' => 'required|email|max:255|unique:users,email',
+                ]);
+            }
+
+            // Update the user details
+            $user->update(array_filter([
+                'username' => $request->username !== $user->username ? $request->username : null,
+                'password' => $request->password ? bcrypt($request->password) : null,
+                'name' => $request->name !== $user->name ? $request->name : null,
+                'email' => $request->email !== $user->email ? $request->email : null,
+                'status' => 'active',
+            ]));
+
+            // Update the Sales Associate details
+            $salesAssociate->update(array_filter([
+                'team_id' => $request->team_id !== $salesAssociate->team_id ? $request->team_id : null,
+                'name' => $request->name !== $salesAssociate->name ? $request->name : null,
+            ]));
+
+            return redirect()->back()->with('success', 'Sales Associate updated successfully!');
+        } catch (\Exception $e) {
+            Log::error('Error updating Sales Associate: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred while updating the Sales Associate.');
+        }
+    }
+
+    // Function to change status
+    public function salesAssociatesChangeStatus($id)
+    {
+        $salesAssociate = SalesAssociate::findOrFail($id);
+        $salesAssociate->status = $salesAssociate->status === 'active' ? 'inactive' : 'active';
+        $salesAssociate->save();
+
+        return redirect()->back()->with('success', 'Sales Associate status updated successfully!');
+    }
+
+
 
 
 }
