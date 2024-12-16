@@ -16,9 +16,11 @@ use App\Models\AlfcBranch;
 use App\Models\ModeOfPayment;
 
 use App\Models\Subproduct;
-
-
 use App\Models\IfGdfi;
+
+use App\Models\Commissioner;
+
+
 
 class DropdownController extends Controller
 {
@@ -511,6 +513,54 @@ class DropdownController extends Controller
         $ifGdfi->save();
 
         return redirect()->back()->with('success', 'IfGdfi status updated successfully!');
+    }
+
+
+
+
+
+
+    public function commissionersIndex()
+    {
+        $commissioners = Commissioner::orderBy('status', 'asc')->get();
+        return view('dropdown.commissioners', compact('commissioners'));
+    }
+
+    public function commissionersStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:commissioners,name',
+        ]);
+
+        Commissioner::create([
+            'name' => $validated['name']
+        ]);
+
+        return redirect()->back()->with('success', 'Commissioner added successfully!');
+    }
+
+    public function commissionersUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:commissioners,id',
+            'name' => 'required|string|max:255|unique:commissioners,name,' . $request->id,
+        ]);
+
+        $commissioner = Commissioner::findOrFail($validated['id']);
+        $commissioner->update([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Commissioner updated successfully!');
+    }
+
+    public function commissionersChangeStatus($id)
+    {
+        $commissioner = Commissioner::findOrFail($id);
+        $commissioner->status = $commissioner->status === 'active' ? 'inactive' : 'active';
+        $commissioner->save();
+
+        return redirect()->back()->with('success', 'Commissioner status updated successfully!');
     }
 
 

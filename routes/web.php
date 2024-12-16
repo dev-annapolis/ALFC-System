@@ -131,14 +131,22 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
     Route::patch('/ifGdfiChangeStatus/{id}', [DropdownController::class, 'ifGdfiChangeStatus'])->name('gdfis.changeStatus');
 
 
-
-
-
-
+    // IF GDFI
+    Route::get('/subproductsIndex', [DropdownController::class, 'subproductsIndex'])->name('subproducts.index');
+    Route::post('/subproductsStore', [DropdownController::class, 'subproductsStore'])->name('subproducts.store');
+    Route::put('/subproductsUpdate', [DropdownController::class, 'subproductsUpdate'])->name('subproducts.update');
+    Route::patch('/subproductsChangeStatus/{id}', [DropdownController::class, 'subproductsChangeStatus'])->name('subproducts.changeStatus');
 
 
 
     // COMMISIONERS
+    Route::get('/commissionersIndex', [DropdownController::class, 'commissionersIndex'])->name('commissioners.index');
+    Route::post('/commissionersStore', [DropdownController::class, 'commissionersStore'])->name('commissioners.store');
+    Route::put('/commissionersUpdate', [DropdownController::class, 'commissionersUpdate'])->name('commissioners.update');
+    Route::patch('/commissionersChangeStatus/{id}', [DropdownController::class, 'commissionersChangeStatus'])->name('commissioners.changeStatus');
+
+
+
     // TELES
 });
 
