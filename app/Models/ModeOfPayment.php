@@ -12,4 +12,9 @@ class ModeOfPayment extends Model
     {
         return $this->hasMany(InsuranceDetail::class);
     }
+
+    public function paymentChecklists()
+    {
+        return $this->hasMany(PaymentChecklist::class);
+    }
 }

@@ -11,8 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('checklist_titles', function (Blueprint $table) {
+        Schema::create('payment_checklists', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('mode_of_payment_id')->nullable()->constrained()->onDelete('cascade');
             $table->string('name');
             $table->string('status')->default('active');
             $table->timestamps();
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('checklist_titles');
+        Schema::dropIfExists('payment_checklists');
     }
 };
