@@ -27,8 +27,7 @@ use App\Models\ModeOfPayment;
 use App\Models\Tele;
 use App\Models\Commissioner;
 
-use App\Models\ChecklistTitle;
-use App\Models\ChecklistOption;
+use App\Models\PaymentChecklist;
 use App\Models\InsuranceChecklist;
 
 class SalesProcessorSupervisorController extends Controller
@@ -99,33 +98,60 @@ class SalesProcessorSupervisorController extends Controller
 
     public function fetchChecklist($insuranceDetailId)
     {
-        Log::info($insuranceDetailId);
-        // Get all checklist options grouped by title
-        $checklistTitles = ChecklistTitle::with('checklistOptions')->get();
+        try {
+            // Fetch InsuranceDetail and its Mode of Payment
+            $insuranceDetail = InsuranceDetail::findOrFail($insuranceDetailId);
+            $modeOfPayment = ModeOfPayment::with('paymentChecklists')->findOrFail($insuranceDetail->mode_of_payment_id);
 
-        // Create missing InsuranceChecklist entries
-        foreach ($checklistTitles as $title) {
-            foreach ($title->checklistOptions as $option) {
+            // Ensure all checklist items for the MOP are added to InsuranceChecklist
+            foreach ($modeOfPayment->paymentChecklists as $checklistOption) {
                 InsuranceChecklist::firstOrCreate(
                     [
                         'insurance_detail_id' => $insuranceDetailId,
-                        'checklist_option_id' => $option->id,
+                        'payment_checklist_id' => $checklistOption->id,
                     ],
                     [
                         'completed' => false,
                     ]
                 );
             }
+
+            // Fetch all checklists for the given insuranceDetailId with related data
+            $insuranceChecklists = InsuranceChecklist::where('insurance_detail_id', $insuranceDetailId)
+                ->with([
+                    'paymentChecklist' => function ($query) {
+                        $query->with('modeOfPayment');
+                    },
+                ])
+                ->get();
+
+            // Return the structured data as JSON
+            return response()->json($insuranceChecklists, 200);
+        } catch (\Exception $e) {
+            // Handle exceptions gracefully
+            Log::error('Error fetching checklist: ' . $e->getMessage());
+            return response()->json(['error' => 'Unable to fetch checklist.'], 500);
         }
-
-        // Fetch all checklist items for the insurance detail
-        $insuranceChecklists = InsuranceChecklist::where('insurance_detail_id', $insuranceDetailId)
-            ->with('checklistOption.checklistTitle')
-            ->get();
-
-
-            Log::info($insuranceChecklists);
-        return response()->json($insuranceChecklists);
     }
+
+    public function saveChecklist(Request $request)
+    {
+        try {
+            $changes = $request->all();
+
+            foreach ($changes as $change) {
+                InsuranceChecklist::where('id', $change['id'])->update([
+                    'completed' => $change['completed']
+                ]);
+            }
+
+            return response()->json(['message' => 'Checklist updated successfully!'], 200);
+        } catch (\Exception $e) {
+            Log::error('Error saving checklist: ' . $e->getMessage());
+            return response()->json(['error' => 'Unable to save checklist changes.'], 500);
+        }
+    }
+
+
     
 }
