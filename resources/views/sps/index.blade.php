@@ -242,15 +242,16 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="checklistContainer">
-                    <!-- Checklist items will be dynamically loaded here -->
+                    <!-- Dynamically loaded checklist items will appear here -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary" onclick="saveChecklistChanges()">Save Changes</button>
                 </div>
             </div>
         </div>
     </div>
+
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -447,28 +448,24 @@
 
                 // Group data by titles
                 const groupedByTitle = data.reduce((acc, item) => {
-                    const title = item.checklist_option.checklist_title.name;
+                    const title = item.payment_checklist?.mode_of_payment?.name || 'Unknown MOP';
                     acc[title] = acc[title] || [];
                     acc[title].push(item);
                     return acc;
                 }, {});
 
-                // Render each title and its options
-                for (const [title, options] of Object.entries(groupedByTitle)) {
-                    checklistContainer.innerHTML += `
-                        <h5>${title}</h5>
-                        ${options.map(option => `
-                            <div class="form-check">
-                                <input 
-                                    class="form-check-input checklist-item" 
-                                    type="checkbox" 
-                                    data-id="${option.id}" 
-                                    ${option.completed ? 'checked' : ''}
-                                >
-                                <label class="form-check-label">${option.checklist_option.name}</label>
-                            </div>
-                        `).join('')}
-                    `;
+                // Render grouped checklist items
+                for (const [title, items] of Object.entries(groupedByTitle)) {
+                    const titleElement = `<h5>${title}</h5>`;
+                    const checklistItems = items.map(item => `
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="checklist-${item.id}" ${item.completed ? 'checked' : ''}>
+                            <label class="form-check-label" for="checklist-${item.id}">
+                                ${item.payment_checklist?.name || 'Unnamed Checklist'}
+                            </label>
+                        </div>
+                    `).join('');
+                    checklistContainer.innerHTML += `${titleElement}${checklistItems}`;
                 }
             },
             error: function (xhr, status, error) {
@@ -476,6 +473,10 @@
             }
         });
     }
+
+    
+
+
 
 
     function fetchInsuranceDetail(insuranceDetailId) {
