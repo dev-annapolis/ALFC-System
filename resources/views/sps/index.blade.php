@@ -273,6 +273,32 @@
 
 
 <script>
+    function saveChecklistChanges() {
+        const checklistContainer = document.getElementById('checklistContainer');
+        const checkboxes = checklistContainer.querySelectorAll('.form-check-input');
+
+        const changes = Array.from(checkboxes).map(checkbox => ({
+            id: checkbox.id.split('-')[1], // Extract the ID from the `checklist-{id}`
+            completed: checkbox.checked ? 1 : 0
+        }));
+        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        $.ajax({
+            url: '/api/checklist/save', // Update with your endpoint for saving checklist changes
+            method: 'POST', // Or PUT if you're updating existing records
+            headers: {
+                'X-CSRF-TOKEN': csrfToken
+            },
+            contentType: 'application/json',
+            data: JSON.stringify(changes),
+            success: function (response) {
+                alert('Checklist changes saved successfully!');
+                $('#checklistModal').modal('hide'); // Optionally close the modal
+            },
+            error: function (xhr, status, error) {
+                alert('Error saving checklist changes: ' + error);
+            }
+        });
+    }
 
 
    $(document).ready(function () {
@@ -474,29 +500,7 @@
         });
     }
 
-    function saveChecklistChanges() {
-        const checklistContainer = document.getElementById('checklistContainer');
-        const checkboxes = checklistContainer.querySelectorAll('.form-check-input');
-
-        const changes = Array.from(checkboxes).map(checkbox => ({
-            id: checkbox.id.split('-')[1], // Extract the ID from the `checklist-{id}`
-            completed: checkbox.checked ? 1 : 0
-        }));
-
-        $.ajax({
-            url: '/api/checklist/save', // Update with your endpoint for saving checklist changes
-            method: 'POST', // Or PUT if you're updating existing records
-            contentType: 'application/json',
-            data: JSON.stringify(changes),
-            success: function (response) {
-                alert('Checklist changes saved successfully!');
-                $('#checklistModal').modal('hide'); // Optionally close the modal
-            },
-            error: function (xhr, status, error) {
-                alert('Error saving checklist changes: ' + error);
-            }
-        });
-    }
+    
 
 
 
