@@ -59,7 +59,7 @@
                                     <a class="dropdown-item" href="{{ route('commissioners.index') }}">{{ __('Commissioners') }}</a>
                                     <a class="dropdown-item" href="{{ route('salesManagers.index') }}">{{ __('Sales Manager') }}</a>
                                     <a class="dropdown-item" href="{{ route('teles.index') }}">{{ __('Tele Collector') }}</a>
-
+                                    <a class="dropdown-item" href="{{ route('payment_checklists.index') }}">{{ __('Payment Checklist') }}</a>
 
                                 </div>
                             </li>

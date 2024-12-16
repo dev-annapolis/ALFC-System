@@ -164,6 +164,14 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
     Route::patch('/telesChangeStatus/{id}', [DropdownController::class, 'telesChangeStatus'])->name('teles.changeStatus');
 
 
+    //Payment Checklist
+    Route::get('/paymentChecklistsIndex', [DropdownController::class, 'paymentChecklistsIndex'])->name('payment_checklists.index');
+    Route::post('/paymentChecklistsStore', [DropdownController::class, 'paymentChecklistsStore'])->name('payment_checklists.store');
+    Route::put('/paymentChecklistsUpdate', [DropdownController::class, 'paymentChecklistsUpdate'])->name('payment_checklists.update');
+    Route::patch('/paymentChecklistsChangeStatus/{id}', [DropdownController::class, 'paymentChecklistsChangeStatus'])->name('payment_checklists.changeStatus');
+
+
+
 
 
 

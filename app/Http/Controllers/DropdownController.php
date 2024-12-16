@@ -19,6 +19,7 @@ use App\Models\IfGdfi;
 use App\Models\Commissioner;
 use App\Models\SalesManager;
 use App\Models\Tele;
+use App\Models\PaymentChecklist;
 
 use App\Models\User;
 
@@ -738,8 +739,57 @@ class DropdownController extends Controller
 
 
 
+    public function paymentChecklistsIndex()
+    {
+        $paymentChecklists = PaymentChecklist::with('modeOfPayment')->orderBy('status', 'asc')->get();
+        $modesOfPayment = ModeOfPayment::all(); // Fetch all modes of payment for the dropdown
+
+        return view('dropdown.payment_checklists', compact('paymentChecklists', 'modesOfPayment'));
+    }
 
 
+    public function paymentChecklistsStore(Request $request)
+    {
+        $validated = $request->validate([
+            'mode_of_payment_id' => 'required|exists:mode_of_payments,id',
+            'name' => 'required|string|max:255|unique:payment_checklists,name',
+        ]);
+
+        PaymentChecklist::create([
+            'mode_of_payment_id' => $validated['mode_of_payment_id'],
+            'name' => $validated['name'],
+            'status' => 'active', // Default status, you can change as needed
+        ]);
+
+        return redirect()->back()->with('success', 'Payment checklist added successfully!');
+    }
+
+    public function paymentChecklistsUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:payment_checklists,id',
+            'mode_of_payment_id' => 'required|exists:mode_of_payments,id',
+            'name' => 'required|string|max:255|unique:payment_checklists,name,' . $request->id,
+        ]);
+
+        $paymentChecklist = PaymentChecklist::findOrFail($validated['id']);
+        $paymentChecklist->update([
+            'mode_of_payment_id' => $validated['mode_of_payment_id'],
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Payment checklist updated successfully!');
+    }
+
+
+    public function paymentChecklistsChangeStatus($id)
+    {
+        $paymentChecklist = PaymentChecklist::findOrFail($id);
+        $paymentChecklist->status = $paymentChecklist->status === 'active' ? 'inactive' : 'active';
+        $paymentChecklist->save();
+
+        return redirect()->back()->with('success', 'Payment checklist status updated successfully!');
+    }
 
 
 }
