@@ -54,10 +54,7 @@ Route::post('/api/ra/verify/{id}', [RevenueAssistantController::class, 'verifyIn
 
 Route::get('/sps/index', [SalesProcessorSupervisorController::class, 'SalesProcessorSupervisorIndex'])->name('sps.index');
 Route::get('/api/sps-index', [SalesProcessorSupervisorController::class, 'spsIndexData']);
-
-Route::get('/api/checklist/{insuranceDetailId}', [SalesProcessorSupervisorController::class, 'fetchChecklist']);
-Route::get('/api/checklist-titles', [SalesProcessorSupervisorController::class, 'fetchChecklistTitles']);
-Route::get('/api/checklist-options/{titleId}', [SalesProcessorSupervisorController::class, 'fetchChecklistOptions']);
+Route::get('/api/checklist/{insurance_details_id}', [SalesProcessorSupervisorController::class, 'fetchChecklist']);
 Route::post('/api/checklist/save', [SalesProcessorSupervisorController::class, 'saveChecklist']);
 
 
@@ -137,15 +134,57 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
     Route::patch('/ifGdfiChangeStatus/{id}', [DropdownController::class, 'ifGdfiChangeStatus'])->name('gdfis.changeStatus');
 
 
-
-
-
-
+    // IF GDFI
+    Route::get('/subproductsIndex', [DropdownController::class, 'subproductsIndex'])->name('subproducts.index');
+    Route::post('/subproductsStore', [DropdownController::class, 'subproductsStore'])->name('subproducts.store');
+    Route::put('/subproductsUpdate', [DropdownController::class, 'subproductsUpdate'])->name('subproducts.update');
+    Route::patch('/subproductsChangeStatus/{id}', [DropdownController::class, 'subproductsChangeStatus'])->name('subproducts.changeStatus');
 
 
 
     // COMMISIONERS
+    Route::get('/commissionersIndex', [DropdownController::class, 'commissionersIndex'])->name('commissioners.index');
+    Route::post('/commissionersStore', [DropdownController::class, 'commissionersStore'])->name('commissioners.store');
+    Route::put('/commissionersUpdate', [DropdownController::class, 'commissionersUpdate'])->name('commissioners.update');
+    Route::patch('/commissionersChangeStatus/{id}', [DropdownController::class, 'commissionersChangeStatus'])->name('commissioners.changeStatus');
+
+
+    //Sales Manager
+    Route::get('/salesManagersIndex', [DropdownController::class, 'salesManagersIndex'])->name('salesManagers.index');
+    Route::post('/salesManagersStore', [DropdownController::class, 'salesManagersStore'])->name('salesManagers.store');
+    Route::put('/salesManagersUpdate', [DropdownController::class, 'salesManagersUpdate'])->name('salesManagers.update');
+    Route::patch('/salesManagersChangeStatus/{id}', [DropdownController::class, 'salesManagersChangeStatus'])->name('salesManagers.changeStatus');
+
+
+
     // TELES
+    Route::get('/telesIndex', [DropdownController::class, 'telesIndex'])->name('teles.index');
+    Route::post('/telesStore', [DropdownController::class, 'telesStore'])->name('teles.store');
+    Route::put('/telesUpdate', [DropdownController::class, 'telesUpdate'])->name('teles.update');
+    Route::patch('/telesChangeStatus/{id}', [DropdownController::class, 'telesChangeStatus'])->name('teles.changeStatus');
+
+
+    //Payment Checklist
+    Route::get('/paymentChecklistsIndex', [DropdownController::class, 'paymentChecklistsIndex'])->name('payment_checklists.index');
+    Route::post('/paymentChecklistsStore', [DropdownController::class, 'paymentChecklistsStore'])->name('payment_checklists.store');
+    Route::put('/paymentChecklistsUpdate', [DropdownController::class, 'paymentChecklistsUpdate'])->name('payment_checklists.update');
+    Route::patch('/paymentChecklistsChangeStatus/{id}', [DropdownController::class, 'paymentChecklistsChangeStatus'])->name('payment_checklists.changeStatus');
+
+
+    //Sales Associate
+    Route::get('/salesAssociatesIndex', [DropdownController::class, 'salesAssociatesIndex'])->name('sales_associates.index');
+    Route::post('/salesAssociatesStore', [DropdownController::class, 'salesAssociatesStore'])->name('sales_associates.store');
+    Route::put('/salesAssociatesUpdate', [DropdownController::class, 'salesAssociatesUpdate'])->name('sales_associates.update');
+    Route::patch('/salesAssociatesChangeStatus/{id}', [DropdownController::class, 'salesAssociatesChangeStatus'])->name('sales_associates.changeStatus');
+
+
+
+
+
+
+
+
+
 });
 
 

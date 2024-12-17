@@ -242,15 +242,16 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="checklistContainer">
-                    <!-- Checklist items will be dynamically loaded here -->
+                    <!-- Dynamically loaded checklist items will appear here -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary" onclick="saveChecklistChanges()">Save Changes</button>
                 </div>
             </div>
         </div>
     </div>
+
 
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -272,6 +273,32 @@
 
 
 <script>
+    function saveChecklistChanges() {
+        const checklistContainer = document.getElementById('checklistContainer');
+        const checkboxes = checklistContainer.querySelectorAll('.form-check-input');
+
+        const changes = Array.from(checkboxes).map(checkbox => ({
+            id: checkbox.id.split('-')[1], // Extract the ID from the `checklist-{id}`
+            completed: checkbox.checked ? 1 : 0
+        }));
+        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        $.ajax({
+            url: '/api/checklist/save', // Update with your endpoint for saving checklist changes
+            method: 'POST', // Or PUT if you're updating existing records
+            headers: {
+                'X-CSRF-TOKEN': csrfToken
+            },
+            contentType: 'application/json',
+            data: JSON.stringify(changes),
+            success: function (response) {
+                alert('Checklist changes saved successfully!');
+                $('#checklistModal').modal('hide'); // Optionally close the modal
+            },
+            error: function (xhr, status, error) {
+                alert('Error saving checklist changes: ' + error);
+            }
+        });
+    }
 
 
    $(document).ready(function () {
@@ -446,68 +473,26 @@
                 const checklistContainer = document.getElementById('checklistContainer');
                 checklistContainer.innerHTML = '';
 
-                if (data.length === 0) {
-                    // No data found, show dropdown for checklist titles
-                    $.ajax({
-                        url: '/api/checklist-titles',
-                        method: 'GET',
-                        success: function (titles) {
-                            checklistContainer.innerHTML = `
-                                <label for="checklistTitleDropdown">Select Checklist Title:</label>
-                                <select id="checklistTitleDropdown" class="form-select">
-                                    <option value="">-- Select --</option>
-                                    ${titles.map(title => `<option value="${title.id}">${title.name}</option>`).join('')}
-                                </select>
-                                <div id="checklistOptionsContainer"></div>
-                                <button id="saveChecklist" class="btn btn-primary mt-3">Save Checklist</button>
-                            `;
+                // Group data by titles
+                const groupedByTitle = data.reduce((acc, item) => {
+                    const title = item.payment_checklist?.mode_of_payment?.name || 'Unknown MOP';
+                    acc[title] = acc[title] || [];
+                    acc[title].push(item);
+                    return acc;
+                }, {});
 
-                            const titleDropdown = document.getElementById('checklistTitleDropdown');
-                            titleDropdown.addEventListener('change', function () {
-                                const selectedTitleId = this.value;
-                                if (selectedTitleId) {
-                                    fetchChecklistOptions(selectedTitleId);
-                                }
-                            });
-
-                            document.getElementById('saveChecklist').addEventListener('click', function () {
-                                saveChecklist(detailId);
-                            });
-                        },
-                        error: function () {
-                            alert("Error fetching checklist titles.");
-                        }
-                    });
-                } else {
-                    // Data found, group and display as before
-                    const groupedByTitle = data.reduce((acc, item) => {
-                        const title = item.checklist_option.checklist_title.name;
-                        acc[title] = acc[title] || [];
-                        acc[title].push(item);
-                        return acc;
-                    }, {});
-
-                    for (const [title, options] of Object.entries(groupedByTitle)) {
-                        checklistContainer.innerHTML += `
-                            <h5>${title}</h5>
-                            ${options.map(option => `
-                                <div class="form-check">
-                                    <input 
-                                        class="form-check-input checklist-item" 
-                                        type="checkbox" 
-                                        data-id="${option.id}" 
-                                        ${option.completed ? 'checked' : ''}
-                                    >
-                                    <label class="form-check-label">${option.checklist_option.name}</label>
-                                </div>
-                            `).join('')}
-                        `;
-                    }
-
-                    checklistContainer.innerHTML += `<button id="saveChecklist" class="btn btn-primary mt-3">Save Checklist</button>`;
-                    document.getElementById('saveChecklist').addEventListener('click', function () {
-                        saveChecklist(detailId);
-                    });
+                // Render grouped checklist items
+                for (const [title, items] of Object.entries(groupedByTitle)) {
+                    const titleElement = `<h5>${title}</h5>`;
+                    const checklistItems = items.map(item => `
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="checklist-${item.id}" ${item.completed ? 'checked' : ''}>
+                            <label class="form-check-label" for="checklist-${item.id}">
+                                ${item.payment_checklist?.name || 'Unnamed Checklist'}
+                            </label>
+                        </div>
+                    `).join('');
+                    checklistContainer.innerHTML += `${titleElement}${checklistItems}`;
                 }
             },
             error: function () {
@@ -516,62 +501,8 @@
         });
     }
 
-    function fetchChecklistOptions(titleId) {
-        const checklistOptionsContainer = document.getElementById('checklistOptionsContainer');
-        checklistOptionsContainer.innerHTML = '';
+    
 
-        $.ajax({
-            url: `/api/checklist-options/${titleId}`,
-            method: 'GET',
-            success: function (options) {
-                console.log("Checklist Options:");
-                options.forEach(option => console.log(option.name)); // Log names to the console
-
-                checklistOptionsContainer.innerHTML = options.map(option => `
-                    <div class="form-check">
-                        <input 
-                            class="form-check-input checklist-option" 
-                            type="checkbox" 
-                            data-id="${option.id}">
-                        <label class="form-check-label">${option.name}</label>
-                    </div>
-                `).join('');
-            },
-            error: function () {
-                alert("Error fetching checklist options.");
-            }
-        });
-    }
-
-
-    function saveChecklist(detailId) {
-    // Collect only selected (checked) checklist option IDs
-        const selectedOptions = Array.from(document.querySelectorAll('.checklist-option:checked')).map(option => ({
-            checklist_option_id: option.dataset.id
-        }));
-
-        console.log("Selected Checklist Options:", selectedOptions);
-        var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        $.ajax({
-            url: `/api/checklist/save`,
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': csrfToken
-            },
-            contentType: 'application/json',
-            data: JSON.stringify({
-                insurance_detail_id: detailId,
-                options: selectedOptions // Pass only the checked options
-            }),
-            
-            success: function () {
-                alert("Checklist saved successfully.");
-            },
-            error: function () {
-                alert("Error saving checklist.");
-            }
-        });
-    }
 
 
 

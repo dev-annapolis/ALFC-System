@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ChecklistOption extends Model
+class PaymentChecklist extends Model
 {
-    protected $fillable = ['name', 'status', 'checklist_title_id'];
+    protected $fillable = ['name', 'status', 'mode_of_payment_id'];
 
-    public function checklistTitle()
+    public function modeOfPayment()
     {
-        return $this->belongsTo(ChecklistTitle::class);
+        return $this->belongsTo(ModeOfPayment::class);
     }
 
     public function insuranceChecklists()

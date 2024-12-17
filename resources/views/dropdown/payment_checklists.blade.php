@@ -106,6 +106,9 @@
 </style>
 
 
+
+
+
 <div class="container-fluid p-5">
     @if (session('success'))
         <div id="success-alert" class="alert alert-success alert-dismissible fade show" role="alert">
@@ -115,14 +118,14 @@
     @endif
 
     <div class="row TOP-ROW mb-3">
-        <div class="col-md-6 GDFI-MASTERLIST">
-            <h1 class="fs-2 fw-medium">Master List of <strong>GDFI</strong></h1>
+        <div class="col-md-6 CHECKLIST-MASTERLIST">
+            <h1 class="fs-2 fw-medium">Master List of <strong>Payment Checklists</strong></h1>
         </div>
         <div class="col-md-6 SEARCHING d-flex align-items-center justify-content-end">
-            <!-- Add GDFI Button -->
-            <button class="btn btn-sm btn-primary fs-6 pe-3 me-3" data-bs-toggle="modal" data-bs-target="#addGdfiModal">
+            <!-- Add Payment Checklist Button -->
+            <button class="btn btn-sm btn-primary fs-6 pe-3 me-3" data-bs-toggle="modal" data-bs-target="#addPaymentChecklistModal">
                 <i class="me-2 ms-2 fa-solid fa-plus"></i>
-                Add GDFI
+                Add Payment Checklist
             </button>
             <!-- Search box will be initialized by DataTables -->
         </div>
@@ -131,7 +134,7 @@
     <div class="table-container">
 
         <div class="table-responsive">
-            <table class="table dt-responsive shadow-sm " id="gdfisTable">
+            <table class="table dt-responsive shadow-sm" id="paymentChecklistsTable">
                 <thead class="fw-medium">
                     <tr class="fs-6">
                         <th style="width: 33%;">Name</th>
@@ -140,26 +143,29 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($ifGdfis as $ifGdfi)
+                    @foreach ($paymentChecklists as $paymentChecklist)
                         <tr class="fs-6 shadow-sm">
-                            <td class="text-secondary fw-medium">{{ $ifGdfi->name }}</td>
+                            <td class="text-secondary fw-medium">{{ $paymentChecklist->name }}</td>
                             <td>
-                                <span class="badge {{ $ifGdfi->status === 'active' ? 'bg-active' : 'bg-inactive' }}">
-                                    {{ ucfirst($ifGdfi->status) }}
+                                <span class="badge {{ $paymentChecklist->status === 'active' ? 'bg-active' : 'bg-inactive' }}">
+                                    {{ ucfirst($paymentChecklist->status) }}
                                 </span>
                             </td>
                             <td>
-                                <form method="POST" action="{{ route('gdfis.changeStatus', $ifGdfi->id) }}" class="d-inline" >
+                                <form method="POST" action="{{ route('payment_checklists.changeStatus', $paymentChecklist->id) }}" class="d-inline">
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" class="btn btn-change-status btn-sm">Change Status</button>
                                 </form>
 
-                                <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#editGdfiModal" data-id="{{ $ifGdfi->id }}" data-name="{{ $ifGdfi->name }}" style="margin-left: 0.5rem;">
+                                <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#editPaymentChecklistModal"
+                                        data-id="{{ $paymentChecklist->id }}"
+                                        data-name="{{ $paymentChecklist->name }}"
+                                        data-mode-of-payment-id="{{ $paymentChecklist->mode_of_payment_id }}"
+                                        style="margin-left: 0.5rem;">
                                     Edit
                                 </button>
                             </td>
-
                         </tr>
                     @endforeach
                 </tbody>
@@ -168,52 +174,71 @@
 
     </div>
 
-
-
-
 </div>
 
-<!-- Add GDFI Modal -->
-<div class="modal fade" id="addGdfiModal" tabindex="-1" aria-labelledby="addGdfiModalLabel" aria-hidden="true">
+<!-- Add Payment Checklist Modal -->
+<div class="modal fade" id="addPaymentChecklistModal" tabindex="-1" aria-labelledby="addPaymentChecklistModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form method="POST" action="{{ route('gdfis.store') }}">
+        <form method="POST" action="{{ route('payment_checklists.store') }}">
             @csrf
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addGdfiModalLabel">Add GDFI</h5>
+                    <h5 class="modal-title" id="addPaymentChecklistModalLabel">Add Payment Checklist</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="gdfiName" class="form-label">GDFI Name</label>
-                        <input type="text" class="form-control" id="gdfiName" name="name" required>
+                        <label for="modeOfPaymentSelect" class="form-label">Select Mode of Payment</label>
+                        <select class="form-select" id="modeOfPaymentSelect" name="mode_of_payment_id" required>
+                            <option value="" disabled selected>Select a mode of payment</option>
+                            @foreach($modesOfPayment as $modeOfPayment)
+                                <option value="{{ $modeOfPayment->id }}">{{ $modeOfPayment->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="paymentChecklistName" class="form-label">Checklist Name</label>
+                        <input type="text" class="form-control" id="paymentChecklistName" name="name" required>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Add GDFI</button>
+                    <button type="submit" class="btn btn-primary">Add Payment Checklist</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Edit GDFI Modal -->
-<div class="modal fade" id="editGdfiModal" tabindex="-1" aria-labelledby="editGdfiModalLabel" aria-hidden="true">
+<!-- Edit Payment Checklist Modal -->
+<div class="modal fade" id="editPaymentChecklistModal" tabindex="-1" aria-labelledby="editPaymentChecklistModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form method="POST" action="{{ route('gdfis.update') }}">
+        <form method="POST" action="{{ route('payment_checklists.update') }}">
             @csrf
             @method('PUT')
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editGdfiModalLabel">Edit GDFI</h5>
+                    <h5 class="modal-title" id="editPaymentChecklistModalLabel">Edit Payment Checklist</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" id="editGdfiId" name="id">
+                    <input type="hidden" id="editPaymentChecklistId" name="id">
+
+                    <!-- Mode of Payment Dropdown -->
                     <div class="mb-3">
-                        <label for="editgdfiName" class="form-label">GDFI Name</label>
-                        <input type="text" class="form-control" id="editgdfiName" name="name" required>
+                        <label for="editModeOfPaymentSelect" class="form-label">Select Mode of Payment</label>
+                        <select class="form-select" id="editModeOfPaymentSelect" name="mode_of_payment_id" required>
+                            <option value="" disabled>Select a mode of payment</option>
+                            @foreach($modesOfPayment as $modeOfPayment)
+                                <option value="{{ $modeOfPayment->id }}">{{ $modeOfPayment->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Checklist Name -->
+                    <div class="mb-3">
+                        <label for="editPaymentChecklistName" class="form-label">Checklist Name</label>
+                        <input type="text" class="form-control" id="editPaymentChecklistName" name="name" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -225,17 +250,13 @@
     </div>
 </div>
 
-
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
 
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
 
-        // Show the success alert if it's present
         var successAlert = document.getElementById('success-alert');
         if (successAlert) {
             successAlert.style.display = 'block';  // Make alert visible
@@ -250,7 +271,7 @@
             }, 1075);  // 1 second delay before fading out
         }
 
-        var table = $('#gdfisTable').DataTable({
+        var table = $('#paymentChecklistsTable').DataTable({
             paging: true,
             searching: true, // Ensure search is enabled
             info: false,
@@ -271,20 +292,33 @@
             'float': 'right',
             'text-align': 'right'
         });
-        searchBox.find('input').addClass('form-control').attr('placeholder', 'Search GDFIs').css('width', '100%');
-
+        searchBox.find('input').addClass('form-control').attr('placeholder', 'Search Payment Checklists').css('width', '100%');
 
         // Handle Edit Button Click
-        document.getElementById('editGdfiModal').addEventListener('show.bs.modal', function (event) {
+        document.getElementById('editPaymentChecklistModal').addEventListener('show.bs.modal', function (event) {
             var button = event.relatedTarget;
             var id = button.getAttribute('data-id');
             var name = button.getAttribute('data-name');
-            document.getElementById('editGdfiId').value = id;
-            document.getElementById('editgdfiName').value = name;
+            var modeOfPaymentId = button.getAttribute('data-mode-of-payment-id');
+
+            document.getElementById('editPaymentChecklistId').value = id;
+            document.getElementById('editPaymentChecklistName').value = name;
+
+            // Set the selected mode of payment in the dropdown
+            var modeOfPaymentSelect = document.getElementById('editModeOfPaymentSelect');
+            Array.from(modeOfPaymentSelect.options).forEach(option => {
+                option.selected = option.value == modeOfPaymentId;
+            });
         });
 
     });
 </script>
+
+
+
+
+
+
 
 
 @endsection

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 use App\Models\Team;
 use App\Models\Provider;
@@ -11,14 +12,18 @@ use App\Models\Product;
 use App\Models\Area;
 use App\Models\Source;
 use App\Models\SourceBranch;
-
 use App\Models\AlfcBranch;
 use App\Models\ModeOfPayment;
-
 use App\Models\Subproduct;
-
-
 use App\Models\IfGdfi;
+use App\Models\Commissioner;
+use App\Models\SalesManager;
+use App\Models\Tele;
+use App\Models\PaymentChecklist;
+use App\Models\SalesAssociate;
+
+use App\Models\User;
+
 
 class DropdownController extends Controller
 {
@@ -513,6 +518,407 @@ class DropdownController extends Controller
         return redirect()->back()->with('success', 'IfGdfi status updated successfully!');
     }
 
+
+
+
+
+
+    public function commissionersIndex()
+    {
+        $commissioners = Commissioner::orderBy('status', 'asc')->get();
+        return view('dropdown.commissioners', compact('commissioners'));
+    }
+
+    public function commissionersStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:commissioners,name',
+        ]);
+
+        Commissioner::create([
+            'name' => $validated['name']
+        ]);
+
+        return redirect()->back()->with('success', 'Commissioner added successfully!');
+    }
+
+    public function commissionersUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:commissioners,id',
+            'name' => 'required|string|max:255|unique:commissioners,name,' . $request->id,
+        ]);
+
+        $commissioner = Commissioner::findOrFail($validated['id']);
+        $commissioner->update([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Commissioner updated successfully!');
+    }
+
+    public function commissionersChangeStatus($id)
+    {
+        $commissioner = Commissioner::findOrFail($id);
+        $commissioner->status = $commissioner->status === 'active' ? 'inactive' : 'active';
+        $commissioner->save();
+
+        return redirect()->back()->with('success', 'Commissioner status updated successfully!');
+    }
+
+
+
+
+
+
+    //Sales Managers
+    public function salesManagersIndex()
+    {
+        $salesManagers = SalesManager::with(['user', 'team'])->orderBy('status', 'asc')->get();
+        $users = User::all(); // Fetch all users for the dropdown
+        $teams = Team::all(); // Fetch all teams for the dropdown
+
+        return view('dropdown.salesManager', compact(
+            'salesManagers',
+            'users',
+            'teams'
+        ));
+    }
+
+    public function salesManagersStore(Request $request)
+    {
+        try {
+            // Validate the incoming request
+            $validated = $request->validate([
+                'username' => 'required|string|max:255|unique:users,username',
+                'password' => 'required|string|min:8|confirmed',
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|max:255|unique:users,email',
+                'viber_number' => 'nullable|string|max:20',
+                'team_id' => 'required|exists:teams,id',
+            ]);
+
+            // Create a new user
+            $user = User::create([
+                'username' => $validated['username'],
+                'password' => bcrypt($validated['password']),
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'viber_number' => $validated['viber_number'] ?? null,
+                'role_id' => 9,  // Automatically set role_id to 9
+                'status' => 'active',  // Automatically set status to active
+            ]);
+
+            // Create the Sales Manager and associate it with the user and team
+            SalesManager::create([
+                'user_id' => $user->id,
+                'team_id' => $validated['team_id'],
+                'name' => $validated['name'],
+            ]);
+
+            return redirect()->back()->with('success', 'Sales Manager added successfully!');
+        } catch (\Exception $e) {
+            Log::error('Error adding Sales Manager: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred while adding the Sales Manager.');
+        }
+    }
+
+    public function salesManagersUpdate(Request $request)
+    {
+        try {
+            // Get the current sales manager
+            $salesManager = SalesManager::findOrFail($request->id);
+
+            // Get the associated user
+            $user = $salesManager->user;
+
+            // Validate the incoming request
+            $validated = $request->validate([
+                'id' => 'required|exists:sales_managers,id',
+                'name' => 'required|string|max:255',
+                'password' => 'nullable|string|min:8|confirmed', // Password is optional
+                'viber_number' => 'nullable|string|max:20',
+                'team_id' => 'required|exists:teams,id', // Ensure valid team ID
+            ]);
+
+            // Only validate and update the username if it has changed
+            if ($request->username !== $user->username) {
+                $request->validate([
+                    'username' => 'required|string|max:255|unique:users,username',
+                ]);
+            }
+
+            // Only validate and update the email if it has changed
+            if ($request->email !== $user->email) {
+                $request->validate([
+                    'email' => 'required|email|max:255|unique:users,email',
+                ]);
+            }
+
+            // Update the user information only if something has changed
+            $user->update(array_filter([
+                'username' => $request->username !== $user->username ? $request->username : null,
+                'password' => $request->password ? bcrypt($request->password) : null,
+                'name' => $request->name !== $user->name ? $request->name : null,
+                'email' => $request->email !== $user->email ? $request->email : null,
+                'viber_number' => $request->viber_number !== $user->viber_number ? $request->viber_number : null,
+                'role_id' => 9,  // Role is kept as 9
+                'status' => 'active', // Keep status as active
+            ]));
+
+            // Update the Sales Manager's team information if team_id or name is changed
+            $salesManager->update(array_filter([
+                'team_id' => $request->team_id !== $salesManager->team_id ? $request->team_id : null,
+                'name' => $request->name !== $salesManager->name ? $request->name : null,
+            ]));
+
+            // Success message
+            return redirect()->back()->with('success', 'Sales Manager updated successfully!');
+        } catch (\Exception $e) {
+            // Log error details for debugging
+            Log::error('Error updating Sales Manager: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred while updating the Sales Manager.');
+        }
+    }
+
+    public function salesManagersChangeStatus($id)
+    {
+        $salesManager = SalesManager::findOrFail($id);
+        $salesManager->status = $salesManager->status === 'active' ? 'inactive' : 'active';
+        $salesManager->save();
+
+        return redirect()->back()->with('success', 'Sales Manager status updated successfully!');
+    }
+
+
+
+
+
+
+
+
+
+
+
+    public function telesIndex()
+    {
+        $teles = Tele::orderBy('status', 'asc')->get();
+        return view('dropdown.teles', compact('teles'));
+    }
+
+    public function telesStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:teles,name',
+        ]);
+
+        Tele::create([
+            'name' => $validated['name']
+        ]);
+
+        return redirect()->back()->with('success', 'Tele added successfully!');
+    }
+
+    public function telesUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:teles,id',
+            'name' => 'required|string|max:255|unique:teles,name,' . $request->id,
+        ]);
+
+        $tele = Tele::findOrFail($validated['id']);
+        $tele->update([
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Tele updated successfully!');
+    }
+
+    public function telesChangeStatus($id)
+    {
+        $tele = Tele::findOrFail($id);
+        $tele->status = $tele->status === 'active' ? 'inactive' : 'active';
+        $tele->save();
+
+        return redirect()->back()->with('success', 'Tele status updated successfully!');
+    }
+
+
+
+
+
+
+    public function paymentChecklistsIndex()
+    {
+        $paymentChecklists = PaymentChecklist::with('modeOfPayment')->orderBy('status', 'asc')->get();
+        $modesOfPayment = ModeOfPayment::all(); // Fetch all modes of payment for the dropdown
+
+        return view('dropdown.payment_checklists', compact('paymentChecklists', 'modesOfPayment'));
+    }
+
+
+    public function paymentChecklistsStore(Request $request)
+    {
+        $validated = $request->validate([
+            'mode_of_payment_id' => 'required|exists:mode_of_payments,id',
+            'name' => 'required|string|max:255|unique:payment_checklists,name',
+        ]);
+
+        PaymentChecklist::create([
+            'mode_of_payment_id' => $validated['mode_of_payment_id'],
+            'name' => $validated['name'],
+            'status' => 'active', // Default status, you can change as needed
+        ]);
+
+        return redirect()->back()->with('success', 'Payment checklist added successfully!');
+    }
+
+    public function paymentChecklistsUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:payment_checklists,id',
+            'mode_of_payment_id' => 'required|exists:mode_of_payments,id',
+            'name' => 'required|string|max:255|unique:payment_checklists,name,' . $request->id,
+        ]);
+
+        $paymentChecklist = PaymentChecklist::findOrFail($validated['id']);
+        $paymentChecklist->update([
+            'mode_of_payment_id' => $validated['mode_of_payment_id'],
+            'name' => $validated['name'],
+        ]);
+
+        return redirect()->back()->with('success', 'Payment checklist updated successfully!');
+    }
+
+
+    public function paymentChecklistsChangeStatus($id)
+    {
+        $paymentChecklist = PaymentChecklist::findOrFail($id);
+        $paymentChecklist->status = $paymentChecklist->status === 'active' ? 'inactive' : 'active';
+        $paymentChecklist->save();
+
+        return redirect()->back()->with('success', 'Payment checklist status updated successfully!');
+    }
+
+
+
+
+
+
+
+
+
+    // Index function to display Sales Associates
+    public function salesAssociatesIndex()
+    {
+        $salesAssociates = SalesAssociate::with(['user', 'team'])->orderBy('status', 'asc')->get();
+        $users = User::all(); // Fetch all users for the dropdown
+        $teams = Team::all(); // Fetch all teams for the dropdown
+
+        return view('dropdown.salesAssociates', compact(
+            'salesAssociates',
+            'users',
+            'teams'
+        ));
+    }
+
+    // Store function to add a new Sales Associate
+    public function salesAssociatesStore(Request $request)
+    {
+        try {
+            // Validate the incoming request
+            $validated = $request->validate([
+                'username' => 'required|string|max:255|unique:users,username',
+                'password' => 'required|string|min:8|confirmed',
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|max:255|unique:users,email',
+                'team_id' => 'required|exists:teams,id',
+            ]);
+
+            // Create a new user
+            $user = User::create([
+                'username' => $validated['username'],
+                'password' => bcrypt($validated['password']),
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'role_id' => 8,  // Role ID for Sales Associate
+                'status' => 'active',
+            ]);
+
+            // Create the Sales Associate
+            SalesAssociate::create([
+                'user_id' => $user->id,
+                'team_id' => $validated['team_id'],
+                'name' => $validated['name'],
+                'status' => 'active',
+            ]);
+
+            return redirect()->back()->with('success', 'Sales Associate added successfully!');
+        } catch (\Exception $e) {
+            Log::error('Error adding Sales Associate: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred while adding the Sales Associate.');
+        }
+    }
+
+    // Update function to modify a Sales Associate
+    public function salesAssociatesUpdate(Request $request)
+    {
+        try {
+            $salesAssociate = SalesAssociate::findOrFail($request->id);
+            $user = $salesAssociate->user;
+
+            // Validate the request
+            $validated = $request->validate([
+                'id' => 'required|exists:sales_associates,id',
+                'name' => 'required|string|max:255',
+                'password' => 'nullable|string|min:8|confirmed',
+                'team_id' => 'required|exists:teams,id',
+            ]);
+
+            // Validate username and email if changed
+            if ($request->username !== $user->username) {
+                $request->validate([
+                    'username' => 'required|string|max:255|unique:users,username',
+                ]);
+            }
+
+            if ($request->email !== $user->email) {
+                $request->validate([
+                    'email' => 'required|email|max:255|unique:users,email',
+                ]);
+            }
+
+            // Update the user details
+            $user->update(array_filter([
+                'username' => $request->username !== $user->username ? $request->username : null,
+                'password' => $request->password ? bcrypt($request->password) : null,
+                'name' => $request->name !== $user->name ? $request->name : null,
+                'email' => $request->email !== $user->email ? $request->email : null,
+                'status' => 'active',
+            ]));
+
+            // Update the Sales Associate details
+            $salesAssociate->update(array_filter([
+                'team_id' => $request->team_id !== $salesAssociate->team_id ? $request->team_id : null,
+                'name' => $request->name !== $salesAssociate->name ? $request->name : null,
+            ]));
+
+            return redirect()->back()->with('success', 'Sales Associate updated successfully!');
+        } catch (\Exception $e) {
+            Log::error('Error updating Sales Associate: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred while updating the Sales Associate.');
+        }
+    }
+
+    // Function to change status
+    public function salesAssociatesChangeStatus($id)
+    {
+        $salesAssociate = SalesAssociate::findOrFail($id);
+        $salesAssociate->status = $salesAssociate->status === 'active' ? 'inactive' : 'active';
+        $salesAssociate->save();
+
+        return redirect()->back()->with('success', 'Sales Associate status updated successfully!');
+    }
 
 
 
