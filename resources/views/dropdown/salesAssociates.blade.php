@@ -116,13 +116,13 @@
 
     <div class="row TOP-ROW mb-3">
         <div class="col-md-6 MASTERLIST">
-            <h1 class="fs-2 fw-medium">Master List of <strong>Sales Managers</strong></h1>
+            <h1 class="fs-2 fw-medium">Master List of <strong>Sales Associates</strong></h1>
         </div>
         <div class="col-md-6 SEARCHING d-flex align-items-center justify-content-end">
-            <!-- Add Sales Manager Button -->
-            <button class="btn btn-sm btn-primary fs-6 pe-3 me-3" data-bs-toggle="modal" data-bs-target="#addSalesManagerModal">
+            <!-- Add Sales Associate Button -->
+            <button class="btn btn-sm btn-primary fs-6 pe-3 me-3" data-bs-toggle="modal" data-bs-target="#addSalesAssociateModal">
                 <i class="me-2 ms-2 fa-solid fa-plus"></i>
-                Add Sales Manager
+                Add Sales Associate
             </button>
             <!-- Search box will be initialized by DataTables -->
         </div>
@@ -131,7 +131,7 @@
     <div class="table-container">
 
         <div class="table-responsive">
-            <table class="table dt-responsive shadow-sm " id="salesManagersTable">
+            <table class="table dt-responsive shadow-sm" id="salesAssociatesTable">
                 <thead class="fw-medium">
                     <tr class="fs-6">
                         <th style="width: 25%;">Name</th>
@@ -141,39 +141,37 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($salesManagers as $salesManager)
+                    @foreach ($salesAssociates as $salesAssociate)
                         <tr class="fs-6 shadow-sm">
-                            <td class="text-secondary fw-medium">{{ $salesManager->name }}</td>
-                            <td class="text-secondary fw-medium">{{ $salesManager->team->name ?? 'N/A' }}</td>
+                            <td class="text-secondary fw-medium">{{ $salesAssociate->name }}</td>
+                            <td class="text-secondary fw-medium">{{ $salesAssociate->team->name ?? 'N/A' }}</td>
                             <td>
-                                <span class="badge {{ $salesManager->status === 'active' ? 'bg-active' : 'bg-inactive' }}">
-                                    {{ ucfirst($salesManager->status) }}
+                                <span class="badge {{ $salesAssociate->status === 'active' ? 'bg-active' : 'bg-inactive' }}">
+                                    {{ ucfirst($salesAssociate->status) }}
                                 </span>
                             </td>
                             <td>
-                                <form method="POST" action="{{ route('salesManagers.changeStatus', $salesManager->id) }}" class="d-inline" >
+                                <form method="POST" action="{{ route('sales_associates.changeStatus', $salesAssociate->id) }}" class="d-inline">
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" class="btn btn-change-status btn-sm">Change Status</button>
                                 </form>
 
                                 <button
-                                class="btn btn-edit btn-sm"
-                                data-bs-toggle="modal"
-                                data-bs-target="#editSalesManagerModal"
-                                data-id="{{ $salesManager->id }}"
-                                data-name="{{ $salesManager->name }}"
-                                data-username="{{ $salesManager->user->username }}"
-                                data-email="{{ $salesManager->user->email }}"
-                                data-viber-number="{{ $salesManager->user->viber_number }}"
-                                data-team-id="{{ $salesManager->team_id }}"
-                                style="margin-left: 0.5rem;"
-                            >
-                                Edit
-                            </button>
+                                    class="btn btn-edit btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editSalesAssociateModal"
+                                    data-id="{{ $salesAssociate->id }}"
+                                    data-name="{{ $salesAssociate->name }}"
+                                    data-username="{{ $salesAssociate->user->username }}"
+                                    data-email="{{ $salesAssociate->user->email }}"
+                                    data-team-id="{{ $salesAssociate->team_id }}"
+                                    style="margin-left: 0.5rem;"
+                                >
+                                    Edit
+                                </button>
 
                             </td>
-
                         </tr>
                     @endforeach
                 </tbody>
@@ -181,17 +179,16 @@
         </div>
 
     </div>
-
 </div>
 
-<!-- Add Sales Manager Modal -->
-<div class="modal fade" id="addSalesManagerModal" tabindex="-1" aria-labelledby="addSalesManagerModalLabel" aria-hidden="true">
+<!-- Add Sales Associate Modal -->
+<div class="modal fade" id="addSalesAssociateModal" tabindex="-1" aria-labelledby="addSalesAssociateModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form method="POST" action="{{ route('salesManagers.store') }}">
+        <form method="POST" action="{{ route('sales_associates.store') }}">
             @csrf
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addSalesManagerModalLabel">Add Sales Manager</h5>
+                    <h5 class="modal-title" id="addSalesAssociateModalLabel">Add Sales Associate</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -215,20 +212,14 @@
 
                     <!-- Name -->
                     <div class="mb-3">
-                        <label for="salesManagerName" class="form-label">Sales Manager Name</label>
-                        <input type="text" class="form-control" id="salesManagerName" name="name" required>
+                        <label for="salesAssociateName" class="form-label">Sales Associate Name</label>
+                        <input type="text" class="form-control" id="salesAssociateName" name="name" required>
                     </div>
 
                     <!-- Email -->
                     <div class="mb-3">
                         <label for="email" class="form-label">Email</label>
                         <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-
-                    <!-- Viber Number -->
-                    <div class="mb-3">
-                        <label for="viber_number" class="form-label">Viber Number</label>
-                        <input type="text" class="form-control" id="viber_number" name="viber_number">
                     </div>
 
                     <!-- Team Selection Dropdown -->
@@ -245,28 +236,26 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Add Sales Manager</button>
+                    <button type="submit" class="btn btn-primary">Add Sales Associate</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
 
-
-
-<!-- Edit Sales Manager Modal -->
-<div class="modal fade" id="editSalesManagerModal" tabindex="-1" aria-labelledby="editSalesManagerModalLabel" aria-hidden="true">
+<!-- Edit Sales Associate Modal -->
+<div class="modal fade" id="editSalesAssociateModal" tabindex="-1" aria-labelledby="editSalesAssociateModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form method="POST" action="{{ route('salesManagers.update') }}">
+        <form method="POST" action="{{ route('sales_associates.update') }}">
             @csrf
             @method('PUT')
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editSalesManagerModalLabel">Edit Sales Manager</h5>
+                    <h5 class="modal-title" id="editSalesAssociateModalLabel">Edit Sales Associate</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" id="editSalesManagerId" name="id">
+                    <input type="hidden" id="editSalesAssociateId" name="id">
 
                     <!-- Username -->
                     <div class="mb-3">
@@ -288,20 +277,14 @@
 
                     <!-- Name -->
                     <div class="mb-3">
-                        <label for="editSalesManagerName" class="form-label">Sales Manager Name</label>
-                        <input type="text" class="form-control" id="editSalesManagerName" name="name" required>
+                        <label for="editSalesAssociateName" class="form-label">Sales Associate Name</label>
+                        <input type="text" class="form-control" id="editSalesAssociateName" name="name" required>
                     </div>
 
                     <!-- Email -->
                     <div class="mb-3">
                         <label for="editEmail" class="form-label">Email</label>
                         <input type="email" class="form-control" id="editEmail" name="email" required>
-                    </div>
-
-                    <!-- Viber Number -->
-                    <div class="mb-3">
-                        <label for="editViberNumber" class="form-label">Viber Number</label>
-                        <input type="text" class="form-control" id="editViberNumber" name="viber_number">
                     </div>
 
                     <!-- Team Selection Dropdown -->
@@ -314,7 +297,6 @@
                             @endforeach
                         </select>
                     </div>
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -330,12 +312,15 @@
 
 
 
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener("DOMContentLoaded", function () {
+
         // Display success alert if present
         var successAlert = document.getElementById('success-alert');
         if (successAlert) {
@@ -351,8 +336,8 @@
             }, 1075);  // 1 second delay before fading out
         }
 
-        // Initialize DataTable for Sales Managers
-        var table = $('#salesManagersTable').DataTable({
+        // Initialize DataTable
+        $('#salesAssociatesTable').DataTable({
             paging: true,
             searching: true, // Enable search
             info: false, // Hide "Showing x of y" info
@@ -366,31 +351,28 @@
                 search: "" // Remove "Search:" label
             }
         });
-
         // Move search box to a custom container
         var searchBox = $('div.dataTables_filter');
         searchBox.appendTo('.SEARCHING').css({
             'float': 'right',
             'text-align': 'right'
         });
-        searchBox.find('input').addClass('form-control').attr('placeholder', 'Search SM').css('width', '100%');
+        searchBox.find('input').addClass('form-control').attr('placeholder', 'Search SA').css('width', '100%');
 
-        // Handle Edit Button Click for Sales Manager
-        $('#editSalesManagerModal').on('show.bs.modal', function(event) {
+        // Handle Edit Button Click for Sales Associate
+        $('#editSalesAssociateModal').on('show.bs.modal', function(event) {
             var button = event.relatedTarget; // Button that triggered the modal
             var id = button.getAttribute('data-id');
             var name = button.getAttribute('data-name');
             var username = button.getAttribute('data-username');
             var email = button.getAttribute('data-email');
-            var viber_number = button.getAttribute('data-viber-number');
             var teamId = button.getAttribute('data-team-id');
 
             // Fill hidden fields and input values
-            document.getElementById('editSalesManagerId').value = id;
-            document.getElementById('editSalesManagerName').value = name;
+            document.getElementById('editSalesAssociateId').value = id;
+            document.getElementById('editSalesAssociateName').value = name;
             document.getElementById('editUsername').value = username;
             document.getElementById('editEmail').value = email;
-            document.getElementById('editViberNumber').value = viber_number;
 
             // Set the selected team in the dropdown
             var teamSelect = document.getElementById('editTeamSelect');
@@ -402,6 +384,6 @@
 
 
     });
-</script>
 
+</script>
 @endsection

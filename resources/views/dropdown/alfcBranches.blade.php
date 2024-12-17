@@ -242,9 +242,13 @@
             setTimeout(function() {
                 successAlert.classList.remove('show');
                 successAlert.classList.add('fade');
+
+                // Set a timeout for when the alert should be fully hidden
+                setTimeout(function() {
+                    successAlert.style.display = 'none'; // Hide the alert after fade
+                }, 1500);  // Adjust the time (in ms) to match the fade-out duration
             }, 1075);  // 1 second delay before fading out
         }
-
 
         var table = $('#alfcBranchesTable').DataTable({
             paging: true,

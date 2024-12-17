@@ -164,6 +164,21 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
     Route::patch('/telesChangeStatus/{id}', [DropdownController::class, 'telesChangeStatus'])->name('teles.changeStatus');
 
 
+    //Payment Checklist
+    Route::get('/paymentChecklistsIndex', [DropdownController::class, 'paymentChecklistsIndex'])->name('payment_checklists.index');
+    Route::post('/paymentChecklistsStore', [DropdownController::class, 'paymentChecklistsStore'])->name('payment_checklists.store');
+    Route::put('/paymentChecklistsUpdate', [DropdownController::class, 'paymentChecklistsUpdate'])->name('payment_checklists.update');
+    Route::patch('/paymentChecklistsChangeStatus/{id}', [DropdownController::class, 'paymentChecklistsChangeStatus'])->name('payment_checklists.changeStatus');
+
+
+    //Sales Associate
+    Route::get('/salesAssociatesIndex', [DropdownController::class, 'salesAssociatesIndex'])->name('sales_associates.index');
+    Route::post('/salesAssociatesStore', [DropdownController::class, 'salesAssociatesStore'])->name('sales_associates.store');
+    Route::put('/salesAssociatesUpdate', [DropdownController::class, 'salesAssociatesUpdate'])->name('sales_associates.update');
+    Route::patch('/salesAssociatesChangeStatus/{id}', [DropdownController::class, 'salesAssociatesChangeStatus'])->name('sales_associates.changeStatus');
+
+
+
 
 
 
