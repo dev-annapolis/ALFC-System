@@ -115,23 +115,22 @@
     @endif
 
     <div class="row TOP-ROW mb-3">
-        <div class="col-md-6 TEAMS-MASTERLIST">
-            <h1 class="fs-2 fw-medium">Master List of <strong>Teams</strong></h1>
+        <div class="col-md-6 ASSURED-MASTERLIST">
+            <h1 class="fs-2 fw-medium">Master List of <strong>Assured Details</strong></h1>
         </div>
         <div class="col-md-6 SEARCHING d-flex align-items-center justify-content-end">
-            <!-- Add Team Button -->
-            <button class="btn btn-sm btn-primary fs-6 pe-3 me-3" data-bs-toggle="modal" data-bs-target="#addTeamModal">
+            <!-- Add Assured Detail Button -->
+            <button class="btn btn-sm btn-primary fs-6 pe-3 me-3" data-bs-toggle="modal" data-bs-target="#addAssuredDetailModal">
                 <i class="me-2 ms-2 fa-solid fa-plus"></i>
-                Add Team
+                Add Assured Detail
             </button>
-            <!-- Search box will be initialized by DataTables -->
         </div>
     </div>
 
     <div class="table-container">
 
         <div class="table-responsive">
-            <table class="table dt-responsive shadow-sm " id="teamsTable">
+            <table class="table dt-responsive shadow-sm" id="assuredDetailsTable">
                 <thead class="fw-medium">
                     <tr class="fs-6">
                         <th style="width: 33%;">Name</th>
@@ -140,26 +139,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($teams as $team)
+                    @foreach ($assuredDetails as $assuredDetail)
                         <tr class="fs-6 shadow-sm">
-                            <td class="text-secondary fw-medium">{{ $team->name }}</td>
+                            <td class="text-secondary fw-medium">{{ $assuredDetail->name }}</td>
                             <td>
-                                <span class="badge {{ $team->status === 'active' ? 'bg-active' : 'bg-inactive' }}">
-                                    {{ ucfirst($team->status) }}
+                                <span class="badge {{ $assuredDetail->status === 'active' ? 'bg-active' : 'bg-inactive' }}">
+                                    {{ ucfirst($assuredDetail->status) }}
                                 </span>
                             </td>
                             <td>
-                                <form method="POST" action="{{ route('teams.changeStatus', $team->id) }}" class="d-inline" >
+                                <form method="POST" action="{{ route('assured-details.change-status', $assuredDetail->id) }}" class="d-inline">
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" class="btn btn-change-status btn-sm">Change Status</button>
                                 </form>
 
-                                <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#editTeamModal" data-id="{{ $team->id }}" data-name="{{ $team->name }}" style="margin-left: 0.5rem;">
+                                <button class="btn btn-edit btn-sm" data-bs-toggle="modal" data-bs-target="#editAssuredDetailModal" data-id="{{ $assuredDetail->id }}" data-name="{{ $assuredDetail->name }}" style="margin-left: 0.5rem;">
                                     Edit
                                 </button>
                             </td>
-
                         </tr>
                     @endforeach
                 </tbody>
@@ -167,53 +165,49 @@
         </div>
 
     </div>
-
-
-
-
 </div>
 
-<!-- Add Team Modal -->
-<div class="modal fade" id="addTeamModal" tabindex="-1" aria-labelledby="addTeamModalLabel" aria-hidden="true">
+<!-- Add Assured Detail Modal -->
+<div class="modal fade" id="addAssuredDetailModal" tabindex="-1" aria-labelledby="addAssuredDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form method="POST" action="{{ route('teams.store') }}">
+        <form method="POST" action="{{ route('assured-details.store') }}">
             @csrf
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addTeamModalLabel">Add Team</h5>
+                    <h5 class="modal-title" id="addAssuredDetailModalLabel">Add Assured Detail</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
-                        <label for="teamName" class="form-label">Team Name</label>
-                        <input type="text" class="form-control" id="teamName" name="name" required>
+                        <label for="assuredDetailName" class="form-label">Assured Name</label>
+                        <input type="text" class="form-control" id="assuredDetailName" name="name" required>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Add Team</button>
+                    <button type="submit" class="btn btn-primary">Add Assured Detail</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
 
-<!-- Edit Team Modal -->
-<div class="modal fade" id="editTeamModal" tabindex="-1" aria-labelledby="editTeamModalLabel" aria-hidden="true">
+<!-- Edit Assured Detail Modal -->
+<div class="modal fade" id="editAssuredDetailModal" tabindex="-1" aria-labelledby="editAssuredDetailModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <form method="POST" action="{{ route('teams.update') }}">
+        <form method="POST" action="{{ route('assured-details.update') }}">
             @csrf
             @method('PUT')
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="editTeamModalLabel">Edit Team</h5>
+                    <h5 class="modal-title" id="editAssuredDetailModalLabel">Edit Assured Detail</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" id="editTeamId" name="id">
+                    <input type="hidden" id="editAssuredDetailId" name="id">
                     <div class="mb-3">
-                        <label for="editTeamName" class="form-label">Team Name</label>
-                        <input type="text" class="form-control" id="editTeamName" name="name" required>
+                        <label for="editAssuredDetailName" class="form-label">Assured Name</label>
+                        <input type="text" class="form-control" id="editAssuredDetailName" name="name" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -225,67 +219,43 @@
     </div>
 </div>
 
-
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
-
-
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-
-        // Show the success alert if it's present
         var successAlert = document.getElementById('success-alert');
         if (successAlert) {
-            successAlert.style.display = 'block';  // Make alert visible
+            successAlert.style.display = 'block';
             setTimeout(function() {
                 successAlert.classList.remove('show');
                 successAlert.classList.add('fade');
-
-                // Set a timeout for when the alert should be fully hidden
                 setTimeout(function() {
-                    successAlert.style.display = 'none'; // Hide the alert after fade
-                }, 1500);  // Adjust the time (in ms) to match the fade-out duration
-            }, 1075);  // 1 second delay before fading out
+                    successAlert.style.display = 'none';
+                }, 1500);
+            }, 1075);
         }
 
-
-        var table = $('#teamsTable').DataTable({
+        var table = $('#assuredDetailsTable').DataTable({
             paging: true,
-            searching: true, // Ensure search is enabled
+            searching: true,
             info: false,
             order: [[1, 'asc']],
             pageLength: 10,
-            lengthChange: false, // Hide the "Show entries" dropdown
-            columnDefs: [
-                { orderable: false, targets: [2] } // Disable sorting on Actions column
-            ],
-            language: {
-                search: "" // Remove "Search:" label by setting it to an empty string
-            }
+            lengthChange: false,
+            columnDefs: [{ orderable: false, targets: [2] }],
+            language: { search: "" }
         });
 
-        // .SEARCHING
         var searchBox = $('div.dataTables_filter');
-        searchBox.appendTo('.SEARCHING').css({
-            'float': 'right',
-            'text-align': 'right'
-        });
-        searchBox.find('input').addClass('form-control').attr('placeholder', 'Search Teams').css('width', '100%');
+        searchBox.appendTo('.SEARCHING').css({ 'float': 'right', 'text-align': 'right' });
+        searchBox.find('input').addClass('form-control').attr('placeholder', 'Search Assured Details').css('width', '100%');
 
-
-        // Handle Edit Button Click
-        document.getElementById('editTeamModal').addEventListener('show.bs.modal', function (event) {
+        document.getElementById('editAssuredDetailModal').addEventListener('show.bs.modal', function(event) {
             var button = event.relatedTarget;
             var id = button.getAttribute('data-id');
             var name = button.getAttribute('data-name');
-            document.getElementById('editTeamId').value = id;
-            document.getElementById('editTeamName').value = name;
+            document.getElementById('editAssuredDetailId').value = id;
+            document.getElementById('editAssuredDetailName').value = name;
         });
-
     });
 </script>
-
 
 @endsection

@@ -21,6 +21,7 @@ use App\Models\SalesManager;
 use App\Models\Tele;
 use App\Models\PaymentChecklist;
 use App\Models\SalesAssociate;
+use App\Models\AssuredDetail;
 
 use App\Models\User;
 
@@ -919,6 +920,80 @@ class DropdownController extends Controller
 
         return redirect()->back()->with('success', 'Sales Associate status updated successfully!');
     }
+
+
+
+
+    public function assuredDetailsIndex()
+    {
+        $assuredDetails = AssuredDetail::orderBy('name', 'asc')->get();
+        return view('dropdown.assured_details', compact('assuredDetails'));
+    }
+
+    // Store - Add a new Assured Detail
+    public function assuredDetailsStore(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:assured_details,name',
+            'lot_number' => 'nullable|string|max:255',
+            'street' => 'nullable|string|max:255',
+            'barangay' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'country' => 'nullable|string|max:255',
+            'contact_number' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'other_contact_number' => 'nullable|string|max:20',
+            'facebook_account' => 'nullable|string|max:255',
+            'viber_account' => 'nullable|string|max:255',
+            'nature_of_business' => 'nullable|string|max:255',
+            'other_assets' => 'nullable|string|max:255',
+            'other_source_of_business' => 'nullable|string|max:255',
+        ]);
+
+        AssuredDetail::create($validated);
+
+        return redirect()->back()->with('success', 'Assured Detail added successfully!');
+    }
+
+    // Update - Edit an existing Assured Detail
+    public function assuredDetailsUpdate(Request $request)
+    {
+        $validated = $request->validate([
+            'id' => 'required|exists:assured_details,id',
+            'name' => 'required|string|max:255|unique:assured_details,name,' . $request->id,
+            'lot_number' => 'nullable|string|max:255',
+            'street' => 'nullable|string|max:255',
+            'barangay' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'country' => 'nullable|string|max:255',
+            'contact_number' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'other_contact_number' => 'nullable|string|max:20',
+            'facebook_account' => 'nullable|string|max:255',
+            'viber_account' => 'nullable|string|max:255',
+            'nature_of_business' => 'nullable|string|max:255',
+            'other_assets' => 'nullable|string|max:255',
+            'other_source_of_business' => 'nullable|string|max:255',
+        ]);
+
+        $assuredDetail = AssuredDetail::findOrFail($validated['id']);
+        $assuredDetail->update($validated);
+
+        return redirect()->back()->with('success', 'Assured Detail updated successfully!');
+    }
+
+
+    public function assuredDetailsChangeStatus($id)
+    {
+        $assuredDetail = AssuredDetail::findOrFail($id);
+        $assuredDetail->status = $assuredDetail->status === 'active' ? 'inactive' : 'active';
+        $assuredDetail->save();
+
+        return redirect()->back()->with('success', 'Assured Detail status updated successfully!');
+    }
+
+
+
 
 
 
