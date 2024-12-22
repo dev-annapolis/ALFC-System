@@ -179,6 +179,11 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
 
 
 
+    //Assured
+    Route::get('/assuredDetailsIndex', [DropdownController::class, 'assuredDetailsIndex'])->name('assured_details.index');
+    Route::post('/assuredDetailsStore', [DropdownController::class, 'assuredDetailsStore'])->name('assured_details.store');
+    Route::put('/assuredDetailsUpdate', [DropdownController::class, 'assuredDetailsUpdate'])->name('assured_details.update');
+    Route::patch('/assuredDetailsChangeStatus/{id}', [DropdownController::class, 'assuredDetailsChangeStatus'])->name('assured_details.changeStatus');
 
 
 
