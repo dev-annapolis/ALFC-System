@@ -61,7 +61,7 @@
                                     <a class="dropdown-item" href="{{ route('teles.index') }}">{{ __('Tele Collector') }}</a>
                                     <a class="dropdown-item" href="{{ route('payment_checklists.index') }}">{{ __('Payment Checklist') }}</a>
                                     <a class="dropdown-item" href="{{ route('sales_associates.index') }}">{{ __('Sales Associates') }}</a>
-                                    <a class="dropdown-item" href="{{ route('assured_details.index') }}">{{ __('Sales Associates') }}</a>
+                                    <a class="dropdown-item" href="{{ route('assured_details.index') }}">{{ __('Assured') }}</a>
 
                                 </div>
                             </li>
