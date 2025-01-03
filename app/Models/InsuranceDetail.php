@@ -121,10 +121,12 @@ class InsuranceDetail extends Model
     {
         return $this->hasMany(InsuranceCommissioner::class);
     }
+
     public function assuredDetail()
     {
         return $this->belongsTo(AssuredDetail::class);
     }
+
     public function team()
     {
         return $this->belongsTo(Team::class);
@@ -133,5 +135,10 @@ class InsuranceDetail extends Model
     public function checklistOption()
     {
         return $this->belongsTo(ChecklistOption::class);
+    }
+
+    public function arAging()
+    {
+        return $this->hasMany(ArAging::class);
     }
 }
