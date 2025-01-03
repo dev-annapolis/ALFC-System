@@ -13,6 +13,16 @@ return new class extends Migration
     {
         Schema::create('ar_aging_pivots', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('ar_aging_id')->nullable()->constrained()->onDelete('cascade');
+            $table->string('label')->nullable();
+            $table->string('payment_amount')->nullable();
+            $table->string('payment_schedule')->nullable();
+            $table->string('paid_amount')->nullable();
+            $table->string('paid_schedule')->nullable();
+            $table->string('reference_number')->nullable();
+            $table->string('ra_remarks')->nullable();
+            $table->string('tele_remarks')->nullable();
+            $table->boolean('paid')->default(false);
             $table->timestamps();
         });
     }
