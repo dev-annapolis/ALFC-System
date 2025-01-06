@@ -13,7 +13,6 @@ use App\Models\InsuranceDetail;
 use App\Models\CommissionDetail;
 use App\Models\PaymentDetail;
 use App\Models\InsuranceCommissioner;
-
 use App\Models\SalesAssociate;
 use App\Models\SalesManager;
 use App\Models\Provider;
@@ -27,6 +26,9 @@ use App\Models\AlfcBranch;
 use App\Models\Team;
 use App\Models\ModeOfPayment;
 use App\Models\Commissioner;
+use App\Models\ArAging;
+use App\Models\ArAgingPivot;
+
 use Illuminate\Support\Facades\Crypt;
 
 
@@ -117,7 +119,7 @@ class SalesProcessorController extends Controller
                     'email' => $request->assuredEmailValue,
                 ]);
                 $AssuredDetailId = $AssuredDetail->id;
-            } 
+            }
 
             $InsuranceDetail = InsuranceDetail::create([
                 'assured_detail_id' => $AssuredDetailId,
@@ -210,11 +212,71 @@ class SalesProcessorController extends Controller
                     'amount' => $commission['commissionAmount'],
                 ]);
             }
+            $grossPremium = $request->grossPremiumValue;
+            $initialPayment = $request->initialPaymentValues;
 
+            // Calculate the balance (gross_premium - total_outstanding)
+            $balance = $grossPremium - $initialPayment;
 
+            $arAging = ArAging::create([
+                'insurance_detail_id' => $InsuranceDetailId,
+                'issuance_code' => $request->IssuanceCodeValue,
+                'name' => $request->assuredNameValue,
+                'due_date' => $request->dueDateStartValues,
+                'terms' => $request->paymentTermsValues,
+                'team' => $request->teamValue,
+                'policy_number' => $request->policyNumberValue,
+                'sale_date' => $request->saleDateValue,
+                'mode_of_payment' => $request->mopValue,
+                'gross_premium' => $request->grossPremiumValue,
+                'total_outstanding' => $request->initialPaymentValues,
+                'balance' => $balance, // Assuming the balance is the same as total outstanding initially
+            ]);
+
+            // Create AR Aging Pivots
+            $terms = (int) $request->paymentTermsValues;
+            $paymentDetail = PaymentDetail::where('insurance_detail_id', $InsuranceDetailId)->first();
+
+            // Validate that $paymentDetail exists
+            if ($paymentDetail) {
+                $paymentSchedules = [
+                    ['schedule' => $paymentDetail->first_payment_schedule, 'amount' => $paymentDetail->first_payment_amount],
+                    ['schedule' => $paymentDetail->second_payment_schedule, 'amount' => $paymentDetail->second_payment_amount],
+                    ['schedule' => $paymentDetail->third_payment_schedule, 'amount' => $paymentDetail->third_payment_amount],
+                    ['schedule' => $paymentDetail->fourth_payment_schedule, 'amount' => $paymentDetail->fourth_payment_amount],
+                    ['schedule' => $paymentDetail->fifth_payment_schedule, 'amount' => $paymentDetail->fifth_payment_amount],
+                    ['schedule' => $paymentDetail->sixth_payment_schedule, 'amount' => $paymentDetail->sixth_payment_amount],
+                    ['schedule' => $paymentDetail->seventh_payment_schedule, 'amount' => $paymentDetail->seventh_payment_amount],
+                    ['schedule' => $paymentDetail->eight_payment_schedule, 'amount' => $paymentDetail->eight_payment_amount],
+                ];
+
+                // Create AR Aging Pivots
+                $terms = (int) $request->paymentTermsValues;
+
+                for ($i = 0; $i < min($terms, 8); $i++) {
+                    $label = $i === 0 ? 'current' : (($i - 1) * 30 + 1) . '-' . ($i * 30);
+                    $schedule = $paymentSchedules[$i];
+
+                    ArAgingPivot::create([
+                        'ar_aging_id' => $arAging->id,
+                        'label' => $label,
+                        'payment_amount' => $schedule['amount'],
+                        'payment_schedule' => $schedule['schedule'],
+                        'paid_amount' => $i === 0 ? $paymentDetail->first_payment_amount : null, // Set for current
+                        'paid_schedule' => $i === 0 ? $paymentDetail->first_payment_schedule : null, // Set for current
+                        'reference_number' => null,
+                        'ra_remarks' => null,
+                        'tele_remarks' => null,
+                        'paid' => $i === 0, // Set current to 1, others to 0
+                    ]);
+                }
+            } else {
+                // Handle case where PaymentDetail is not found
+                throw new \Exception('PaymentDetail not found for InsuranceDetail ID: ' . $InsuranceDetailId);
+            }
 
             DB::commit();
-            Log::info("Created ". $AssuredDetail->name);
+            Log::info("Created " . $AssuredDetail->name);
             return response()->json([
                 'message' => 'Form data received successfully.',
                 'AssuredDetailId' => $AssuredDetailId,
