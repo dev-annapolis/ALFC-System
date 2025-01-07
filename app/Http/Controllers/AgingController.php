@@ -68,22 +68,101 @@ class AgingController extends Controller
 
     public function getArAgingPivots($id)
     {
-        // Retrieve selected fields from the ArAgingPivot model for the given ArAging ID
+        // Retrieve selected fields from ArAgingPivot and related fields from ar_agings table
         $pivots = ArAgingPivot::select(
-            'label',
-            'payment_amount',
-            'payment_schedule',
-            'paid_amount',
-            'paid_schedule',
-            'reference_number',
-            'ra_remarks',
-            'tele_remarks',
-            'paid'
+            'ar_aging_pivots.id',
+            'ar_aging_pivots.label',
+            'ar_aging_pivots.payment_amount',
+            'ar_aging_pivots.payment_schedule',
+            'ar_aging_pivots.paid_amount',
+            'ar_aging_pivots.paid_schedule',
+            'ar_aging_pivots.reference_number',
+            'ar_aging_pivots.ra_remarks',
+            'ar_aging_pivots.tele_remarks',
+            'ar_aging_pivots.paid',
+            'ar_agings.gross_premium',
+            'ar_agings.total_outstanding',
+            'ar_agings.balance'
         )
-            ->where('ar_aging_id', $id)  // Use $id here instead of $arAgingId
+            ->join('ar_agings', 'ar_agings.id', '=', 'ar_aging_pivots.ar_aging_id') // Join with ar_agings table
+            ->where('ar_aging_pivots.ar_aging_id', $id) // Filter by the given AR Aging ID
             ->get();
 
+        // Retrieve summary fields for the given AR Aging ID
+        $summary = ArAging::select(
+            'gross_premium',
+            'total_outstanding',
+            'balance'
+        )
+            ->where('id', $id) // Match the given ID in ArAging table
+            ->first(); // Fetch the single matching record
+
         // Return the data as a JSON response
-        return response()->json($pivots);
+        return response()->json([
+            'pivots' => $pivots,
+            'summary' => $summary
+        ]);
     }
+    public function savePivotDetails(Request $request, $id)
+    {
+        // Log the incoming request data
+        Log::info('Received data for saving pivot details:', $request->all());
+
+        try {
+            // Validate the request data
+            $validated = $request->validate([
+                'paid_amount' => 'nullable|string',
+                'paid_schedule' => 'nullable|string',
+                'payment_amount' => 'nullable|string',
+                'payment_schedule' => 'nullable|string',
+                'reference_number' => 'nullable|string',
+                'ra_remarks' => 'nullable|string',
+                'tele_remarks' => 'nullable|string',
+                'paid' => 'nullable|in:true,false,1,0', // Accept boolean-like strings
+            ]);
+
+            // Log validation success
+            Log::info('Validation passed for pivot details.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation failed for pivot details.', ['errors' => $e->errors()]);
+            return response()->json(['error' => 'Validation failed', 'messages' => $e->errors()], 422);
+        }
+
+        // Find the pivot by ID
+        $pivot = ArAgingPivot::find($id);
+
+        if (!$pivot) {
+            Log::warning('Pivot not found with ID: ' . $id);
+            return response()->json(['error' => 'Pivot not found'], 404);
+        }
+
+        // Log the pivot data before updating
+        Log::info('Pivot found. Updating with new data.', ['pivot' => $pivot]);
+
+        // Convert 'paid' to 1 or 0 before saving
+        $paid = $validated['paid'] ? 1 : 0;  // Convert true/false to 1/0
+
+        // Update the pivot with the validated data
+        $pivot->paid_amount = $validated['paid_amount'];
+        $pivot->paid_schedule = $validated['paid_schedule'];
+        $pivot->payment_amount = $validated['payment_amount'];
+        $pivot->payment_schedule = $validated['payment_schedule'];
+        $pivot->reference_number = $validated['reference_number'];
+        $pivot->ra_remarks = $validated['ra_remarks'];
+        $pivot->tele_remarks = $validated['tele_remarks'];
+        $pivot->paid = $paid; // Save the converted 'paid' value (1 or 0)
+
+        // Log before saving
+        Log::info('Saving updated pivot data:', ['pivot' => $pivot->toArray()]);
+
+        // Save the updated pivot
+        $pivot->save();
+
+        // Log success
+        Log::info('Pivot details updated successfully.');
+
+        // Return success response
+        return response()->json(['success' => true]);
+    }
+
 }
