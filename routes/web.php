@@ -62,6 +62,8 @@ Route::post('/api/checklist/save', [SalesProcessorSupervisorController::class, '
 
 use App\Http\Middleware\RoleMiddleware;
 use App\Http\Controllers\DropdownController;
+use App\Http\Controllers\UploadingController;
+
 
 Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
     // ROLES
@@ -189,6 +191,7 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
 
 
 
+    Route::get('/uploadDataIndex', [UploadingController::class, 'uploadDataIndex'])->name('uploadData.index');
 
 });
 
