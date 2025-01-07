@@ -7,6 +7,8 @@ use App\Http\Controllers\SalesReportController;
 use App\Http\Controllers\SalesProcessorController;
 use App\Http\Controllers\RevenueAssistantController;
 use App\Http\Controllers\SalesProcessorSupervisorController;
+use App\Http\Controllers\AgingController;
+
 
 Route::get('/', function () {
     return view('landing-page');
@@ -57,6 +59,11 @@ Route::get('/api/sps-index', [SalesProcessorSupervisorController::class, 'spsInd
 Route::get('/api/checklist/{insurance_details_id}', [SalesProcessorSupervisorController::class, 'fetchChecklist']);
 Route::post('/api/checklist/save', [SalesProcessorSupervisorController::class, 'saveChecklist']);
 
+
+Route::get('/aging/index', [AgingController::class, 'agingIndex'])->name('aging.index');
+
+Route::get('/api/aging-data', [AgingController::class, 'agingTableData'])->name('aging.data');
+Route::get('/api/ar-aging-pivots/{id}', [AgingController::class, 'getArAgingPivots']);
 
 
 
