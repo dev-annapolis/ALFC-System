@@ -64,6 +64,7 @@ Route::get('/aging/index', [AgingController::class, 'agingIndex'])->name('aging.
 
 Route::get('/api/aging-data', [AgingController::class, 'agingTableData'])->name('aging.data');
 Route::get('/api/ar-aging-pivots/{id}', [AgingController::class, 'getArAgingPivots']);
+Route::put('/api/save-pivot-details/{id}', [AgingController::class, 'savePivotDetails']);
 
 
 
