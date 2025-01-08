@@ -83,6 +83,66 @@
         </tbody>
     </table>
 </div>
+<!-- Modal for Viewing and Editing Pivot Details -->
+<div class="modal fade" id="viewPivotDetailsModal" tabindex="-1" aria-labelledby="viewPivotDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="viewPivotDetailsModalLabel">Edit Pivot Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editPivotForm">
+                    <div class="mb-3" hidden>
+                        <label for="pivotIdInput" class="form-label"><strong>ID:</strong></label>
+                        <input type="text" class="form-control" id="pivotIdInput" name="id" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pivotPaidAmountInput" class="form-label"><strong>Paid Amount:</strong></label>
+                        <input type="text" class="form-control" id="pivotPaidAmountInput" name="paid_amount">
+                    </div>
+                    <div class="mb-3">
+                        <label for="pivotPaidScheduleInput" class="form-label"><strong>Paid Schedule:</strong></label>
+                        <input type="text" class="form-control" id="pivotPaidScheduleInput" name="paid_schedule">
+                    </div>
+                    <div class="mb-3">
+                        <label for="pivotPaymentAmountInput" class="form-label"><strong>Payment Amount:</strong></label>
+                        <input type="text" class="form-control" id="pivotPaymentAmountInput" name="payment_amount" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pivotPaymentScheduleInput" class="form-label"><strong>Payment Schedule:</strong></label>
+                        <input type="text" class="form-control" id="pivotPaymentScheduleInput" name="payment_schedule" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pivotReferenceNumberInput" class="form-label"><strong>Reference Number:</strong></label>
+                        <input type="text" class="form-control" id="pivotReferenceNumberInput" name="reference_number">
+                    </div>
+                    <div class="mb-3">
+                        <label for="pivotRaRemarksInput" class="form-label"><strong>RA Remarks:</strong></label>
+                        <textarea class="form-control" id="pivotRaRemarksInput" name="ra_remarks" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pivotTeleRemarksInput" class="form-label"><strong>Tele Remarks:</strong></label>
+                        <textarea class="form-control" id="pivotTeleRemarksInput" name="tele_remarks" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="pivotPaidInput" class="form-label"><strong>Paid:</strong></label>
+                        <select class="form-control" id="pivotPaidInput" name="paid">
+                            <option value="1">Yes</option>
+                            <option value="0">No</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="savePivotDetailsBtn" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css">
@@ -95,6 +155,10 @@
 <!-- Daterangepicker JS -->
 <script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
 <script>
     $(document).ready(function () {
         // Initialize DataTable
@@ -189,7 +253,6 @@
             const rowData = row.data();
 
             if (!rowData) {
-                console.error('Row data is undefined or null.');
                 return;
             }
 
@@ -197,7 +260,7 @@
             if (row.child.isShown()) {
                 // If it's already shown, close it
                 row.child.hide();
-                $(this).removeClass('shown');
+                $(this).removeClass('shown'); 
             } else {
                 // If it's not shown, open it
                 row.child(formatRowDetails(rowData)).show();
@@ -223,45 +286,58 @@
                 url: `/api/ar-aging-pivots/${id}`, // Your API endpoint for AR Aging Pivots
                 method: 'GET',
                 success: function (data) {
-                    if (data.length > 0) {
+                    // Log the summary for debugging
+                    console.log('Summary:', data.summary);
+
+                    if (data.pivots && data.pivots.length > 0) {
                         const tableHtml = `
                             <table class="table table-bordered table-sm">
                                 <thead>
                                     <tr>
-                                        <th>Label</th>
-                                        <th>Payment Amount</th>
-                                        <th>Payment Schedule</th>
-                                        <th>Paid Amount</th>
-                                        <th>Paid Schedule</th>
-                                        <th>Reference Number</th>
-                                        <th>RA Remarks</th>
-                                        <th>Tele Remarks</th>
-                                        <th>Paid</th>
+                                        ${data.pivots.map(pivot => `<th>${pivot.label}</th>`).join('')}
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    ${data.map(pivot => `
-                                        <tr>
-                                            <td>${pivot.label}</td>
-                                            <td>${pivot.payment_amount
-                                                ? pivot.payment_amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
-                                                : '$0.00'}</td>
-                                            <td>${pivot.payment_schedule || 'N/A'}</td>
-                                            <td>${pivot.paid_amount
-                                                ? pivot.paid_amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
-                                                : '$0.00'}</td>
-                                            <td>${pivot.paid_schedule || 'N/A'}</td>
-                                            <td>${pivot.reference_number || 'N/A'}</td>
-                                            <td>${pivot.ra_remarks || 'N/A'}</td>
-                                            <td>${pivot.tele_remarks || 'N/A'}</td>
-                                            <td>${pivot.paid ? 'Yes' : 'No'}</td>
-                                        </tr>
-                                    `).join('')}
+                                    <tr>
+                                        ${data.pivots.map(pivot => `
+                                            <td>
+                                                <div><strong>Paid Amount:</strong> ${pivot.paid_amount
+                                                    ? pivot.paid_amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+                                                    : ' '}</div>
+                                                <div><strong>Paid Schedule:</strong> ${pivot.paid_schedule || ' '}</div>
+                                                <div><strong>Payment Amount:</strong> ${pivot.payment_amount
+                                                    ? pivot.payment_amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+                                                    : ' '}</div>
+                                                <div><strong>Payment Schedule:</strong> ${pivot.payment_schedule || ' '}</div>
+                                                <div><strong>Reference Number:</strong> ${pivot.reference_number || ' '}</div>
+                                                <div><strong>RA Remarks:</strong> ${pivot.ra_remarks || ' '}</div>
+                                                <div><strong>Tele Remarks:</strong> ${pivot.tele_remarks || ' '}</div>
+                                                <div><strong>Paid:</strong> ${pivot.paid ? 'Yes' : ' '}</div>
+                                                <!-- View Details Button -->
+                                                <button 
+                                                    class="btn btn-primary btn-sm mt-2 view-details-btn" 
+                                                    data-id="${pivot.id}" 
+                                                    data-pivot='${JSON.stringify(pivot).replace(/"/g, '&quot;')}' 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#viewPivotDetailsModal">
+                                                    View Details
+                                                </button>
+                                            </td>
+                                        `).join('')}
+                                    </tr>
                                 </tbody>
                             </table>
                         `;
 
                         $(`#ar-aging-pivots-${id}`).html(tableHtml);
+
+                        // Bind the click event for the View Details buttons
+                        document.querySelectorAll('.view-details-btn').forEach(button => {
+                            button.addEventListener('click', function () {
+                                const pivot = JSON.parse(button.getAttribute('data-pivot'));
+                                populateModalDetails(pivot);
+                            });
+                        });
                     } else {
                         $(`#ar-aging-pivots-${id}`).html('<p>No AR Aging Pivots available.</p>');
                     }
@@ -272,10 +348,124 @@
                 }
             });
         }
+
+        function populateModalDetails(pivot) {
+            $('#pivotIdInput').val(pivot.id); // Set the ID dynamically
+            $('#pivotLabelInput').val(pivot.label || '');
+            $('#pivotPaidAmountInput').val(pivot.paid_amount || '');
+            $('#pivotPaidScheduleInput').val(''); // Ensure input starts as blank
+            $('#pivotPaymentAmountInput').val(pivot.payment_amount || '');
+            $('#pivotPaymentScheduleInput').val(pivot.payment_schedule || '');
+            $('#pivotReferenceNumberInput').val(pivot.reference_number || '');
+            $('#pivotRaRemarksInput').val(pivot.ra_remarks || '');
+            $('#pivotTeleRemarksInput').val(pivot.tele_remarks || '');
+            $('#pivotPaidInput').val(pivot.paid ? '1' : '0');
+
+            // Initialize DateRangePicker when modal is shown
+            $('#viewPivotDetailsModal').on('shown.bs.modal', function() {
+                $('#pivotPaidScheduleInput').daterangepicker({
+                    singleDatePicker: true,  // Enable single date selection
+                    showDropdowns: true,    // Show year and month dropdowns
+                    autoUpdateInput: false, // Don't update input field automatically
+                    locale: {
+                        format: 'MM/DD/YYYY', // Set the date format to MM/DD/YYYY
+                    },
+                }).on('apply.daterangepicker', function(ev, picker) {
+                    // Manually set the selected date to the input field
+                    $('#pivotPaidScheduleInput').val(picker.startDate.format('MM/DD/YYYY'));
+                });
+            });
+        }
+
+        // Function to save the data
+        function populateModalDetails(pivot) {
+            $('#pivotIdInput').val(pivot.id); // Set the ID dynamically
+            $('#pivotLabelInput').val(pivot.label || '');
+            $('#pivotPaidAmountInput').val(pivot.paid_amount || '');
+            $('#pivotPaidScheduleInput').val(''); // Ensure input starts as blank
+            $('#pivotPaymentAmountInput').val(pivot.payment_amount || '');
+            $('#pivotPaymentScheduleInput').val(pivot.payment_schedule || '');
+            $('#pivotReferenceNumberInput').val(pivot.reference_number || '');
+            $('#pivotRaRemarksInput').val(pivot.ra_remarks || '');
+            $('#pivotTeleRemarksInput').val(pivot.tele_remarks || '');
+            $('#pivotPaidInput').val(pivot.paid ? '1' : '0');
+
+            // Initialize DateRangePicker when modal is shown
+            $('#viewPivotDetailsModal').on('shown.bs.modal', function() {
+                $('#pivotPaidScheduleInput').daterangepicker({
+                    singleDatePicker: true,  // Enable single date selection
+                    showDropdowns: true,    // Show year and month dropdowns
+                    autoUpdateInput: false, // Don't update input field automatically
+                    locale: {
+                        format: 'MM/DD/YYYY', // Set the date format to MM/DD/YYYY
+                    },
+                }).on('apply.daterangepicker', function(ev, picker) {
+                    // Manually set the selected date to the input field
+                    $('#pivotPaidScheduleInput').val(picker.startDate.format('MM/DD/YYYY'));
+                });
+            });
+        }
+
+        // Function to save the data via PUT AJAX request
+        function savePivotDetails() {
+    // Get values from the modal inputs
+    var pivotData = {
+        id: $('#pivotIdInput').val(),
+        label: $('#pivotLabelInput').val(),
+        paid_amount: $('#pivotPaidAmountInput').val(),
+        paid_schedule: $('#pivotPaidScheduleInput').val(),
+        payment_amount: $('#pivotPaymentAmountInput').val(),
+        payment_schedule: $('#pivotPaymentScheduleInput').val(),
+        reference_number: $('#pivotReferenceNumberInput').val(),
+        ra_remarks: $('#pivotRaRemarksInput').val(),
+        tele_remarks: $('#pivotTeleRemarksInput').val(),
+        paid: $('#pivotPaidInput').val() === '1' // Ensure this is a boolean (true or false)
+    };
+
+    // Log the pivotData being sent
+    console.log('Sending the following pivot data:', pivotData);
+
+    // Send data to server via AJAX (PUT request)
+    $.ajax({
+        url: '/api/save-pivot-details/' + pivotData.id, // Correct URL to include the pivot ID
+        method: 'PUT',
+        data: pivotData,
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Add CSRF token to headers
+        },
+        success: function(response) {
+            // Log the response
+            console.log('Response from server:', response);
+
+            if (response.success) {
+                alert('Pivot details updated successfully!');
+                $('#viewPivotDetailsModal').modal('hide'); // Close the modal
+            } else {
+                alert('Error updating pivot details');
+            }
+        },
+        error: function(xhr, status, error) {
+            // Log the error details
+            console.error('AJAX error:', error);
+            console.error('XHR:', xhr);
+            console.error('Status:', status);
+            alert('Error updating pivot details');
+        }
+    });
+}
+
+// Attach save function to the "Save" button in the modal
+$('#savePivotDetailsBtn').on('click', function() {
+    savePivotDetails();
+});
+
+
+
+
+      
+
+
     });
 </script>
-
-
-
 
 @endsection
