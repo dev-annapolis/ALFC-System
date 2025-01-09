@@ -630,734 +630,618 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 
 
-<div class="container-form min-vh-100">
-    <div class="row px-3">
-        <!-- Steps section (Sidebar) -->
-        <div class="col-md-2 mt-md-3 col-12 sidebar px-4">
-
-
-            <div class="logo-container d-md-flex flex-column align-items-center text-center mt-3 mb-5 pt-md-1 pt-md-1 pt-sm-5">
-                <img src="{{ asset('images/frontend/alfc-logo.jpg') }}" alt="Logo" class="img-fluid alfc-logo mb-3">
-                <p class="fw-bold mb-0 alfc-title">
-                    ALFC Insurance Agency Inc.
-                </p>
-            </div>
-
-
-            <div class="steps mb-5" id="stepsContainer">
-                <label class="step active fw-bold">
-                    <input type="radio" name="step" value="1" checked disabled>
-                    Insurance Details
-                </label>
-                <label class="step">
-                    <input type="radio" name="step" value="2" disabled>
-                    Commissions
-                </label>
-
-            </div>
-
-        </div>
-
-        <!-- Form content section -->
-        <div class="col-md-10 col-12 form-content pt-md-5">
-
-            <!-- Step 1: Insurance Information -->
-            <div class="form-step active px-md-3 mb-md-5">
-                <h3 class="main-title fw-bold fs-1 mt-md-5">Insurance Details</h3>
-                <p class="sub-main-title text-muted mb-md-5">Input the assured's personal details and information accurately.</p>
-
-                <form id="step1 mt-md-5 mb-md-5">
-
-                    {{-- Assured Name --}}
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-3 mt-md-3 mt-sm-5">
-                                <label for="assuredNameLabel" class="form-label fw-bold">Client Name</label>
-                                <input type="text"
-                                       class="form-control uppercase-input rounded-0 border-1"
-                                       id="assuredName"
-                                       placeholder="Enter Client's Name"
-                                       autocomplete="off"
-                                       required>
-
-                            </div>
-                            <ul id="suggestions" class="list-group mt-2 w-25" style="display: none; position: absolute; z-index: 1000;">
-                                <!-- Suggestions will appear here -->
-                            </ul>
-                        </div>
-
-                        <input type="hidden" id="clientId" name="clientId">
-
-
-                    </div>
-
-
-                    {{-- Lot Number, Street, and Barangay --}}
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-3 mb-sm-2 mt-md-3 mt-sm-4">
-                                <label for="unitNoLabel" class="form-label fw-bold">Lot Number</label>
-                                <input type="text" class="form-control rounded-0 border-1 rounded-0 border-1" id="unitNo" placeholder="Enter lot number or unit number" required>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-3 mb-sm-2 mt-md-3 mt-sm-4">
-                                <label for="streetLabel" class="form-label fw-bold">Street</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="street" name="street" placeholder="Enter Street" required>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-3 mb-sm-2 mt-md-3 mt-sm-4">
-                                <label for="barangayLabel" class="form-label fw-bold">Barangay</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="barangay" placeholder="Enter Barangay" required>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    {{-- City and Country --}}
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-3 mb-sm-2 mt-md-2 mt-sm-4">
-                                <label for="cityLabel" class="form-label fw-bold">City</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="city" placeholder="Enter City" required>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-3 mb-sm-2 mt-md-2 mt-sm-4">
-                                <label for="countryLabel" class="form-label fw-bold">Country</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="country" placeholder="Enter Country" required>
-                            </div>
-                        </div>
-
-                        <input type="hidden" id="fullAddress" name="fullAddress">
-
-                    </div>
-
-                    {{-- Address and Contact Number --}}
-                    <div class="row ">
-
-                        <div class="col-md-6">
-                            <div class="mb-4 mb-md-4 mb-sm-5 mt-md-2">
-                                <label for="assuredEmailLabel" class="form-label fw-bold fw-bold">Email</label>
-                                <input type="text" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="assuredEmail" placeholder="Enter Email" required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="mb-4 mb-md-4 mb-sm-5 mt-md-2">
-                                <label for="assuredContactNumberLabel" class="form-label fw-bold fw-bold">Contact Number</label>
-                                <input type="text" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="assuredContactNumber" placeholder="Enter Assured Address" required>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    {{-- Issuance Code --}}
-                    <div class="row ">
-
-
-                        <div class="col-md-8">
-                            <div class="mb-3 mb-md-3 mb-sm-4 mt-md-5 mt-sm-4">
-                                <label for="sssuanceCodeLabel" class="form-label fw-bold fw-bold">Issuance Code</label>
-                                <input type="text" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="IssuanceCode" placeholder="Enter Issuance Code" required>
-                            </div>
-                        </div>
-
-
-
-
-                    </div>
-
-                    {{-- Classification and Sale Status --}}
-                    <div class="row ">
-
-
-                        <div class="col-md-4 ">
-                            <div class="mb-3 mb-md-3 mb-sm-4 mt-md-2">
-                                <label for="classificationLabel" class="form-label fw-bold fw-bold fs-6">Classification</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="classification" required>
-                                    <option value="" disabled selected>Select Classification</option>
-                                    <option value="new">New</option>
-                                    <option value="renewal">Renewal</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-3 mb-sm-4 mt-md-2">
-                                <label for="insuranceTypeLabel" class="form-label fw-bold">Sale Status</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="saleStatus" required>
-                                    <option value="" disabled selected>Select Insurance Type</option>
-                                    <option value="sale">Sale</option>
-                                    <option value="reinstated">Reinstated</option>
-                                    <option value="cancelled">Cancelled</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-3 mb-sm-4 mt-md-2">
-                                <label for="saleDateLabel" class="form-label fw-bold fw-bold">Sale Date</label>
-                                <input type="date" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="saleDate"  required>
-
-                            </div>
-
-                        </div>
-
-
-
-                    </div>
-
-                    {{-- Team and SA/SM --}}
-                    <div class="row ">
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
-                                <label for="team-label" class="form-label fw-bold fs-6">Team</label>
-                                <select class="form-control rounded-0 border-1 m-0" id="team" required>
-                                    <option value="" selected>Select Team</option>
-                                    @foreach($teams as $team)
-                                        <option value="{{ $team->id }}">{{ $team->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-3 mb-sm-4 mt-md-2">
-                                <label for="salesAssociateLabel" class="form-label fw-bold fs-6">SA</label>
-                                <select class="form-control rounded-0 border-1 m-0" id="salesAssociate">
-                                    <option value="" selected>SA</option>
-                                    @foreach($salesAssociates as $salesAssociate)
-                                        <option value="{{ $salesAssociate->id }}">{{ $salesAssociate->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-3 mb-sm-4 mt-md-2">
-                                <label for="salesManagerLabel" class="form-label fw-bold fs-6">SM</label>
-                                <select class="form-control rounded-0 border-1 m-0" id="salesManager">
-                                    <option value="" selected>SM</option>
-                                    @foreach($salesManagers as $salesManager)
-                                        <option value="{{ $salesManager->id }}">{{ $salesManager->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="row">
-
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4 mt-md-5">
-                                <label for="plateConductionNumberLabel" class="form-label fw-bold fw-bold fs-6">Plate / Conduction Number</label>
-                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="plateConductionNumber" placeholder="Enter Plate Conduction Number" required>
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-4 ">
-                            <div class="mb-5 mb-md-4 mb-sm-4 mt-md-5">
-                                <label for="descriptionLabel" class="form-label fw-bold fw-bold fs-6">Description</label>
-                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="description" placeholder="Enter Description" required>
-                            </div>
-                        </div>
-
-
-                    </div>
-
-                    <div class="row">
-
-                        <div class="col-md-4 ">
-                            <div class="mb-4 mb-md-4 mb-sm-4">
-                                <label for="loanAmountLabel" class="form-label fw-bold fw-bold fs-6">Loan Amount</label>
-                                <input type="text" class="form-control formatted-input rounded-0 rounded-0 border-1" id="loanAmount" placeholder="Enter Loan Amount" required>
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-4 ">
-                            <div class="mb-4 mb-md-4 mb-sm-4">
-                                <label for="totalSumInsuredLabel" class="form-label fw-bold fw-bold fs-6">Total Sum Insured </label>
-                                <input type="text" class="form-control formatted-input rounded-0 rounded-0 border-1" id="totalSumInsured" placeholder="Enter Total Sum Insured" required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4 ">
-                            <div class="mb-4 mb-md-4 mb-sm-4">
-                                <label for="mopLabel" class="form-label fw-bold fw-bold fs-6">Mode of Payment</label>
-                                <select class="form-control rounded-0 border-1 m-0" id="mop">
-                                    <option value="" disabled selected>Select Mode of Payment</option>
-                                    @foreach($mops as $mop)
-                                        <option value="{{ $mop->id }}">{{ $mop->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                    </div>
-
-
-
-                    {{-- Policy Inception Date and Expiry Date --}}
-                    <div class="row ">
-
-                        <div class="col-md-4">
-                            <div class="mb-5 mb-md-5 mb-sm-4 mt-md-2">
-
-                                <label for="policyInceptionLabel" class="form-label fw-bold fw-bold fs-6">Policy Inception Date</label>
-                                <input type="date" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="policyInception" placeholder="Enter Policy Inisu" required>
-
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-4">
-                            <div class="mb-5 mb-md-5 mb-sm-4 mt-md-2">
-                                <label for="expiryDateLabel" class="form-label fw-bold fw-bold fs-6">Expiry Date</label>
-                                <input type="date" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="expiryDate" placeholder="Enter Policy Number" required>
-                            </div>
-                        </div>
-
-
-                    </div>
-
-
-                    {{-- Provider --}}
-                    <div class="row">
-
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
-                                <label for="providerlabel" class="form-label fw-bold fw-bold fs-6">Provider</label>
-                                <select class="form-control rounded-0 border-1 m-0" id="provider" required>
-                                    <option value="" selected>Select Provider</option>
-                                    @foreach($providers as $provider)
-                                        <option value="{{ $provider->id }}">{{ $provider->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
-                                <label for="policyNumberLabel" class="form-label fw-bold fw-bold fs-6">Policy Number</label>
-                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="policyNumber" placeholder="Enter Policy Number" required>
-                            </div>
-                        </div>
-
-                    </div>
-                    {{-- Product, Sub-Product, and Product Type --}}
-                    <div class="row">
-
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4">
-                                <label for="productLabel" class="form-label fw-bold fs-6">Product</label>
-                                <select class="form-control rounded-0 border-1 m-0" id="product" required>
-                                    <option value="" selected disabled>Select Products</option>
-                                    @foreach($products as $product)
-                                        <option value="{{ $product->id }}">{{ $product->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4">
-                                <label for="subProductLabel" class="form-label fw-bold fs-6">Sub-Product</label>
-                                <select class="form-control rounded-0 border-1 m-0" id="subProduct" required>
-                                    <option value="" disabled selected>Select Sub-Product</option>
-                                    @foreach($subproducts as $subproduct)
-                                        <option value="{{ $subproduct->id }}">{{ $subproduct->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-
-                        <div class="col-md-4 ">
-                            <div class="mb-4 mb-md-4 mb-sm-4">
-                                <label for="productTypeLabel" class="form-label fw-bold fw-bold fs-6">Product Type</label>
-                                <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="productType">
-                                    <option value="" disabled selected>Select Product Type</option>
-                                    <option value="refinancing">Refinancing</option>
-                                    <option value="financing">Financing</option>
-                                </select>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    {{-- Source, Source Branch, and If GDFI --}}
-                    <div class="row ">
-
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
-                                <label for="sourceLabel" class="form-label fw-bold fw-bold fs-6">Source</label>
-
-                                <select class="form-control rounded-0 border-1 m-0" id="selectSources" required>
-                                    <option value="" disabled selected>Select Source</option>
-                                    @foreach($sources as $source)
-                                        <option value="{{ $source->id }}">{{ $source->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4 ">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
-                                <label for="sourceBranchLabel" class="form-label fw-bold fw-bold fs-6">Source Branch</label>
-
-                                <select class="form-control rounded-0 border-1 m-0" id="sourceBranch" required>
-                                    <option value="" disabled selected>Select Source Branch</option>
-                                    @foreach($sourcebranches as $sourcebranch)
-                                        <option value="{{ $sourcebranch->id }}">{{ $sourcebranch->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4" id="gdficol" style="display: none;">
-                            <div class="mb-5 mb-md-4 mb-sm-4">
-                                <label for="ifGdfiLabel" class="form-label fw-bold fw-bold fs-6">If GDFI</label>
-
-                                <select class="form-control rounded-0 border-1 m-0" id="ifGdfi">
-                                    <option value="" disabled selected>Select If GDFI</option>
-                                    @foreach($ifGdfis as $ifGdfi)
-                                        <option value="{{ $ifGdfi->id }}">{{ $ifGdfi->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    {{-- Area, Mortagee, and ALFC Branch --}}
-                    <div class="row mb-md-5">
-
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
-                                <label for="mortgageeLabel" class="form-label fw-bold fw-bold fs-6">Mortagee</label>
-                                <input type="text" class="form-control rounded-0 rounded-0 border-1" id="mortgagee" placeholder="Enter Mortgagee" required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
-                                <label for="areaLabel" class="form-label fw-bold fw-bold fs-6">Area</label>
-                                <select class="form-control rounded-0 border-1 m-0" id="area">
-                                    <option value="" disabled selected>Select Area</option>
-                                    @foreach($areas as $area)
-                                        <option value="{{ $area->id }}">{{ $area->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
-                                <label for="alfcBranchLabel" class="form-label fw-bold fw-bold fs-6">ALFC Branch</label>
-
-                                <select class="form-control rounded-0 border-1 m-0" id="alfcBranch">
-                                    <option value="" disabled selected>Select ALFC Branch</option>
-                                    @foreach($alfcbranches as $alfcbranch)
-                                        <option value="{{ $alfcbranch->id }}">{{ $alfcbranch->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-
-                    </div>
-
-
-                    <div class="button-container mb-md-5 mb-mt-5">
-                        <button type="button" class="prev-button" onclick="cancelStep()">Cancel</button>
-                        <button type="button" class="next-button" onclick="nextStep()">Next</button>
-                    </div>
-
-
-                </form>
+    <div class="container-form min-vh-100">
+        <div class="row px-3">
+            <!-- Steps section (Sidebar) -->
+            <div class="col-md-2 mt-md-3 col-12 sidebar px-4">
+
+                <div class="logo-container d-md-flex flex-column align-items-center text-center mt-3 mb-5 pt-md-1 pt-md-1 pt-sm-5">
+                    <img src="{{ asset('images/frontend/alfc-logo.jpg') }}" alt="Logo" class="img-fluid alfc-logo mb-3">
+                    <p class="fw-bold mb-0 alfc-title">
+                        ALFC Insurance Agency Inc.
+                    </p>
+                </div>
+
+                <div class="steps mb-5" id="stepsContainer">
+                    <label class="step active fw-bold">
+                        <input type="radio" name="step" value="1" checked disabled>
+                        Insurance Details
+                    </label>
+                    <label class="step">
+                        <input type="radio" name="step" value="2" disabled>
+                        Commissions
+                    </label>
+                </div>
 
             </div>
 
-            <!-- Step 2: Commission Details-->
-            <div class="form-step px-3 mb-md-5">
-                <h3 class="main-title fw-bold fs-1 mt-md-5">Commissions</h3>
-                <p class="sub-main-title text-muted mb-md-5">Enter Commissions Details and Information</p>
+            <!-- Form content section -->
+            <div class="col-md-10 col-12 form-content pt-md-5">
 
-                <form id="step2 mt-md-5">
+                <!-- Step 1: Insurance Information -->
+                <div class="form-step active px-md-3 mb-md-5">
+                    <h3 class="main-title fw-bold fs-1 mt-md-5">Insurance Details</h3>
+                    <p class="sub-main-title text-muted mb-md-5">Input the assured's personal details and information accurately.</p>
 
+                    <form id="step1 mt-md-5 mb-md-5">
 
-                    {{-- Gross Premium, Discount, and Gross Premium, Net of Discount --}}
-                    <div class="row">
+                        {{-- Assured Name --}}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-3 mt-md-3 mt-sm-5">
+                                    <label for="assuredNameLabel" class="form-label fw-bold">Client Name / Assured Name</label>
+                                    <input type="text"
+                                        class="form-control uppercase-input rounded-0 border-1"
+                                        id="assuredName"
+                                        placeholder="Enter Client's Name"
+                                        autocomplete="off"
+                                        required>
+                                </div>
+                                <ul id="suggestions" class="list-group mt-2 w-25" style="display: none; position: absolute; z-index: 1000;">
+                                    <!-- Suggestions will appear here -->
+                                </ul>
+                            </div>
+                            <input type="hidden" id="clientId" name="clientId">
+                        </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
-                                <label for="grossPremiumLabel" class="form-label fw-bold">Gross Premium</label>
-                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="grossPremium" placeholder="Enter Gross Premium" required>
+                        {{-- Lot Number, Street, and Barangay --}}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-3 mb-sm-2 mt-md-3 mt-sm-4">
+                                    <label for="unitNoLabel" class="form-label fw-bold">Lot Number</label>
+                                    <input type="text" class="form-control rounded-0 border-1 rounded-0 border-1" id="unitNo" placeholder="Enter lot number or unit number" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-3 mb-sm-2 mt-md-3 mt-sm-4">
+                                    <label for="streetLabel" class="form-label fw-bold">Street</label>
+                                    <input type="text" class="form-control rounded-0 border-1" id="street" name="street" placeholder="Enter Street" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-3 mb-sm-2 mt-md-3 mt-sm-4">
+                                    <label for="barangayLabel" class="form-label fw-bold">Barangay</label>
+                                    <input type="text" class="form-control rounded-0 border-1" id="barangay" placeholder="Enter Barangay" required>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
-                                <label for="discountLabel" class="form-label fw-bold">Discount</label>
-                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="discount" placeholder="Enter Discount" required>
+                        {{-- City and Country --}}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-3 mb-sm-2 mt-md-2 mt-sm-4">
+                                    <label for="cityLabel" class="form-label fw-bold">City</label>
+                                    <input type="text" class="form-control rounded-0 border-1" id="city" placeholder="Enter City" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-3 mb-sm-2 mt-md-2 mt-sm-4">
+                                    <label for="countryLabel" class="form-label fw-bold">Country</label>
+                                    <input type="text" class="form-control rounded-0 border-1" id="country" placeholder="Enter Country" required>
+                                </div>
+                            </div>
+                            <input type="hidden" id="fullAddress" name="fullAddress">
+                        </div>
+
+                        {{-- Address and Contact Number --}}
+                        <div class="row ">
+                            <div class="col-md-6">
+                                <div class="mb-4 mb-md-4 mb-sm-5 mt-md-2">
+                                    <label for="assuredEmailLabel" class="form-label fw-bold fw-bold">Email</label>
+                                    <input type="text" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="assuredEmail" placeholder="Enter Email" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-4 mb-md-4 mb-sm-5 mt-md-2">
+                                    <label for="assuredContactNumberLabel" class="form-label fw-bold fw-bold">Contact Number</label>
+                                    <input type="text" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="assuredContactNumber" placeholder="Enter Assured Address" required>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
-                                <label for="netOfDiscountLabel" class="form-label fw-bold">Gross Premium, Net of Discount</label>
-                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="netOfDiscount"  disabled required>
+                        {{-- Issuance Code --}}
+                        <div class="row ">
+                            <div class="col-md-8">
+                                <div class="mb-3 mb-md-3 mb-sm-4 mt-md-5 mt-sm-4">
+                                    <label for="sssuanceCodeLabel" class="form-label fw-bold fw-bold">Issuance Code</label>
+                                    <input type="text" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="IssuanceCode" placeholder="Enter Issuance Code" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-3 mb-sm-4 mt-md-5 mt-sm-4">
+                                    <label for="team-label" class="form-label fw-bold fs-6">Team</label>
+                                    <select class="form-control rounded-0 border-1 m-0" id="team" required>
+                                        <option value="" selected>Select Team</option>
+                                        @foreach($teams as $team)
+                                            <option value="{{ $team->id }}">{{ $team->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
-                    </div>
+                        {{-- Team and SA/SM --}}
+                        <div class="row ">
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-3 mb-sm-4 mt-md-2">
+                                    <label for="salesAssociateLabel" class="form-label fw-bold fs-6">SA</label>
+                                    <select class="form-control rounded-0 border-1 m-0" id="salesAssociate">
+                                        <option value="" selected>SA</option>
+                                        @foreach($salesAssociates as $salesAssociate)
+                                            <option value="{{ $salesAssociate->id }}">{{ $salesAssociate->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-3 mb-sm-4 mt-md-2">
+                                    <label for="salesManagerLabel" class="form-label fw-bold fs-6">SM</label>
+                                    <select class="form-control rounded-0 border-1 m-0" id="salesManager">
+                                        <option value="" selected>SM</option>
+                                        @foreach($salesManagers as $salesManager)
+                                            <option value="{{ $salesManager->id }}">{{ $salesManager->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+<!-- --------------- ILALAGAY YUNG RM (regional manager) -->
+                        </div>
 
-                    {{-- Amount Due to Provider and Full Commission --}}
-                    <div class="row">
-
-
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
-                                <label for="amountDuetoProviderLabel" class="form-label fw-bold">Amount Due to Provider</label>
-                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="amountDuetoProvider" placeholder="Enter Amount Due to Provider" required>
+                        {{-- Classification and Sale Status --}}
+                        <div class="row ">
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-3 mb-sm-4 mt-md-2">
+                                    <label for="saleDateLabel" class="form-label fw-bold fw-bold">Sale Date</label>
+                                    <input type="date" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="saleDate"  required>
+                                </div>
+                            </div>
+                            <div class="col-md-4 ">
+                                <div class="mb-3 mb-md-3 mb-sm-4 mt-md-2">
+                                    <label for="classificationLabel" class="form-label fw-bold fw-bold fs-6">Classification</label>
+                                    <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="classification" required>
+                                        <option value="" disabled selected>Select Classification</option>
+                                        <option value="New">New</option>
+                                        <option value="Renewal">Renewal</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-3 mb-sm-4 mt-md-2">
+                                    <label for="insuranceTypeLabel" class="form-label fw-bold">Sale/Cancellation/Reinstatement</label>
+                                    <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="saleStatus" required>
+                                        <option value="" disabled selected>Select Sale Status</option>
+                                        <option value="Sale">Sale</option>
+                                        <option value="Reinstatement">Reinstatement</option>
+                                        <option value="Cancellation">Cancellation</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
-                                <label for="fullCommissionLabel" class="form-label fw-bold">Full Commission</label>
-                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="fullCommission"  disabled required>
+                        {{-- Product, Sub-Product, and Product Type --}}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-5 mb-md-4 mb-sm-4 mt-md-5">
+                                    <label for="productLabel" class="form-label fw-bold fs-6">Product</label>
+                                    <select class="form-control rounded-0 border-1 m-0" id="product" required>
+                                        <option value="" selected disabled>Select Products</option>
+                                        @foreach($products as $product)
+                                            <option value="{{ $product->id }}">{{ $product->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-5 mb-md-4 mb-sm-4 mt-md-5">
+                                    <label for="subProductLabel" class="form-label fw-bold fs-6">Sub-Product</label>
+                                    <select class="form-control rounded-0 border-1 m-0" id="subProduct" required>
+                                        <option value="" disabled selected>Select Sub-Product</option>
+                                        @foreach($subproducts as $subproduct)
+                                            <option value="{{ $subproduct->id }}">{{ $subproduct->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 ">
+                                <div class="mb-5 mb-md-4 mb-sm-4 mt-md-5">
+                                    <label for="productTypeLabel" class="form-label fw-bold fw-bold fs-6">Product Type</label>
+                                    <select class="form-control form-select rounded-0 border-1 rounded-0 m-0" id="productType">
+                                        <option value="" disabled selected>Select Product Type</option>
+                                        <option value="refinancing">Refinancing</option>
+                                        <option value="financing">Financing</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
-                    </div>
+                        {{-- Source, Source Branch, and If GDFI --}}
+                        <div class="row ">
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
+                                    <label for="sourceLabel" class="form-label fw-bold fw-bold fs-6">Source</label>
 
-
-
-
-                    <div id="commissionContainer">
-                    </div>
-
-                    <div class="row mb-md-5">
-                        <div class="col-md-4 mb-5 mb-md-5 mb-sm-5">
-                            <button type="button" class="bg-secondary" id="addButton">ADD</button>
-                        </div>
-                        <div class="col-md-4 mb-5 mb-md-5 mb-sm-5">
-                            <!-- Initially hidden remove button -->
-                            <button type="button" class="bg-danger" id="removeButton" style="display: none;">REMOVE</button>
-                        </div>
-                    </div>
-
-
-
-                    {{-- Travel Incentives, Offsetting, and Promo --}}
-                    <!-- <div class="row">
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4 mt-md-2">
-                                <label for="travelIncentivesLabel" class="form-label fw-bold">Travel Incentives</label>
-                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="travelIncentives" placeholder="Enter Travel Incentives" required>
+                                    <select class="form-control rounded-0 border-1 m-0" id="selectSources" required>
+                                        <option value="" disabled selected>Select Source</option>
+                                        @foreach($sources as $source)
+                                            <option value="{{ $source->id }}">{{ $source->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4 ">
+                                <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
+                                    <label for="sourceBranchLabel" class="form-label fw-bold fw-bold fs-6">Affi Branch</label>
+                                    <select class="form-control rounded-0 border-1 m-0" id="sourceBranch" required>
+                                        <option value="" disabled selected>Select Source Branch</option>
+                                        @foreach($sourcebranches as $sourcebranch)
+                                            <option value="{{ $sourcebranch->id }}">{{ $sourcebranch->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+<!-- ---------------------- IfGDFI change to DIVISION -->
+                            <div class="col-md-4" id="gdficol" style="display: none;">
+                                <div class="mb-5 mb-md-4 mb-sm-4">
+                                    <label for="ifGdfiLabel" class="form-label fw-bold fw-bold fs-6">If GDFI</label> 
+                                    <select class="form-control rounded-0 border-1 m-0" id="ifGdfi">
+                                        <option value="" disabled selected>Select If GDFI</option>
+                                        @foreach($ifGdfis as $ifGdfi)
+                                            <option value="{{ $ifGdfi->id }}">{{ $ifGdfi->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4 mt-md-2">
-                                <label for="offsettingLabel" class="form-label fw-bold">Offsetting</label>
-                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="offSetting" placeholder="Enter Offsetting" required>
+                        {{-- Area, Mortagee, and ALFC Branch --}}
+                        <div class="row mb-md-5">
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
+                                    <label for="mortgageeLabel" class="form-label fw-bold fw-bold fs-6">Mortagee</label>
+                                    <input type="text" class="form-control rounded-0 rounded-0 border-1" id="mortgagee" placeholder="Enter Mortgagee" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
+                                    <label for="areaLabel" class="form-label fw-bold fw-bold fs-6">Area</label>
+                                    <select class="form-control rounded-0 border-1 m-0" id="area">
+                                        <option value="" disabled selected>Select Area</option>
+                                        @foreach($areas as $area)
+                                            <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
+                                    <label for="alfcBranchLabel" class="form-label fw-bold fw-bold fs-6">ALFC Branch</label>
+                                    <select class="form-control rounded-0 border-1 m-0" id="alfcBranch">
+                                        <option value="" disabled selected>Select ALFC Branch</option>
+                                        @foreach($alfcbranches as $alfcbranch)
+                                            <option value="{{ $alfcbranch->id }}">{{ $alfcbranch->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-4 mb-sm-4 mt-md-2">
-                                <label for="promoLabel" class="form-label fw-bold">Promo</label>
-                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="promo" placeholder="Enter Promo Amount" required>
+                        <div class="row">
+                            <div class="col-md-4 ">
+                                <div class="mb-4 mb-md-4 mb-sm-4">
+                                    <label for="loanAmountLabel" class="form-label fw-bold fw-bold fs-6">Loan Amount</label>
+                                    <input type="text" class="form-control formatted-input rounded-0 rounded-0 border-1" id="loanAmount" placeholder="Enter Loan Amount" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4 ">
+                                <div class="mb-4 mb-md-4 mb-sm-4">
+                                    <label for="totalSumInsuredLabel" class="form-label fw-bold fw-bold fs-6">Total Sum Insured </label>
+                                    <input type="text" class="form-control formatted-input rounded-0 rounded-0 border-1" id="totalSumInsured" placeholder="Enter Total Sum Insured" required>
+                                </div>
                             </div>
                         </div>
 
-                    </div> -->
+                        {{-- Policy Inception Date and Expiry Date --}}
+                        <div class="row ">
+                            <div class="col-md-4">
+                                <div class="mb-5 mb-md-5 mb-sm-4 mt-md-2">
 
+                                    <label for="policyInceptionLabel" class="form-label fw-bold fw-bold fs-6">Policy Inception Date</label>
+                                    <input type="date" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="policyInception" placeholder="Enter Policy Inisu" required>
 
-
-                    {{-- Comm Deduct and Total Commission --}}
-                    <div class="row">
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-2 mb-sm-4">
-                                <label for="totalCommissionLabel" class="form-label fw-bold">Total Commission</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="totalCommission" required disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-5 mb-md-5 mb-sm-4 mt-md-2">
+                                    <label for="expiryDateLabel" class="form-label fw-bold fw-bold fs-6">Expiry Date</label>
+                                    <input type="date" class="form-control uppercase-input rounded-0 rounded-0 border-1" id="expiryDate" placeholder="Enter Policy Number" required>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-2 mb-sm-4">
-                                <label for="commDeductLabel" class="form-label fw-bold">Comm Deduct</label>
-                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="commDeduct" placeholder="Enter Comm Deduct" required>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
+                                    <label for="policyNumberLabel" class="form-label fw-bold fw-bold fs-6">Policy Number</label>
+                                    <input type="text" class="form-control rounded-0 rounded-0 border-1" id="policyNumber" placeholder="Enter Policy Number" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4 ">
+                                <div class="mb-5 mb-md-4 mb-sm-4 mt-md-5">
+                                    <label for="plateConductionNumberLabel" class="form-label fw-bold fw-bold fs-6">Plate / Conduction Number</label>
+                                    <input type="text" class="form-control rounded-0 rounded-0 border-1" id="plateConductionNumber" placeholder="Enter Plate Conduction Number" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4 ">
+                                <div class="mb-5 mb-md-4 mb-sm-4 mt-md-5">
+                                    <label for="descriptionLabel" class="form-label fw-bold fw-bold fs-6">Description</label>
+                                    <input type="text" class="form-control rounded-0 rounded-0 border-1" id="description" placeholder="Enter Description" required>
+                                </div>
                             </div>
                         </div>
 
-                    </div>
-
-                    {{-- VAT, Sales Credit, and Sales Credit % --}}
-                    <div class="row mt-md-3">
-
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-5 mb-sm-4">
-                                <label for="vatLabel" class="form-label fw-bold">VAT</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="vatInput" required disabled>
+                        <div class="row">
+                            <div class="col-md-4 ">
+                                <div class="mb-4 mb-md-4 mb-sm-4">
+                                    <label for="mopLabel" class="form-label fw-bold fw-bold fs-6">Mode of Payment</label>
+                                    <select class="form-control rounded-0 border-1 m-0" id="mop">
+                                        <option value="" disabled selected>Select Mode of Payment</option>
+                                        @foreach($mops as $mop)
+                                            <option value="{{ $mop->id }}">{{ $mop->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-5 mb-sm-4">
-                                <label for="salesCreditLabel" class="form-label fw-bold">Sales Credit</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="salesCredit" required disabled>
+                        <div class="button-container mb-md-5 mb-mt-5">
+                            <button type="button" class="prev-button" onclick="cancelStep()">Cancel</button>
+                            <button type="button" class="next-button" onclick="nextStep()">Next</button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 2: Commission Details-->
+                <div class="form-step px-3 mb-md-5">
+                    <h3 class="main-title fw-bold fs-1 mt-md-5">Commissions</h3>
+                    <p class="sub-main-title text-muted mb-md-5">Enter Commissions Details and Information</p>
+
+                    <form id="step2 mt-md-5">
+                        {{-- Provider --}}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4">
+                                    <label for="prNumberLabel" class="form-label fw-bold">PR#</label>
+                                    <input type="text" class="form-control rounded-0 border-1" id="prNumber" placeholder="Enter PR Number" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4">
+                                    <label for="providerlabel" class="form-label fw-bold fw-bold fs-6">Provider</label>
+                                    <select class="form-control rounded-0 border-1 m-0" id="provider" required>
+                                        <option value="" selected>Select Provider</option>
+                                        @foreach($providers as $provider)
+                                            <option value="{{ $provider->id }}">{{ $provider->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-3 mb-md-5 mb-sm-4">
-                                <label for="salesCreditPercentLabel" class="form-label fw-bold">Sales Credit %</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="salesCreditPercent" required disabled>
+                        {{-- Gross Premium, Discount, and Gross Premium, Net of Discount --}}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
+                                    <label for="grossPremiumLabel" class="form-label fw-bold">Gross Premium</label>
+                                    <input type="text" class="form-control formatted-input rounded-0 border-1" id="grossPremium" placeholder="Enter Gross Premium" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
+                                    <label for="discountLabel" class="form-label fw-bold">Discount</label>
+                                    <input type="text" class="form-control formatted-input rounded-0 border-1" id="discount" placeholder="Enter Discount" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
+                                    <label for="netOfDiscountLabel" class="form-label fw-bold">Gross Premium, Net of Discount</label>
+                                    <input type="text" class="form-control formatted-input rounded-0 border-1" id="netOfDiscount"  disabled required>
+                                </div>
                             </div>
                         </div>
 
+                        {{-- Amount Due to Provider and Full Commission --}}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
+                                    <label for="amountDuetoProviderLabel" class="form-label fw-bold">Amount Due to Provider</label>
+                                    <input type="text" class="form-control formatted-input rounded-0 border-1" id="amountDuetoProvider" placeholder="Enter Amount Due to Provider" required>
+                                </div>
+                            </div>
 
-                    </div>
-
-
-
-
-
-
-                    {{-- Payment Terms --}}
-                    <div class="row mb-md-1 mt-md-5">
-
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4">
-                                <label for="paymentTermsLabel" class="form-label fw-bold">Payment Terms</label>
-                                <input
-                                    type="number"
-                                    class="form-control rounded-0 border-1"
-                                    id="paymentTerms"
-                                    placeholder="Enter Payment Terms"
-                                    required
-                                    min="1"
-                                    max="8"
-                                    oninput="validatePaymentTerms()"
-                                    onfocus="clearValidation()"
-                                >
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
+                                    <label for="fullCommissionLabel" class="form-label fw-bold">Full Commission</label>
+                                    <input type="text" class="form-control formatted-input rounded-0 border-1" id="fullCommission"  disabled required>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4">
-                                <label for="dueDateStartLabel" class="form-label fw-bold">Due Date Start</label>
-                                <input type="date" class="form-control uppercase-input rounded-0 border-1" id="dueDateStart" required>
+                        <div id="commissionContainer">
+                        </div>
+
+                        <div class="row mb-md-5">
+                            <div class="col-md-4 mb-5 mb-md-5 mb-sm-5">
+                                <button type="button" class="bg-secondary" id="addButton">ADD</button>
+                            </div>
+                            <div class="col-md-4 mb-5 mb-md-5 mb-sm-5">
+                                <!-- Initially hidden remove button -->
+                                <button type="button" class="bg-danger" id="removeButton" style="display: none;">REMOVE</button>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4">
-                                <label for="dueDateEndLabel" class="form-label fw-bold">Due Date End</label>
-                                <input type="date" class="form-control uppercase-input rounded-0 border-1" id="dueDateEnd" required>
+                        {{-- Travel Incentives, Offsetting, and Promo --}}
+                        <!-- <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-4 mb-sm-4 mt-md-2">
+                                    <label for="travelIncentivesLabel" class="form-label fw-bold">Travel Incentives</label>
+                                    <input type="text" class="form-control formatted-input rounded-0 border-1" id="travelIncentives" placeholder="Enter Travel Incentives" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-4 mb-sm-4 mt-md-2">
+                                    <label for="offsettingLabel" class="form-label fw-bold">Offsetting</label>
+                                    <input type="text" class="form-control formatted-input rounded-0 border-1" id="offSetting" placeholder="Enter Offsetting" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-4 mb-sm-4 mt-md-2">
+                                    <label for="promoLabel" class="form-label fw-bold">Promo</label>
+                                    <input type="text" class="form-control formatted-input rounded-0 border-1" id="promo" placeholder="Enter Promo Amount" required>
+                                </div>
+                            </div>
+                        </div> -->
+
+                        {{-- Comm Deduct and Total Commission --}}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-2 mb-sm-4">
+                                    <label for="totalCommissionLabel" class="form-label fw-bold">Total Commission</label>
+                                    <input type="text" class="form-control rounded-0 border-1" id="totalCommission" required disabled>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-2 mb-sm-4">
+                                    <label for="commDeductLabel" class="form-label fw-bold">Comm Deduct</label>
+                                    <input type="text" class="form-control formatted-input rounded-0 border-1" id="commDeduct" placeholder="Enter Comm Deduct" required>
+                                </div>
                             </div>
                         </div>
 
-                    </div>
+                        {{-- VAT, Sales Credit, and Sales Credit % --}}
+                        <div class="row mt-md-3">
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-5 mb-sm-4">
+                                    <label for="vatLabel" class="form-label fw-bold">VAT</label>
+                                    <input type="text" class="form-control rounded-0 border-1" id="vatInput" required disabled>
+                                </div>
+                            </div>
 
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-5 mb-sm-4">
+                                    <label for="salesCreditLabel" class="form-label fw-bold">Sales Credit</label>
+                                    <input type="text" class="form-control rounded-0 border-1" id="salesCredit" required disabled>
+                                </div>
+                            </div>
 
-                    {{-- Payments --}}
-                    <div class="mb-md-3 mt-md-5" id="schedulePaymentTerms">
-
-                    </div>
-
-
-
-
-                    <div class="row mt-md-5">
-
-                        <div class="col-md-4 mt-md-5">
-                            <div class="mb-4 mb-md-3 mb-sm-4">
-                                <label for="initialPaymentLabel" class="form-label fw-bold">Initial Payment</label>
-                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="initialPayment" placeholder="Enter Initial Payment" required>
+                            <div class="col-md-4">
+                                <div class="mb-3 mb-md-5 mb-sm-4">
+                                    <label for="salesCreditPercentLabel" class="form-label fw-bold">Sales Credit %</label>
+                                    <input type="text" class="form-control rounded-0 border-1" id="salesCreditPercent" required disabled>
+                                </div>
                             </div>
                         </div>
 
-                    </div>
+                        {{-- Payment Terms --}}
+                        <div class="row mb-md-1 mt-md-5">
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4">
+                                    <label for="paymentTermsLabel" class="form-label fw-bold">Payment Terms</label>
+                                    <input
+                                        type="number"
+                                        class="form-control rounded-0 border-1"
+                                        id="paymentTerms"
+                                        placeholder="Enter Payment Terms"
+                                        required
+                                        min="1"
+                                        max="8"
+                                        oninput="validatePaymentTerms()"
+                                        onfocus="clearValidation()"
+                                    >
+                                </div>
+                            </div>
 
-                    <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4">
+                                    <label for="dueDateStartLabel" class="form-label fw-bold">Due Date Start</label>
+                                    <input type="date" class="form-control uppercase-input rounded-0 border-1" id="dueDateStart" required>
+                                </div>
+                            </div>
 
-
-
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-3">
-                                <label for="dateGoodSalesLabel" class="form-label fw-bold">Date of Good as Sales</label>
-                                <input type="date" class="form-control uppercase-input rounded-0 border-1" id="dateGoodSales" placeholder="Enter Date of Good as Sales" required>
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4">
+                                    <label for="dueDateEndLabel" class="form-label fw-bold">Due Date End</label>
+                                    <input type="date" class="form-control uppercase-input rounded-0 border-1" id="dueDateEnd" required>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-3">
-                                <label for="forBillingLabel" class="form-label fw-bold">For Billing</label>
-                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="forBilling" placeholder="Enter For Billing" required>
-                            </div>
-                        </div>
-
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4 mt-md-3">
-                                <label for="overUnderPaymentLabel" class="form-label fw-bold">Over (Under) Payment</label>
-                                <input type="text" class="form-control formatted-input rounded-0 border-1" id="overUnderPayment" placeholder="Enter Over or Under Payment" required>
-                            </div>
+                        {{-- Payments --}}
+                        <div class="mb-md-3 mt-md-5" id="schedulePaymentTerms">
                         </div>
 
 
-
-
-
-                    </div>
-
-
-                    <div class="row">
-
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4">
-                                <label for="prNumberLabel" class="form-label fw-bold">PR#</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="prNumber" placeholder="Enter PR Number" required>
+<!-- --------------- BUBURAHIN SIMULA DITO -->
+                        <div class="row mt-md-5">
+                            <div class="col-md-4 mt-md-5">
+                                <div class="mb-4 mb-md-3 mb-sm-4">
+                                    <label for="initialPaymentLabel" class="form-label fw-bold">Initial Payment</label>
+                                    <input type="text" class="form-control formatted-input rounded-0 border-1" id="initialPayment" placeholder="Enter Initial Payment" required>
+                                </div>
                             </div>
                         </div>
 
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4 mt-md-3">
+                                    <label for="dateGoodSalesLabel" class="form-label fw-bold">Date of Good as Sales</label>
+                                    <input type="date" class="form-control uppercase-input rounded-0 border-1" id="dateGoodSales" placeholder="Enter Date of Good as Sales" required>
+                                </div>
+                            </div>
 
-                        <div class="col-md-4">
-                            <div class="mb-4 mb-md-4 mb-sm-4">
-                                <label for="statusPaymentLabel" class="form-label fw-bold">Status</label>
-                                <input type="text" class="form-control rounded-0 border-1" id="statusPayment" placeholder="Enter status, e.g., GOOD AS SALES or SJ-GMA092024-1" required>
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4 mt-md-3">
+                                    <label for="forBillingLabel" class="form-label fw-bold">For Billing</label>
+                                    <input type="text" class="form-control formatted-input rounded-0 border-1" id="forBilling" placeholder="Enter For Billing" required>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4 mt-md-3">
+                                    <label for="overUnderPaymentLabel" class="form-label fw-bold">Over (Under) Payment</label>
+                                    <input type="text" class="form-control formatted-input rounded-0 border-1" id="overUnderPayment" placeholder="Enter Over or Under Payment" required>
+                                </div>
                             </div>
                         </div>
 
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-4 mb-md-4 mb-sm-4">
+                                    <label for="statusPaymentLabel" class="form-label fw-bold">Status</label>
+                                    <input type="text" class="form-control rounded-0 border-1" id="statusPayment" placeholder="Enter status, e.g., GOOD AS SALES or SJ-GMA092024-1" required>
+                                </div>
+                            </div>
+                        </div>
+<!-- --------------- HANGGANG DITO -->
 
-                    </div>
+<!-- --------------- IDADAGDAG DITO ADMIN ASST REMARKS-->
+<!-- --------------- IDADAGDAG DITO TRACKING NUMBER -->
+<!-- --------------- IDADAGDAG DITO MODE OF DELIVERY (POLICY) -->
+ 
+                        <div class="button-container mb-md-5 mb-mt-5">
+                            <button type="button" class="prev-button" onclick="prevStep()">Back</button>
+                            <button type="button" class="submit-button" onclick="submitForm(event)">Submit</button>
+                        </div>
 
 
-                    <div class="button-container mb-md-5 mb-mt-5">
-                        <button type="button" class="prev-button" onclick="prevStep()">Back</button>
-                        <button type="button" class="submit-button" onclick="submitForm(event)">Submit</button>
-                    </div>
+                    </form>
+                </div>
 
-
-                </form>
             </div>
 
         </div>
-
     </div>
-</div>
 
 
 
