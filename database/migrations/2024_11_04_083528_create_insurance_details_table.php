@@ -63,11 +63,11 @@ return new class extends Migration {
             $table->timestamps();
             
             // LILIPAT SA PAYMENT DEAILS
-            $table->foreignId('provider_id')->nullable()->constrained()->onDelete('cascade');
+            // $table->foreignId('provider_id')->nullable()->constrained()->onDelete('cascade');
 
             // AALISIN
-            $table->string('product_type')->nullable();
-            $table->foreignId('if_gdfi_id')->nullable()->constrained()->onDelete('cascade');
+            // $table->string('product_type')->nullable();
+            // $table->foreignId('if_gdfi_id')->nullable()->constrained()->onDelete('cascade');
             
         });
     }
