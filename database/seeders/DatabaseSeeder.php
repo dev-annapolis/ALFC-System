@@ -172,19 +172,19 @@ class DatabaseSeeder extends Seeder
         DB::table('teams')->insert([
             [
                 // 'id' => 1
-                'name' => 'AFC LUZON',
+                'name' => 'GMA AREA',
             ],
             [
                 // 'id' => 2
-                'name' => 'GDFI LUZON',
+                'name' => 'NOL AREA',
             ],
             [
                 // 'id' => 3
-                'name' => 'SAFC',
+                'name' => 'SAFC-NCR',
             ],
             [
                 // 'id' => 4
-                'name' => 'OC/DEALER',
+                'name' => 'SOL AREA',
             ],
             [
                 // 'id' => 5
@@ -196,149 +196,35 @@ class DatabaseSeeder extends Seeder
             ],
             [
                 // 'id' => 7
-                'name' => 'CAPTIVE',
+                'name' => 'CAPTIVE - OTHERS',
             ],
             [
                 // 'id' => 8
-                'name' => 'RENEWAL',
-            ],
-            [
-                // 'id' => 9
-                'name' => 'SPECIAL',
-            ],
-            [
-                // 'id' => 10
-                'name' => 'SOL AREA',
-            ],
-            [
-                // 'id' => 11
-                'name' => 'NOL AREA',
-            ],
-            [
-                // 'id' => 12
                 'name' => 'CAPTIVE - REPLEVIN',
             ],
             [
-                // 'id' => 13
-                'name' => 'GMA AREA',
-            ],
-        ]);
-
-
-
-        // DB::table('assured_details')->insert([
-
-        // ]);
-
-        DB::table('products')->insert([
-            [
-                // 'id' => 1
-                'name' => 'MOTORCAR',
-            ],
-            [
-                // 'id' => 2
-                'name' => 'LRI',
-            ],
-            [
-                // 'id' => 3
-                'name' => 'REPLEVIN',
-            ],
-            [
-                // 'id' => 4
-                'name' => 'PROPERTY',
-            ],
-            [
-                // 'id' => 5
-                'name' => 'TRAVEL/PA/GPA',
-            ],
-            [
-                // 'id' => 6
-                'name' => 'OTHERS',
-            ],
-        ]);
-
-        DB::table('subproducts')->insert([
-            [
-                // 'id' => 1
-                'name' => 'TRUCK',
-            ],
-            [
-                // 'id' => 2
-                'name' => 'WAGON',
-            ],
-            [
-                // 'id' => 3
-                'name' => 'SEDAN',
-            ],
-            [
-                // 'id' => 4
-                'name' => 'LUXURY CAR',
-            ],
-            [
-                // 'id' => 5
-                'name' => 'MOTORCYCLE',
-            ],
-            [
-                // 'id' => 6
-                'name' => 'CTPL',
-            ],
-            [
-                // 'id' => 7
-                'name' => 'CARI',
-            ],
-            [
-                // 'id' => 8
-                'name' => 'CGL',
-            ],
-            [
                 // 'id' => 9
-                'name' => 'FIRE',
+                'name' => 'RENEWAL',
             ],
             [
                 // 'id' => 10
-                'name' => 'FLOATER',
+                'name' => 'CAM MULTIPLIER',
             ],
             [
                 // 'id' => 11
-                'name' => 'FPA',
+                'name' => 'SPECIAL',
             ],
             [
                 // 'id' => 12
-                'name' => 'GPA',
+                'name' => 'Digital Marketer',
             ],
             [
                 // 'id' => 13
-                'name' => 'INLAND MARINE',
-            ],
-            [
-                // 'id' => 14
-                'name' => 'LRI',
-            ],
-            [
-                // 'id' => 15
-                'name' => 'FIDELITY GUARANTEE',
-            ],
-            [
-                // 'id' => 16
-                'name' => 'PERFORMANCE BOND',
-            ],
-            [
-                // 'id' => 17
-                'name' => 'REPLEVIN BOND',
-            ],
-            [
-                // 'id' => 18
-                'name' => 'SURETY BOND',
-            ],
-            [
-                // 'id' => 19
-                'name' => 'TRAVEL',
-            ],
-            [
-                // 'id' => 20
-                'name' => 'OTHERS',
+                'name' => 'CUSTOMER CARE',
             ],
         ]);
+
+
 
         DB::table('sources')->insert([
             [
@@ -425,409 +311,966 @@ class DatabaseSeeder extends Seeder
                 // 'id' => 21
                 'name' => 'VIP-EXECOM',
             ],
+            [
+                // 'id' => 22
+                'name' => 'VIP-BOD',
+            ],
+            [
+                // 'id' => 23
+                'name' => 'VIP-DIRECT',
+            ],
+            [
+                // 'id' => 24
+                'name' => 'VIP-OC',
+            ],
+            [
+                // 'id' => 25
+                'name' => 'GLOBAL SME',
+            ],
+            [
+                // 'id' => 26
+                'name' => 'AFFI REF',
+            ],
+            [
+                // 'id' => 27
+                'name' => 'CAPTIVE REF',
+            ],
+            [
+                // 'id' => 28
+                'name' => 'OC REF',
+            ],
         ]);
 
         DB::table('source_branches')->insert([
             [
-                // 'id' => 1
+                'name' => 'ABRA',
+            ],
+            [
+                'name' => 'AGOO',
+            ],
+            [
+                'name' => 'ALAMINOS',
+            ],
+            [
+                'name' => 'AMANG RODRIGUEZ',
+            ],
+            [
+                'name' => 'ANGELES',
+            ],
+            [
+                'name' => 'ANGELES BRAND NEW',
+            ],
+            [
                 'name' => 'ANTIPOLO',
             ],
             [
-                // 'id' => 2
                 'name' => 'ANTIQUE',
             ],
             [
-                // 'id' => 3
                 'name' => 'BACOLOD',
             ],
             [
-                // 'id' => 4
+                'name' => 'BACOLOD EAST',
+            ],
+            [
                 'name' => 'BACOOR',
             ],
             [
-                // 'id' => 5
                 'name' => 'BAGUIO',
             ],
             [
-                // 'id' => 6
+                'name' => 'BAIS',
+            ],
+            [
+                'name' => 'BAJADA',
+            ],
+            [
                 'name' => 'BALANGA',
             ],
             [
-                // 'id' => 7
                 'name' => 'BALAYAN',
             ],
             [
-                // 'id' => 8
                 'name' => 'BALER',
             ],
             [
-                // 'id' => 9
                 'name' => 'BALIUAG',
             ],
             [
-                // 'id' => 10
                 'name' => 'BANILAD',
             ],
             [
-                // 'id' => 11
+                'name' => 'BANSALAN',
+            ],
+            [
+                'name' => 'BASAK LAPU-LAPU',
+            ],
+            [
                 'name' => 'BATAAN',
             ],
             [
-                // 'id' => 12
+                'name' => 'BATAC',
+            ],
+            [
                 'name' => 'BATANGAS',
             ],
             [
-                // 'id' => 13
                 'name' => 'BAUAN',
             ],
             [
-                // 'id' => 14
                 'name' => 'BAYAWAN',
             ],
             [
-                // 'id' => 15
                 'name' => 'BENGUET',
             ],
             [
-                // 'id' => 16
                 'name' => 'BICUTAN',
             ],
             [
-                // 'id' => 17
                 'name' => 'BIÑAN',
             ],
             [
-                // 'id' => 18
+                'name' => 'BISLIG',
+            ],
+            [
+                'name' => 'BOGO',
+            ],
+            [
                 'name' => 'BUHANGIN',
             ],
             [
-                // 'id' => 19
+                'name' => 'BUHANGIN',
+            ],
+            [
+                'name' => 'BULACAO',
+            ],
+            [
+                'name' => 'BUNAO',
+            ],
+            [
                 'name' => 'BUTUAN',
             ],
             [
-                // 'id' => 20
+                'name' => 'BUUG',
+            ],
+            [
                 'name' => 'CABANATUAN',
             ],
             [
-                // 'id' => 21
                 'name' => 'CABUYAO',
             ],
             [
-                // 'id' => 22
+                'name' => 'CADIZ',
+            ],
+            [
                 'name' => 'CAGAYAN DE ORO',
             ],
             [
-                // 'id' => 23
                 'name' => 'CAINTA',
             ],
             [
-                // 'id' => 24
                 'name' => 'CALAMBA',
             ],
             [
-                // 'id' => 25
                 'name' => 'CALAPAN',
             ],
             [
-                // 'id' => 26
+                'name' => 'CALASIAO',
+            ],
+            [
                 'name' => 'CALBAYOG',
             ],
             [
-                // 'id' => 27
                 'name' => 'CALINAN',
             ],
             [
-                // 'id' => 28
+                'name' => 'CALINDAGAN',
+            ],
+            [
                 'name' => 'CALOOCAN',
             ],
             [
-                // 'id' => 29
+                'name' => 'CALUMPANG',
+            ],
+            [
                 'name' => 'CANDELARIA',
             ],
             [
-                // 'id' => 30
                 'name' => 'CANDON',
             ],
             [
-                // 'id' => 31
+                'name' => 'CARCAR',
+            ],
+            [
                 'name' => 'CARMONA',
             ],
             [
-                // 'id' => 32
+                'name' => 'CATARMAN',
+            ],
+            [
                 'name' => 'CATBALOGAN',
             ],
             [
-                // 'id' => 33
+                'name' => 'CATITIPAN',
+            ],
+            [
                 'name' => 'CAUAYAN',
             ],
             [
-                // 'id' => 34
                 'name' => 'CAVITE',
             ],
             [
-                // 'id' => 35
+                'name' => 'CDO',
+            ],
+            [
                 'name' => 'CEBU',
             ],
             [
-                // 'id' => 36
+                'name' => 'CEBU PS 1',
+            ],
+            [
+                'name' => 'CEBU PS 2',
+            ],
+            [
+                'name' => 'CEBU PS 3',
+            ],
+            [
+                'name' => 'CENTRO EAST SANTIAGO',
+            ],
+            [
+                'name' => 'CITY OF HEIGHTS',
+            ],
+            [
+                'name' => 'COMMONWEALTH',
+            ],
+            [
+                'name' => 'CONGRESSIONAL',
+            ],
+            [
                 'name' => 'CONSOLACION',
             ],
             [
-                // 'id' => 37
                 'name' => 'DAET',
             ],
             [
-                // 'id' => 38
                 'name' => 'DAGUPAN',
             ],
             [
-                // 'id' => 39
                 'name' => 'DASMARIÑAS',
             ],
             [
-                // 'id' => 40
                 'name' => 'DAU',
             ],
             [
-                // 'id' => 41
                 'name' => 'DAVAO',
             ],
             [
-                // 'id' => 42
                 'name' => 'DIGOS',
             ],
             [
-                // 'id' => 43
+                'name' => 'DINALUPIHAN',
+            ],
+            [
                 'name' => 'DIPOLOG',
             ],
             [
-                // 'id' => 44
+                'name' => 'DON ANTONIO',
+            ],
+            [
                 'name' => 'DUMAGUETE',
             ],
             [
-                // 'id' => 45
                 'name' => 'E. RODRIGUEZ',
             ],
             [
-                // 'id' => 46
                 'name' => 'ERMITA',
             ],
             [
-                // 'id' => 47
                 'name' => 'FAIRVIEW',
             ],
             [
-                // 'id' => 48
                 'name' => 'GAPAN',
             ],
             [
-                // 'id' => 49
+                'name' => 'GEN. TRIAS',
+            ],
+            [
                 'name' => 'GENERAL SANTOS',
             ],
             [
-                // 'id' => 50
+                'name' => 'GENSAN',
+            ],
+            [
                 'name' => 'GINGOOG',
             ],
             [
-                // 'id' => 51
+                'name' => 'GMA',
+            ],
+            [
+                'name' => 'GUMACA',
+            ],
+            [
                 'name' => 'HEAD OFFICE',
             ],
             [
-                // 'id' => 52
+                'name' => 'IBA ZAMBALES',
+            ],
+            [
                 'name' => 'ILIGAN',
             ],
             [
-                // 'id' => 53
                 'name' => 'ILOILO',
             ],
             [
-                // 'id' => 54
+                'name' => 'ILOILO 2',
+            ],
+            [
+                'name' => 'ILOILO ARMY',
+            ],
+            [
                 'name' => 'IMUS',
             ],
             [
-                // 'id' => 55
                 'name' => 'INTRAMUROS',
             ],
             [
-                // 'id' => 56
+                'name' => 'IPIL',
+            ],
+            [
                 'name' => 'IRIGA',
             ],
             [
-                // 'id' => 57
                 'name' => 'ISABELA',
             ],
             [
-                // 'id' => 58
+                'name' => 'JARO',
+            ],
+            [
+                'name' => 'KABACAN',
+            ],
+            [
                 'name' => 'KABANKALAN',
             ],
             [
-                // 'id' => 59
+                'name' => 'KALIBO',
+            ],
+            [
                 'name' => 'KALIBO 2',
             ],
             [
-                // 'id' => 60
                 'name' => 'KAPASIGAN',
             ],
             [
-                // 'id' => 61
                 'name' => 'KIDAPAWAN',
             ],
             [
-                // 'id' => 62
                 'name' => 'KORONADAL',
             ],
             [
-                // 'id' => 63
+                'name' => 'LA TRINIDAD',
+            ],
+            [
                 'name' => 'LA UNION',
             ],
             [
-                // 'id' => 64
+                'name' => 'LAGAO',
+            ],
+            [
                 'name' => 'LAGRO',
             ],
             [
-                // 'id' => 65
                 'name' => 'LAOAG',
             ],
             [
-                // 'id' => 66
+                'name' => 'LAPAZ',
+            ],
+            [
                 'name' => 'LAPU LAPU',
             ],
             [
-                // 'id' => 67
                 'name' => 'LAS PIÑAS',
             ],
             [
-                // 'id' => 68
                 'name' => 'LAS PIÑAS',
             ],
             [
-                // 'id' => 69
                 'name' => 'LEGASPI',
             ],
             [
-                // 'id' => 70
                 'name' => 'LEMERY',
             ],
             [
-                // 'id' => 71
+                'name' => 'LIBIS',
+            ],
+            [
                 'name' => 'LINGAYEN',
             ],
             [
-                // 'id' => 72
                 'name' => 'LIPA',
             ],
             [
-                // 'id' => 73
+                'name' => 'LOS BAÑOS',
+            ],
+            [
                 'name' => 'LUBAO',
             ],
             [
-                // 'id' => 74
                 'name' => 'LUCENA',
             ],
             [
-                // 'id' => 75
                 'name' => 'MAASIN',
             ],
             [
-                // 'id' => 76
+                'name' => 'MABOLO',
+            ],
+            [
+                'name' => 'MAGUIKAY',
+            ],
+            [
                 'name' => 'MAKATI',
             ],
             [
-                // 'id' => 77
                 'name' => 'MALAYBALAY',
             ],
             [
-                // 'id' => 78
                 'name' => 'MALOLOS',
             ],
             [
-                // 'id' => 79
+                'name' => 'MAMBALING',
+            ],
+            [
+                'name' => 'MAMBALING',
+            ],
+            [
+                'name' => 'MANDALUYONG',
+            ],
+            [
                 'name' => 'MANDAUE',
             ],
             [
-                // 'id' => 80
                 'name' => 'MANILA',
             ],
             [
-                // 'id' => 81
+                'name' => 'MARASBARAS',
+            ],
+            [
                 'name' => 'MARIKINA',
             ],
             [
-                // 'id' => 82
                 'name' => 'MATI',
             ],
             [
-                // 'id' => 83
                 'name' => 'MEYCAUAYAN',
             ],
             [
-                // 'id' => 84
+                'name' => 'MIDSAYAP',
+            ],
+            [
                 'name' => 'MINDANAO NORTH PS',
             ],
             [
-                // 'id' => 85
                 'name' => 'MINDANAO SOUTH PS',
             ],
             [
-                // 'id' => 86
+                'name' => 'MINGLANILLA',
+            ],
+            [
+                'name' => 'MOLAVE',
+            ],
+            [
+                'name' => 'MOLINO',
+            ],
+            [
+                'name' => 'MOLO ILOILO',
+            ],
+            [
                 'name' => 'MONTALBAN',
             ],
             [
-                // 'id' => 87
-                'name' => 'MORONG',
-            ],
-            [
-                // 'id' => 88
-                'name' => 'MUÑOZ',
-            ],
-            [
-                // 'id' => 89
                 'name' => 'MUNTINLUPA',
             ],
             [
-                // 'id' => 90
+                'name' => 'N/A',
+            ],
+            [
+                'name' => 'NABUNTURAN',
+            ],
+            [
                 'name' => 'NAGA',
             ],
             [
-                // 'id' => 91
-                'name' => 'NUEVA ECIJA',
+                'name' => 'NARVACAN TM',
             ],
             [
-                // 'id' => 92
-                'name' => 'OCCIDENTAL MINDORO',
+                'name' => 'NGMA BNC',
             ],
             [
-                // 'id' => 93
+                'name' => 'NGMA PS',
+            ],
+            [
+                'name' => 'NOL 1 PS',
+            ],
+            [
+                'name' => 'NOL 1B PS',
+            ],
+            [
+                'name' => 'NOL 2 PS',
+            ],
+            [
+                'name' => 'NOL 3 PS',
+            ],
+            [
+                'name' => 'NOVALICHES',
+            ],
+            [
                 'name' => 'OLONGAPO',
             ],
             [
-                // 'id' => 94
+                'name' => 'ORMOC',
+            ],
+            [
                 'name' => 'OROQUIETA',
             ],
             [
-                // 'id' => 95
-                'name' => 'OROQUIETA',
+                'name' => 'OZAMIS',
             ],
             [
-                // 'id' => 96
-                'name' => 'ORION',
+                'name' => 'OZAMIZ',
             ],
             [
-                // 'id' => 97
                 'name' => 'PAGADIAN',
             ],
             [
-                // 'id' => 98
-                'name' => 'PAGUIO',
+                'name' => 'PAGBILAO',
             ],
             [
-                // 'id' => 99
+                'name' => 'PAJO LAPU-LAPU',
+            ],
+            [
                 'name' => 'PALAWAN',
             ],
             [
-                // 'id' => 100
-                'name' => 'PANGASINAN',
+                'name' => 'PALO',
             ],
+            [
+                'name' => 'PANABO',
+            ],
+            [
+                'name' => 'PANACAN',
+            ],
+            [
+                'name' => 'PANIQUI',
+            ],
+            [
+                'name' => 'PARAÑAQUE',
+            ],
+            [
+                'name' => 'PASAY',
+            ],
+            [
+                'name' => 'PASAY',
+            ],
+            [
+                'name' => 'PASIG',
+            ],
+            [
+                'name' => 'PATEROS',
+            ],
+            [
+                'name' => 'PILI',
+            ],
+            [
+                'name' => 'PINAMALAYAN',
+            ],
+            [
+                'name' => 'PLARIDEL',
+            ],
+            [
+                'name' => 'POLOMOLOK',
+            ],
+            [
+                'name' => 'QUEZON AVE.',
+            ],
+            [
+                'name' => 'QUEZON CITY',
+            ],
+            [
+                'name' => 'ROSARIO',
+            ],
+            [
+                'name' => 'ROXAS',
+            ],
+            [
+                'name' => 'SAFC SPECIAL ACCOUNTS',
+            ],
+            [
+                'name' => 'SAMPALOC',
+            ],
+            [
+                'name' => 'SAN CARLOS',
+            ],
+            [
+                'name' => 'SAN FERNANDO',
+            ],
+            [
+                'name' => 'SAN FRANCISCO',
+            ],
+            [
+                'name' => 'SAN JOSE DEL MONTE',
+            ],
+            [
+                'name' => 'SAN JUAN',
+            ],
+            [
+                'name' => 'SAN NICOLAS',
+            ],
+            [
+                'name' => 'SAN PABLO',
+            ],
+            [
+                'name' => 'SAN PEDRO',
+            ],
+            [
+                'name' => 'SANTA ROSA',
+            ],
+            [
+                'name' => 'SANTIAGO',
+            ],
+            [
+                'name' => 'SANTIAGO 1',
+            ],
+            [
+                'name' => 'SANTIAGO 2',
+            ],
+            [
+                'name' => 'SARIAYA',
+            ],
+            [
+                'name' => 'SAU - AREA 4',
+            ],
+            [
+                'name' => 'SAU AUTO LOANS - BATANGAS',
+            ],
+            [
+                'name' => 'SAU HO',
+            ],
+            [
+                'name' => 'SAU MEXICO',
+            ],
+            [
+                'name' => 'SAU SME',
+            ],
+            [
+                'name' => 'SAU TRUCK',
+            ],
+            [
+                'name' => 'SBMA',
+            ],
+            [
+                'name' => 'SGMA PS',
+            ],
+            [
+                'name' => 'SGMA PS 2',
+            ],
+            [
+                'name' => 'SGMA PS 3',
+            ],
+            [
+                'name' => 'SGMA PS 4',
+            ],
+            [
+                'name' => 'SINDALAN',
+            ],
+            [
+                'name' => 'Singcang',
+            ],
+            [
+                'name' => 'SOGOD',
+            ],
+            [
+                'name' => 'SOLANO',
+            ],
+            [
+                'name' => 'SORSOGON',
+            ],
+            [
+                'name' => 'SRS CEBU',
+            ],
+            [
+                'name' => 'STA. CRUZ',
+            ],
+            [
+                'name' => 'STA. MARIA',
+            ],
+            [
+                'name' => 'STA. MESA',
+            ],
+            [
+                'name' => 'STA. ROSA',
+            ],
+            [
+                'name' => 'STO TOMAS',
+            ],
+            [
+                'name' => 'SUCAT',
+            ],
+            [
+                'name' => 'SUMULONG',
+            ],
+            [
+                'name' => 'SURALLAH',
+            ],
+            [
+                'name' => 'SURIGAO 2',
+            ],
+            [
+                'name' => 'TABACO',
+            ],
+            [
+                'name' => 'TACLOBAN',
+            ],
+            [
+                'name' => 'TACLOBAN 2',
+            ],
+            [
+                'name' => 'TACLOBAN PS 5',
+            ],
+            [
+                'name' => 'TACURONG',
+            ],
+            [
+                'name' => 'TAGAYTAY',
+            ],
+            [
+                'name' => 'TAGBILARAN',
+            ],
+            [
+                'name' => 'TAGUIG 1',
+            ],
+            [
+                'name' => 'TAGUIG 2',
+            ],
+            [
+                'name' => 'TAGUM',
+            ],
+            [
+                'name' => 'TALAVERA',
+            ],
+            [
+                'name' => 'TANAUAN',
+            ],
+            [
+                'name' => 'TANAY',
+            ],
+            [
+                'name' => 'TANDAG',
+            ],
+            [
+                'name' => 'TANJAY',
+            ],
+            [
+                'name' => 'TANZA CAVITE',
+            ],
+            [
+                'name' => 'TARLAC',
+            ],
+            [
+                'name' => 'TAYTAY',
+            ],
+            [
+                'name' => 'TOLEDO',
+            ],
+            [
+                'name' => 'TORIL',
+            ],
+            [
+                'name' => 'TRECE MARTIREZ CAVITE',
+            ],
+            [
+                'name' => 'TUGUEGARAO',
+            ],
+            [
+                'name' => 'TUNGKO',
+            ],
+            [
+                'name' => 'URDANETA',
+            ],
+            [
+                'name' => 'VALENCIA',
+            ],
+            [
+                'name' => 'VALENZUELA',
+            ],
+            [
+                'name' => 'VIGAN',
+            ],
+            [
+                'name' => 'VIGAN',
+            ],
+            [
+                'name' => 'VISAYAS 1 PS',
+            ],
+            [
+                'name' => 'VISAYAS 2 PS',
+            ],
+            [
+                'name' => 'VISAYAS 3 PS',
+            ],
+            [
+                'name' => 'VISAYAS 4 PS',
+            ],
+            [
+                'name' => 'VISAYAS AVE.',
+            ],
+            [
+                'name' => 'ZAMBOANGA',
+            ],
+            [
+                'name' => 'MAIN',
+            ],
+            [
+                'name' => 'DOWNTOWN',
+            ],
+            [
+                'name' => 'BACOLOD LACSON',
+            ],
+            [
+                'name' => 'BNC',
+            ],
+
+
+
+        ]);
+
+        DB::table('products')->insert([
+            [
+                // 'id' => 1
+                'name' => 'MOTORCAR',
+            ],
+            [
+                // 'id' => 2
+                'name' => 'LRI',
+            ],
+            [
+                // 'id' => 3
+                'name' => 'REPLEVIN',
+            ],
+            [
+                // 'id' => 4
+                'name' => 'PROPERTY',
+            ],
+            [
+                // 'id' => 5
+                'name' => 'TRAVEL/PA/GPA',
+            ],
+            [
+                // 'id' => 6
+                'name' => 'OTHERS',
+            ],
+        ]);
+
+        DB::table('subproducts')->insert([
+            [
+                'product_id' => 1,
+                'name' => 'TRUCK',
+            ],
+            [
+                'product_id' => 2,
+                'name' => 'TRUCK',
+            ],
+            [
+                'product_id' => 3,
+                'name' => 'TRUCK',
+            ],
+            [
+                'product_id' => 4,
+                'name' => 'TRUCK',
+            ],
+            [
+                'product_id' => 5,
+                'name' => 'TRUCK',
+            ],
+            [
+                'product_id' => 1,
+                'name' => 'WAGON',
+            ],
+            [
+                'product_id' => 2,
+                'name' => 'WAGON',
+            ],
+            [
+                'product_id' => 3,
+                'name' => 'WAGON',
+            ],
+            [
+                'product_id' => 4,
+                'name' => 'WAGON',
+            ],
+            [
+                'product_id' => 5,
+                'name' => 'WAGON',
+            ],
+            [
+                'product_id' => 1,
+                'name' => 'SEDAN',
+            ],
+            [
+                'product_id' => 2,
+                'name' => 'SEDAN',
+            ],
+            [
+                'product_id' => 3,
+                'name' => 'SEDAN',
+            ],
+            [
+                'product_id' => 4,
+                'name' => 'SEDAN',
+            ],
+            [
+                'product_id' => 5,
+                'name' => 'SEDAN',
+            ],
+            [
+                'product_id' => 1,
+                'name' => 'LUXURY CAR',
+            ],
+            [
+                'product_id' => 2,
+                'name' => 'LUXURY CAR',
+            ],
+            [
+                'product_id' => 3,
+                'name' => 'LUXURY CAR',
+            ],
+            [
+                'product_id' => 4,
+                'name' => 'LUXURY CAR',
+            ],
+            [
+                'product_id' => 5,
+                'name' => 'LUXURY CAR',
+            ],
+            [
+                'product_id' => 1,
+                'name' => 'MOTORCYCLE',
+            ],
+            [
+                'product_id' => 2,
+                'name' => 'MOTORCYCLE',
+            ],
+            [
+                'product_id' => 3,
+                'name' => 'MOTORCYCLE',
+            ],
+            [
+                'product_id' => 4,
+                'name' => 'MOTORCYCLE',
+            ],
+            [
+                'product_id' => 5,
+                'name' => 'MOTORCYCLE',
+            ],
+
         ]);
 
         DB::table('if_gdfis')->insert([
@@ -835,14 +1278,76 @@ class DatabaseSeeder extends Seeder
                 // 'id' => 1
                 'name' => 'BRANCH DIVISION',
             ],
+
+        ]);
+        DB::table('source_divisions')->insert([
             [
-                // 'id' => 2
-                'name' => 'TFD',
+                'source_id' => 1,
+                'name' => 'AUTO LOANS',
+                'status' => 'active'
+
             ],
             [
-                // 'id' => 3
-                'name' => 'CFD',
-            ]
+                'source_id' => 1,
+                'name' => 'TRUCK LOANS',
+                'status' => 'active'
+
+            ],
+            [
+                'source_id' => 1,
+                'name' => 'BRAND NEW CARS',
+                'status' => 'active'
+
+            ],
+            [
+                'source_id' => 2,
+                'name' => 'BRAND NEW CARS',
+                'status' => 'active'
+
+            ],
+            [
+                'source_id' => 3,
+                'name' => 'BRAND NEW CARS',
+                'status' => 'active'
+
+            ],
+            [
+                'source_id' => 2,
+                'name' => 'BRANCH DIVISION',
+                'status' => 'active'
+
+            ],
+            [
+                'source_id' => 2,
+                'name' => 'CAR FD',
+                'status' => 'active'
+
+            ],
+            [
+                'source_id' => 2,
+                'name' => 'TRUCK FD',
+                'status' => 'active'
+
+            ],
+            [
+                'source_id' => 3,
+                'name' => 'BRANCH REFINANCING',
+                'status' => 'active'
+
+            ],
+            [
+                'source_id' => 3,
+                'name' => 'SAU',
+                'status' => 'active'
+
+            ],
+            [
+                'source_id' => 3,
+                'name' => 'TRUCK FINANCING',
+                'status' => 'active'
+
+            ],
+
         ]);
 
         DB::table('areas')->insert([
@@ -874,80 +1379,103 @@ class DatabaseSeeder extends Seeder
 
         DB::table('alfc_branches')->insert([
             [
-                // 'id' => 1
                 'name' => 'BACOLOD',
             ],
             [
-                // 'id' => 2
                 'name' => 'BICUTAN',
             ],
             [
-                // 'id' => 3
                 'name' => 'HEAD OFFICE',
             ],
             [
-                // 'id' => 4
                 'name' => 'CDO',
             ],
             [
-                // 'id' => 5
                 'name' => 'CEBU',
             ],
             [
-                // 'id' => 6
                 'name' => 'DAGUPAN',
             ],
             [
-                // 'id' => 7
                 'name' => 'DASMARINAS',
             ],
             [
-                // 'id' => 8
                 'name' => 'DAVAO',
             ],
             [
-                // 'id' => 9
                 'name' => 'GENSAN',
             ],
             [
-                // 'id' => 10
                 'name' => 'LIFEHOMES',
             ],
             [
-                // 'id' => 11
                 'name' => 'LIPA',
             ],
             [
-                // 'id' => 12
                 'name' => 'PAMPANGA',
             ],
             [
-                // 'id' => 13
                 'name' => 'SANTIAGO',
             ],
             [
-                // 'id' => 14
+                'name' => 'BICUTAN',
+            ],
+            [
                 'name' => 'ILOILO',
             ],
             [
-                // 'id' => 15
                 'name' => 'NUEVA ECIJA',
             ],
             [
-                // 'id' => 16
                 'name' => 'BAGUIO',
-            ]
+            ],
+            [
+                'name' => 'BATANGAS',
+            ],
+
         ]);
 
         DB::table('mode_of_payments')->insert([
             [
-                // 'id' => 1
-                'name' => 'CASH',
+                'name' => 'ADD ON',
             ],
             [
-                // 'id' => 2
-                'name' => 'GCASH',
+                'name' => 'ADD ON + CASH INSTALLMENT',
             ],
+            [
+                'name' => 'BILLED',
+            ],
+            [
+                'name' => 'BILLED + CASH INSTALLMENT',
+            ],
+            [
+                'name' => 'CASH INSTALLMENT',
+            ],
+            [
+                'name' => 'DIRECT PAYMENT',
+            ],
+            [
+                'name' => 'FREE INSURANCE',
+            ],
+            [
+                'name' => 'FULL CASH',
+            ],
+            [
+                'name' => 'FULL LTP',
+            ],
+            [
+                'name' => 'LTP + CASH INSTALLMENT',
+            ],
+            [
+                'name' => 'LTP + PDC',
+            ],
+            [
+                'name' => 'PDC',
+            ],
+            [
+                'name' => 'SALARY DEDUCT',
+            ],
+
         ]);
 
         DB::table('providers')->insert([
@@ -1319,344 +1847,10 @@ class DatabaseSeeder extends Seeder
                 'status' => 'Inactive',
             ],
         ]);
-        DB::table('assured_details')->insert([
-            [
-                'name' => 'John Doe',
-                'lot_number' => '123',
-                'street' => 'Main St',
-                'barangay' => 'Springfield',
-                'city' => 'Springfield',
-                'country' => 'Philippines',
-                'contact_number' => '123-456-7890',
-                'email' => 'assured1@test.com',
-                'other_contact_number' => '098-765-4321',
-                'facebook_account' => 'facebook.com/johndoe',
-                'viber_account' => 'viber.com/johndoe',
-                'nature_of_business' => 'Retail',
-                'other_assets' => 'Real estate properties',
-                'other_source_of_business' => null,
-            ],
-            [
-                'name' => 'Jane Smith',
-                'lot_number' => '456',
-                'street' => 'Elm St',
-                'barangay' => 'Shelbyville',
-                'city' => 'Shelbyville',
-                'country' => 'Philippines',
-                'contact_number' => '234-567-8901',
-                'email' => 'assured2@test.com',
-                'other_contact_number' => '876-543-2109',
-                'facebook_account' => 'facebook.com/janedoe',
-                'viber_account' => 'viber.com/janedoe',
-                'nature_of_business' => 'Wholesale',
-                'other_assets' => 'Vehicles, Machinery',
-                'other_source_of_business' => null,
-            ],
-        ]);
 
 
 
-        DB::table('insurance_details')->insert([
-            [
-                'assured_detail_id' => 1,
-                'issuance_code' => 'IC002',
-                'sale_date' => '2023-03-01',
-                'classification' => 'Auto Insurance',
-                'insurance_status' => 'Pending',
-                'team_id' => 1,
-                'sales_associate_id' => 2,
-                'sales_manager_id' => null,
-                'book_number' => 'BN1234',
-                'filing_number' => 'FN5678',
-                'database_remarks' => 'Policy pending approval',
-                'pid_received_date' => '2023-04-05',
-                'pid_completion_date' => '2024-04-05',
-                'pid_status' => null,
-                'provider_id' => 2,
-                'product_id' => 2,
-                'subproduct_id' => 2,
-                'product_type' => 'Comprehensive',
-                'source_id' => 2,
-                'source_branch_id' => 2,
-                'if_gdfi_id' => 2,
-                'mortgagee' => 'DEF Bank',
-                'area_id' => 2,
-                'alfc_branch_id' => 2,
-                'policy_number' => 'PN654321',
-                'plate_conduction_number' => 'PL67890',
-                'description' => 'Auto insurance policy',
-                'policy_inception_date' => '2023-04-01',
-                'expiry_date' => '2024-04-01',
-                'mode_of_payment_id' => 2,
-                'loan_amount' => '75000',
-                'total_sum_insured' => '150000',
-                'policy_expiration_aging' => '1 year',
-                'ra_comments' => null,
-                'admin_assistant_remarks' => null,
-                'tracking_number' => null,
-                'policy_received_by' => null,
 
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'assured_detail_id' => 2,
-                'issuance_code' => 'IC003',
-                'sale_date' => '2023-05-01',
-                'classification' => 'Health Insurance',
-                'insurance_status' => 'Approved',
-                'team_id' => 1,
-                'sales_associate_id' => 1,
-                'sales_manager_id' => null,
-                'book_number' => 'BN7891',
-                'filing_number' => 'FN2345',
-                'database_remarks' => 'Policy approved',
-                'pid_received_date' => '2023-06-05',
-                'pid_completion_date' => '2023-06-10',
-                'pid_status' => null,
-                'provider_id' => 2,
-                'product_id' => 2,
-                'subproduct_id' => 2,
-                'product_type' => 'Standard Health',
-                'source_id' => 2,
-                'source_branch_id' => 2,
-                'if_gdfi_id' => 2,
-                'mortgagee' => 'XYZ Financial',
-                'area_id' => 2,
-                'alfc_branch_id' => 2,
-                'policy_number' => 'PN789012',
-                'plate_conduction_number' => 'PL34567',
-                'description' => 'Comprehensive health insurance',
-                'policy_inception_date' => '2023-06-01',
-                'expiry_date' => '2024-06-01',
-                'mode_of_payment_id' => 2,
-                'loan_amount' => '100000',
-                'total_sum_insured' => '200000',
-                'policy_expiration_aging' => '1 year',
-                'ra_comments' => null,
-                'admin_assistant_remarks' => null,
-                'tracking_number' => null,
-                'policy_received_by' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-
-        ]);
-
-
-        DB::table('payment_details')->insert([
-            [
-                'insurance_detail_id' => 1,
-                'payment_terms' => 8,
-                'due_date_start' => '2023-01-10',
-                'due_date_end' => '2023-08-10',
-                'first_payment_schedule' => '2023-01-10',
-                'first_payment_amount' => 1000,
-                'second_payment_schedule' => '2023-02-10',
-                'second_payment_amount' => null,
-                'third_payment_schedule' => '2023-03-10',
-                'third_payment_amount' => null,
-                'fourth_payment_schedule' => '2023-04-10',
-                'fourth_payment_amount' => null,
-                'fifth_payment_schedule' => '2023-05-10',
-                'fifth_payment_amount' => null,
-                'sixth_payment_schedule' => '2023-06-10',
-                'sixth_payment_amount' => null,
-                'seventh_payment_schedule' => '2023-07-10',
-                'seventh_payment_amount' => null,
-                'eight_payment_schedule' => '2023-08-10',
-                'eight_payment_amount' => null,
-                'provision_receipt' => null,
-                'initial_payment' => 1000,
-                'for_billing' => 'Yes',
-                'over_under_payment' => 'None',
-                'date_of_good_as_sales' => '2023-01-05',
-                'payment_status' => 'Active',
-            ],
-            [
-                'insurance_detail_id' => 2,
-                'payment_terms' => 'Quarterly',
-                'due_date_start' => null,
-                'due_date_end' => '2023-11-15',
-                'first_payment_schedule' => '2023-05-15',
-                'first_payment_amount' => null,
-                'second_payment_schedule' => '2023-02-10',
-                'second_payment_amount' => null,
-                'third_payment_schedule' => '2023-06-10',
-                'third_payment_amount' => null,
-                'fourth_payment_schedule' => '2023-08-15',
-                'fourth_payment_amount' => null,
-                'fifth_payment_schedule' => '2023-11-15',
-                'fifth_payment_amount' => null,
-                'sixth_payment_schedule' => '2023-03-10',
-                'sixth_payment_amount' => null,
-                'seventh_payment_schedule' => '2023-07-10',
-                'seventh_payment_amount' => null,
-                'eight_payment_schedule' => '2023-02-15',
-                'eight_payment_amount' => null,
-                'provision_receipt' => null,
-                'initial_payment' => 2000,
-                'for_billing' => 'No',
-                'over_under_payment' => 'Under',
-                'date_of_good_as_sales' => '2023-02-10',
-                'payment_status' => 'Pending',
-            ]
-        ]);
-
-
-        DB::table('commission_details')->insert([
-            [
-                'insurance_detail_id' => 1, // Foreign key to insurance_detail
-                'gross_premium' => '5000',
-                'discount' => '500',
-                'gross_premium_net_discounted' => '4500',
-                'amount_due_to_provider' => '4000',
-                'full_commission' => '1000',
-                'vat' => '12',
-                'sales_credit' => '900',
-                'sales_credit_percent' => '20',
-                'comm_deduct' => '10',
-                'total_commission' => '850',
-            ],
-            [
-                'insurance_detail_id' => 2, // Foreign key to insurance_detail
-                'gross_premium' => '10000',
-                'discount' => '1000',
-                'gross_premium_net_discounted' => '9000',
-                'amount_due_to_provider' => '8500',
-                'full_commission' => '1500',
-                'vat' => '12',
-                'sales_credit' => '1350',
-                'sales_credit_percent' => '25',
-                'comm_deduct' => '15',
-                'total_commission' => '1275',
-            ],
-        ]);
-
-
-        DB::table('insurance_commissioners')->insert([
-            [
-                'insurance_detail_id' => 1,
-                'commissioner_id' => 1,
-                'commissioner_name' => 'James Villamin',
-                'amount' => 1000,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'insurance_detail_id' => 1,
-                'commissioner_id' => 2,
-                'commissioner_name' => 'Jang Fernando',
-                'amount' => '1000',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'insurance_detail_id' => 1,
-                'commissioner_id' => 16,
-                'commissioner_name' => null,
-                'amount' => '1000',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'insurance_detail_id' => 1,
-                'commissioner_id' => 17,
-                'commissioner_name' => null,
-                'amount' => '1000',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'insurance_detail_id' => 1,
-                'commissioner_id' => 18,
-                'commissioner_name' => null,
-                'amount' => '1000',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-
-
-            [
-                'insurance_detail_id' => 2,
-                'commissioner_id' => 1,
-                'commissioner_name' => 'James Villamin',
-                'amount' => 1000,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'insurance_detail_id' => 2,
-                'commissioner_id' => 2,
-                'commissioner_name' => 'Jang Fernando',
-                'amount' => '1000',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'insurance_detail_id' => 2,
-                'commissioner_id' => 16,
-                'commissioner_name' => null,
-                'amount' => '1000',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'insurance_detail_id' => 2,
-                'commissioner_id' => 17,
-                'commissioner_name' => null,
-                'amount' => '1000',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'insurance_detail_id' => 2,
-                'commissioner_id' => 18,
-                'commissioner_name' => null,
-                'amount' => '1000',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-
-
-        ]);
-
-        DB::table('collection_details')->insert([
-            [
-                'insurance_detail_id' => 1, // FK reference to insurance_detail
-                'insurance_type' => 'Health Insurance',
-                'sale_status' => 'Active',
-                'tele_id' => 1, // FK reference to tele
-                'due_date' => '2023-12-10',
-                'paid_terms' => '1',
-                'payment_remarks' => 'First payment made',
-                'account_status' => 'Active',
-                'payment_ptp_declared' => 'No',
-                'payment_center' => 'Online Payment',
-                'reference_number' => 'REF12345',
-                'date_on_receipt_abstract' => '2023-11-15',
-                'contact_number_verification' => 'Verified',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-            [
-                'insurance_detail_id' => 2, // FK reference to insurance_detail
-                'insurance_type' => 'Auto Insurance',
-                'sale_status' => 'Pending',
-                'tele_id' => 2, // FK reference to tele
-                'due_date' => '2023-11-20',
-                'paid_terms' => '2',
-                'payment_remarks' => 'Awaiting payment',
-                'account_status' => 'Pending',
-                'payment_ptp_declared' => 'Yes',
-                'payment_center' => 'Bank Transfer',
-                'reference_number' => 'REF67890',
-                'date_on_receipt_abstract' => '2023-11-10',
-                'contact_number_verification' => 'Not Verified',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
 
     }
 
