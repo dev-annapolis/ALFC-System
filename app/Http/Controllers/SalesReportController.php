@@ -26,6 +26,7 @@ use App\Models\AlfcBranch;
 use App\Models\ModeOfPayment;
 use App\Models\Tele;
 use App\Models\Commissioner;
+use App\Models\SourceDivision;
 
 
 
@@ -42,7 +43,7 @@ class SalesReportController extends Controller
 
         $sources = Source::where('status', 'active')->get();
         $sourcebranches = Sourcebranch::where('status', 'active')->get();
-        $ifgdfis = IfGdfi::where('status', 'active')->get();
+        // $ifgdfis = IfGdfi::where('status', 'active')->get();
         $areas = Area::where('status', 'active')->get();
         $alfcbranches = AlfcBranch::where('status', 'active')->get();
         $modeofpayments = ModeOfPayment::where('status', 'active')->get();
@@ -51,7 +52,7 @@ class SalesReportController extends Controller
 
         $teles = Tele::where('status', 'active')->get();
 
-        return view('salesreport.index', compact('sales_associates', 'teams', 'sales_managers', 'providers', 'products', 'subproducts', 'sources', 'sourcebranches', 'ifgdfis', 'areas', 'alfcbranches', 'modeofpayments', 'teles', 'commissioners'));
+        return view('salesreport.index', compact('sales_associates', 'teams', 'sales_managers', 'providers', 'products', 'subproducts', 'sources', 'sourcebranches', 'areas', 'alfcbranches', 'modeofpayments', 'teles', 'commissioners'));
     }
 
     public function salesReportData()
@@ -59,12 +60,12 @@ class SalesReportController extends Controller
         // Fetch the insurance details along with related data through nested relationships
         $insuranceDetails = InsuranceDetail::with([
             'assuredDetail', // Load assureds with their related assuredDetails
-            'paymentDetail',
+            'paymentDetail.provider',
             'salesAssociate.team',
             // 'branchManager',
             'source',
             'subproduct',
-            'provider',
+            // 'provider',
         ])
             ->get()
             ->map(function ($insuranceDetail) {
@@ -82,7 +83,7 @@ class SalesReportController extends Controller
                     'source' => $insuranceDetail->source->name ?? null,
                     'subproduct' => $insuranceDetail->subproduct->name ?? null,
                     'policy_inception_date' => $insuranceDetail->policy_inception_date ?? null,
-                    'provider' => $insuranceDetail->provider->name ?? null,
+                    'provider' => $insuranceDetail->paymentDetail->provider->name ?? null,
                     'sale_status' => $insuranceDetail->insurance_status ?? null,
                 ];
             })
@@ -123,12 +124,12 @@ class SalesReportController extends Controller
             'subproduct',
             'source',
             'sourceBranch',
-            'ifGdfi',
+            // 'ifGdfi',
             'area',
             'alfcBranch',
             'modeOfPayment',
-            'provider',
-            'paymentDetail',
+            // 'provider',
+            'paymentDetail.provider',
             'commissionDetail',
             'collectionDetail.tele',
             'insuranceCommissioner.commissioner'
@@ -236,13 +237,13 @@ class SalesReportController extends Controller
                     'pid_received_date' => $insuranceDetail->pid_received_date ?? "N/A",
                     'pid_completion_date' => $insuranceDetail->pid_completion_date ?? "N/A",
                     'pid_status' => $insuranceDetail->pid_status ?? "N/A",
-                    'provider_name' => $insuranceDetail->provider->name ?? "N/A",
                     'product_name' => $insuranceDetail->product->name ?? "N/A",
                     'subproduct_name' => $insuranceDetail->subproduct->name ?? "N/A",
-                    'product_type' => $insuranceDetail->product_type ?? "N/A",
+                    // 'product_type' => $insuranceDetail->product_type ?? "N/A",
+                    'source_division_name' => $insuranceDetail->sourceDivisions->name ?? "N/A",
                     'source_name' => $insuranceDetail->source->name ?? "N/A",
                     'source_branch_name' => $insuranceDetail->sourceBranch->name ?? "N/A",
-                    'if_gdfi' => $insuranceDetail->ifGdfi->name ?? "N/A",
+                    // 'if_gdfi' => $insuranceDetail->ifGdfi->name ?? "N/A",
                     'mortgagee' => $insuranceDetail->mortgagee ?? "N/A",
                     'area_name' => $insuranceDetail->area->name ?? "N/A",
                     'alfc_branch_name' => $insuranceDetail->alfcBranch->name ?? "N/A",
@@ -258,19 +259,19 @@ class SalesReportController extends Controller
                 ];
             case 'commission_details':
                 return [
-                    'gross_premium' => $insuranceDetail->commissionDetail->gross_premium ?? "N/A",
-                    'discount' => $insuranceDetail->commissionDetail->discount ?? "N/A",
-                    'gross_premium_net_discounted' => $insuranceDetail->commissionDetail->gross_premium_net_discounted ?? "N/A",
-                    'amount_due_to_provider' => $insuranceDetail->commissionDetail->amount_due_to_provider ?? "N/A",
-                    'full_commission' => $insuranceDetail->commissionDetail->full_commission ?? "N/A",
+                    // 'gross_premium' => $insuranceDetail->commissionDetail->gross_premium ?? "N/A",
+                    // 'discount' => $insuranceDetail->commissionDetail->discount ?? "N/A",
+                    // 'gross_premium_net_discounted' => $insuranceDetail->commissionDetail->gross_premium_net_discounted ?? "N/A",
+                    // 'amount_due_to_provider' => $insuranceDetail->commissionDetail->amount_due_to_provider ?? "N/A",
+                    // 'full_commission' => $insuranceDetail->commissionDetail->full_commission ?? "N/A",
                     // 'travel_incentives' => $insuranceDetail->commissionDetail->travel_incentives ?? "N/A",
                     // 'offsetting' => $insuranceDetail->commissionDetail->offsetting ?? "N/A",
                     // 'promo' => $insuranceDetail->commissionDetail->promo ?? "N/A",
-                    'total_commission' => $insuranceDetail->commissionDetail->total_commission ?? "N/A",
-                    'vat' => $insuranceDetail->commissionDetail->vat ?? "N/A",
-                    'sales_credit' => $insuranceDetail->commissionDetail->sales_credit ?? "N/A",
-                    'sales_credit_percent' => $insuranceDetail->commissionDetail->sales_credit_percent ?? "N/A",
-                    'comm_deduct' => $insuranceDetail->commissionDetail->comm_deduct ?? "N/A"
+                    // 'total_commission' => $insuranceDetail->commissionDetail->total_commission ?? "N/A",
+                    // 'vat' => $insuranceDetail->commissionDetail->vat ?? "N/A",
+                    // 'sales_credit' => $insuranceDetail->commissionDetail->sales_credit ?? "N/A",
+                    // 'sales_credit_percent' => $insuranceDetail->commissionDetail->sales_credit_percent ?? "N/A",
+                    // 'comm_deduct' => $insuranceDetail->commissionDetail->comm_deduct ?? "N/A"
                 ];
             case 'insurance_commissioners':
                 $commissionersData = [];
@@ -304,7 +305,7 @@ class SalesReportController extends Controller
                     'date_of_good_as_sales' => $insuranceDetail->paymentDetail->date_of_good_as_sales ?? "N/A",
                     'due_date_start' => $insuranceDetail->paymentDetail->due_date_start ?? "N/A",
                     'due_date_end' => $insuranceDetail->paymentDetail->due_date_end ?? "N/A",
-
+                    'provider_name' => $insuranceDetail->paymentDetail->provider->name ?? "N/A",
                     'first_payment_schedule' => $insuranceDetail->paymentDetail->first_payment_schedule ?? "N/A",
                     'first_payment_amount' => $insuranceDetail->paymentDetail->first_payment_amount ?? "N/A",
                     'second_payment_schedule' => $insuranceDetail->paymentDetail->second_payment_schedule ?? "N/A",
@@ -327,6 +328,16 @@ class SalesReportController extends Controller
                     'for_billing' => $insuranceDetail->paymentDetail->for_billing ?? "N/A",
                     'over_under_payment' => $insuranceDetail->paymentDetail->over_under_payment ?? "N/A",
                     'payment_status' => $insuranceDetail->paymentDetail->payment_status ?? "N/A",
+                    'gross_premium' => $insuranceDetail->paymentDetail->gross_premium ?? "N/A",
+                    'discount' => $insuranceDetail->paymentDetail->discount ?? "N/A",
+                    'gross_premium_net_discounted' => $insuranceDetail->paymentDetail->gross_premium_net_discounted ?? "N/A",
+                    'amount_due_to_provider' => $insuranceDetail->paymentDetail->amount_due_to_provider ?? "N/A",
+                    'full_commission' => $insuranceDetail->paymentDetail->full_commission ?? "N/A",
+                    'total_commission' => $insuranceDetail->paymentDetail->total_commission ?? "N/A",
+                    'vat' => $insuranceDetail->paymentDetail->vat ?? "N/A",
+                    'sales_credit' => $insuranceDetail->paymentDetail->sales_credit ?? "N/A",
+                    'sales_credit_percent' => $insuranceDetail->paymentDetail->sales_credit_percent ?? "N/A",
+                    'comm_deduct' => $insuranceDetail->paymentDetail->comm_deduct ?? "N/A"
                 ];
             default:
                 return [];
@@ -352,12 +363,12 @@ class SalesReportController extends Controller
             'subproduct',
             'source',
             'sourceBranch',
-            'ifGdfi',
+            // 'ifGdfi',
             'area',
             'alfcBranch',
             'modeOfPayment',
-            'provider',
-            'paymentDetail',
+            // 'provider',
+            'paymentDetail.provider',
             'commissionDetail',
             'collectionDetail.tele',
             'insuranceCommissioner.commissioner',
@@ -432,16 +443,25 @@ class SalesReportController extends Controller
                         ? response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail, 'updatedName' => $sourceBranch->name])
                         : response()->json(['error' => 'Source branch not found'], 404);
                 }
-
-                if ($key === 'if_gdfi') {
-                    $insuranceDetail->if_gdfi_id = $newValue;
+                if ($key === 'source_division_name') {
+                    $insuranceDetail->source_division_id = $newValue;
                     $insuranceDetail->save();
 
-                    $ifGdfi = IfGdfi::find($newValue);
-                    return $ifGdfi
-                        ? response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail, 'updatedName' => $ifGdfi->name])
+                    $sourceDivisions = SourceDivision::find($newValue);
+                    return $sourceDivisions
+                        ? response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail, 'updatedName' => $sourceDivisions->name])
                         : response()->json(['error' => 'IF GDFI not found'], 404);
                 }
+
+                // if ($key === 'if_gdfi') {
+                //     $insuranceDetail->if_gdfi_id = $newValue;
+                //     $insuranceDetail->save();
+
+                //     $ifGdfi = IfGdfi::find($newValue);
+                //     return $ifGdfi
+                //         ? response()->json(['success' => 'Field updated successfully', 'updatedData' => $insuranceDetail, 'updatedName' => $ifGdfi->name])
+                //         : response()->json(['error' => 'IF GDFI not found'], 404);
+                // }
 
                 if ($key === 'area_name') {
                     $insuranceDetail->area_id = $newValue;
