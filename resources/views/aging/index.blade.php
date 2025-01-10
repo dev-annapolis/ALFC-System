@@ -75,6 +75,7 @@
                 <th style="text-align: center;">DUE DATE</th>
                 <th style="text-align: center;">TERMS</th>
                 <th style="text-align: center;"> GROSS PREMIUM <br> (NET OF DISCOUNTS)</th>
+                <th style="text-align: center;">TOTAL OUTSTANDING</th>
                 <th style="text-align: center;">BALANCE</th>
             </tr>
         </thead>
@@ -216,6 +217,15 @@
                     }
                 },
                 {
+                    data: 'total_outstanding',
+                    className: 'text-center',
+                    render: function (data) {
+                        return data
+                            ? data.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+                            : '$0.00';
+                    }
+                },
+                {
                     data: 'balance',
                     className: 'text-center',
                     render: function (data) {
@@ -295,6 +305,7 @@
                                 <thead>
                                     <tr>
                                         ${data.pivots.map(pivot => `<th>${pivot.label}</th>`).join('')}
+                                        <th>Total</th> <!-- Add Total column here -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -314,6 +325,7 @@
                                                 <div><strong>Tele Remarks:</strong> ${pivot.tele_remarks || ' '}</div>
                                                 <div><strong>Paid:</strong> ${pivot.paid ? 'Yes' : ' '}</div>
                                                 <!-- View Details Button -->
+                                                <div> ${((pivot.paid_amount / data.summary.gross_premium) * 100).toFixed(2) + '%'}</div>
                                                 <button 
                                                     class="btn btn-primary btn-sm mt-2 view-details-btn" 
                                                     data-id="${pivot.id}" 
@@ -324,9 +336,23 @@
                                                 </button>
                                             </td>
                                         `).join('')}
+                                        <td>
+                                           <div><strong>Gross Premium:</strong> ${
+                                                data.summary.gross_premium
+                                            }</div>
+                                            <div><strong>Total Paid:</strong> ${
+                                                data.totalPaidAmount
+                                            }</div>
+                                            <div><strong>Percentage Paid:</strong> ${
+                                                ((data.totalPaidAmount / data.summary.gross_premium) * 100).toFixed(2) + '%'
+                                            }</div>
+
+                                           
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
+
                         `;
 
                         $(`#ar-aging-pivots-${id}`).html(tableHtml);
@@ -408,62 +434,57 @@
 
         // Function to save the data via PUT AJAX request
         function savePivotDetails() {
-    // Get values from the modal inputs
-    var pivotData = {
-        id: $('#pivotIdInput').val(),
-        label: $('#pivotLabelInput').val(),
-        paid_amount: $('#pivotPaidAmountInput').val(),
-        paid_schedule: $('#pivotPaidScheduleInput').val(),
-        payment_amount: $('#pivotPaymentAmountInput').val(),
-        payment_schedule: $('#pivotPaymentScheduleInput').val(),
-        reference_number: $('#pivotReferenceNumberInput').val(),
-        ra_remarks: $('#pivotRaRemarksInput').val(),
-        tele_remarks: $('#pivotTeleRemarksInput').val(),
-        paid: $('#pivotPaidInput').val() === '1' // Ensure this is a boolean (true or false)
-    };
+            // Get values from the modal inputs
+            var pivotData = {
+                id: $('#pivotIdInput').val(),
+                label: $('#pivotLabelInput').val(),
+                paid_amount: $('#pivotPaidAmountInput').val(),
+                paid_schedule: $('#pivotPaidScheduleInput').val(),
+                payment_amount: $('#pivotPaymentAmountInput').val(),
+                payment_schedule: $('#pivotPaymentScheduleInput').val(),
+                reference_number: $('#pivotReferenceNumberInput').val(),
+                ra_remarks: $('#pivotRaRemarksInput').val(),
+                tele_remarks: $('#pivotTeleRemarksInput').val(),
+                paid: $('#pivotPaidInput').val() === '1' // Ensure this is a boolean (true or false)
+            };
 
-    // Log the pivotData being sent
-    console.log('Sending the following pivot data:', pivotData);
+            // Log the pivotData being sent
+            console.log('Sending the following pivot data:', pivotData);
 
-    // Send data to server via AJAX (PUT request)
-    $.ajax({
-        url: '/api/save-pivot-details/' + pivotData.id, // Correct URL to include the pivot ID
-        method: 'PUT',
-        data: pivotData,
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Add CSRF token to headers
-        },
-        success: function(response) {
-            // Log the response
-            console.log('Response from server:', response);
+            // Send data to server via AJAX (PUT request)
+            $.ajax({
+                url: '/api/save-pivot-details/' + pivotData.id, // Correct URL to include the pivot ID
+                method: 'PUT',
+                data: pivotData,
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Add CSRF token to headers
+                },
+                success: function(response) {
+                    // Log the response
+                    console.log('Response from server:', response);
 
-            if (response.success) {
-                alert('Pivot details updated successfully!');
-                $('#viewPivotDetailsModal').modal('hide'); // Close the modal
-            } else {
-                alert('Error updating pivot details');
-            }
-        },
-        error: function(xhr, status, error) {
-            // Log the error details
-            console.error('AJAX error:', error);
-            console.error('XHR:', xhr);
-            console.error('Status:', status);
-            alert('Error updating pivot details');
+                    if (response.success) {
+                        alert('Pivot details updated successfully!');
+                        $('#viewPivotDetailsModal').modal('hide'); // Close the modal
+                    } else {
+                        alert('Error updating pivot details');
+                    }
+                    fetchTableData();
+                },
+                error: function(xhr, status, error) {
+                    // Log the error details
+                    console.error('AJAX error:', error);
+                    console.error('XHR:', xhr);
+                    console.error('Status:', status);
+                    alert('Error updating pivot details');
+                }
+            });
         }
-    });
-}
 
-// Attach save function to the "Save" button in the modal
-$('#savePivotDetailsBtn').on('click', function() {
-    savePivotDetails();
-});
-
-
-
-
-      
-
+        // Attach save function to the "Save" button in the modal
+        $('#savePivotDetailsBtn').on('click', function() {
+            savePivotDetails();
+        });
 
     });
 </script>

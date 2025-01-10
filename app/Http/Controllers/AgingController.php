@@ -96,11 +96,13 @@ class AgingController extends Controller
         )
             ->where('id', $id) // Match the given ID in ArAging table
             ->first(); // Fetch the single matching record
+        $totalPaidAmount = ArAgingPivot::where('ar_aging_id', $id)->sum('paid_amount');
 
         // Return the data as a JSON response
         return response()->json([
             'pivots' => $pivots,
-            'summary' => $summary
+            'summary' => $summary,
+            'totalPaidAmount' => $totalPaidAmount
         ]);
     }
     public function savePivotDetails(Request $request, $id)
@@ -158,11 +160,39 @@ class AgingController extends Controller
         // Save the updated pivot
         $pivot->save();
 
+        // Update the balance of the related ArAging
+        $arAging = ArAging::find($pivot->ar_aging_id); // Assuming `ar_aging_id` exists in pivot table
+        if ($arAging) {
+            // Calculate the total paid amount for all related pivots
+            $totalPaidAmount = ArAgingPivot::where('ar_aging_id', $arAging->id)
+                ->sum('paid_amount');
+
+            // Compute the new balance
+            $arAging->balance = $arAging->gross_premium - $totalPaidAmount;
+
+            // Ensure balance is not negative
+            $arAging->balance = max($arAging->balance, 0);
+            $arAging->total_outstanding = $totalPaidAmount;
+            // Save the updated balance
+            $arAging->save();
+
+            // Log the balance update
+            Log::info('ArAging balance updated.', [
+                'ar_aging_id' => $arAging->id,
+                'new_balance' => $arAging->balance,
+                'gross_premium' => $arAging->gross_premium,
+                'total_paid_amount' => $totalPaidAmount,
+            ]);
+        } else {
+            Log::warning('ArAging not found for pivot with ar_aging_id: ' . $pivot->ar_aging_id);
+        }
+
         // Log success
         Log::info('Pivot details updated successfully.');
 
         // Return success response
         return response()->json(['success' => true]);
     }
+
 
 }

@@ -127,7 +127,7 @@
     </div>
 </div>
 {{-- comment modal --}}
-<div id="addCommentModal" class="modal fade" tabindex="-1" aria-labelledby="addCommentModalLabel" aria-hidden="true">
+{{-- <div id="addCommentModal" class="modal fade" tabindex="-1" aria-labelledby="addCommentModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -143,7 +143,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 
 <!-- Confirmation Modal -->
 <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
@@ -154,7 +154,32 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                Are you sure you want to verify this insurance detail?
+                <form id="verificationForm">
+                    <div class="mb-3">
+                        <label for="initialPayment" class="form-label">Initial Payment</label>
+                        <input type="number" class="form-control" id="initialPayment" name="initial_payment" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="forBilling" class="form-label">For Billing</label>
+                        <input type="text" class="form-control" id="forBilling" name="for_billing" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="overUnderPayment" class="form-label">Over/Under Payment</label>
+                        <input type="text" class="form-control" id="overUnderPayment" name="over_under_payment" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="dateOfGoodAsSales" class="form-label">Date of Good as Sales</label>
+                        <input type="date" class="form-control" id="dateOfGoodAsSales" name="date_of_good_as_sales" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="paymentStatus" class="form-label">Payment Status</label>
+                        <input type="text" class="form-control" id="paymentStatus" name="payment_status" required>
+                    </div>
+                    <div class="mt-3">
+                        <label for="comment" class="form-label">RA Comment :</label>
+                        <textarea id="comment" class="form-control" rows="3" placeholder="Enter your comment here..."></textarea>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -163,6 +188,7 @@
         </div>
     </div>
 </div>
+
 
 
 <script>
@@ -339,11 +365,6 @@
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item add-comment" href="#" data-insurance-id="${row.id}">
-                                        Add Comments
-                                    </a>
-                                </li>
-                                <li>
                                     <a class="dropdown-item" href="#" id="verifyButton" data-insurance-detail-id="${row.id}">
                                         Verify
                                     </a>
@@ -451,41 +472,41 @@ $(document).on('click', '.delete-commissioner', function () {
 
 
 
-// Save Changes
-$('#saveChanges').on('click', function () {
-    const updatedData = [];
-    $('#commissionTableBody tr').each(function () {
-        const row = $(this);
-        updatedData.push({
-            id: row.data('id'),
-            commissioner_id: row.find('.commissioner-title').val(), // Dropdown value
-            commissioner_name: row.find('.commissioner-name').text(), // Editable string
-            amount: row.find('.commission-amount').text(), // Editable string
+    // Save Changes
+    $('#saveChanges').on('click', function () {
+        const updatedData = [];
+        $('#commissionTableBody tr').each(function () {
+            const row = $(this);
+            updatedData.push({
+                id: row.data('id'),
+                commissioner_id: row.find('.commissioner-title').val(), // Dropdown value
+                commissioner_name: row.find('.commissioner-name').text(), // Editable string
+                amount: row.find('.commission-amount').text(), // Editable string
+            });
+        });
+
+        const insuranceDetailsId = $('#commissionModal').data('insurance-details-id');
+
+        $.ajax({
+            url: `/api/update-commission/${insuranceDetailsId}`,
+            method: 'POST',
+            data: {
+                commissioners: updatedData,
+                _token: $('meta[name="csrf-token"]').attr('content'),
+            },
+            success: function (response) {
+                if (response.success) {
+                    alert('Changes saved successfully!');
+                    $('#commissionModal').modal('hide');
+                } else {
+                    alert('Failed to save changes.');
+                }
+            },
+            error: function () {
+                alert('An error occurred while saving changes.');
+            }
         });
     });
-
-    const insuranceDetailsId = $('#commissionModal').data('insurance-details-id');
-
-    $.ajax({
-        url: `/api/update-commission/${insuranceDetailsId}`,
-        method: 'POST',
-        data: {
-            commissioners: updatedData,
-            _token: $('meta[name="csrf-token"]').attr('content'),
-        },
-        success: function (response) {
-            if (response.success) {
-                alert('Changes saved successfully!');
-                $('#commissionModal').modal('hide');
-            } else {
-                alert('Failed to save changes.');
-            }
-        },
-        error: function () {
-            alert('An error occurred while saving changes.');
-        }
-    });
-});
 
 
 
@@ -500,54 +521,54 @@ $('#saveChanges').on('click', function () {
     }
         // Reload DataTable when Apply Filter is clicked
     });
-// RA Comments
-    $(document).on('click', '.add-comment', function (e) {
-        e.preventDefault();
+    // // RA Comments
+    //     $(document).on('click', '.add-comment', function (e) {
+    //         e.preventDefault();
 
-        // Get the insurance details ID from the clicked element
-        const insuranceDetailsId = $(this).data('insurance-id');
-        
-        // Store the ID in the modal for reference
-        $('#addCommentModal').data('insurance-id', insuranceDetailsId);
+    //         // Get the insurance details ID from the clicked element
+    //         const insuranceDetailsId = $(this).data('insurance-id');
+            
+    //         // Store the ID in the modal for reference
+    //         $('#addCommentModal').data('insurance-id', insuranceDetailsId);
 
-        // Clear the textarea and show the modal
-        $('#commentInput').val('');
-        $('#addCommentModal').modal('show');
-    });
+    //         // Clear the textarea and show the modal
+    //         $('#commentInput').val('');
+    //         $('#addCommentModal').modal('show');
+    //     });
 
-    $('#saveComment').on('click', function () {
-        const insuranceDetailsId = $('#addCommentModal').data('insurance-id');
-        const comment = $('#commentInput').val();
+    //     $('#saveComment').on('click', function () {
+    //         const insuranceDetailsId = $('#addCommentModal').data('insurance-id');
+    //         const comment = $('#commentInput').val();
 
-        if (!comment.trim()) {
-            alert('Comment cannot be empty.');
-            return;
-        }
+    //         if (!comment.trim()) {
+    //             alert('Comment cannot be empty.');
+    //             return;
+    //         }
 
-        // Perform an AJAX request to save the comment
-        $.ajax({
-            url: `/api/ra/${insuranceDetailsId}/comments`,
-            method: 'POST',
-            data: {
-                comment: comment,
-                _token: $('meta[name="csrf-token"]').attr('content'), // Include CSRF token for security
-            },
-            success: function (response) {
-                if (response.success) {
-                    alert('Comment added successfully!');
-                    $('#addCommentModal').modal('hide');
+    //         // Perform an AJAX request to save the comment
+    //         $.ajax({
+    //             url: `/api/ra/${insuranceDetailsId}/comments`,
+    //             method: 'POST',
+    //             data: {
+    //                 comment: comment,
+    //                 _token: $('meta[name="csrf-token"]').attr('content'), // Include CSRF token for security
+    //             },
+    //             success: function (response) {
+    //                 if (response.success) {
+    //                     alert('Comment added successfully!');
+    //                     $('#addCommentModal').modal('hide');
 
-                    // Optionally update the displayed comments on the table
-                    $(`tr[data-insurance-details-id="${insuranceDetailsId}"]`).find('.comments-cell').text(response.ra_comments);
-                } else {
-                    alert('Failed to save the comment.');
-                }
-            },
-            error: function () {
-                alert('An error occurred while saving the comment.');
-            }
-        });
-    });
+    //                     // Optionally update the displayed comments on the table
+    //                     $(`tr[data-insurance-details-id="${insuranceDetailsId}"]`).find('.comments-cell').text(response.ra_comments);
+    //                 } else {
+    //                     alert('Failed to save the comment.');
+    //                 }
+    //             },
+    //             error: function () {
+    //                 alert('An error occurred while saving the comment.');
+    //             }
+    //         });
+    //     });
 
     //Verification For Ra 
 
@@ -560,33 +581,56 @@ $('#saveChanges').on('click', function () {
         // Store the ID in the modal for later use
         $('#confirmationModal').data('insurance-detail-id', insuranceDetailId).modal('show');
     });
+
     $('#confirmVerifyButton').on('click', function () {
         // Retrieve the stored insurance detail ID from the modal
         const insuranceDetailId = $('#confirmationModal').data('insurance-detail-id');
         const table = $('#raTable').DataTable();
+
+        // Collect form data from the modal
+        const formData = {
+            initial_payment: $('#initialPayment').val(),
+            for_billing: $('#forBilling').val(),
+            over_under_payment: $('#overUnderPayment').val(),
+            date_of_good_as_sales: $('#dateOfGoodAsSales').val(),
+            payment_status: $('#paymentStatus').val(),
+            comment: $('#comment').val(), // Include comment field
+            verification_status: 'for_sps_verification', // Hardcoded status
+            _token: $('meta[name="csrf-token"]').attr('content') // Include CSRF token for security
+        };
+
         // Perform the AJAX request to verify the insurance detail
         $.ajax({
             url: `/api/ra/verify/${insuranceDetailId}`,
             method: 'POST',
-            data: {
-                verification_status: 'for_sps_verification',
-                _token: $('meta[name="csrf-token"]').attr('content') // Include CSRF token for security
-            },
+            data: formData,
             success: function (response) {
                 if (response.success) {
                     alert(response.message);
 
+                    // Close the modal and reload the table
                     $('#confirmationModal').modal('hide');
                     table.ajax.reload();
-
                 } else {
                     alert('Failed to verify insurance detail.');
                 }
             },
-            error: function () {
-                alert('An error occurred while verifying the insurance detail.');
+            error: function (xhr) {
+                // Show error messages if validation fails or an error occurs
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    const errors = xhr.responseJSON.errors;
+                    let errorMessage = 'Validation errors:\n';
+                    for (let key in errors) {
+                        errorMessage += `${errors[key]}\n`;
+                    }
+                    alert(errorMessage);
+                } else {
+                    alert('An error occurred while verifying the insurance detail.');
+                }
             }
         });
     });
+
+
 </script>
 @endsection

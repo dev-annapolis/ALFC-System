@@ -262,8 +262,8 @@ class SalesProcessorController extends Controller
                         'label' => $label,
                         'payment_amount' => $schedule['amount'],
                         'payment_schedule' => $schedule['schedule'],
-                        'paid_amount' => $i === 0 ? $paymentDetail->first_payment_amount : null, // Set for current
-                        'paid_schedule' => $i === 0 ? $paymentDetail->first_payment_schedule : null, // Set for current
+                        'paid_amount' => null, // Set for current
+                        'paid_schedule' => null, // Set for current
                         'reference_number' => null,
                         'ra_remarks' => null,
                         'tele_remarks' => null,
