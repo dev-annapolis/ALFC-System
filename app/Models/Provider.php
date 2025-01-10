@@ -8,9 +8,9 @@ class Provider extends Model
 {
     protected $fillable = ['name', 'status'];
 
-    public function insuranceDetails()
+    public function paymentDetails()
     {
-        return $this->hasMany(InsuranceDetail::class);
+        return $this->hasMany(PaymentDetail::class);
     }
 
 }

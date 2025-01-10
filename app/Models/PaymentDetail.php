@@ -8,6 +8,18 @@ class PaymentDetail extends Model
 {
     protected $fillable = [
         'insurance_detail_id',
+        'provision_receipt',
+        'provider_id',
+        'gross_premium',
+        'discount',
+        'gross_premium_net_discounted',
+        'amount_due_to_provider',
+        'full_commission',
+        'total_commission',
+        'vat',
+        'sales_credit',
+        'sales_credit_percent',
+        'comm_deduct',
         'payment_terms',
         'due_date_start',
         'due_date_end',
@@ -27,17 +39,21 @@ class PaymentDetail extends Model
         'seventh_payment_amount',
         'eight_payment_schedule',
         'eight_payment_amount',
-        'provision_receipt',
-        'initial_payment',
         'for_billing',
         'over_under_payment',
+        'initial_payment',
         'date_of_good_as_sales',
-        'payment_status'
+        'payment_status',
     ];
-
+    
     public function insuranceDetail()
     {
         return $this->belongsTo(InsuranceDetail::class);
+    }
+    
+    public function provider()
+    {
+        return $this->belongsTo(Provider::class);
     }
 
 }
