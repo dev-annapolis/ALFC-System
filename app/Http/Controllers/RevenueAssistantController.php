@@ -20,7 +20,9 @@ use App\Models\Commissioner;
 use App\Models\InsuranceCommissioner;
 use App\Models\InsuranceDetail;
 use App\Models\RolePermission;
-
+use App\Models\PaymentDetail;
+use App\Models\ArAging;
+use App\Models\ArAgingPivot;
 use Illuminate\Http\Request;
 use Log;
 use Auth;
@@ -170,22 +172,81 @@ class RevenueAssistantController extends Controller
     {
         // Validate incoming data
         $request->validate([
+            'initial_payment' => 'required|numeric',
+            'for_billing' => 'required|string|max:255',
+            'over_under_payment' => 'required|string|max:255',
+            'date_of_good_as_sales' => 'required|date',
+            'payment_status' => 'required|string|max:255',
             'verification_status' => 'required|string|max:255',
+            'comment' => 'required|string|max:1000',
         ]);
 
         // Find the insurance detail by ID
         $insuranceDetail = InsuranceDetail::findOrFail($id);
 
-        // Set the verification status to "for_sps_verification"
-        $insuranceDetail->verification_status = 'for_sps_verification';  // Hardcoded status
+        // Update insurance_details fields
+        $insuranceDetail->verification_status = $request->verification_status;
+        $existingComments = $insuranceDetail->ra_comments ?? ''; // Existing comments, if any
+        $newComment = auth()->user()->name . ' (' . now()->format('M j, Y') . '): ' . $request->comment;
+        $insuranceDetail->ra_comments = trim($existingComments . "\n" . $newComment);
+        $insuranceDetail->save(); // Save changes to the insurance_details table
 
-        // Save the changes
-        $insuranceDetail->save();
+        // Update the related payment_details record
+        $paymentDetail = PaymentDetail::where('insurance_detail_id', $id)->first();
+
+        if ($paymentDetail) {
+            $paymentDetail->for_billing = $request->for_billing;
+            $paymentDetail->over_under_payment = $request->over_under_payment;
+            $paymentDetail->date_of_good_as_sales = $request->date_of_good_as_sales;
+            $paymentDetail->payment_status = $request->payment_status;
+            $paymentDetail->initial_payment = $request->initial_payment;
+            $paymentDetail->save(); // Save changes to the payment_details table
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'Payment detail not found for this insurance detail!',
+            ], 404);
+        }
+
+        // Update the ArAgingPivot table based on ar_aging_id
+        $arAging = ArAging::where('insurance_detail_id', $id)->first();
+        if ($arAging) {
+            $arAgingPivot = ArAgingPivot::where('ar_aging_id', $arAging->id)
+                ->where('label', 'current') // Only update rows where label = 'current'
+                ->first();
+
+            if ($arAgingPivot) {
+                $arAgingPivot->paid_amount = $request->initial_payment; // Set paid_amount to initial_payment
+                $arAgingPivot->paid_schedule = $request->date_of_good_as_sales; // Set paid_schedule to date_of_good_as_sales
+                $arAgingPivot->paid = true; // Set paid_status to true (boolean)
+                $arAgingPivot->save(); // Save changes to the ArAgingPivot table
+            }
+
+            // Calculate the total paid amount for the AR Aging
+            $totalPaidAmount = ArAgingPivot::where('ar_aging_id', $arAging->id)
+                ->sum('paid_amount');
+
+            // Compute the new balance
+            $arAging->balance = $arAging->gross_premium - $totalPaidAmount;
+
+            // Ensure balance is not negative
+            $arAging->balance = max($arAging->balance, 0);
+
+            // Update the total outstanding
+            $arAging->total_outstanding = $totalPaidAmount;
+
+            // Save changes to the ArAging table
+            $arAging->save();
+        }
 
         return response()->json([
             'success' => true,
-            'message' => 'Insurance detail status updated for SPS Verification successfully!',
+            'message' => 'Insurance detail, payment detail, AR aging pivot, and AR aging table updated successfully!',
         ]);
     }
+
+
+
+
 
 }
