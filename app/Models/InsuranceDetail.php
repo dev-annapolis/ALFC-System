@@ -9,43 +9,44 @@ class InsuranceDetail extends Model
     protected $fillable = [
         'assured_detail_id',
         'issuance_code',
-        'sale_date',
-        'classification',
-        'insurance_status',
         'team_id',
         'sales_associate_id',
         'sales_manager_id',
+        'regional_manager_id',
+        'sale_date',
+        'classification',
+        'insurance_status',
+        'product_id',
+        'subproduct_id',
+        'source_id',
+        'source_branch_id',
+        'source_division_id',
+        'mortgagee',
+        'area_id',
+        'alfc_branch_id',
+        'loan_amount',
+        'total_sum_insured',
+        'policy_inception_date',
+        'expiry_date',
+        'policy_number',
+        'plate_conduction_number',
+        'description',
+        'mode_of_payment_id',
+        'ra_comments',
+        'admin_assistant_remarks',
+        'tracking_number',
+        'mode_of_delivery',
+        'policy_received_by',
+        'policy_expiration_aging',
         'book_number',
         'filing_number',
         'database_remarks',
         'pid_received_date',
-        'pid_completion_date',
         'pid_status',
-        'provider_id',
-        'product_id',
-        'subproduct_id',
-        'product_type',
-        'source_id',
-        'source_branch_id',
-        'if_gdfi_id',
-        'mortgagee',
-        'area_id',
-        'alfc_branch_id',
-        'policy_number',
-        'plate_conduction_number',
-        'description',
-        'policy_inception_date',
-        'expiry_date',
-        'mode_of_payment_id',
-        'loan_amount',
-        'total_sum_insured',
-        'policy_expiration_aging',
-        'ra_comments',
-        'admin_assistant_remarks',
-        'tracking_number',
-        'policy_received_by',
+        'pid_completion_date',
         'verification_status',
     ];
+    
 
     public function salesAssociate()
     {
@@ -57,9 +58,9 @@ class InsuranceDetail extends Model
         return $this->belongsTo(SalesManager::class);
     }
 
-    public function provider()
+    public function sourceDivision()
     {
-        return $this->belongsTo(Provider::class);
+        return $this->belongsTo(SourceDivision::class);
     }
 
     public function product()
@@ -82,10 +83,10 @@ class InsuranceDetail extends Model
         return $this->belongsTo(SourceBranch::class);
     }
 
-    public function ifGdfi()
-    {
-        return $this->belongsTo(IfGdfi::class);
-    }
+    // public function ifGdfi()
+    // {
+    //     return $this->belongsTo(IfGdfi::class);
+    // }
 
     public function area()
     {
