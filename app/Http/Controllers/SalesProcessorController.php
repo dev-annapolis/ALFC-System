@@ -21,6 +21,7 @@ use App\Models\Subproduct;
 use App\Models\Source;
 use App\Models\SourceBranch;
 use App\Models\IfGdfi;
+use App\Models\SourceDivision;
 use App\Models\Area;
 use App\Models\AlfcBranch;
 use App\Models\Team;
@@ -51,6 +52,8 @@ class SalesProcessorController extends Controller
         $sources = Source::select('name', 'id')->where('status', 'active')->get();
         $sourcebranches = SourceBranch::select('name', 'id')->where('status', 'active')->get();
         $ifGdfis = IfGdfi::select('name', 'id')->where('status', 'active')->get();
+        $sourceDivisions = SourceDivision::with('source')->select('name', 'id', 'source_id')->where('status', 'active')->get();
+
         $areas = Area::select('name', 'id')->where('status', 'active')->get();
         $alfcbranches = AlfcBranch::select('name', 'id')->where('status', 'active')->get();
         $mops = ModeOfPayment::select('name', 'id')->where('status', 'active')->get();
@@ -67,7 +70,8 @@ class SalesProcessorController extends Controller
             'subproducts',
             'sources',
             'sourcebranches',
-            'ifGdfis',
+            // 'ifGdfis',
+            'sourceDivisions',
             'areas',
             'alfcbranches',
             'mops',
@@ -136,13 +140,13 @@ class SalesProcessorController extends Controller
                 // 'pid_received_date' => $request->assuredNameValue,
                 // 'pid_completion_date' => $request->assuredNameValue,
                 // 'pid_status' => $request->assuredNameValue,
-                'provider_id' => $request->providerValue,
                 'product_id' => $request->productValue,
                 'subproduct_id' => $request->subProductValue,
-                'product_type' => $request->productTypeValue,
+                // 'product_type' => $request->productTypeValue,
                 'source_id' => $request->sourceValue,
                 'source_branch_id' => $request->sourceBranchValue,
-                'if_gdfi_id' => $request->ifGdfiValue,
+                // 'if_gdfi_id' => $request->ifGdfiValue,
+                'source_division_id' => $request->sourceDivisionIdValue,
                 'mortgagee' => $request->mortgageeValue,
                 'area_id' => $request->areaValue,
                 'alfc_branch_id' => $request->alfcBranchValue,
@@ -158,22 +162,22 @@ class SalesProcessorController extends Controller
             ]);
             $InsuranceDetailId = $InsuranceDetail->id;
 
-            $CommissionDetail = CommissionDetail::create([
-                'insurance_detail_id' => $InsuranceDetailId,
-                'gross_premium' => $request->grossPremiumValue,
-                'discount' => $request->discountValue,
-                'gross_premium_net_discounted' => $request->netOfDiscountValue,
-                'amount_due_to_provider' => $request->amountDuetoProviderValue,
-                'full_commission' => $request->fullCommissionValue,
-                // 'travel_incentives' => $request->travelIncentivesValues,
-                // 'offsetting' => $request->offSettingValues,
-                // 'promo' => $request->promoValues,
-                'vat' => $request->vatValues,
-                'sales_credit' => $request->salesCreditValues,
-                'sales_credit_percent' => $request->salesCreditPercentValues,
-                'comm_deduct' => $request->commDeductValues,
-                'total_commission' => $request->totalCommissionValues,
-            ]);
+            // $CommissionDetail = CommissionDetail::create([
+            //     'insurance_detail_id' => $InsuranceDetailId,
+            //     'gross_premium' => $request->grossPremiumValue,
+            //     'discount' => $request->discountValue,
+            //     'gross_premium_net_discounted' => $request->netOfDiscountValue,
+            //     'amount_due_to_provider' => $request->amountDuetoProviderValue,
+            //     'full_commission' => $request->fullCommissionValue,
+            //     // 'travel_incentives' => $request->travelIncentivesValues,
+            //     // 'offsetting' => $request->offSettingValues,
+            //     // 'promo' => $request->promoValues,
+            //     'vat' => $request->vatValues,
+            //     'sales_credit' => $request->salesCreditValues,
+            //     'sales_credit_percent' => $request->salesCreditPercentValues,
+            //     'comm_deduct' => $request->commDeductValues,
+            //     'total_commission' => $request->totalCommissionValues,
+            // ]);
 
             $PaymentDetail = PaymentDetail::create([
                 'insurance_detail_id' => $InsuranceDetailId,
@@ -198,10 +202,22 @@ class SalesProcessorController extends Controller
                 'eight_payment_amount' => $request->paymentTermsDate[7]['eighth_payment_schedule_amount'] ?? null,
                 'provision_receipt' => $request->prNumberValues,
                 'initial_payment' => $request->initialPaymentValues,
-                'for_billing' => $request->forBillingValues,
-                'over_under_payment' => $request->overUnderPaymentValues,
-                'date_of_good_as_sales' => $request->dateGoodSalesValues,
-                'payment_status' => $request->statusPaymentValues,
+                // 'for_billing' => $request->forBillingValues,
+                // 'over_under_payment' => $request->overUnderPaymentValues,
+                // 'date_of_good_as_sales' => $request->dateGoodSalesValues,
+                // 'payment_status' => $request->statusPaymentValues,
+                'gross_premium' => $request->grossPremiumValue,
+                'discount' => $request->discountValue,
+                'gross_premium_net_discounted' => $request->netOfDiscountValue,
+                'amount_due_to_provider' => $request->amountDuetoProviderValue,
+                'full_commission' => $request->fullCommissionValue,
+                'vat' => $request->vatValues,
+                'sales_credit' => $request->salesCreditValues,
+                'sales_credit_percent' => $request->salesCreditPercentValues,
+                'comm_deduct' => $request->commDeductValues,
+                'total_commission' => $request->totalCommissionValues,
+                'provider_id' => $request->providerValue,
+
             ]);
 
             foreach ($request->commissionsSelect as $commission) {
