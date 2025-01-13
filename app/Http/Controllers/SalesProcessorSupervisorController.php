@@ -60,12 +60,12 @@ class SalesProcessorSupervisorController extends Controller
         // Fetch the insurance details along with related data through nested relationships
         $insuranceDetails = InsuranceDetail::with([
             'assuredDetail', // Load assureds with their related assuredDetails
-            'paymentDetail',
+            'paymentDetail.provider',
             'salesAssociate.team',
             // 'branchManager',
             'source',
             'subproduct',
-            'provider',
+            // 'provider',
         ])
             ->where('verification_status', 'for_sps_verification')
 
@@ -85,7 +85,7 @@ class SalesProcessorSupervisorController extends Controller
                     'source' => $insuranceDetail->source->name ?? null,
                     'subproduct' => $insuranceDetail->subproduct->name ?? null,
                     'policy_inception_date' => $insuranceDetail->policy_inception_date ?? null,
-                    'provider' => $insuranceDetail->provider->name ?? null,
+                    'provider' => $insuranceDetail->paymentDetail->provider->name ?? null,
                     'ra_comments' => $insuranceDetail->ra_comments ?? ' ',
                     'sale_status' => $insuranceDetail->insurance_status ?? null,
                 ];
@@ -153,5 +153,5 @@ class SalesProcessorSupervisorController extends Controller
     }
 
 
-    
+
 }

@@ -335,7 +335,6 @@
     const subproducts = @json($subproducts); //for subproduct_name
     const sources = @json($sources); //for source_name
     const sourcebranches = @json($sourcebranches); //for source_branch_name
-    const ifgdfis = @json($ifgdfis); //for if_gdfi
     const areas = @json($areas); //for area_name
     const alfcbranches = @json($alfcbranches); //for alfc_branch_name
     const modeofpayments = @json($modeofpayments); //for mode_of_payment_name

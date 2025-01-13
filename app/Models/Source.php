@@ -13,9 +13,9 @@ class Source extends Model
         return $this->hasMany(InsuranceDetail::class);
     }
 
-    public function sourceDivisions()
+    public function source()
     {
-        return $this->hasMany(SourceDivision::class);
+        return $this->belongsTo(Source::class, 'source_id');
     }
 
 }

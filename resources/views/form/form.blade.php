@@ -880,13 +880,26 @@
                                 </div>
                             </div>
 <!-- ---------------------- IfGDFI change to DIVISION -->
-                            <div class="col-md-4" id="gdficol" style="display: none;">
+                            {{-- <div class="col-md-4" id="gdficol" style="display: none;">
                                 <div class="mb-5 mb-md-4 mb-sm-4">
                                     <label for="ifGdfiLabel" class="form-label fw-bold fw-bold fs-6">If GDFI</label> 
                                     <select class="form-control rounded-0 border-1 m-0" id="ifGdfi">
                                         <option value="" disabled selected>Select If GDFI</option>
                                         @foreach($ifGdfis as $ifGdfi)
                                             <option value="{{ $ifGdfi->id }}">{{ $ifGdfi->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div> --}}
+                            <div class="col-md-4" id="sourceDivisionCol" >
+                                <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
+                                    <label for="sourceDivisionLabel" class="form-label fw-bold fw-bold fs-6">Source Division</label> 
+                                    <select class="form-control rounded-0 border-1 m-0" id="sourceDivision">
+                                        <option value="" disabled selected>Select Source Division</option>
+                                        @foreach($sourceDivisions as $sourceDivision)
+                                        <option value="{{ $sourceDivision->id }}">
+                                            {{ $sourceDivision->name }} ({{ $sourceDivision->source ? $sourceDivision->source->name : 'No Source' }})
+                                        </option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -1183,7 +1196,7 @@
 
 
 <!-- --------------- BUBURAHIN SIMULA DITO -->
-                        <div class="row mt-md-5">
+                        {{-- <div class="row mt-md-5">
                             <div class="col-md-4 mt-md-5">
                                 <div class="mb-4 mb-md-3 mb-sm-4">
                                     <label for="initialPaymentLabel" class="form-label fw-bold">Initial Payment</label>
@@ -1222,7 +1235,7 @@
                                     <input type="text" class="form-control rounded-0 border-1" id="statusPayment" placeholder="Enter status, e.g., GOOD AS SALES or SJ-GMA092024-1" required>
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
 <!-- --------------- HANGGANG DITO -->
 
 <!-- --------------- IDADAGDAG DITO ADMIN ASST REMARKS-->
@@ -1266,7 +1279,9 @@
         product: "Select Product",
         selectSources: "Select Source",
         sourceBranch: "Select Source Branch",
-        ifGdfi: "Select GDFI",
+        // ifGdfi: "Select GDFI",
+        sourceDivision: "Select Source Division",
+
         area: "Select Area",
         alfcBranch: "Select ALFC Branch",
         mop: "Select Mode of Payment"
@@ -1332,7 +1347,9 @@
     const productTypeSelect = document.getElementById('productType');
     const sourceSelect = document.getElementById('selectSources');
     const sourceBranchSelect = document.getElementById('sourceBranch');
-    const ifGdfiSelect = document.getElementById('ifGdfi');
+    // const ifGdfiSelect = document.getElementById('ifGdfi');
+    const sourceDivisionSelect = document.getElementById('sourceDivision');
+
     const mortgageeInput = document.getElementById('mortgagee');
     const areaSelect = document.getElementById('area');
     const alfcBranchSelect = document.getElementById('alfcBranch');
@@ -1372,12 +1389,12 @@
     const schedulePaymentInputs = document.getElementById('SchedulePayment1');
 
 
-    const initialPaymentInputs = document.getElementById('initialPayment');
-    const dateGoodSalesSelect = document.getElementById('dateGoodSales');
-    const forBillingInputs = document.getElementById('forBilling');
-    const overUnderPaymentInputs = document.getElementById('overUnderPayment');
+    // const initialPaymentInputs = document.getElementById('initialPayment');
+    // const dateGoodSalesSelect = document.getElementById('dateGoodSales');
+    // const forBillingInputs = document.getElementById('forBilling');
+    // const overUnderPaymentInputs = document.getElementById('overUnderPayment');
     const prNumberInputs = document.getElementById('prNumber');
-    const statusPaymentInputs = document.getElementById('statusPayment');
+    // const statusPaymentInputs = document.getElementById('statusPayment');
 
 
 
@@ -1401,7 +1418,7 @@
         showStep(currentStep);
         attachRadioChangeHandlers();
         loadFormData();
-        checkIfGDFI();
+        // checkIfGDFI();
 
 
         autoCompletePersonalDetails();
@@ -1497,7 +1514,7 @@
 
 
         $('#selectSources').on('change', function() {
-            checkIfGDFI();
+            // checkIfGDFI();
             saveFormData();
         });
 
@@ -1735,7 +1752,8 @@
         formData.productTypeValue = productTypeSelect.value;
         formData.sourceValue = sourceSelect.value;
         formData.sourceBranchValue = sourceBranchSelect.value;
-        formData.ifGdfiValue = ifGdfiSelect.value;
+        // formData.ifGdfiValue = ifGdfiSelect.value;
+        formData.sourceDivisionValue = sourceDivision.value;
         formData.mortgageeValue = mortgageeInput.value;
         formData.areaValue = areaSelect.value;
         formData.alfcBranchValue = alfcBranchSelect.value;
@@ -1782,12 +1800,12 @@
 
 
 
-        formData.initialPaymentValues = removeCommas(initialPaymentInputs.value);
-        formData.dateGoodSalesValues = dateGoodSalesSelect.value;
-        formData.forBillingValues = removeCommas(forBillingInputs.value);
-        formData.overUnderPaymentValues = removeCommas(overUnderPaymentInputs.value);
+        // formData.initialPaymentValues = removeCommas(initialPaymentInputs.value);
+        // formData.dateGoodSalesValues = dateGoodSalesSelect.value;
+        // formData.forBillingValues = removeCommas(forBillingInputs.value);
+        // formData.overUnderPaymentValues = removeCommas(overUnderPaymentInputs.value);
         formData.prNumberValues = prNumberInputs.value;
-        formData.statusPaymentValues = statusPaymentInputs.value;
+        // formData.statusPaymentValues = statusPaymentInputs.value;
 
 
 
@@ -1841,7 +1859,9 @@
             productTypeSelect.value = formData.productTypeValue || '';
             sourceSelect.value = formData.sourceValue || '';
             sourceBranchSelect.value = formData.sourceBranchValue || '';
-            ifGdfiSelect.value = formData.ifGdfiValue || '';
+            // ifGdfiSelect.value = formData.ifGdfiValue || '';
+            sourceDivisionSelect.value = formData.sourceDivision || '';
+
             mortgageeInput.value = formData.mortgageeValue || '';
             areaSelect.value = formData.areaValue || '';
             alfcBranchSelect.value = formData.alfcBranchValue || '';
@@ -1852,12 +1872,6 @@
             loanAmountInput.value = formatNumberWithCommas(formData.loanAmountValue || '0');
             totalSumInsuredInput.value = formatNumberWithCommas(formData.totalSumInsuredValue || '0');
             mopSelect.value = formData.mopValue || '';
-
-
-
-
-
-
 
             //SECOND FORM
             grossPremiumInput.value = formatNumberWithCommas(formData.grossPremiumValue || '0');
@@ -2097,12 +2111,12 @@
 
 
 
-            initialPaymentInputs.value = formatNumberWithCommas(formData.initialPaymentValues || '0');
-            dateGoodSalesSelect.value = formData.dateGoodSalesValues || '';
-            forBillingInputs.value = formatNumberWithCommas(formData.forBillingValues || '0');
-            overUnderPaymentInputs.value = formatNumberWithCommas(formData.overUnderPaymentValues || '0')
+            // initialPaymentInputs.value = formatNumberWithCommas(formData.initialPaymentValues || '0');
+            // dateGoodSalesSelect.value = formData.dateGoodSalesValues || '';
+            // forBillingInputs.value = formatNumberWithCommas(formData.forBillingValues || '0');
+            // overUnderPaymentInputs.value = formatNumberWithCommas(formData.overUnderPaymentValues || '0')
             prNumberInputs.value = formData.prNumberValues || '';
-            statusPaymentInputs.value = formData.statusPaymentValues || '';
+            // statusPaymentInputs.value = formData.statusPaymentValues || '';
 
 
 
@@ -2206,29 +2220,29 @@
     }
 
 
-    function checkIfGDFI() {
-        const source = document.getElementById('selectSources').value;
-        const ifGdfiSelect = document.getElementById('ifGdfiSelect'); // Ensure this element exists
-        const gdficol = document.getElementById('gdficol');
+    // function checkIfGDFI() {
+    //     const source = document.getElementById('selectSources').value;
+    //     const ifGdfiSelect = document.getElementById('ifGdfiSelect'); // Ensure this element exists
+    //     const gdficol = document.getElementById('gdficol');
 
-        // Retrieve stored data and parse it or initialize as an empty object
-        let storedData = JSON.parse(sessionStorage.getItem('formData')) || {};
+    //     // Retrieve stored data and parse it or initialize as an empty object
+    //     let storedData = JSON.parse(sessionStorage.getItem('formData')) || {};
 
-        if (source == 2) {
-            // Show the div
-            gdficol.style.display = "block";
-        } else {
-            // Hide the div
-            gdficol.style.display = "none";
-            if (ifGdfiSelect) {
-                ifGdfiSelect.value = "";
-            }
-            storedData.ifGdfiValue = ''; // Safely set the value
-        }
+    //     if (source == 2) {
+    //         // Show the div
+    //         gdficol.style.display = "block";
+    //     } else {
+    //         // Hide the div
+    //         gdficol.style.display = "none";
+    //         if (ifGdfiSelect) {
+    //             ifGdfiSelect.value = "";
+    //         }
+    //         storedData.ifGdfiValue = ''; // Safely set the value
+    //     }
 
-        // Save updated data back to sessionStorage
-        sessionStorage.setItem('formData', JSON.stringify(storedData));
-    }
+    //     // Save updated data back to sessionStorage
+    //     sessionStorage.setItem('formData', JSON.stringify(storedData));
+    // }
 
 
     function validatePaymentTerms() {
@@ -2695,7 +2709,7 @@
                     alert("First payment cannot exceed the gross premium.");
                     this.value = ''; // Clear the value
                     this.dataset.rawValue = ''; // Clear any stored raw value for formatting
-                    initialPaymentInputs.value = '';
+                    // initialPaymentInputs.value = '';
                     return;
                 }
 
@@ -2709,7 +2723,7 @@
                     paymentInputs[i].value = formatNumberWithCommas(monthlyPayment);
                 }
 
-                initialPaymentInputs.value = firstPaymentValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });;
+                // initialPaymentInputs.value = firstPaymentValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });;
                 saveFormData();
 
             });
