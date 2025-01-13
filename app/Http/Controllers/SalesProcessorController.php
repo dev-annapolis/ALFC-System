@@ -102,6 +102,7 @@ class SalesProcessorController extends Controller
         DB::beginTransaction();
         try {
             $AssuredDetailId = null;
+            $AssuredDetail = null; // Initialize the variable
 
             if (!is_null($request->assuredIdValue)) {
                 try {
@@ -123,6 +124,8 @@ class SalesProcessorController extends Controller
                     'email' => $request->assuredEmailValue,
                 ]);
                 $AssuredDetailId = $AssuredDetail->id;
+            } else {
+                $AssuredDetail = AssuredDetail::find($AssuredDetailId); // Retrieve existing AssuredDetail
             }
 
             $InsuranceDetail = InsuranceDetail::create([
@@ -279,7 +282,8 @@ class SalesProcessorController extends Controller
                         'payment_amount' => $schedule['amount'],
                         'payment_schedule' => $schedule['schedule'],
                         'paid_amount' => null, // Set for current
-                        'paid_schedule' => null, // Set for current
+                        'paid_schedule' => null,
+                        'over_under_payment' => null,
                         'reference_number' => null,
                         'ra_remarks' => null,
                         'tele_remarks' => null,
