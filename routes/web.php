@@ -200,7 +200,8 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
 
 
     Route::get('/uploadDataIndex', [UploadingController::class, 'uploadDataIndex'])->name('uploadData.index');
-
+    Route::post('/uploadDataStore', [UploadingController::class, 'uploadDataStore'])->name('uploadData.store');
+    
 });
 
 
