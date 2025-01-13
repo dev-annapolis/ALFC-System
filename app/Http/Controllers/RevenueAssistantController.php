@@ -70,6 +70,7 @@ class RevenueAssistantController extends Controller
                 'date_of_good_as_sales' => $insuranceDetail->paymentDetail->date_of_good_as_sales ?? 'N/A',
                 'status' => $insuranceDetail->insurance_status ?? 'N/A',
                 'ra_comments' => $insuranceDetail->ra_comments ?? ' ',
+
             ];
         });
 
@@ -80,6 +81,56 @@ class RevenueAssistantController extends Controller
             'data' => $data,
         ]);
     }
+
+    public function getDataById($insuranceDetailId)
+    {
+        Log::info("Received ID: {$insuranceDetailId}");
+
+        // Validate the ID input
+        if (!$insuranceDetailId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Insurance Detail ID is required',
+            ], 400);
+        }
+
+        // Fetch the ArAging and its related ArAgingPivot with the 'current' label
+        $arAging = ArAging::where('insurance_detail_id', $insuranceDetailId)->first();
+
+        $currentPaymentAmount = 0;
+        if ($arAging) {
+            $arAgingPivot = ArAgingPivot::where('ar_aging_id', $arAging->id)
+                ->where('label', 'current') // Only update rows where label = 'current'
+                ->first();
+
+            if ($arAgingPivot) {
+                $currentPaymentAmount = $arAgingPivot->payment_amount ?? 0;
+            }
+        }
+
+        // Fetch the insurance detail
+        $insuranceDetail = InsuranceDetail::find($insuranceDetailId);
+
+        if (!$insuranceDetail) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Insurance detail not found',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $insuranceDetail->id,
+                'issuance_code' => $insuranceDetail->issuance_code ?? 'N/A',
+                'payment_amount' => $currentPaymentAmount,
+            ],
+        ]);
+    }
+
+
+
+
 
     public function viewCommission($insuranceDetailsId)
     {
@@ -196,10 +247,49 @@ class RevenueAssistantController extends Controller
 
         if ($paymentDetail) {
             $paymentDetail->for_billing = $request->for_billing;
-            $paymentDetail->over_under_payment = $request->over_under_payment;
             $paymentDetail->date_of_good_as_sales = $request->date_of_good_as_sales;
             $paymentDetail->payment_status = $request->payment_status;
             $paymentDetail->initial_payment = $request->initial_payment;
+
+            // Update the ArAgingPivot table based on ar_aging_id
+            $arAging = ArAging::where('insurance_detail_id', $id)->first();
+            if ($arAging) {
+                $arAgingPivot = ArAgingPivot::where('ar_aging_id', $arAging->id)
+                    ->where('label', 'current') // Only update rows where label = 'current'
+                    ->first();
+
+                if ($arAgingPivot) {
+                    $arAgingPivot->paid_amount = $request->initial_payment; // Set paid_amount to initial_payment
+                    $arAgingPivot->paid_schedule = $request->date_of_good_as_sales; // Set paid_schedule to date_of_good_as_sales
+                    $arAgingPivot->over_under_payment = $request->over_under_payment;
+                    $arAgingPivot->ra_remarks = trim($existingComments . "\n" . $newComment);
+                    $arAgingPivot->paid = true; // Set paid_status to true (boolean)
+                    $arAgingPivot->save(); // Save changes to the ArAgingPivot table
+                }
+
+                $totalOverUnderPayment = ArAgingPivot::where('ar_aging_id', $arAging->id)
+                    ->sum('over_under_payment');
+                Log::info($totalOverUnderPayment);
+
+                $paymentDetail->over_under_payment = $totalOverUnderPayment;
+
+                // Calculate the total paid amount for the AR Aging
+                $totalPaidAmount = ArAgingPivot::where('ar_aging_id', $arAging->id)
+                    ->sum('paid_amount');
+
+                // Compute the new balance
+                $arAging->balance = $arAging->gross_premium - $totalPaidAmount;
+
+                // Ensure balance is not negative
+                $arAging->balance = max($arAging->balance, 0);
+
+                // Update the total outstanding
+                $arAging->total_outstanding = $totalPaidAmount;
+
+                // Save changes to the ArAging table
+                $arAging->save();
+            }
+
             $paymentDetail->save(); // Save changes to the payment_details table
         } else {
             return response()->json([
@@ -208,42 +298,12 @@ class RevenueAssistantController extends Controller
             ], 404);
         }
 
-        // Update the ArAgingPivot table based on ar_aging_id
-        $arAging = ArAging::where('insurance_detail_id', $id)->first();
-        if ($arAging) {
-            $arAgingPivot = ArAgingPivot::where('ar_aging_id', $arAging->id)
-                ->where('label', 'current') // Only update rows where label = 'current'
-                ->first();
-
-            if ($arAgingPivot) {
-                $arAgingPivot->paid_amount = $request->initial_payment; // Set paid_amount to initial_payment
-                $arAgingPivot->paid_schedule = $request->date_of_good_as_sales; // Set paid_schedule to date_of_good_as_sales
-                $arAgingPivot->paid = true; // Set paid_status to true (boolean)
-                $arAgingPivot->save(); // Save changes to the ArAgingPivot table
-            }
-
-            // Calculate the total paid amount for the AR Aging
-            $totalPaidAmount = ArAgingPivot::where('ar_aging_id', $arAging->id)
-                ->sum('paid_amount');
-
-            // Compute the new balance
-            $arAging->balance = $arAging->gross_premium - $totalPaidAmount;
-
-            // Ensure balance is not negative
-            $arAging->balance = max($arAging->balance, 0);
-
-            // Update the total outstanding
-            $arAging->total_outstanding = $totalPaidAmount;
-
-            // Save changes to the ArAging table
-            $arAging->save();
-        }
-
         return response()->json([
             'success' => true,
             'message' => 'Insurance detail, payment detail, AR aging pivot, and AR aging table updated successfully!',
         ]);
     }
+
 
 
 
