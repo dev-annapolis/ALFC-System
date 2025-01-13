@@ -13,12 +13,13 @@ class ArAgingPivot extends Model
         'payment_schedule',
         'paid_amount',
         'paid_schedule',
+        'over_under_payment',
         'reference_number',
         'ra_remarks',
         'tele_remarks',
         'paid'
     ];
-    
+
     public function arAging()
     {
         return $this->belongsTo(ArAging::class);
