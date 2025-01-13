@@ -20,7 +20,7 @@ class ArAging extends Model
         'total_outstanding',
         'balance'
     ];
-    
+
     public function arAgingPivot()
     {
         return $this->hasMany(ArAgingPivot::class);
@@ -29,5 +29,9 @@ class ArAging extends Model
     public function insuranceDetail()
     {
         return $this->belongsTo(InsuranceDetail::class);
+    }
+    public function arAgingPivots()
+    {
+        return $this->hasMany(ArAgingPivot::class, 'ar_aging_id');
     }
 }
