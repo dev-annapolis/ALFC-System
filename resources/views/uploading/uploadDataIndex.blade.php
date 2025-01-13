@@ -47,33 +47,43 @@
         </div>
     </div>
 
-    <div class="container-fluid col-lg-12 mt-4 mb-4" style="background: white; padding: 3%; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-        
-        <div class="row">
-            <div class="col text-left">
-                <h1 class="fw-bolder mb-3">Upload an Excel File</h1>
-            </div>
+    <div class="d-flex justify-content-center align-items-center vh-100" style="background: #f8f9fa;">
+        <div class="container col-lg-4 p-5" style="background:rgb(255, 255, 255); border-radius: 20px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);">
+            <form action="{{ route('uploadData.index') }}" method="GET">
+                @csrf
+                <h3 class="text-center fw-bold mb-4">STEP 1</h3>
+                <p class="text-center mb-4">DOWNLOAD HEADERS</p>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-warning w-100">Click here to Download Headers</button>
+                </div>
+            </form>
+
+            <hr class="my-4">
+
+            <h3 class="text-center fw-bold mb-4">STEP 2</h3>
+            <p class="text-center mb-4">FILL UP HEADERS AND SAVE AS XLS or XLSX</p>
+            
+            <hr class="my-4">
+
+            <form action="{{ route('uploadData.index') }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <h3 class="text-center fw-bold mb-4">STEP 3</h3>
+                <p class="text-center mb-4">UPLOAD FILE</p>
+                <div class="form-group">
+                    <!-- <label for="excel_file" class="fw-bold">Choose Excel File</label> -->
+                    <input type="file" name="excel_file" id="excel_file" class="form-control" required>
+                </div>
+                <div class="text-center mt-4">
+                    <button type="submit"
+                            class="btn btn-custom w-100"
+                            style="color: #ffffff; background-color: #043681;"
+                            onmouseout="this.style.color='#ffffff'; this.style.backgroundColor='#043681';"
+                            onmouseover="this.style.color='#313131'; this.style.backgroundColor='#c0c0c0';">
+                        Upload
+                    </button>
+                </div>
+            </form>
         </div>
-
-        <form action="{{ route('uploadData.index') }}" method="POST" enctype="multipart/form-data">
-            @csrf
-
-            <div class="form-group mt-4">
-                <label for="excel_file" class="mr-2 fw-bold">Choose Excel File</label>
-                <input type="file" name="excel_file" id="excel_file" required>
-            </div>
-
-            <div class="d-flex justify-content-start mt-4">
-                <button type="submit"
-                        class="btn btn-custom border-0 fs-6 fw-bolder"
-                        style="color: #ffffff; background-color: #043681; width: 200px;"
-                        onmouseout="this.style.color='#ffffff'; this.style.backgroundColor='#043681';"
-                        onmouseover="this.style.color='#313131'; this.style.backgroundColor='#c0c0c0';"
-                        >
-                    Upload
-                </button>
-            </div>
-        </form>
     </div>
 
 
