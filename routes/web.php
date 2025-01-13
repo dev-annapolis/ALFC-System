@@ -49,6 +49,8 @@ Route::post('/api/insurance/details/update', [SalesReportController::class, 'upd
 
 Route::get('/ra/index', [RevenueAssistantController::class, 'RevenueAssistantIndex'])->name('ra.index');
 Route::get('/api/ra-index', [RevenueAssistantController::class, 'raIndexData']);
+Route::get('/api/getData/{insuranceDetailId}', [RevenueAssistantController::class, 'getDataById']);
+
 Route::get('/api/view-commission/{insurance_details_id}', [RevenueAssistantController::class, 'viewCommission']);
 Route::post('/api/update-commission/{insurance_details_id}', [RevenueAssistantController::class, 'updateCommission']);
 Route::post('/api/ra/{id}/comments', [RevenueAssistantController::class, 'postComment']);
@@ -61,6 +63,8 @@ Route::post('/api/checklist/save', [SalesProcessorSupervisorController::class, '
 
 
 Route::get('/aging/index', [AgingController::class, 'agingIndex'])->name('aging.index');
+
+
 
 Route::get('/api/aging-data', [AgingController::class, 'agingTableData'])->name('aging.data');
 Route::get('/api/ar-aging-pivots/{id}', [AgingController::class, 'getArAgingPivots']);
