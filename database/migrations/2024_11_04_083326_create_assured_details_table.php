@@ -31,6 +31,12 @@ return new class extends Migration {
             $table->string('other_assets')->nullable();
             $table->string('other_source_of_business')->nullable();
 
+            $table->string('primary_reference')->nullable();
+            $table->string('verified_number')->nullable();
+            $table->string('verified_mailing_address')->nullable();
+            $table->string('customer_care_remarks')->nullable();
+            $table->string('additional_reference')->nullable();
+
             $table->timestamps();
         });
     }
