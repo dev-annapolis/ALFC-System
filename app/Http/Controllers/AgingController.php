@@ -76,6 +76,7 @@ class AgingController extends Controller
             'ar_aging_pivots.payment_schedule',
             'ar_aging_pivots.paid_amount',
             'ar_aging_pivots.paid_schedule',
+            'ar_aging_pivots.over_under_payment',
             'ar_aging_pivots.reference_number',
             'ar_aging_pivots.ra_remarks',
             'ar_aging_pivots.tele_remarks',
@@ -123,10 +124,11 @@ class AgingController extends Controller
                 'payment_schedule' => 'nullable|string',
                 'reference_number' => 'nullable|string',
                 'ra_remarks' => 'nullable|string',
+                'new_ra_remarks' => 'nullable|string',
+                'new_tele_remarks' => 'nullable|string',
                 'tele_remarks' => 'nullable|string',
                 'paid' => 'nullable|in:true,false,1,0', // Accept boolean-like strings
                 'over_under_payment' => 'nullable|numeric', // Ensure it's either numeric or null
-
             ]);
 
             // Log validation success
@@ -147,6 +149,17 @@ class AgingController extends Controller
         // Log the pivot data before updating
         Log::info('Pivot found. Updating with new data.', ['pivot' => $pivot]);
 
+        // Reset the fields before saving (clear the container)
+        $pivot->paid_amount = null;
+        $pivot->paid_schedule = null;
+        $pivot->payment_amount = null;
+        $pivot->payment_schedule = null;
+        $pivot->reference_number = null;
+        // $pivot->ra_remarks = null;
+        // $pivot->tele_remarks = null;
+        $pivot->paid = null;
+        $pivot->over_under_payment = null;
+
         // Convert 'paid' to 1 or 0 before saving
         $paid = $validated['paid'] ? 1 : 0;  // Convert true/false to 1/0
 
@@ -157,9 +170,48 @@ class AgingController extends Controller
         $pivot->payment_schedule = $validated['payment_schedule'];
         $pivot->over_under_payment = $validated['over_under_payment'];
         $pivot->reference_number = $validated['reference_number'];
-        $pivot->ra_remarks = $validated['ra_remarks'];
-        $pivot->tele_remarks = $validated['tele_remarks'];
+        // $pivot->tele_remarks = $validated['tele_remarks'];
+        // $pivot->ra_remarks = $validated['ra_remarks'];
         $pivot->paid = $paid; // Save the converted 'paid' value (1 or 0)
+
+        if (!empty($validated['new_ra_remarks'])) {
+            // Prepare the new remark
+            $newRemark = auth()->user()->name . ' (' . now()->format('M j, Y ') . '): ' . $validated['new_ra_remarks'];
+
+            // Check if 'ra_remarks' already contains the new remark
+            if (strpos($pivot->ra_remarks, $newRemark) === false) {
+                // If existing remarks are not empty, append the new remark with a newline
+                $pivot->ra_remarks = empty($pivot->ra_remarks)
+                    ? $newRemark
+                    : $pivot->ra_remarks . "\n" . $newRemark;
+            } else {
+                // Log the redundant remark
+                Log::info('Skipping redundant remark.', ['new_remark' => $newRemark]);
+            }
+        } else {
+            // If 'new_ra_remarks' is empty, retain the current 'ra_remarks' value
+            $pivot->ra_remarks = $validated['ra_remarks'] ?? $pivot->ra_remarks;
+        }
+
+        if (!empty($validated['new_tele_remarks'])) {
+            // Prepare the new tele remark
+            $newTeleRemark = auth()->user()->name . ' (' . now()->format('M j, Y ') . '): ' . $validated['new_tele_remarks'];
+
+            // Check if 'tele_remarks' already contains the new remark
+            if (strpos($pivot->tele_remarks, $newTeleRemark) === false) {
+                // If existing tele remarks are not empty, append the new remark with a newline
+                $pivot->tele_remarks = empty($pivot->tele_remarks)
+                    ? $newTeleRemark
+                    : $pivot->tele_remarks . "\n" . $newTeleRemark;
+            } else {
+                // Log the redundant tele remark
+                Log::info('Skipping redundant tele remark.', ['new_tele_remark' => $newTeleRemark]);
+            }
+        } else {
+            // If 'new_tele_remarks' is empty, retain the current 'tele_remarks' value
+            $pivot->tele_remarks = $validated['tele_remarks'] ?? $pivot->tele_remarks;
+        }
+
 
         // Log before saving
         Log::info('Saving updated pivot data:', ['pivot' => $pivot->toArray()]);
@@ -219,6 +271,7 @@ class AgingController extends Controller
         // Return success response
         return response()->json(['success' => true]);
     }
+
 
 
 
