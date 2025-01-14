@@ -15,6 +15,13 @@ use App\Models\SalesAssociate;
 use App\Models\InsuranceDetail;
 use App\Models\Product;
 use App\Models\Subproduct;
+use App\Models\Source;
+use App\Models\SourceBranch;
+use App\Models\SourceDivision;
+use App\Models\Area;
+use App\Models\AlfcBranch;
+use App\Models\ModeOfPayment;
+use App\Models\Provider;
 
 use Carbon\Carbon;
 
@@ -68,11 +75,19 @@ class DataImport implements ToCollection, WithHeadingRow
                     'customer_care_remarks' => $row['customer_care_remarks'] ?? null,
                 ])->id;
 
-                $team = Team::firstOrCreate(['name' => $row['team']]);
-                $product = Product::firstOrCreate(['name' => $row['product']]);
-                $subproduct = Subproduct::firstOrCreate(['name' => $row['subproduct']]);
+                // generate ID from tables
+                $teamId = !empty($row['team']) ? Team::firstOrCreate(['name' => $row['team']])->id : null;
+                $productId = !empty($row['product']) ? Product::firstOrCreate(['name' => $row['product']])->id : null;
+                $subproductId = !empty($row['subproduct']) ? Subproduct::firstOrCreate(['name' => $row['subproduct']])->id : null;
+                $sourceId = !empty($row['source']) ? Source::firstOrCreate(['name' => $row['source']])->id : null;
+                $sourceBranchId = !empty($row['affi_branch']) ? SourceBranch::firstOrCreate(['name' => $row['affi_branch']])->id : null;
+                $sourceDivisionId = !empty($row['division']) ? SourceDivision::firstOrCreate(['name' => $row['division']])->id : null;
+                $areaId = !empty($row['area']) ? SourceDivision::firstOrCreate(['name' => $row['area']])->id : null;
+                $alfcBranchId = !empty($row['alfc_branch']) ? SourceDivision::firstOrCreate(['name' => $row['alfc_branch']])->id : null;
+                $modeOfPaymentId = !empty($row['mode_of_payment']) ? ModeOfPayment::firstOrCreate(['name' => $row['mode_of_payment']])->id : null;
+                $providerId = !empty($row['provider']) ? Provider::firstOrCreate(['name' => $row['provider']])->id : null;
 
-                $salesAssociate = SalesAssociate::firstOrCreate(
+                $salesAssociateId = !empty($row['sales_associate']) ? SalesAssociate::firstOrCreate(
                     ['name' => $row['sales_associate']],
                     [
                         'user_id' => User::firstOrCreate([
@@ -81,11 +96,11 @@ class DataImport implements ToCollection, WithHeadingRow
                             'password' => Hash::make(strtolower(str_replace(' ', '', $row['sales_associate']))),
                             'role_id' => 8,
                         ])->id,
-                        'team_id' => $team->id
+                        'team_id' => $teamId
                     ]
-                );
+                )->id : null;
 
-                $regionalManager = RegionalManager::firstOrCreate(
+                $regionalManagerId = !empty($row['regional_manager']) ? RegionalManager::firstOrCreate(
                     ['name' => $row['regional_manager']],
                     [
                         'user_id' => User::firstOrCreate([
@@ -94,24 +109,106 @@ class DataImport implements ToCollection, WithHeadingRow
                             'password' => Hash::make(strtolower(str_replace(' ', '', $row['regional_manager']))),
                             'role_id' => 10,
                         ])->id,
-                        'team_id' => $team->id
+                        'team_id' => $teamId
                     ]
-                );
+                )->id : null;
 
-                $saleDate = $row['sale_date'] ? Carbon::createFromFormat('F j, Y', $row['sale_date'])->format('Y-m-d') : null;
-
+                $saleDate = !empty($row['sale_date']) ? Carbon::createFromFormat('F j, Y', $row['sale_date'])->format('Y-m-d') : null;
+                $policyInceptionDate = !empty($row['policy_inception_date']) ? Carbon::createFromFormat('F j, Y', $row['policy_inception_date'])->format('Y-m-d') : null;
+                $expiryDate = !empty($row['expiry_date']) ? Carbon::createFromFormat('F j, Y', $row['expiry_date'])->format('Y-m-d') : null;
+                $goodAsSalesDate = !empty($row['date_of_good_as_sales']) ? Carbon::createFromFormat('F j, Y', $row['date_of_good_as_sales'])->format('Y-m-d') : null;
+                
+                $dueDateTerm = $row['due_date_term'] ?? null;
+                if ($dueDateTerm === "FOR BILLING") {
+                    $dueDateStart = "FOR BILLING";
+                    $dueDateEnd = "FOR BILLING";
+                } elseif (!empty($dueDateTerm) && preg_match('/\b(\w+ \d{1,2}, \d{4}) - (\w+ \d{1,2}, \d{4})\b/', $dueDateTerm, $matches)) {
+                    $dueDateStart = Carbon::createFromFormat('F j, Y', $matches[1])->format('Y-m-d');
+                    $dueDateEnd = Carbon::createFromFormat('F j, Y', $matches[2])->format('Y-m-d');
+                } else {
+                    $dueDateStart = null;
+                    $dueDateEnd = null;
+                }
+                
                 // Create InsuranceDetail
                 $InsuranceDetail = InsuranceDetail::create([
                     'assured_detail_id' => $AssuredDetailId,
-                    'issuance_code' => $row['issuance_code'],
-                    'team_id' => $team->id,
-                    'sales_associate_id' => $salesAssociate->id,
-                    'regional_manager_id' => $regionalManager->id,
+                    'issuance_code' => $row['issuance_code'] ?? null,
+                    'team_id' => $teamId,
+                    'sales_associate_id' => $salesAssociateId,
+                    'regional_manager_id' => $regionalManagerId,
                     'sale_date' => $saleDate,
-                    'classification' => $row['classification'],
-                    'insurance_status' => $row['insurance_status'],
-                    'product_id' => $product->id,
-                    'subproduct_id' => $subproduct->id,
+                    'classification' => $row['classification'] ?? null,
+                    'insurance_status' => $row['insurance_status'] ?? null,
+                    'product_id' => $productId,
+                    'subproduct_id' => $subproductId,
+                    'source_id' => $sourceId,
+                    'source_branch_id' => $sourceBranchId,
+                    'source_division_id' => $sourceDivisionId,
+                    'mortgagee' => $row['mortgagee'] ?? null,
+                    'area_id' => $areaId,
+                    'alfc_branch_id' => $alfcBranchId,
+                    'loan_amount' => $row['loan_amount'] ?? null,
+                    'total_sum_insured' => $row['total_sum_insured'] ?? null,
+                    'policy_inception_date' => $policyInceptionDate,
+                    'expiry_date' => $expiryDate,
+                    'policy_number' => $row['policy_no'] ?? null,
+                    'plate_conduction_number' => $row['plate_conduction_no'] ?? null,
+                    'description' => $row['description'] ?? null,
+                    'mode_of_payment_id' => $row['mode_of_payment'] ?? null,
+                    'ra_comments' => $row['ra_comments'] ?? null,
+                    'admin_assistant_remarks' => $row['admin_asst_remarks'] ?? null,
+                    'tracking_number' => $row['tracking_number'] ?? null,
+                    'mode_of_delivery' => $row['mode_of_delivery'] ?? null,
+                    'policy_received_by' => $row['policy_received_by'] ?? null,
+                    'policy_expiration_aging' => $row['policy_expiration_aging_days'] ?? null,
+                    'book_number' => $row['book_no'] ?? null,
+                    'filing_number' => $row['filing_no'] ?? null,
+                    'database_remarks' => $row['remarks'] ?? null,
+                    'pid_received_date' => $row['pid_received_date'] ?? null,
+                    'pid_status' => $row['pid_status'] ?? null,
+                    'pid_completion_date' => $row['pid_completion_date'] ?? null,
+                ]);
+
+                // Create PaymentDetail
+                $InsuranceDetail = PaymentDetail::create([
+                    'insurance_detail_id' => $InsuranceDetail->id,
+                    'provision_receipt' => $row['provision_receipt'] ?? null,
+                    'provider_id' => $providerId,
+                    'gross_premium' => $row['gross_premium'] ?? null,
+                    'discount' => $row['discount'] ?? null,
+                    'gross_premium_net_discounted' => $row['gross_premium_net_of_discounts'] ?? null,
+                    'amount_due_to_provider' => $row['amount_due_to_provider'] ?? null,
+                    'full_commission' => $row['full_commission'] ?? null,
+                    'total_commission' => $row['total_commission'] ?? null,
+                    'vat' => $row['vat'] ?? null,
+                    'sales_credit' => $row['sales_credit'] ?? null,
+                    'sales_credit_percent' => $row['sales_credit_percent'] ?? null,
+                    'comm_deduct' => $row['comm_deduct'] ?? null,
+                    'payment_terms' => $row['payment_terms'] ?? null,
+                    'due_date_start' => $dueDateStart,
+                    'due_date_end' => $dueDateEnd,
+                    'first_payment_schedule' => null,
+                    'first_payment_amount' => $row['schedule_of_first_payment'] ?? null,
+                    'second_payment_schedule' => null,
+                    'second_payment_amount' => $row['schedule_of_second_payment'] ?? null,
+                    'third_payment_schedule' => null,
+                    'third_payment_amount' => $row['schedule_of_third_payment'] ?? null,
+                    'fourth_payment_schedule' => null,
+                    'fourth_payment_amount' => $row['schedule_of_fourth_payment'] ?? null,
+                    'fifth_payment_schedule' => null,
+                    'fifth_payment_amount' => $row['schedule_of_fifth_payment'] ?? null,
+                    'sixth_payment_schedule' => null,
+                    'sixth_payment_amount' => $row['schedule_of_sixth_payment'] ?? null,
+                    'seventh_payment_schedule' => null,
+                    'seventh_payment_amount' => $row['schedule_of_seventh_payment'] ?? null,
+                    'eight_payment_schedule' => null,
+                    'eight_payment_amount' => $row['schedule_of_eight_payment'] ?? null,
+                    'for_billing' => $row['for_billing'] ?? null,
+                    'over_under_payment' => $row['over_under_payment'] ?? null,
+                    'initial_payment' => $row['initial_payment'] ?? null,
+                    'date_of_good_as_sales' => $goodAsSalesDate,
+                    'payment_status' => $row['status'] ?? null,
                 ]);
             }
             DB::commit(); // COMMIT UPLOADED DATA IF NO ERRORS
@@ -129,34 +226,4 @@ class DataImport implements ToCollection, WithHeadingRow
 
 
 
-                        // sale_date
-                        // classification
-                        // insurance_status
-                        // product
-                        // subproduct
-                        // source
-                        // division
-                        // mortgagee
-                        // affi_branch
-                        // area
-                        // alfc_branch
-                        // loan_amount
-                        // total_sum_insured
-                        // policy_inception_date
-                        // expiry_date
-                        // policy_no
-                        // plate_ conduction_no
-                        // description
-                        // mode_of_payment
-                        // ra_comments
-                        // admin_asst_remarks
-                        // tracking_number
-                        // mode_of_delivery
-                        // policy_received_by
-                        // policy_expiration_aging_days
-                        // book_no
-                        // filing_no
-                        // remarks
-                        // pid_received_date
-                        // pid_status
-                        // pid_completion_date
+                        
