@@ -122,13 +122,24 @@
                         <label for="pivotReferenceNumberInput" class="form-label"><strong>Reference Number:</strong></label>
                         <input type="text" class="form-control" id="pivotReferenceNumberInput" name="reference_number">
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3" id="raRemarksContainer">
                         <label for="pivotRaRemarksInput" class="form-label"><strong>RA Remarks:</strong></label>
-                        <textarea class="form-control" id="pivotRaRemarksInput" name="ra_remarks" rows="2"></textarea>
+                        <textarea class="form-control" id="pivotRaRemarksInput" name="ra_remarks" rows="2" readonly></textarea>
                     </div>
-                    <div class="mb-3">
+                    
+                    <div id="newRaRemarksInput" style="display: none;">
+                        <label for="pivotNewRaRemarksInput" class="form-label"><strong>Add RA Remarks:</strong></label>
+                        <textarea class="form-control" id="pivotNewRaRemarksInput" name="ra_remarks" rows="2"></textarea>
+                        <button type="button" id="cancelNewRaRemarks" class="btn btn-secondary mt-2">Cancel</button>
+                    </div>
+                    <div id = "teleRemarksContainer" class="mb-3">
                         <label for="pivotTeleRemarksInput" class="form-label"><strong>Tele Remarks:</strong></label>
                         <textarea class="form-control" id="pivotTeleRemarksInput" name="tele_remarks" rows="2"></textarea>
+                    </div>
+                    <div id="newTeleRemarksInput" style="display: none;">
+                        <label for="pivotNewTeleRemarksInput" class="form-label"><strong>Add Tele Remarks:</strong></label>
+                        <textarea class="form-control" id="pivotNewTeleRemarksInput" name="tele-remarks" rows="2"></textarea>
+                        <button type="button" id="cancelNewTeleRemarks" class="btn btn-secondary mt-2">Cancel</button>
                     </div>
                     <div class="mb-3">
                         <label for="pivotPaidInput" class="form-label"><strong>Paid:</strong></label>
@@ -308,22 +319,25 @@
                             <table class="table table-bordered table-sm">
                                 <thead>
                                     <tr>
-                                        ${data.pivots.map(pivot => `<th>${pivot.label}</th>`).join('')}
-                                        <th>Total</th> <!-- Add Total column here -->
+                                        ${data.pivots.map(pivot => `<th style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">${pivot.label}</th>`).join('')}
+                                        <th style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">Total</th> <!-- Add Total column here -->
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         ${data.pivots.map(pivot => `
-                                            <td>
+                                            <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">
                                                 <div><strong>Paid Amount:</strong> ${pivot.paid_amount
-                                                    ? pivot.paid_amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+                                                    ? pivot.paid_amount.toLocaleString('en-US', { style: 'currency', currency: 'PHP' })
                                                     : ' '}</div>
                                                 <div><strong>Paid Schedule:</strong> ${pivot.paid_schedule || ' '}</div>
                                                 <div><strong>Payment Amount:</strong> ${pivot.payment_amount
-                                                    ? pivot.payment_amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' })
+                                                    ? pivot.payment_amount.toLocaleString('en-US', { style: 'currency', currency: 'PHP' })
                                                     : ' '}</div>
                                                 <div><strong>Payment Schedule:</strong> ${pivot.payment_schedule || ' '}</div>
+                                                <div><strong>Over/Under Payment:</strong> ${pivot.over_under_payment
+                                                    ? pivot.over_under_payment.toLocaleString('en-US', { style: 'currency', currency: 'PHP' })
+                                                    : ' '}</div>
                                                 <div><strong>Reference Number:</strong> ${pivot.reference_number || ' '}</div>
                                                 <div><strong>RA Remarks:</strong> ${pivot.ra_remarks || ' '}</div>
                                                 <div><strong>Tele Remarks:</strong> ${pivot.tele_remarks || ' '}</div>
@@ -340,8 +354,8 @@
                                                 </button>
                                             </td>
                                         `).join('')}
-                                        <td>
-                                           <div><strong>Gross Premium:</strong> ${
+                                        <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;">
+                                            <div><strong>Gross Premium:</strong> ${
                                                 data.summary.gross_premium
                                             }</div>
                                             <div><strong>Total Paid:</strong> ${
@@ -353,14 +367,10 @@
                                             <div><strong>Total Over/Under Payment:</strong> ${
                                                 data.totalOverUnderPayment}
                                             </div>
-
-
-                                           
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
-
                         `;
 
                         $(`#ar-aging-pivots-${id}`).html(tableHtml);
@@ -383,11 +393,12 @@
             });
         }
 
+
         function populateModalDetails(pivot) {
             $('#pivotIdInput').val(pivot.id); // Set the ID dynamically
             $('#pivotLabelInput').val(pivot.label || '');
             $('#pivotPaidAmountInput').val(pivot.paid_amount || '');
-            $('#pivotPaidScheduleInput').val(''); // Ensure input starts as blank
+            $('#pivotPaidScheduleInput').val(pivot.paid_schedule || ''); // Ensure input starts as blank
             $('#pivotPaymentAmountInput').val(pivot.payment_amount || '');
             $('#pivotPaymentScheduleInput').val(pivot.payment_schedule || '');
             $('#pivotReferenceNumberInput').val(pivot.reference_number || '');
@@ -417,6 +428,48 @@
             $('#pivotPaidAmountInput, #pivotPaymentAmountInput').on('input', function() {
                 calculateOverUnderPayment();
             });
+
+            // Clear RA remarks field when clicked
+            $('#pivotRaRemarksInput').on('click', function() {
+                // $(this).val(''); // Clear the 'RA Remarks' field
+
+                // Hide the original RA Remarks container and show the new remarks container
+                $('#raRemarksContainer').hide();
+                $('#newRaRemarksInput').show();
+            });
+
+            // When the 'Cancel' button is clicked in the new remarks section
+            $('#cancelNewRaRemarks').on('click', function() {
+                // Hide the new remarks container and show the original RA Remarks container
+                $('#newRaRemarksInput').hide();
+                $('#raRemarksContainer').show();
+
+                // Optionally, clear the new remarks input field
+                $('#pivotNewRaRemarksInput').val('');
+            });
+            // Clear other fields if required (Example for Tele Remarks)
+
+            //--------
+            $('#pivotTeleRemarksInput').on('click', function() {
+                // $(this).val(''); // Clear the 'RA Remarks' field
+
+                // Hide the original RA Remarks container and show the new remarks container
+                $('#teleRemarksContainer').hide();
+                $('#newTeleRemarksInput').show();
+            });
+
+            // When the 'Cancel' button is clicked in the new remarks section
+            $('#cancelNewTeleRemarks').on('click', function() {
+                // Hide the new remarks container and show the original RA Remarks container
+                $('#newTeleRemarksInput').hide();
+                $('#teleRemarksContainer').show();
+
+                // Optionally, clear the new remarks input field
+                $('#pivotNewTeleRemarksInput').val('');
+            });
+            // Clear other fields if required (Example for Tele Remarks)
+
+            
         }
 
         // Function to calculate over_under_payment
@@ -441,8 +494,10 @@
                 payment_amount: $('#pivotPaymentAmountInput').val(),
                 payment_schedule: $('#pivotPaymentScheduleInput').val(),
                 reference_number: $('#pivotReferenceNumberInput').val(),
-                ra_remarks: $('#pivotRaRemarksInput').val(),
-                tele_remarks: $('#pivotTeleRemarksInput').val(),
+                new_ra_remarks: $('#pivotNewRaRemarksInput').val(), // Send the value of the new RA remarks
+                new_tele_remarks: $('#pivotNewTeleRemarksInput').val(), // Send the value of the new RA remarks
+
+                // tele_remarks: $('#pivotTeleRemarksInput').val(),
                 paid: $('#pivotPaidInput').val() === '1', // Ensure this is a boolean (true or false)
                 over_under_payment: $('#pivotOverUnderPaymentInput').val() // Add over_under_payment
             };
@@ -484,6 +539,7 @@
         $('#savePivotDetailsBtn').on('click', function() {
             savePivotDetails();
         });
+
 
     });
 </script>
