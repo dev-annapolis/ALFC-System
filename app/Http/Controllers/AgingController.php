@@ -96,13 +96,17 @@ class AgingController extends Controller
         )
             ->where('id', $id) // Match the given ID in ArAging table
             ->first(); // Fetch the single matching record
+
+        // Calculate the total paid amount and the sum of over_under_payment for the pivots
         $totalPaidAmount = ArAgingPivot::where('ar_aging_id', $id)->sum('paid_amount');
+        $totalOverUnderPayment = ArAgingPivot::where('ar_aging_id', $id)->sum('over_under_payment');
 
         // Return the data as a JSON response
         return response()->json([
             'pivots' => $pivots,
             'summary' => $summary,
-            'totalPaidAmount' => $totalPaidAmount
+            'totalPaidAmount' => $totalPaidAmount,
+            'totalOverUnderPayment' => $totalOverUnderPayment, // Include the sum of over_under_payment
         ]);
     }
     public function savePivotDetails(Request $request, $id)
@@ -121,6 +125,8 @@ class AgingController extends Controller
                 'ra_remarks' => 'nullable|string',
                 'tele_remarks' => 'nullable|string',
                 'paid' => 'nullable|in:true,false,1,0', // Accept boolean-like strings
+                'over_under_payment' => 'nullable|numeric', // Ensure it's either numeric or null
+
             ]);
 
             // Log validation success
@@ -149,6 +155,7 @@ class AgingController extends Controller
         $pivot->paid_schedule = $validated['paid_schedule'];
         $pivot->payment_amount = $validated['payment_amount'];
         $pivot->payment_schedule = $validated['payment_schedule'];
+        $pivot->over_under_payment = $validated['over_under_payment'];
         $pivot->reference_number = $validated['reference_number'];
         $pivot->ra_remarks = $validated['ra_remarks'];
         $pivot->tele_remarks = $validated['tele_remarks'];
@@ -160,10 +167,29 @@ class AgingController extends Controller
         // Save the updated pivot
         $pivot->save();
 
-        // Update the balance of the related ArAging
-        $arAging = ArAging::find($pivot->ar_aging_id); // Assuming `ar_aging_id` exists in pivot table
+        // Retrieve the associated ArAging by its ID from the pivot's ar_aging_id
+        $arAging = ArAging::where('id', $pivot->ar_aging_id)->first();
+
         if ($arAging) {
-            // Calculate the total paid amount for all related pivots
+            // Calculate the total over_under_payment for all related pivots
+            $totalOverUnderPayment = ArAgingPivot::where('ar_aging_id', $arAging->id)
+                ->sum('over_under_payment');
+
+            // Log the total over_under_payment
+            Log::info('Total over/under payment:', ['total' => $totalOverUnderPayment]);
+
+            // Retrieve the payment detail based on the insurance_details_id from the ArAging (related to the insurance_detail)
+            $paymentDetail = PaymentDetail::where('insurance_detail_id', $arAging->insurance_detail_id)->first();
+
+            if ($paymentDetail) {
+                // Update the payment detail with the calculated over_under_payment
+                $paymentDetail->over_under_payment = $totalOverUnderPayment;
+                $paymentDetail->save(); // Save the updated payment detail
+            } else {
+                Log::warning('PaymentDetail not found for insurance_detail_id: ' . $arAging->insurance_detail_id);
+            }
+
+            // Update the balance of the related ArAging
             $totalPaidAmount = ArAgingPivot::where('ar_aging_id', $arAging->id)
                 ->sum('paid_amount');
 
@@ -193,6 +219,7 @@ class AgingController extends Controller
         // Return success response
         return response()->json(['success' => true]);
     }
+
 
 
 }

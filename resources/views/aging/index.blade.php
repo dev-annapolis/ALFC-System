@@ -115,6 +115,10 @@
                         <input type="text" class="form-control" id="pivotPaymentScheduleInput" name="payment_schedule" readonly>
                     </div>
                     <div class="mb-3">
+                        <label for="pivotOverUnderPaymentInput" class="form-label"><strong>Over/Under Payment:</strong></label>
+                        <input type="text" class="form-control" id="pivotOverUnderPaymentInput" name="over_under_payment" readonly>
+                    </div>
+                    <div class="mb-3">
                         <label for="pivotReferenceNumberInput" class="form-label"><strong>Reference Number:</strong></label>
                         <input type="text" class="form-control" id="pivotReferenceNumberInput" name="reference_number">
                     </div>
@@ -346,6 +350,10 @@
                                             <div><strong>Percentage Paid:</strong> ${
                                                 ((data.totalPaidAmount / data.summary.gross_premium) * 100).toFixed(2) + '%'
                                             }</div>
+                                            <div><strong>Total Over/Under Payment:</strong> ${
+                                                data.totalOverUnderPayment}
+                                            </div>
+
 
                                            
                                         </td>
@@ -387,6 +395,9 @@
             $('#pivotTeleRemarksInput').val(pivot.tele_remarks || '');
             $('#pivotPaidInput').val(pivot.paid ? '1' : '0');
 
+            // Calculate over_under_payment
+            calculateOverUnderPayment();
+
             // Initialize DateRangePicker when modal is shown
             $('#viewPivotDetailsModal').on('shown.bs.modal', function() {
                 $('#pivotPaidScheduleInput').daterangepicker({
@@ -400,36 +411,23 @@
                     // Manually set the selected date to the input field
                     $('#pivotPaidScheduleInput').val(picker.startDate.format('MM/DD/YYYY'));
                 });
+            });
+
+            // Add event listeners for changes in paid_amount or payment_amount to recalculate over_under_payment
+            $('#pivotPaidAmountInput, #pivotPaymentAmountInput').on('input', function() {
+                calculateOverUnderPayment();
             });
         }
 
-        // Function to save the data
-        function populateModalDetails(pivot) {
-            $('#pivotIdInput').val(pivot.id); // Set the ID dynamically
-            $('#pivotLabelInput').val(pivot.label || '');
-            $('#pivotPaidAmountInput').val(pivot.paid_amount || '');
-            $('#pivotPaidScheduleInput').val(''); // Ensure input starts as blank
-            $('#pivotPaymentAmountInput').val(pivot.payment_amount || '');
-            $('#pivotPaymentScheduleInput').val(pivot.payment_schedule || '');
-            $('#pivotReferenceNumberInput').val(pivot.reference_number || '');
-            $('#pivotRaRemarksInput').val(pivot.ra_remarks || '');
-            $('#pivotTeleRemarksInput').val(pivot.tele_remarks || '');
-            $('#pivotPaidInput').val(pivot.paid ? '1' : '0');
+        // Function to calculate over_under_payment
+        function calculateOverUnderPayment() {
+            const paidAmount = parseFloat($('#pivotPaidAmountInput').val()) || 0;
+            const paymentAmount = parseFloat($('#pivotPaymentAmountInput').val()) || 0;
 
-            // Initialize DateRangePicker when modal is shown
-            $('#viewPivotDetailsModal').on('shown.bs.modal', function() {
-                $('#pivotPaidScheduleInput').daterangepicker({
-                    singleDatePicker: true,  // Enable single date selection
-                    showDropdowns: true,    // Show year and month dropdowns
-                    autoUpdateInput: false, // Don't update input field automatically
-                    locale: {
-                        format: 'MM/DD/YYYY', // Set the date format to MM/DD/YYYY
-                    },
-                }).on('apply.daterangepicker', function(ev, picker) {
-                    // Manually set the selected date to the input field
-                    $('#pivotPaidScheduleInput').val(picker.startDate.format('MM/DD/YYYY'));
-                });
-            });
+            const overUnderPayment = paidAmount - paymentAmount;
+
+            // Display the result in the over_under_payment field
+            $('#pivotOverUnderPaymentInput').val(overUnderPayment);
         }
 
         // Function to save the data via PUT AJAX request
@@ -445,7 +443,8 @@
                 reference_number: $('#pivotReferenceNumberInput').val(),
                 ra_remarks: $('#pivotRaRemarksInput').val(),
                 tele_remarks: $('#pivotTeleRemarksInput').val(),
-                paid: $('#pivotPaidInput').val() === '1' // Ensure this is a boolean (true or false)
+                paid: $('#pivotPaidInput').val() === '1', // Ensure this is a boolean (true or false)
+                over_under_payment: $('#pivotOverUnderPaymentInput').val() // Add over_under_payment
             };
 
             // Log the pivotData being sent

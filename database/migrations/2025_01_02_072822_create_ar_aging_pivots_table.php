@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -19,6 +18,7 @@ return new class extends Migration
             $table->string('payment_schedule')->nullable();
             $table->string('paid_amount')->nullable();
             $table->string('paid_schedule')->nullable();
+            $table->string('over_under_payment')->nullable();
             $table->string('reference_number')->nullable();
             $table->string('ra_remarks')->nullable();
             $table->string('tele_remarks')->nullable();

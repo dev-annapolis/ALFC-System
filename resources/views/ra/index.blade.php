@@ -160,6 +160,10 @@
                         <input type="number" class="form-control" id="initialPayment" name="initial_payment" required>
                     </div>
                     <div class="mb-3">
+                        <label for="paymentAmount" class="form-label">Amount to Pay</label>
+                        <input type="number" class="form-control" id="paymentAmount" name="initial_payment" readonly>
+                    </div>
+                    <div class="mb-3">
                         <label for="forBilling" class="form-label">For Billing</label>
                         <input type="text" class="form-control" id="forBilling" name="for_billing" required>
                     </div>
@@ -381,94 +385,94 @@
 
 
 // Populate modal table
-$(document).on('click', '.dropdown-item.view-commission', function () {
-    const insuranceDetailsId = $(this).closest('tr').data('insurance-details-id');
-    $.ajax({
-        url: `/api/view-commission/${insuranceDetailsId}`,
-        method: 'GET',
-        success: function (response) {
-            if (response.success) {
-                $('#commissionTableBody').empty();
-                response.data.forEach(commission => {
-                    const dropdown = generateTitleDropdown(
-                        commission.commissioner_id, 
-                        allCommissioners
-                    );
-                    const row = `
-                        <tr data-id="${commission.id}">
-                            <td>${dropdown}</td>
-                            <td contenteditable="true" class="commissioner-name">${commission.commissioner_name}</td>
-                            <td contenteditable="true" class="commission-amount">${commission.amount}</td>
-                            <td>
-                                <button class="btn btn-danger btn-sm delete-commissioner">Delete</button>
-                            </td>
-                        </tr>
-                    `;
-                    $('#commissionTableBody').append(row);
-                });
+    $(document).on('click', '.dropdown-item.view-commission', function () {
+        const insuranceDetailsId = $(this).closest('tr').data('insurance-details-id');
+        $.ajax({
+            url: `/api/view-commission/${insuranceDetailsId}`,
+            method: 'GET',
+            success: function (response) {
+                if (response.success) {
+                    $('#commissionTableBody').empty();
+                    response.data.forEach(commission => {
+                        const dropdown = generateTitleDropdown(
+                            commission.commissioner_id, 
+                            allCommissioners
+                        );
+                        const row = `
+                            <tr data-id="${commission.id}">
+                                <td>${dropdown}</td>
+                                <td contenteditable="true" class="commissioner-name">${commission.commissioner_name}</td>
+                                <td contenteditable="true" class="commission-amount">${commission.amount}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm delete-commissioner">Delete</button>
+                                </td>
+                            </tr>
+                        `;
+                        $('#commissionTableBody').append(row);
+                    });
 
-                // Restrict "commission-amount" column to only allow numbers and decimals
-                $('#commissionTableBody').on('keypress', '.commission-amount', function (e) {
-                    const charCode = e.which || e.keyCode;
+                    // Restrict "commission-amount" column to only allow numbers and decimals
+                    $('#commissionTableBody').on('keypress', '.commission-amount', function (e) {
+                        const charCode = e.which || e.keyCode;
 
-                    // Allow numbers, backspace, delete, and decimal point
-                    if (
-                        (charCode < 48 || charCode > 57) && // Not a number (0-9)
-                        charCode !== 46 &&                 // Not a decimal point
-                        charCode !== 8 &&                  // Not backspace
-                        charCode !== 37 && charCode !== 39 // Not left or right arrow keys
-                    ) {
-                        e.preventDefault();
-                    }
+                        // Allow numbers, backspace, delete, and decimal point
+                        if (
+                            (charCode < 48 || charCode > 57) && // Not a number (0-9)
+                            charCode !== 46 &&                 // Not a decimal point
+                            charCode !== 8 &&                  // Not backspace
+                            charCode !== 37 && charCode !== 39 // Not left or right arrow keys
+                        ) {
+                            e.preventDefault();
+                        }
 
-                    // Prevent multiple decimals
-                    if (charCode === 46 && $(this).text().includes('.')) {
-                        e.preventDefault();
-                    }
-                });
+                        // Prevent multiple decimals
+                        if (charCode === 46 && $(this).text().includes('.')) {
+                            e.preventDefault();
+                        }
+                    });
 
 
 
-                $('#commissionModal').modal('show');
-                $('#commissionModal').data('insurance-details-id', insuranceDetailsId);
-            } else {
-                alert('Failed to fetch data.');
+                    $('#commissionModal').modal('show');
+                    $('#commissionModal').data('insurance-details-id', insuranceDetailsId);
+                } else {
+                    alert('Failed to fetch data.');
+                }
+            },
+            error: function () {
+                alert('An error occurred while fetching data.');
             }
-        },
-        error: function () {
-            alert('An error occurred while fetching data.');
-        }
+        });
     });
-});
 
-// Generate dropdown for Commissioner Title
-function generateTitleDropdown(selectedId, commissioners) {
-    let options = commissioners.map(comm => {
-        return `<option value="${comm.id}" ${comm.id == selectedId ? 'selected' : ''}>${comm.name}</option>`;
-    }).join('');
-    return `<select class="form-select commissioner-title">${options}</select>`;
-}
+    // Generate dropdown for Commissioner Title
+    function generateTitleDropdown(selectedId, commissioners) {
+        let options = commissioners.map(comm => {
+            return `<option value="${comm.id}" ${comm.id == selectedId ? 'selected' : ''}>${comm.name}</option>`;
+        }).join('');
+        return `<select class="form-select commissioner-title">${options}</select>`;
+    }
 
-// Add Commissioner
-$('#addCommissioner').on('click', function () {
-    const dropdown = generateTitleDropdown(null, allCommissioners);
-    const newRow = `
-        <tr>
-            <td>${dropdown}</td>
-            <td contenteditable="true" class="commissioner-name"> </td>
-            <td contenteditable="true" class="commission-amount">0</td>
-            <td>
-                <button class="btn btn-danger btn-sm delete-commissioner">Delete</button>
-            </td>
-        </tr>
-    `;
-    $('#commissionTableBody').append(newRow);
-});
+    // Add Commissioner
+    $('#addCommissioner').on('click', function () {
+        const dropdown = generateTitleDropdown(null, allCommissioners);
+        const newRow = `
+            <tr>
+                <td>${dropdown}</td>
+                <td contenteditable="true" class="commissioner-name"> </td>
+                <td contenteditable="true" class="commission-amount">0</td>
+                <td>
+                    <button class="btn btn-danger btn-sm delete-commissioner">Delete</button>
+                </td>
+            </tr>
+        `;
+        $('#commissionTableBody').append(newRow);
+    });
 
-// Delete Commissioner
-$(document).on('click', '.delete-commissioner', function () {
-    $(this).closest('tr').remove();
-});
+    // Delete Commissioner
+    $(document).on('click', '.delete-commissioner', function () {
+        $(this).closest('tr').remove();
+    });
 
 
 
@@ -571,15 +575,53 @@ $(document).on('click', '.delete-commissioner', function () {
     //     });
 
     //Verification For Ra 
-
     $(document).on('click', '#verifyButton', function (e) {
         e.preventDefault();
 
         // Get the insurance detail ID from the button's data attribute
         const insuranceDetailId = $(this).data('insurance-detail-id');
+        console.log("Insurance Detail ID:", insuranceDetailId); // For debugging
 
         // Store the ID in the modal for later use
-        $('#confirmationModal').data('insurance-detail-id', insuranceDetailId).modal('show');
+        $('#confirmationModal').data('insurance-detail-id', insuranceDetailId);
+
+        // Fetch the payment amount from the server
+        $.ajax({
+            url: `/api/getData/${insuranceDetailId}`, // Adjust endpoint as needed
+            method: 'GET',
+            success: function (response) {
+                console.log('Response from server:', response); // Log the response to the console
+
+                if (response.success) {
+                    // Update the modal with the retrieved payment amount
+                    $('#paymentAmount').val(response.data.payment_amount);
+                } else {
+                    alert('Failed to retrieve payment amount.');
+                }
+            },
+            error: function (xhr) {
+                console.error("Error fetching data:", xhr);
+                alert('Failed to fetch payment amount.');
+            }
+        });
+        $('#confirmationModal').modal('show');
+    });
+
+
+
+    // Set the initial value of paymentAmount after fetching from the server
+
+
+    $('#initialPayment').on('input', function () {
+        // Get the values of initialPayment and paymentAmount
+        const initialPayment = parseFloat($(this).val()) || 0; // Parse input or default to 0
+        const paymentAmount = parseFloat($('#paymentAmount').val()) || 0; // Ensure paymentAmount exists
+
+        // Calculate over/under payment
+        const overUnderPayment = initialPayment - paymentAmount;
+
+        // Update the Over/Under Payment field with the result
+        $('#overUnderPayment').val(overUnderPayment < 0 ? overUnderPayment.toFixed(2) : `+${overUnderPayment.toFixed(2)}`);
     });
 
     $('#confirmVerifyButton').on('click', function () {
@@ -589,6 +631,7 @@ $(document).on('click', '.delete-commissioner', function () {
 
         // Collect form data from the modal
         const formData = {
+            payment_amount: $('#paymentAmount').val(),
             initial_payment: $('#initialPayment').val(),
             for_billing: $('#forBilling').val(),
             over_under_payment: $('#overUnderPayment').val(),
@@ -630,6 +673,7 @@ $(document).on('click', '.delete-commissioner', function () {
             }
         });
     });
+
 
 
 </script>

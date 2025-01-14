@@ -287,7 +287,7 @@ class SalesProcessorController extends Controller
                         'reference_number' => null,
                         'ra_remarks' => null,
                         'tele_remarks' => null,
-                        'paid' => $i === 0, // Set current to 1, others to 0
+                        'paid' => 0, // Set current to 1, others to 0
                     ]);
                 }
             } else {
