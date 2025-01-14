@@ -75,6 +75,7 @@ class DataImport implements ToCollection, WithHeadingRow
                     'customer_care_remarks' => $row['customer_care_remarks'] ?? null,
                 ])->id;
 
+                // generate ID from tables
                 $teamId = !empty($row['team']) ? Team::firstOrCreate(['name' => $row['team']])->id : null;
                 $productId = !empty($row['product']) ? Product::firstOrCreate(['name' => $row['product']])->id : null;
                 $subproductId = !empty($row['subproduct']) ? Subproduct::firstOrCreate(['name' => $row['subproduct']])->id : null;
@@ -85,7 +86,6 @@ class DataImport implements ToCollection, WithHeadingRow
                 $alfcBranchId = !empty($row['alfc_branch']) ? SourceDivision::firstOrCreate(['name' => $row['alfc_branch']])->id : null;
                 $modeOfPaymentId = !empty($row['mode_of_payment']) ? ModeOfPayment::firstOrCreate(['name' => $row['mode_of_payment']])->id : null;
                 $providerId = !empty($row['provider']) ? Provider::firstOrCreate(['name' => $row['provider']])->id : null;
-
 
                 $salesAssociateId = !empty($row['sales_associate']) ? SalesAssociate::firstOrCreate(
                     ['name' => $row['sales_associate']],
@@ -116,6 +116,19 @@ class DataImport implements ToCollection, WithHeadingRow
                 $saleDate = !empty($row['sale_date']) ? Carbon::createFromFormat('F j, Y', $row['sale_date'])->format('Y-m-d') : null;
                 $policyInceptionDate = !empty($row['policy_inception_date']) ? Carbon::createFromFormat('F j, Y', $row['policy_inception_date'])->format('Y-m-d') : null;
                 $expiryDate = !empty($row['expiry_date']) ? Carbon::createFromFormat('F j, Y', $row['expiry_date'])->format('Y-m-d') : null;
+                $goodAsSalesDate = !empty($row['date_of_good_as_sales']) ? Carbon::createFromFormat('F j, Y', $row['date_of_good_as_sales'])->format('Y-m-d') : null;
+                
+                $dueDateTerm = $row['due_date_term'] ?? null;
+                if ($dueDateTerm === "FOR BILLING") {
+                    $dueDateStart = "FOR BILLING";
+                    $dueDateEnd = "FOR BILLING";
+                } elseif (!empty($dueDateTerm) && preg_match('/\b(\w+ \d{1,2}, \d{4}) - (\w+ \d{1,2}, \d{4})\b/', $dueDateTerm, $matches)) {
+                    $dueDateStart = Carbon::createFromFormat('F j, Y', $matches[1])->format('Y-m-d');
+                    $dueDateEnd = Carbon::createFromFormat('F j, Y', $matches[2])->format('Y-m-d');
+                } else {
+                    $dueDateStart = null;
+                    $dueDateEnd = null;
+                }
                 
                 // Create InsuranceDetail
                 $InsuranceDetail = InsuranceDetail::create([
@@ -129,7 +142,7 @@ class DataImport implements ToCollection, WithHeadingRow
                     'insurance_status' => $row['insurance_status'] ?? null,
                     'product_id' => $productId,
                     'subproduct_id' => $subproductId,
-                    'source_id' => $sourceId ,
+                    'source_id' => $sourceId,
                     'source_branch_id' => $sourceBranchId,
                     'source_division_id' => $sourceDivisionId,
                     'mortgagee' => $row['mortgagee'] ?? null,
@@ -160,38 +173,42 @@ class DataImport implements ToCollection, WithHeadingRow
                 // Create PaymentDetail
                 $InsuranceDetail = PaymentDetail::create([
                     'insurance_detail_id' => $InsuranceDetail->id,
-                    
                     'provision_receipt' => $row['provision_receipt'] ?? null,
                     'provider_id' => $providerId,
-
-                    // provision_receipt
-                    // provider
-                    // gross_premium
-                    // discount
-                    // gross_premium_net_of_discounts
-                    // amount_due_to_provider
-                    // full_commission
-                    // total_commission
-                    // vat
-                    // sales_credit
-                    // salestcredit_percent
-                    // comm_deduct
-                    // payment_terms
-                    // due_date_term
-                    // schedule_of_first_payment
-                    // schedule_of_second_payment
-                    // schedule_of_third_payment
-                    // schedule_of_fourth_payment
-                    // schedule_of_fifth_payment
-                    // schedule_of_sixth_payment
-                    // schedule_of_seventh_payment
-                    // schedule_of_eight_payment
-                    // for_billing
-                    // over_under_payment
-                    // initial_payment
-                    // date_of_good_as_sales
-                    // status
-
+                    'gross_premium' => $row['gross_premium'] ?? null,
+                    'discount' => $row['discount'] ?? null,
+                    'gross_premium_net_discounted' => $row['gross_premium_net_of_discounts'] ?? null,
+                    'amount_due_to_provider' => $row['amount_due_to_provider'] ?? null,
+                    'full_commission' => $row['full_commission'] ?? null,
+                    'total_commission' => $row['total_commission'] ?? null,
+                    'vat' => $row['vat'] ?? null,
+                    'sales_credit' => $row['sales_credit'] ?? null,
+                    'sales_credit_percent' => $row['sales_credit_percent'] ?? null,
+                    'comm_deduct' => $row['comm_deduct'] ?? null,
+                    'payment_terms' => $row['payment_terms'] ?? null,
+                    'due_date_start' => $dueDateStart,
+                    'due_date_end' => $dueDateEnd,
+                    'first_payment_schedule' => null,
+                    'first_payment_amount' => $row['schedule_of_first_payment'] ?? null,
+                    'second_payment_schedule' => null,
+                    'second_payment_amount' => $row['schedule_of_second_payment'] ?? null,
+                    'third_payment_schedule' => null,
+                    'third_payment_amount' => $row['schedule_of_third_payment'] ?? null,
+                    'fourth_payment_schedule' => null,
+                    'fourth_payment_amount' => $row['schedule_of_fourth_payment'] ?? null,
+                    'fifth_payment_schedule' => null,
+                    'fifth_payment_amount' => $row['schedule_of_fifth_payment'] ?? null,
+                    'sixth_payment_schedule' => null,
+                    'sixth_payment_amount' => $row['schedule_of_sixth_payment'] ?? null,
+                    'seventh_payment_schedule' => null,
+                    'seventh_payment_amount' => $row['schedule_of_seventh_payment'] ?? null,
+                    'eight_payment_schedule' => null,
+                    'eight_payment_amount' => $row['schedule_of_eight_payment'] ?? null,
+                    'for_billing' => $row['for_billing'] ?? null,
+                    'over_under_payment' => $row['over_under_payment'] ?? null,
+                    'initial_payment' => $row['initial_payment'] ?? null,
+                    'date_of_good_as_sales' => $goodAsSalesDate,
+                    'payment_status' => $row['status'] ?? null,
                 ]);
             }
             DB::commit(); // COMMIT UPLOADED DATA IF NO ERRORS
