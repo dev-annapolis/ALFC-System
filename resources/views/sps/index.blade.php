@@ -345,9 +345,9 @@
                 table.clear();
 
                 const statusColors = {
-                    'reinstated': '#ffc107',
-                        'sale': '#28a745',
-                        'cancelled': '#dc3545',
+                    'Reinstated': '#ffc107',
+                        'Sale': '#28a745',
+                        'Cancelled': '#dc3545',
                 };
 
                 function getStatusColor(status) {
