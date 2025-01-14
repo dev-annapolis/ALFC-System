@@ -23,7 +23,7 @@ return new class extends Migration {
 
             $table->string('sale_date')->nullable();
             $table->string('classification');
-            $table->string('insurance_status')->default('Sale'); // Sale,Cancellation,Reinstatement
+            $table->string('insurance_status')->default('SALE'); // Sale,Cancellation,Reinstatement
             
             $table->foreignId('product_id')->nullable()->constrained()->onDelete('cascade');
             $table->foreignId('subproduct_id')->nullable()->constrained()->onDelete('cascade');
