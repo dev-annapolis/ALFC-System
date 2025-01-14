@@ -261,9 +261,9 @@
                 table.clear();
 
                 const statusColors = {
-                    'reinstated': '#ffc107',
-                        'sale': '#28a745',
-                        'cancelled': '#dc3545',
+                        'Reinstated': '#ffc107',
+                        'Sale': '#28a745',
+                        'Cancelled': '#dc3545',
                 };
 
                 function getStatusColor(status) {
@@ -495,7 +495,7 @@
                                 'subproduct_name': subproducts,
                                 'source_name': sources,
                                 'source_branch_name': sourcebranches,
-                                'if_gdfi': ifgdfis,
+                                // 'if_gdfi': ifgdfis,
                                 'area_name': areas,
                                 'alfc_branch_name': alfcbranches,
                                 'mode_of_payment_name': modeofpayments,
