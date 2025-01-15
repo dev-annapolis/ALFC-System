@@ -80,6 +80,13 @@ class DatabaseSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                // 'id' => 10
+                'name' => 'regional_manager',
+                'view_name' => 'Regional Manager',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
 
         DB::table('users')->insert([
