@@ -8,11 +8,16 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\Importable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+
 use App\Models\AssuredDetail;
-use App\Models\Team;
+use App\Models\InsuranceDetail;
+use App\Models\PaymentDetail;
+
 use App\Models\User;
 use App\Models\SalesAssociate;
-use App\Models\InsuranceDetail;
+use App\Models\RegionalManager;
+
+use App\Models\Team;
 use App\Models\Product;
 use App\Models\Subproduct;
 use App\Models\Source;
@@ -22,6 +27,7 @@ use App\Models\Area;
 use App\Models\AlfcBranch;
 use App\Models\ModeOfPayment;
 use App\Models\Provider;
+
 
 use Carbon\Carbon;
 
@@ -39,6 +45,7 @@ class DataImport implements ToCollection, WithHeadingRow
             'ASSURED NAME' => [],
             'TEAM' => [],
             'SALES ASSOCIATE' => [] ];
+        $current_index = 0;
 
         foreach ($collection as $index => $row) {
             if (empty($row['issuance_code'])) $missingFields['ISSUANCE CODE'][] = $index + 2;
@@ -61,6 +68,7 @@ class DataImport implements ToCollection, WithHeadingRow
         DB::beginTransaction();
         try {
             foreach ($collection as $index => $row) {
+                $current_index = $index + 2;
                 // AssuredDetail logic
                 $existingAssuredDetail = AssuredDetail::where('name', $row['assured_name'])->first();
                 $AssuredDetailId = $existingAssuredDetail ? $existingAssuredDetail->id : AssuredDetail::create([
@@ -82,36 +90,59 @@ class DataImport implements ToCollection, WithHeadingRow
                 $sourceId = !empty($row['source']) ? Source::firstOrCreate(['name' => $row['source']])->id : null;
                 $sourceBranchId = !empty($row['affi_branch']) ? SourceBranch::firstOrCreate(['name' => $row['affi_branch']])->id : null;
                 $sourceDivisionId = !empty($row['division']) ? SourceDivision::firstOrCreate(['name' => $row['division']])->id : null;
-                $areaId = !empty($row['area']) ? SourceDivision::firstOrCreate(['name' => $row['area']])->id : null;
-                $alfcBranchId = !empty($row['alfc_branch']) ? SourceDivision::firstOrCreate(['name' => $row['alfc_branch']])->id : null;
+                $areaId = !empty($row['area']) ? Area::firstOrCreate(['name' => $row['area']])->id : null;
+                $alfcBranchId = !empty($row['alfc_branch']) ? AlfcBranch::firstOrCreate(['name' => $row['alfc_branch']])->id : null;
                 $modeOfPaymentId = !empty($row['mode_of_payment']) ? ModeOfPayment::firstOrCreate(['name' => $row['mode_of_payment']])->id : null;
                 $providerId = !empty($row['provider']) ? Provider::firstOrCreate(['name' => $row['provider']])->id : null;
 
-                $salesAssociateId = !empty($row['sales_associate']) ? SalesAssociate::firstOrCreate(
-                    ['name' => $row['sales_associate']],
-                    [
-                        'user_id' => User::firstOrCreate([
+                // Handle Sales Associate
+                if (!empty($row['sales_associate'])) {
+                    // Retrieve or create the User for the sales associate
+                    $user = User::firstOrCreate(
+                        ['username' => strtolower(str_replace(' ', '', $row['sales_associate']))],
+                        [
                             'name' => $row['sales_associate'],
-                            'username' => strtolower(str_replace(' ', '', $row['sales_associate'])),
                             'password' => Hash::make(strtolower(str_replace(' ', '', $row['sales_associate']))),
                             'role_id' => 8,
-                        ])->id,
-                        'team_id' => $teamId
-                    ]
-                )->id : null;
+                        ]
+                    );
 
-                $regionalManagerId = !empty($row['regional_manager']) ? RegionalManager::firstOrCreate(
-                    ['name' => $row['regional_manager']],
-                    [
-                        'user_id' => User::firstOrCreate([
+                    // Retrieve or create the Sales Associate
+                    $salesAssociateId = SalesAssociate::firstOrCreate(
+                        ['name' => $row['sales_associate']],
+                        [
+                            'user_id' => $user->id,
+                            'team_id' => $teamId
+                        ]
+                    )->id;
+                } else {
+                    $salesAssociateId = null;
+                }
+
+                // Handle Regional Manager
+                if (!empty($row['regional_manager'])) {
+                    // Retrieve or create the User for the regional manager
+                    $user = User::firstOrCreate(
+                        ['username' => strtolower(str_replace(' ', '', $row['regional_manager']))],
+                        [
                             'name' => $row['regional_manager'],
-                            'username' => strtolower(str_replace(' ', '', $row['regional_manager'])),
                             'password' => Hash::make(strtolower(str_replace(' ', '', $row['regional_manager']))),
                             'role_id' => 10,
-                        ])->id,
-                        'team_id' => $teamId
-                    ]
-                )->id : null;
+                        ]
+                    );
+
+                    // Retrieve or create the Regional Manager
+                    $regionalManagerId = RegionalManager::firstOrCreate(
+                        ['name' => $row['regional_manager']],
+                        [
+                            'user_id' => $user->id,
+                            'team_id' => $teamId
+                        ]
+                    )->id;
+                } else {
+                    $regionalManagerId = null;
+                }
+
 
                 $saleDate = !empty($row['sale_date']) ? Carbon::createFromFormat('F j, Y', $row['sale_date'])->format('Y-m-d') : null;
                 $policyInceptionDate = !empty($row['policy_inception_date']) ? Carbon::createFromFormat('F j, Y', $row['policy_inception_date'])->format('Y-m-d') : null;
@@ -123,8 +154,13 @@ class DataImport implements ToCollection, WithHeadingRow
                     $dueDateStart = "FOR BILLING";
                     $dueDateEnd = "FOR BILLING";
                 } elseif (!empty($dueDateTerm) && preg_match('/\b(\w+ \d{1,2}, \d{4}) - (\w+ \d{1,2}, \d{4})\b/', $dueDateTerm, $matches)) {
+                    // Case with two dates
                     $dueDateStart = Carbon::createFromFormat('F j, Y', $matches[1])->format('Y-m-d');
                     $dueDateEnd = Carbon::createFromFormat('F j, Y', $matches[2])->format('Y-m-d');
+                } elseif (!empty($dueDateTerm) && preg_match('/\b(\w+ \d{1,2}, \d{4})\b/', $dueDateTerm, $matches)) {
+                    // Case with only one date
+                    $dueDateStart = Carbon::createFromFormat('F j, Y', $matches[1])->format('Y-m-d');
+                    $dueDateEnd = $dueDateStart; // Set both start and end as the same date
                 } else {
                     $dueDateStart = null;
                     $dueDateEnd = null;
@@ -155,7 +191,7 @@ class DataImport implements ToCollection, WithHeadingRow
                     'policy_number' => $row['policy_no'] ?? null,
                     'plate_conduction_number' => $row['plate_conduction_no'] ?? null,
                     'description' => $row['description'] ?? null,
-                    'mode_of_payment_id' => $row['mode_of_payment'] ?? null,
+                    'mode_of_payment_id' => $modeOfPaymentId,
                     'ra_comments' => $row['ra_comments'] ?? null,
                     'admin_assistant_remarks' => $row['admin_asst_remarks'] ?? null,
                     'tracking_number' => $row['tracking_number'] ?? null,
@@ -210,11 +246,13 @@ class DataImport implements ToCollection, WithHeadingRow
                     'date_of_good_as_sales' => $goodAsSalesDate,
                     'payment_status' => $row['status'] ?? null,
                 ]);
+
             }
             DB::commit(); // COMMIT UPLOADED DATA IF NO ERRORS
         } catch (\Exception $e) {
             DB::rollBack(); // ROLLBACK IF THERE'S AN ERROR
-            throw $e; // Rethrow the exception to be handled elsewhere
+            $errorMessage = ' at line ' . $current_index; // Save the message to a variable
+            throw new \Exception($e->getMessage() . $errorMessage); // Append the message and rethrow the exception
         }
     }
 

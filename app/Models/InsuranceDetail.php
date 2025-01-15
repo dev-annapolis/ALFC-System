@@ -58,6 +58,11 @@ class InsuranceDetail extends Model
         return $this->belongsTo(SalesManager::class);
     }
 
+    public function regionalManager()
+    {
+        return $this->belongsTo(RegionalManager::class);
+    }
+
     public function sourceDivision()
     {
         return $this->belongsTo(SourceDivision::class);

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('password');
 
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('email')->unique()->nullable();
             $table->string('viber_number')->nullable();
             $table->foreignId('role_id')->constrained()->onDelete('cascade');
             $table->string('status')->default('unverified');

@@ -31,19 +31,15 @@ class UploadingController extends Controller
         }
 
         try {
-            // usleep(3000000);
-            $progressKey = 'upload_progress_' . uniqid();
             $file = $request->file('excel_file');
             $import = new DataImport();
             Excel::import($import, $file);
-
             Log::info('Excel data has been successfully imported with no errors');
             return redirect()->back()->with(['uploadSuccess' => true]);
-
         } catch (\Exception $e) {
             // Handle error: DISPLAY ERROR TO MODAL
             return redirect()->back()->with('uploadError', $e->getMessage());
         }
     }
-    
+
 }
