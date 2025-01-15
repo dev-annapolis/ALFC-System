@@ -9,7 +9,7 @@
         width: 0%;
     }
     50% {
-        width: 75%;
+        width: 50%;
     }
     100% {
         width: 100%;
@@ -127,8 +127,8 @@
         const uploadForm = document.querySelector('form[action="{{ route('uploadData.store') }}"]');
         uploadForm.addEventListener('submit', function() {
             document.getElementById('loaderOverlay').style.display = 'flex';
+            
         });
     });
 </script>
-
 @endsection
