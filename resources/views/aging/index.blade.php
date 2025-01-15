@@ -89,7 +89,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="viewPivotDetailsModalLabel">Edit Pivot Details</h5>
+                <h5 class="modal-title" id="viewPivotDetailsModalLabel">Aging Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -98,55 +98,70 @@
                         <label for="pivotIdInput" class="form-label"><strong>ID:</strong></label>
                         <input type="text" class="form-control" id="pivotIdInput" name="id" readonly>
                     </div>
-                    <div class="mb-3">
-                        <label for="pivotPaidAmountInput" class="form-label"><strong>Paid Amount:</strong></label>
-                        <input type="text" class="form-control" id="pivotPaidAmountInput" name="paid_amount">
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-md-6">
+                            <label for="pivotPaidAmountInput" class="form-label"><strong>Paid Amount:</strong></label>
+                            <input type="text" class="form-control" id="pivotPaidAmountInput" name="paid_amount">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="pivotPaidScheduleInput" class="form-label"><strong>Paid Schedule:</strong></label>
+                            <input type="text" class="form-control" id="pivotPaidScheduleInput" name="paid_schedule">
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="pivotPaidScheduleInput" class="form-label"><strong>Paid Schedule:</strong></label>
-                        <input type="text" class="form-control" id="pivotPaidScheduleInput" name="paid_schedule">
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-md-6">
+                            <label for="pivotPaymentAmountInput" class="form-label"><strong>Payment Amount:</strong></label>
+                            <input type="text" class="form-control" id="pivotPaymentAmountInput" name="payment_amount" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="pivotPaymentScheduleInput" class="form-label"><strong>Payment Schedule:</strong></label>
+                            <input type="text" class="form-control" id="pivotPaymentScheduleInput" name="payment_schedule" readonly>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="pivotPaymentAmountInput" class="form-label"><strong>Payment Amount:</strong></label>
-                        <input type="text" class="form-control" id="pivotPaymentAmountInput" name="payment_amount" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="pivotPaymentScheduleInput" class="form-label"><strong>Payment Schedule:</strong></label>
-                        <input type="text" class="form-control" id="pivotPaymentScheduleInput" name="payment_schedule" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="pivotOverUnderPaymentInput" class="form-label"><strong>Over/Under Payment:</strong></label>
-                        <input type="text" class="form-control" id="pivotOverUnderPaymentInput" name="over_under_payment" readonly>
-                    </div>
-                    <div class="mb-3">
-                        <label for="pivotReferenceNumberInput" class="form-label"><strong>Reference Number:</strong></label>
-                        <input type="text" class="form-control" id="pivotReferenceNumberInput" name="reference_number">
-                    </div>
-                    <div class="mb-3" id="raRemarksContainer">
-                        <label for="pivotRaRemarksInput" class="form-label"><strong>RA Remarks:</strong></label>
-                        <textarea class="form-control" id="pivotRaRemarksInput" name="ra_remarks" rows="2" readonly></textarea>
+                    <div class="row mb-3 align-items-center">
+                        <div class="col-md-4">
+                            <label for="pivotOverUnderPaymentInput" class="form-label"><strong>Over/Under Payment:</strong></label>
+                            <input type="text" class="form-control" id="pivotOverUnderPaymentInput" name="over_under_payment" readonly>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="pivotReferenceNumberInput" class="form-label"><strong>Reference Number:</strong></label>
+                            <input type="text" class="form-control" id="pivotReferenceNumberInput" name="reference_number">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="pivotPaidInput" class="form-label"><strong>Paid:</strong></label>
+                            <select class="form-control" id="pivotPaidInput" name="paid">
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                    <div class="mb-3 " id="raRemarksContainer">
+                        <label for="pivotRaRemarksInput" class="form-label me-2"><strong>RA Remarks:</strong></label>
+                            <div class="d-flex align-items-center">
+                                <textarea class="form-control me-2" id="pivotRaRemarksInput" name="ra_remarks" rows="2" readonly></textarea>
+                                <button type="button" id="addNewRaRemarks" class="btn btn-secondary">Add Remarks</button>
+                            </div>          
                     </div>
                     
                     <div id="newRaRemarksInput" style="display: none;">
                         <label for="pivotNewRaRemarksInput" class="form-label"><strong>Add RA Remarks:</strong></label>
-                        <textarea class="form-control" id="pivotNewRaRemarksInput" name="ra_remarks" rows="2"></textarea>
-                        <button type="button" id="cancelNewRaRemarks" class="btn btn-secondary mt-2">Cancel</button>
+                            <div class="d-flex align-items-center">
+                                <textarea class="form-control me-2" id="pivotNewRaRemarksInput" name="ra_remarks" rows="2"></textarea>
+                                <button type="button" id="cancelNewRaRemarks" class="btn btn-secondary mt-2">Cancel</button>
+                            </div>                        
                     </div>
                     <div id = "teleRemarksContainer" class="mb-3">
                         <label for="pivotTeleRemarksInput" class="form-label"><strong>Tele Remarks:</strong></label>
-                        <textarea class="form-control" id="pivotTeleRemarksInput" name="tele_remarks" rows="2"></textarea>
+                        <div class="d-flex align-items-center">
+                            <textarea class="form-control me-2" id="pivotTeleRemarksInput" name="tele_remarks" rows="2"></textarea>
+                            <button type="button" id="addNewTeleRemarks" class="btn btn-secondary mt-2">Add Remarks</button>
+                        </div>
                     </div>
                     <div id="newTeleRemarksInput" style="display: none;">
                         <label for="pivotNewTeleRemarksInput" class="form-label"><strong>Add Tele Remarks:</strong></label>
-                        <textarea class="form-control" id="pivotNewTeleRemarksInput" name="tele-remarks" rows="2"></textarea>
-                        <button type="button" id="cancelNewTeleRemarks" class="btn btn-secondary mt-2">Cancel</button>
-                    </div>
-                    <div class="mb-3">
-                        <label for="pivotPaidInput" class="form-label"><strong>Paid:</strong></label>
-                        <select class="form-control" id="pivotPaidInput" name="paid">
-                            <option value="1">Yes</option>
-                            <option value="0">No</option>
-                        </select>
+                        <div class="d-flex align-items-center">
+                            <textarea class="form-control me-2" id="pivotNewTeleRemarksInput" name="tele-remarks" rows="2"></textarea>
+                            <button type="button" id="cancelNewTeleRemarks" class="btn btn-secondary mt-2">Cancel</button>
+                        </div> 
                     </div>
                 </form>
             </div>
@@ -207,20 +222,21 @@
                 },
                 { data: 'mode_of_payment', className: 'text-center' },
                 {
-                    data: 'due_date',
+                    data: null, // Use null since we will access multiple fields
                     className: 'text-center',
                     render: function (data) {
-                        if (data && data.includes(' to ')) {
-                            const dueDate = data.split(' to ');
-                            const startDate = new Date(dueDate[0]);
-                            const endDate = new Date(dueDate[1]);
+                        const startDate = data.due_date_start ? new Date(data.due_date_start) : null;
+                        const endDate = data.due_date_end ? new Date(data.due_date_end) : null;
+
+                        if (startDate && endDate) {
                             const formattedStartDate = startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                             const formattedEndDate = endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                             return `${formattedStartDate} to ${formattedEndDate}`;
+                        } else {
+                            return 'Invalid date range';
                         }
-                        return 'Invalid date range';
                     }
-                },
+                },  
                 { data: 'terms', className: 'text-center' },
                 {
                     data: 'gross_premium',
@@ -430,7 +446,7 @@
             });
 
             // Clear RA remarks field when clicked
-            $('#pivotRaRemarksInput').on('click', function() {
+            $('#addNewRaRemarks').on('click', function() {
                 // $(this).val(''); // Clear the 'RA Remarks' field
 
                 // Hide the original RA Remarks container and show the new remarks container
@@ -450,7 +466,7 @@
             // Clear other fields if required (Example for Tele Remarks)
 
             //--------
-            $('#pivotTeleRemarksInput').on('click', function() {
+            $('#addNewTeleRemarks').on('click', function() {
                 // $(this).val(''); // Clear the 'RA Remarks' field
 
                 // Hide the original RA Remarks container and show the new remarks container
