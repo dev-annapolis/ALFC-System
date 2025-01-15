@@ -28,6 +28,12 @@ class RolePermissionController extends Controller
                 'nature_of_business',
                 'other_assets',
                 'other_source_of_business',
+                'primary_reference',
+                'verified_number',
+                'verified_mailing_address',
+                'customer_care_remarks',
+                'additional_reference',
+
             ],
             'insurance_details' => [
                 'name',
@@ -171,6 +177,12 @@ class RolePermissionController extends Controller
                 'nature_of_business',
                 'other_assets',
                 'other_source_of_business',
+                'primary_reference',
+                'verified_number',
+                'verified_mailing_address',
+                'customer_care_remarks',
+                'additional_reference',
+
             ],
             'insurance_details' => [
                 'name',
