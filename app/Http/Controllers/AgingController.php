@@ -41,12 +41,8 @@ class AgingController extends Controller
             'ar_agings.insurance_detail_id',
             'ar_agings.issuance_code',
             'ar_agings.name',
-            // Concatenate the first and last payment_schedule
-            DB::raw('CONCAT(
-                (SELECT payment_schedule FROM ar_aging_pivots WHERE ar_aging_id = ar_agings.id ORDER BY payment_schedule ASC LIMIT 1),
-                " to ",
-                (SELECT payment_schedule FROM ar_aging_pivots WHERE ar_aging_id = ar_agings.id ORDER BY payment_schedule DESC LIMIT 1)
-            ) as due_date'),
+            'ar_agings.due_date_start',
+            'ar_agings.due_date_end',
             'ar_agings.terms',
             'ar_agings.policy_number',
             'ar_agings.sale_date',
@@ -127,8 +123,8 @@ class AgingController extends Controller
                 'new_ra_remarks' => 'nullable|string',
                 'new_tele_remarks' => 'nullable|string',
                 'tele_remarks' => 'nullable|string',
-                'paid' => 'nullable|in:true,false,1,0', // Accept boolean-like strings
-                'over_under_payment' => 'nullable|numeric', // Ensure it's either numeric or null
+                'paid' => 'nullable|in:true,false,1,0',
+                'over_under_payment' => 'nullable|numeric',
             ]);
 
             // Log validation success
