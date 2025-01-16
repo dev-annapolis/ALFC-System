@@ -247,6 +247,45 @@ class DataImport implements ToCollection, WithHeadingRow
                     'payment_status' => $row['status'] ?? null,
                 ]);
 
+                $commissioners = [
+                    1 => 'marketing_arm',
+                    2 => 'referred_by',
+                    3 => 'legal_representative_name',
+                    4 => 'legal_supervisor_name',
+                    5 => 'assigned_atty_one',
+                    6 => 'assigned_atty_two',
+                    7 => 'collection_gm',
+                    8 => 'agent_dealer',
+                    9 => 'bm_emp',
+                    10 => 'pmm_adh',
+                    11 => 'financing',
+                    12 => 'marketing_head',
+                    13 => 'am',
+                    14 => 'gm_president',
+                    15 => 'group_head',
+                    16 => 'rm',
+                    17 => 'afc_atl_gm',
+                    18 => 'referral_fee_program',
+                    19 => 'nip',
+                    20 => 'individual_legal',
+                    21 => 'additional_legal',
+                    22 => 'marketing_fund',
+                    23 => 'offsetting',
+                    24 => 'promo',
+                ];
+                
+                foreach ($commissioners as $commissionerId => $field) {
+                    if (!empty($row[$field])) {
+                        PaymentDetail::create([
+                            'insurance_detail_id' => $InsuranceDetail->id,
+                            'commissioner_id' => $commissionerId,
+                            'commissioner_name' => $field,
+                            'amount' => $row[$field],
+                        ]);
+                    }
+                }
+                
+
             }
             DB::commit(); // COMMIT UPLOADED DATA IF NO ERRORS
         } catch (\Exception $e) {
