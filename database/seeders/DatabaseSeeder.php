@@ -1555,79 +1555,99 @@ class DatabaseSeeder extends Seeder
         DB::table('commissioners')->insert([
             [
                 // 'id' => 1
-                'name' => 'Agent Dealer',
+                'name' => 'Marketing Arm',
             ],
             [
                 // 'id' => 2
-                'name' => 'BM Emp',
+                'name' => 'Referred By',
             ],
             [
                 // 'id' => 3
-                'name' => 'PM Adh',
+                'name' => 'Legal Representative Name',
             ],
             [
                 // 'id' => 4
-                'name' => 'Financing',
+                'name' => 'Legal Supervisor Name',
             ],
             [
                 // 'id' => 5
-                'name' => 'Marketing Head',
-            ],
-            [
-                // 'id' => 6
-                'name' => 'AM',
-            ],
-            [
-                // 'id' => 7
-                'name' => 'GM',
-            ],
-            [
-                // 'id' => 8
-                'name' => 'RM',
-            ],
-            [
-                // 'id' => 9
-                'name' => 'Legal Representative',
-            ],
-            [
-                // 'id' => 10
-                'name' => 'Legal Supervisor',
-            ],
-            [
-                // 'id' => 11
                 'name' => 'Assigned Atty One',
             ],
             [
-                // 'id' => 12
+                // 'id' => 6
                 'name' => 'Assigned Atty Two',
             ],
             [
-                // 'id' => 13
+                // 'id' => 7
                 'name' => 'Collection GM',
             ],
             [
+                // 'id' => 8
+                'name' => 'Agent Dealer',
+            ],
+            [
+                // 'id' => 9
+                'name' => 'BM EMP',
+            ],
+            [
+                // 'id' => 10
+                'name' => 'PMM ADH',
+            ],
+            [
+                // 'id' => 11
+                'name' => 'Financing',
+            ],
+            [
+                // 'id' => 12
+                'name' => 'Marketing Head',
+            ],
+            [
+                // 'id' => 13
+                'name' => 'AM',
+            ],
+            [
                 // 'id' => 14
-                'name' => 'AFC ATL GM',
+                'name' => 'GM President',
             ],
             [
                 // 'id' => 15
-                'name' => 'New Incentive Program',
+                'name' => 'Group Head',
             ],
             [
                 // 'id' => 16
-                'name' => 'Referral Fee Program',
+                'name' => 'RM',
             ],
             [
                 // 'id' => 17
-                'name' => 'Off Setting',
+                'name' => 'AFC ATL GM',
             ],
             [
                 // 'id' => 18
+                'name' => 'Referral Fee Program',
+            ],
+            [
+                // 'id' => 19
+                'name' => 'NIP',
+            ],
+            [
+                // 'id' => 20
+                'name' => 'Individual Legal',
+            ],
+            [
+                // 'id' => 21
+                'name' => 'Additional Legal',
+            ],
+            [
+                // 'id' => 22
+                'name' => 'Marketing Fund',
+            ],
+            [
+                // 'id' => 23
+                'name' => 'Offsetting',
+            ],
+            [
+                // 'id' => 24
                 'name' => 'Promo',
-            ],
-            [
-                // 'id' => 18
-                'name' => 'Travel Incentives',
             ],
         ]);
 
