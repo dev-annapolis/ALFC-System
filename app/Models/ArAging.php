@@ -12,6 +12,7 @@ class ArAging extends Model
         'name',
         'due_date_start',
         'due_date_end',
+        'terms',
         'team',
         'policy_number',
         'sale_date',
