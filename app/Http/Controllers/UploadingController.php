@@ -34,7 +34,7 @@ class UploadingController extends Controller
             $file = $request->file('excel_file');
             $import = new DataImport();
             Excel::import($import, $file);
-            Log::info('Excel data has been successfully imported with no errors');
+            // Log::info('Excel data has been successfully imported with no errors');
             return redirect()->back()->with(['uploadSuccess' => true]);
         } catch (\Exception $e) {
             // Handle error: DISPLAY ERROR TO MODAL
