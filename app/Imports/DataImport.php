@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\AssuredDetail;
 use App\Models\InsuranceDetail;
 use App\Models\PaymentDetail;
+use App\Models\InsuranceCommissioner;
 
 use App\Models\User;
 use App\Models\SalesAssociate;
@@ -28,7 +29,7 @@ use App\Models\AlfcBranch;
 use App\Models\ModeOfPayment;
 use App\Models\Provider;
 
-
+use Log;
 use Carbon\Carbon;
 
 class DataImport implements ToCollection, WithHeadingRow 
@@ -47,6 +48,8 @@ class DataImport implements ToCollection, WithHeadingRow
             'SALES ASSOCIATE' => [] ];
         $current_index = 0;
 
+        Log::info('Upload Started');
+
         foreach ($collection as $index => $row) {
             if (empty($row['issuance_code'])) $missingFields['ISSUANCE CODE'][] = $index + 2;
             if (empty($row['assured_name'])) $missingFields['ASSURED NAME'][] = $index + 2;
@@ -56,6 +59,7 @@ class DataImport implements ToCollection, WithHeadingRow
         // COLLECT MISSING FIELDS
         foreach ($missingFields as $field => $missingRows) {
             if (count($missingRows) > 0) {
+                Log::info('Blank Data Found');
                 $error = true;
                 $errorMessage .= "Missing $field at rows: " . implode(', ', $missingRows) . "\n \n"; }}
 
@@ -67,6 +71,7 @@ class DataImport implements ToCollection, WithHeadingRow
         // TRANSACTION BEGIN
         DB::beginTransaction();
         try {
+            Log::info('No Errors Found');
             foreach ($collection as $index => $row) {
                 $current_index = $index + 2;
                 // AssuredDetail logic
@@ -207,7 +212,7 @@ class DataImport implements ToCollection, WithHeadingRow
                 ]);
 
                 // Create PaymentDetail
-                $InsuranceDetail = PaymentDetail::create([
+                $PaymentDetail = PaymentDetail::create([
                     'insurance_detail_id' => $InsuranceDetail->id,
                     'provision_receipt' => $row['provision_receipt'] ?? null,
                     'provider_id' => $providerId,
@@ -247,16 +252,99 @@ class DataImport implements ToCollection, WithHeadingRow
                     'payment_status' => $row['status'] ?? null,
                 ]);
 
-                $commissioners = [
-                    1 => 'marketing_arm',
-                    2 => 'referred_by',
-                    3 => 'legal_representative_name',
-                    4 => 'legal_supervisor_name',
-                    5 => 'assigned_atty_one',
-                    6 => 'assigned_atty_two',
-                    7 => 'collection_gm',
-                    8 => 'agent_dealer',
-                    9 => 'bm_emp',
+                if (!empty($row['marketing_arm']) && $row['marketing_arm'] !== 'N/A') {
+                    InsuranceCommissioner::create([
+                        'insurance_detail_id' => $InsuranceDetail->id,
+                        'commissioner_id' => 1,
+                        'commissioner_name' => $row['marketing_arm'],
+                        'amount' => 0,
+                    ]);
+                }
+
+                if (!empty($row['referred_by']) && $row['referred_by'] !== 'N/A') {
+                    InsuranceCommissioner::create([
+                        'insurance_detail_id' => $InsuranceDetail->id,
+                        'commissioner_id' => 2,
+                        'commissioner_name' => $row['referred_by'],
+                        'amount' => 0,
+                    ]);
+                }
+
+                if (!empty($row['legal_representative_name']) && $row['legal_representative_name'] !== 'N/A') {
+                    InsuranceCommissioner::create([
+                        'insurance_detail_id' => $InsuranceDetail->id,
+                        'commissioner_id' => 3,
+                        'commissioner_name' => $row['legal_representative_name'],
+                        'amount' => 0,
+                    ]);
+                }
+
+                if (!empty($row['legal_supervisor_name']) && $row['legal_supervisor_name'] !== 'N/A') {
+                    InsuranceCommissioner::create([
+                        'insurance_detail_id' => $InsuranceDetail->id,
+                        'commissioner_id' => 4,
+                        'commissioner_name' => $row['legal_supervisor_name'],
+                        'amount' => 0,
+                    ]);
+                }
+
+                if (!empty($row['assigned_atty_one']) && $row['assigned_atty_one'] !== 'N/A') {
+                    InsuranceCommissioner::create([
+                        'insurance_detail_id' => $InsuranceDetail->id,
+                        'commissioner_id' => 5,
+                        'commissioner_name' => $row['assigned_atty_one'],
+                        'amount' => empty($row['assigned_atty_one_amount']) ?? 0,
+                    ]);
+                } else {
+                    if (!empty($row['assigned_atty_one_amount'])) {
+                        InsuranceCommissioner::create([
+                            'insurance_detail_id' => $InsuranceDetail->id,
+                            'commissioner_id' => 5,
+                            'commissioner_name' => null,
+                            'amount' => empty($row['assigned_atty_one_amount']),
+                        ]);
+                    }
+                }
+
+                if (!empty($row['assigned_atty_two']) && $row['assigned_atty_two'] !== 'N/A') {
+                    InsuranceCommissioner::create([
+                        'insurance_detail_id' => $InsuranceDetail->id,
+                        'commissioner_id' => 6,
+                        'commissioner_name' => $row['assigned_atty_two'],
+                        'amount' => empty($row['assigned_atty_two_amount']) ?? 0,
+                    ]);
+                } else {
+                    if (!empty($row['assigned_atty_two_amount'])) {
+                        InsuranceCommissioner::create([
+                            'insurance_detail_id' => $InsuranceDetail->id,
+                            'commissioner_id' => 6,
+                            'commissioner_name' => null,
+                            'amount' => empty($row['assigned_atty_two_amount']),
+                        ]);
+                    }
+                }
+
+                if (!empty($row['collection_gm']) && $row['collection_gm'] !== 'N/A') {
+                    InsuranceCommissioner::create([
+                        'insurance_detail_id' => $InsuranceDetail->id,
+                        'commissioner_id' => 7,
+                        'commissioner_name' => $row['collection_gm'],
+                        'amount' => empty($row['collection_gm_amount']) ?? 0,
+                    ]);
+                } else {
+                    if (!empty($row['collection_gm_amount'])) {
+                        InsuranceCommissioner::create([
+                            'insurance_detail_id' => $InsuranceDetail->id,
+                            'commissioner_id' => 7,
+                            'commissioner_name' => null,
+                            'amount' => empty($row['collection_gm_amount']),
+                        ]);
+                    }
+                }
+                
+                $amountFields = [
+                    8  => 'agent_dealer',
+                    9  => 'bm_emp',
                     10 => 'pmm_adh',
                     11 => 'financing',
                     12 => 'marketing_head',
@@ -273,23 +361,25 @@ class DataImport implements ToCollection, WithHeadingRow
                     23 => 'offsetting',
                     24 => 'promo',
                 ];
-                
-                foreach ($commissioners as $commissionerId => $field) {
+
+                // Insert amount-based rows
+                foreach ($amountFields as $id => $field) {
                     if (!empty($row[$field])) {
-                        PaymentDetail::create([
+                        InsuranceCommissioner::create([
                             'insurance_detail_id' => $InsuranceDetail->id,
-                            'commissioner_id' => $commissionerId,
-                            'commissioner_name' => $field,
+                            'commissioner_id' => $id,
+                            'commissioner_name' => null,
                             'amount' => $row[$field],
                         ]);
                     }
                 }
                 
-
             }
+            Log::info('Upload Success');
             DB::commit(); // COMMIT UPLOADED DATA IF NO ERRORS
         } catch (\Exception $e) {
             DB::rollBack(); // ROLLBACK IF THERE'S AN ERROR
+            Log::info('Error Found at row '. $current_index);
             $errorMessage = ' at line ' . $current_index; // Save the message to a variable
             throw new \Exception($e->getMessage() . $errorMessage); // Append the message and rethrow the exception
         }
