@@ -45,7 +45,9 @@ class DataImport implements ToCollection, WithHeadingRow
             'ISSUANCE CODE' => [],
             'ASSURED NAME' => [],
             'TEAM' => [],
-            'SALES ASSOCIATE' => [] ];
+            'SALES ASSOCIATE' => [],
+            'GROSS PREMIUM' => [],
+            'GROSS PREMIUM NET OF DISCOUNTS' => [] ];
         $current_index = 0;
 
         Log::info('Upload Started');
@@ -54,8 +56,11 @@ class DataImport implements ToCollection, WithHeadingRow
             if (empty($row['issuance_code'])) $missingFields['ISSUANCE CODE'][] = $index + 2;
             if (empty($row['assured_name'])) $missingFields['ASSURED NAME'][] = $index + 2;
             if (empty($row['team'])) $missingFields['TEAM'][] = $index + 2;
-            if (empty($row['sales_associate'])) $missingFields['SALES ASSOCIATE'][] = $index + 2;}
-
+            if (empty($row['sales_associate'])) $missingFields['SALES ASSOCIATE'][] = $index + 2;
+            if (empty($row['gross_premium'])) $missingFields['GROSS PREMIUM'][] = $index + 2;
+            if (empty($row['gross_premium_net_of_discounts'])) $missingFields['GROSS PREMIUM NET OF DISCOUNTS'][] = $index + 2;}
+            
+            
         // COLLECT MISSING FIELDS
         foreach ($missingFields as $field => $missingRows) {
             if (count($missingRows) > 0) {
