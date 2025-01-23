@@ -300,7 +300,7 @@ class DataImport implements ToCollection, WithHeadingRow
                         'insurance_detail_id' => $InsuranceDetail->id,
                         'commissioner_id' => 5,
                         'commissioner_name' => $row['assigned_atty_one'],
-                        'amount' => empty($row['assigned_atty_one_amount']) ?? 0,
+                        'amount' => $row['assigned_atty_one_amount'] ?? 0,
                     ]);
                 } else {
                     if (!empty($row['assigned_atty_one_amount'])) {
@@ -308,7 +308,7 @@ class DataImport implements ToCollection, WithHeadingRow
                             'insurance_detail_id' => $InsuranceDetail->id,
                             'commissioner_id' => 5,
                             'commissioner_name' => null,
-                            'amount' => empty($row['assigned_atty_one_amount']),
+                            'amount' => $row['assigned_atty_one_amount'],
                         ]);
                     }
                 }
@@ -318,7 +318,7 @@ class DataImport implements ToCollection, WithHeadingRow
                         'insurance_detail_id' => $InsuranceDetail->id,
                         'commissioner_id' => 6,
                         'commissioner_name' => $row['assigned_atty_two'],
-                        'amount' => empty($row['assigned_atty_two_amount']) ?? 0,
+                        'amount' => $row['assigned_atty_two_amount'] ?? 0,
                     ]);
                 } else {
                     if (!empty($row['assigned_atty_two_amount'])) {
@@ -326,7 +326,7 @@ class DataImport implements ToCollection, WithHeadingRow
                             'insurance_detail_id' => $InsuranceDetail->id,
                             'commissioner_id' => 6,
                             'commissioner_name' => null,
-                            'amount' => empty($row['assigned_atty_two_amount']),
+                            'amount' => $row['assigned_atty_two_amount'],
                         ]);
                     }
                 }
@@ -336,7 +336,7 @@ class DataImport implements ToCollection, WithHeadingRow
                         'insurance_detail_id' => $InsuranceDetail->id,
                         'commissioner_id' => 7,
                         'commissioner_name' => $row['collection_gm'],
-                        'amount' => empty($row['collection_gm_amount']) ?? 0,
+                        'amount' => $row['collection_gm_amount'] ?? 0,
                     ]);
                 } else {
                     if (!empty($row['collection_gm_amount'])) {
@@ -344,7 +344,7 @@ class DataImport implements ToCollection, WithHeadingRow
                             'insurance_detail_id' => $InsuranceDetail->id,
                             'commissioner_id' => 7,
                             'commissioner_name' => null,
-                            'amount' => empty($row['collection_gm_amount']),
+                            'amount' => $row['collection_gm_amount'],
                         ]);
                     }
                 }
