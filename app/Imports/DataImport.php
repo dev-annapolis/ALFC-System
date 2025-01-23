@@ -28,6 +28,8 @@ use App\Models\Area;
 use App\Models\AlfcBranch;
 use App\Models\ModeOfPayment;
 use App\Models\Provider;
+use App\Models\ArAging;
+use App\Models\ArAgingPivot;
 
 use Log;
 use Carbon\Carbon;
@@ -47,7 +49,7 @@ class DataImport implements ToCollection, WithHeadingRow
             'TEAM' => [],
             'SALES ASSOCIATE' => [],
             'GROSS PREMIUM' => [],
-            'GROSS PREMIUM NET OF DISCOUNTS' => [] ];
+            'GROSS PREMIUM NET OF DISCOUNTS' => [], ];
         $current_index = 0;
 
         Log::info('Upload Started');
@@ -179,7 +181,7 @@ class DataImport implements ToCollection, WithHeadingRow
                 // Create InsuranceDetail
                 $InsuranceDetail = InsuranceDetail::create([
                     'assured_detail_id' => $AssuredDetailId,
-                    'issuance_code' => $row['issuance_code'] ?? null,
+                    'issuance_code' => $row['issuance_code'],
                     'team_id' => $teamId,
                     'sales_associate_id' => $salesAssociateId,
                     'regional_manager_id' => $regionalManagerId,
@@ -231,7 +233,7 @@ class DataImport implements ToCollection, WithHeadingRow
                     'sales_credit' => $row['sales_credit'] ?? null,
                     'sales_credit_percent' => $row['sales_credit_percent'] ?? null,
                     'comm_deduct' => $row['comm_deduct'] ?? null,
-                    'payment_terms' => $row['payment_terms'] ?? null,
+                    'payment_terms' => $row['payment_terms'] ?? 0,
                     'due_date_start' => $dueDateStart,
                     'due_date_end' => $dueDateEnd,
                     'first_payment_schedule' => null,
@@ -377,6 +379,57 @@ class DataImport implements ToCollection, WithHeadingRow
                             'amount' => $row[$field],
                         ]);
                     }
+                }
+
+                // Declare Balance and set initial value to 0 if does not exists
+                $initial = $row['initial_payment'] ?? 0;
+                $balance = $row['gross_premium_net_of_discounts'] - $initial;
+
+                // Create AR Aging
+                $arAging = ArAging::create([
+                    'insurance_detail_id' => $InsuranceDetail->id,
+                    'issuance_code' => $row['issuance_code'],
+                    'name' => $row['assured_name'],
+                    'due_date_start' => $dueDateStart,
+                    'due_date_end' => $dueDateEnd,
+                    'terms' => $row['payment_terms'] ?? 0,
+                    'team' => $teamId,
+                    'policy_number' => $row['policy_no'] ?? 1,
+                    'sale_date' => $saleDate,
+                    'mode_of_payment' => $modeOfPaymentId,
+                    'gross_premium' => $row['gross_premium_net_of_discounts'],
+                    'total_outstanding' => $row['initial_payment'] ?? 0,
+                    'balance' => $balance,
+                ]);
+
+                $terms = (int) $row['payment_terms'] ?? 0;
+                $paymentSchedules = [
+                    ['schedule' => $PaymentDetail->first_payment_schedule, 'amount' => $PaymentDetail->first_payment_amount],
+                    ['schedule' => $PaymentDetail->second_payment_schedule, 'amount' => $PaymentDetail->second_payment_amount],
+                    ['schedule' => $PaymentDetail->third_payment_schedule, 'amount' => $PaymentDetail->third_payment_amount],
+                    ['schedule' => $PaymentDetail->fourth_payment_schedule, 'amount' => $PaymentDetail->fourth_payment_amount],
+                    ['schedule' => $PaymentDetail->fifth_payment_schedule, 'amount' => $PaymentDetail->fifth_payment_amount],
+                    ['schedule' => $PaymentDetail->sixth_payment_schedule, 'amount' => $PaymentDetail->sixth_payment_amount],
+                    ['schedule' => $PaymentDetail->seventh_payment_schedule, 'amount' => $PaymentDetail->seventh_payment_amount],
+                    ['schedule' => $PaymentDetail->eight_payment_schedule, 'amount' => $PaymentDetail->eight_payment_amount],
+                ];
+                for ($i = 0; $i < min($terms, 8); $i++) {
+                    $label = $i === 0 ? 'current' : (($i - 1) * 30 + 1) . '-' . ($i * 30);
+                    $schedule = $paymentSchedules[$i];
+
+                    ArAgingPivot::create([
+                        'ar_aging_id' => $arAging->id,
+                        'label' => $label,
+                        'payment_amount' => $schedule['amount'],
+                        'payment_schedule' => $schedule['schedule'],
+                        'paid_amount' => null, 
+                        'paid_schedule' => null,
+                        'over_under_payment' => null,
+                        'reference_number' => null,
+                        'ra_remarks' => null,
+                        'tele_remarks' => null,
+                        'paid' => 0, 
+                    ]);
                 }
                 
             }
