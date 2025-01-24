@@ -50,17 +50,22 @@ class AgingController extends Controller
             'ar_agings.total_outstanding',
             'ar_agings.balance',
             'teams.name as team',
-            'mode_of_payments.name as mode_of_payment' // Fetch the name of the payment mode
+            'mode_of_payments.name as mode_of_payment',
+            DB::raw('DATEDIFF(CURDATE(), ar_agings.sale_date) as days_of_age'),
+            'ar_agings.aging_due_days',
+            'ar_agings.aging_description',
+
         )
-            ->leftJoin('teams', 'ar_agings.team', '=', 'teams.id') // Join with teams table
-            ->leftJoin('mode_of_payments', 'ar_agings.mode_of_payment', '=', 'mode_of_payments.id') // Join with mode_of_payments table
+            ->leftJoin('teams', 'ar_agings.team', '=', 'teams.id')
+            ->leftJoin('mode_of_payments', 'ar_agings.mode_of_payment', '=', 'mode_of_payments.id')
             ->get();
-
-
-
-        // Return JSON response
+        // Log::info('Aging Table Data:', context: ['data' => $data]);
         return response()->json($data);
     }
+
+
+
+
 
     public function getArAgingPivots($id)
     {
@@ -113,6 +118,8 @@ class AgingController extends Controller
 
         try {
             // Validate the request data
+            $request->merge(['paid' => filter_var($request->input('paid'), FILTER_VALIDATE_BOOLEAN)]);
+
             $validated = $request->validate([
                 'paid_amount' => 'nullable|string',
                 'paid_schedule' => 'nullable|string',
@@ -123,7 +130,7 @@ class AgingController extends Controller
                 'new_ra_remarks' => 'nullable|string',
                 'new_tele_remarks' => 'nullable|string',
                 'tele_remarks' => 'nullable|string',
-                'paid' => 'nullable|in:true,false,1,0',
+                'paid' => 'required|boolean',
                 'over_under_payment' => 'nullable|numeric',
             ]);
 
@@ -155,9 +162,10 @@ class AgingController extends Controller
         // $pivot->tele_remarks = null;
         $pivot->paid = null;
         $pivot->over_under_payment = null;
+        $pivot->paid = null;
 
         // Convert 'paid' to 1 or 0 before saving
-        $paid = $validated['paid'] ? 1 : 0;  // Convert true/false to 1/0
+        // $paid = $validated['paid'] ? 1 : 0; // Explicitly convert boolean to 1/0
 
         // Update the pivot with the validated data
         $pivot->paid_amount = $validated['paid_amount'];
@@ -168,7 +176,8 @@ class AgingController extends Controller
         $pivot->reference_number = $validated['reference_number'];
         // $pivot->tele_remarks = $validated['tele_remarks'];
         // $pivot->ra_remarks = $validated['ra_remarks'];
-        $pivot->paid = $paid; // Save the converted 'paid' value (1 or 0)
+        $pivot->paid = $validated['paid'];
+        // Save the converted 'paid' value (1 or 0)
 
         if (!empty($validated['new_ra_remarks'])) {
             // Prepare the new remark
@@ -243,7 +252,7 @@ class AgingController extends Controller
 
             // Compute the new balance
             $arAging->balance = $arAging->gross_premium - $totalPaidAmount;
-
+            $arAging->last_paid_date = $pivot->paid_schedule = $validated['paid_schedule'];
             // Ensure balance is not negative
             $arAging->balance = max($arAging->balance, 0);
             $arAging->total_outstanding = $totalPaidAmount;

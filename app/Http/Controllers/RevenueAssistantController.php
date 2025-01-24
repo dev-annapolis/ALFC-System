@@ -285,7 +285,7 @@ class RevenueAssistantController extends Controller
 
                 // Update the total outstanding
                 $arAging->total_outstanding = $totalPaidAmount;
-
+                $arAging->last_paid_date = $request->date_of_good_as_sales;
                 // Save changes to the ArAging table
                 $arAging->save();
             }

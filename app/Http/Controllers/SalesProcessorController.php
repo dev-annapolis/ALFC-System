@@ -29,6 +29,7 @@ use App\Models\ModeOfPayment;
 use App\Models\Commissioner;
 use App\Models\ArAging;
 use App\Models\ArAgingPivot;
+use App\Models\ApAging;
 
 use Illuminate\Support\Facades\Crypt;
 
@@ -252,7 +253,23 @@ class SalesProcessorController extends Controller
                 'total_outstanding' => $request->initialPaymentValues,
                 'balance' => $balance, // Assuming the balance is the same as total outstanding initially
             ]);
-
+            $apAging = ApAging::create([
+                'insurance_detail_id' => $InsuranceDetailId,
+                'assured_name' => $request->assuredNameValue,
+                'provider_id' => $request->providerValue,
+                'remmitance_number' => null,
+                'policy_number' => $request->policyNumberValue,
+                'due_date_start' => $request->dueDateStartValues,
+                'due_date_end' => $request->dueDateEndValues,
+                'terms' => $request->paymentTermsValues,
+                'due_to_provider' => $request->amountDuetoProviderValue,
+                'total_outstanding' => null,
+                'balance' => null,
+                'first_payment' => null,
+                'second_payment' => null,
+                'total_payment' => null,
+                'status' => null,
+            ]);
             // Create AR Aging Pivots
             $terms = (int) $request->paymentTermsValues;
             $paymentDetail = PaymentDetail::where('insurance_detail_id', $InsuranceDetailId)->first();

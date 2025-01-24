@@ -61,22 +61,28 @@
         text-align: left;
         border-bottom: 1px solid var(--shadow-dark);
     }
-
+    .highlight-row {
+        background-color: #ffcccc !important; /* Light red background */
+    }
 </style>
 <div class="table-responsive neumorphic-container">
-    <table id="AgingTable" class="table table-striped dt-responsive thin-horizontal-lines neumorphic-table" style="width:100%">
+    <table id="AgingTable" class="table dt-responsive thin-horizontal-lines neumorphic-table" style="width:100%">
         <thead>
             <tr>
                 <th style="text-align: center;">TEAM</th>
                 <th style="text-align: center;">POLICY NO.</th>
                 <th style="text-align: center;">ASSURED NAME</th>
                 <th style="text-align: center;">SALE DATE</th>
-                <th style="text-align: center;">MODE OF PAYMENT</th>
-                <th style="text-align: center;">DUE DATE</th>
+                <th style="text-align: center; font-size:8px;">MODE OF <br> PAYMENT</th>
+                <th style="text-align: center; ">DUE DATE</th>
                 <th style="text-align: center;">TERMS</th>
-                <th style="text-align: center;"> GROSS PREMIUM <br> (NET OF DISCOUNTS)</th>
-                <th style="text-align: center;">TOTAL OUTSTANDING</th>
+                <th style="text-align: center; font-size:8px;"> GROSS PREMIUM <br> (NET OF DISCOUNTS)</th>
+                <th style="text-align: center; font-size:8px;">TOTAL <br> OUTSTANDING</th>
                 <th style="text-align: center;">BALANCE</th>
+                <th style="text-align: center;">AGE</th>
+                <th style="text-align: center; font-size:10px;">AGING DUE</th>
+                <th style="text-align: center;">AGING DESCRIPTION</th>
+                <th style="text-align: center;"> ACTION </th>
             </tr>
         </thead>
         <tbody>
@@ -198,13 +204,14 @@
             serverSide: false,
             order: [[0, 'asc']], // Default sorting on the first column
             dom: '<"row TOP-ROW"<"col-md-6 MASTER-LIST"><"col-md-6 pb-3 SEARCHING "f>>t<"row"<"col-md-6 pt-3"l><"col-md-6 pt-2"p>>',
-                initComplete: function () {
-                    // Add the header to the MASTER-LIST column
-                    $('.MASTER-LIST').html('<h1><span style="color: #FF3832;"><b>AR</b></span> Aging</h1>');
+            initComplete: function () {
+                // Add the header to the MASTER-LIST column
+                $('.MASTER-LIST').html('<h1><span style="color: #FF3832;"><b>AR</b></span> Aging</h1>');
 
-                    // Wrap the search field and button in a flex container
-                    $('.SEARCHING').addClass('d-flex align-items-center justify-content-end');
-                },
+                // Wrap the search field and button in a flex container
+                $('.SEARCHING').addClass('d-flex align-items-center justify-content-end');
+            },
+
             columns: [
                 { data: 'team', className: 'text-center' },
                 { data: 'policy_number', className: 'text-center' },
@@ -231,12 +238,12 @@
                         if (startDate && endDate) {
                             const formattedStartDate = startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                             const formattedEndDate = endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                            return `${formattedStartDate} to ${formattedEndDate}`;
+                            return `${formattedStartDate} to <br>${formattedEndDate}`;
                         } else {
                             return 'Invalid date range';
                         }
                     }
-                },  
+                },
                 { data: 'terms', className: 'text-center' },
                 {
                     data: 'gross_premium',
@@ -265,10 +272,36 @@
                             : '$0.00';
                     }
                 },
-                
-            ],
-            
+                {
+                    data: 'days_of_age',
+                    className: 'text-center',
+                    render: function (data) {
+                        return data ? `${data} days` : 'N/A'; // Show "N/A" if the data is null or undefined
+                    }
+                },
+                {
+                    data: 'aging_due_days',
+                    className: 'text-center'
+                },
+                {
+                    data: 'aging_description',
+                    className: 'text-center'
+                },
+                {
+                    data: 'action',
+                    className: 'text-center',
+                    orderable: false,
+                    render: function (data, type, row) {
+                        return `
+                            <button class="btn btn-primary btn-sm details-btn" data-id="${row.id}">
+                                Details
+                            </button>
+                        `;
+                    }
+                }
+            ]
         });
+
 
         // Fetch data using $.ajax
         function fetchTableData() {
@@ -289,28 +322,26 @@
         fetchTableData();
 
         // Expandable row functionality
-        $('#AgingTable tbody').on('click', 'tr', function () {
-            const row = table.row(this);
+        $(document).on('click', '.details-btn', function () {
+            const id = $(this).data('id');
+            const row = table.row($(this).closest('tr'));
             const rowData = row.data();
 
             if (!rowData) {
                 return;
             }
 
-            // Check if the row is already expanded
+            // Toggle row details
             if (row.child.isShown()) {
-                // If it's already shown, close it
                 row.child.hide();
-                $(this).removeClass('shown'); 
+                $(this).removeClass('shown');
             } else {
-                // If it's not shown, open it
                 row.child(formatRowDetails(rowData)).show();
                 $(this).addClass('shown');
-
-                // Fetch AR Aging Pivots based on rowData.id
-                fetchArAgingPivots(rowData.id);
+                fetchArAgingPivots(id);
             }
         });
+
 
         // Function to format the details for the expandable row
         function formatRowDetails(data) {

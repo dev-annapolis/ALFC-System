@@ -19,7 +19,10 @@ class ArAging extends Model
         'mode_of_payment',
         'gross_premium',
         'total_outstanding',
-        'balance'
+        'balance',
+        'aging_due_days',
+        'aging_description',
+        'last_paid_date'
     ];
 
     public function arAgingPivot()
