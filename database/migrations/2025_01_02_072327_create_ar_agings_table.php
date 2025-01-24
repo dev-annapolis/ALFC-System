@@ -24,6 +24,9 @@ return new class extends Migration {
             $table->string('mode_of_payment')->nullable();
             $table->string('gross_premium')->nullable();
             $table->string('total_outstanding')->nullable();
+            $table->string('aging_due_days')->nullable();//not sure 
+            $table->string('aging_description')->nullable();//not sure 
+            $table->string('last_paid_date')->nullable();//not sure 
             $table->string('balance')->nullable();
             $table->timestamps();
         });
