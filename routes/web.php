@@ -8,7 +8,7 @@ use App\Http\Controllers\SalesProcessorController;
 use App\Http\Controllers\RevenueAssistantController;
 use App\Http\Controllers\SalesProcessorSupervisorController;
 use App\Http\Controllers\AgingController;
-
+use App\Http\Controllers\ApAgingController;
 
 Route::get('/', function () {
     return view('landing-page');
@@ -70,6 +70,11 @@ Route::get('/api/aging-data', [AgingController::class, 'agingTableData'])->name(
 Route::get('/api/ar-aging-pivots/{id}', [AgingController::class, 'getArAgingPivots']);
 Route::put('/api/save-pivot-details/{id}', [AgingController::class, 'savePivotDetails']);
 
+Route::get('/ap_aging/index', [ApAgingController::class, 'apAgingIndex'])->name('ap_aging.index');
+Route::get('/api/ap-aging-data', [ApAgingController::class, 'apAgingData'])->name('ap_aging.data');
+Route::get('/api/aging-detail/{id}', [ApAgingController::class, 'getAgingDetail']);
+Route::put('/api/update-ap-aging/{id}', [ApAgingController::class, 'updateAgingRecord']);
+Route::post('/api/save-ap-aging/{id}', [ApAgingController::class, 'saveAgingRecord']);
 
 
 use App\Http\Middleware\RoleMiddleware;
@@ -205,7 +210,7 @@ Route::middleware([RoleMiddleware::class . ':1,2'])->group(function () {
 
     Route::get('/uploadDataIndex', [UploadingController::class, 'uploadDataIndex'])->name('uploadData.index');
     Route::post('/uploadDataStore', [UploadingController::class, 'uploadDataStore'])->name('uploadData.store');
-    
+
 });
 
 
