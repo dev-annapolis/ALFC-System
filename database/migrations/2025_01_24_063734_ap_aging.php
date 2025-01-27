@@ -26,7 +26,7 @@ return new class extends Migration {
             $table->string('first_payment')->nullable(); // Nullable string field
             $table->string('second_payment')->nullable(); // Nullable string field
             $table->string('total_payment')->nullable(); // Nullable string field
-            $table->string('status')->nullable(); // Nullable string field
+            $table->string('status')->default('inactive'); // Nullable string field
             $table->timestamps(); // Created at and updated at fields
         });
     }
