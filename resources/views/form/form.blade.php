@@ -882,7 +882,7 @@
 <!-- ---------------------- IfGDFI change to DIVISION -->
                             {{-- <div class="col-md-4" id="gdficol" style="display: none;">
                                 <div class="mb-5 mb-md-4 mb-sm-4">
-                                    <label for="ifGdfiLabel" class="form-label fw-bold fw-bold fs-6">If GDFI</label> 
+                                    <label for="ifGdfiLabel" class="form-label fw-bold fw-bold fs-6">If GDFI</label>
                                     <select class="form-control rounded-0 border-1 m-0" id="ifGdfi">
                                         <option value="" disabled selected>Select If GDFI</option>
                                         @foreach($ifGdfis as $ifGdfi)
@@ -893,7 +893,7 @@
                             </div> --}}
                             <div class="col-md-4" id="sourceDivisionCol" >
                                 <div class="mb-4 mb-md-4 mb-sm-4 mt-md-2">
-                                    <label for="sourceDivisionLabel" class="form-label fw-bold fw-bold fs-6">Source Division</label> 
+                                    <label for="sourceDivisionLabel" class="form-label fw-bold fw-bold fs-6">Source Division</label>
                                     <select class="form-control rounded-0 border-1 m-0" id="sourceDivision">
                                         <option value="" disabled selected>Select Source Division</option>
                                         @foreach($sourceDivisions as $sourceDivision)
@@ -1058,7 +1058,7 @@
 
                             <div class="col-md-4">
                                 <div class="mb-4 mb-md-4 mb-sm-4 mt-md-5">
-                                    <label for="netOfDiscountLabel" class="form-label fw-bold">Gross Premium, Net of Discount</label>
+                                    <label for="netOfDiscountLabel" class="form-label fw-bold">Net of Discount</label>
                                     <input type="text" class="form-control formatted-input rounded-0 border-1" id="netOfDiscount"  disabled required>
                                 </div>
                             </div>
@@ -1241,7 +1241,7 @@
 <!-- --------------- IDADAGDAG DITO ADMIN ASST REMARKS-->
 <!-- --------------- IDADAGDAG DITO TRACKING NUMBER -->
 <!-- --------------- IDADAGDAG DITO MODE OF DELIVERY (POLICY) -->
- 
+
                         <div class="button-container mb-md-5 mb-mt-5">
                             <button type="button" class="prev-button" onclick="prevStep()">Back</button>
                             <button type="button" class="submit-button" onclick="submitForm(event)">Submit</button>
@@ -1956,6 +1956,8 @@
 
 
 
+
+
             if (TermsValue > 0 && Array.isArray(formData.paymentTermsDate)) {
                 const schedulePaymentContainer = document.getElementById('schedulePaymentTerms');
                 schedulePaymentContainer.innerHTML = ''; // Clear any existing fields
@@ -1963,6 +1965,7 @@
                 const paymentAmountInputs = [];
                 const paymentDateInputs = [];
                 const grossPremiumValue = parseFloat(removeCommas(grossPremiumInput.value)) || 0;
+                const netOfDiscountValue = parseFloat(removeCommas(netOfDiscountInput.value)) || 0;
 
                 for (let i = 1; i <= TermsValue; i++) {
                     const paymentTerm = formData.paymentTermsDate[i - 1];
@@ -1974,7 +1977,7 @@
                         colDate.classList.add('col-md-4');
                         colDate.innerHTML = `
                             <div class="mb-3">
-                                <label for="paymentDate${i}" class="form-label fw-bold">${i}${getSuffix(i)} Payment Date</label>
+                                <label for="paymentDate${i}" class="form-label fw-bold">${getLabel(i)} Payment Date</label>
                                 <input type="date" id="paymentDate${i}" class="form-control uppercase-input rounded-0 border-1" required>
                             </div>
                         `;
@@ -1983,8 +1986,8 @@
                         colAmount.classList.add('col-md-4');
                         colAmount.innerHTML = `
                             <div class="mb-3">
-                                <label for="paymentAmount${i}" class="form-label fw-bold">${i}${getSuffix(i)} Payment Amount</label>
-                                <input type="text" id="paymentAmount${i}" class="form-control rounded-0 border-1" placeholder="Enter ${i}${getSuffix(i)} Payment Amount" step="0.01" required>
+                                <label for="paymentAmount${i}" class="form-label fw-bold">${getLabel(i)} Payment Amount</label>
+                                <input type="text" id="paymentAmount${i}" class="form-control rounded-0 border-1" placeholder="Enter ${getLabel(i)} Payment Amount" step="0.01" required>
                             </div>
                         `;
 
@@ -2002,7 +2005,6 @@
                         const formattedDate = formatDateToISO(rawDate);
 
                         paymentDateInput.value = formattedDate || '';
-                        // Use formatNumberWithCommas to format the amount value
                         paymentAmountInput.value = formatNumber(paymentTerm[amountKey]) || '';
 
                         paymentDateInputs.push(paymentDateInput);
@@ -2087,10 +2089,22 @@
                     return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
                 }
 
-                function getSuffix(index) {
-                    const suffixes = ['th', 'st', 'nd', 'rd'];
-                    const value = index % 100;
-                    return (value - 20) % 10 === 0 || value >= 10 && value <= 20 ? suffixes[0] : suffixes[value % 10] || suffixes[0];
+                // New getSuffix function
+                function getSuffix(i) {
+                    if (i === 1) return 'st'; // Explicitly set 1 to '1st'
+                    if (i % 10 === 1 && i % 100 !== 11) return 'st';
+                    if (i % 10 === 2 && i % 100 !== 12) return 'nd';
+                    if (i % 10 === 3 && i % 100 !== 13) return 'rd';
+                    return 'th';
+                }
+
+                // New label logic for payments
+                function getLabel(i) {
+                    if (i === 1) {
+                        return 'Initial'; // Explicitly use "Initial" for the first term
+                    } else {
+                        return `${i - 1}${getSuffix(i - 1)}`; // Subtract 1 to get the proper suffix for subsequent terms
+                    }
                 }
 
                 // Helper function to get ordinal names (first, second, etc.)
@@ -2108,6 +2122,9 @@
                     return value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                 }
             }
+
+
+
 
 
 
@@ -2516,15 +2533,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
     // Function to get all values from the commission fields
     function getCommissionsValue() {
         let initialTotalCommission = 0;
@@ -2606,16 +2614,16 @@
 
 
     function calculateSchedulePaymentsAmount() {
-
         const TermsValue = parseInt(paymentTermsInputs.value); // Number of payment terms
         const schedulePaymentContainer = document.getElementById('schedulePaymentTerms');
         schedulePaymentContainer.innerHTML = ''; // Clear existing inputs
         const paymentInputs = []; // To track all payment inputs
         const paymentDateInputs = []; // To track all date inputs
-        grossPremiumValue = parseFloat(removeCommas(grossPremiumInput.value)) || 0;
+        netOfDiscountValue = parseFloat(removeCommas(netOfDiscountInput.value)) || 0;
 
         // Function to get the correct suffix for the number
         function getSuffix(i) {
+            if (i === 1) return 'st'; // Explicitly set 1 to '1st'
             if (i % 10 === 1 && i % 100 !== 11) return 'st';
             if (i % 10 === 2 && i % 100 !== 12) return 'nd';
             if (i % 10 === 3 && i % 100 !== 13) return 'rd';
@@ -2625,31 +2633,26 @@
         // Function to format input values with commas
         function formatNumberWithCommas(value) {
             if (value === null || value === undefined || isNaN(value)) return '0.00'; // Return '0.00' for null, undefined, or NaN
-            // Ensure the value is a number, and round to two decimal places
-            value = parseFloat(value).toFixed(2);
-            // Add commas and return the formatted number
-            return value.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+            value = parseFloat(value).toFixed(2); // Ensure the value is a number, and round to two decimal places
+            return value.replace(/\B(?=(\d{3})+(?!\d))/g, ','); // Add commas
         }
 
         // Function to reapply the formatting listeners to the inputs
-        function reapplyFormattingListeners(input){
+        function reapplyFormattingListeners(input) {
             input.addEventListener('focus', function () {
-                this.dataset.rawValue = this.dataset.rawValue || this.value.replace(/,/g, '');
+                this.dataset.rawValue = this.dataset.rawValue || this.value.replace(/,/g, ''); // Keep the raw value without commas
                 this.value = this.dataset.rawValue;
             });
 
             input.addEventListener('input', function () {
-                this.dataset.rawValue = this.value.replace(/,/g, '');
+                this.dataset.rawValue = this.value.replace(/,/g, ''); // Keep the raw value without commas
             });
 
             input.addEventListener('blur', function () {
                 let rawValue = this.dataset.rawValue || this.value;
                 let numberValue = parseFloat(rawValue);
                 if (!isNaN(numberValue)) {
-                    this.value = numberValue.toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
+                    this.value = formatNumberWithCommas(numberValue); // Format with commas on blur
                 } else {
                     this.value = '0.00';
                 }
@@ -2657,16 +2660,24 @@
         }
 
         // Create payment fields dynamically
-        for (let i = 1; i <= TermsValue; i++) {
+        for (let i = 0; i < TermsValue; i++) {
             const row = document.createElement('div');
             row.classList.add('row', 'mt-md-2');
+
+            let labelSuffix;
+            if (i === 0) {
+                // Use "Initial" for the first payment
+                labelSuffix = 'Initial';
+            } else {
+                labelSuffix = `${i}${getSuffix(i)}`
+            }
 
             // Payment date input
             const colDate = document.createElement('div');
             colDate.classList.add('col-md-4');
             colDate.innerHTML = `
                 <div class="mb-3">
-                    <label for="paymentDate${i}" class="form-label fw-bold">${i}${getSuffix(i)} Payment Date</label>
+                    <label for="paymentDate${i}" class="form-label fw-bold">${labelSuffix} Payment Date</label>
                     <input type="date" id="paymentDate${i}" class="form-control uppercase-input rounded-0 border-1" required>
                 </div>
             `;
@@ -2676,8 +2687,8 @@
             colAmount.classList.add('col-md-4');
             colAmount.innerHTML = `
                 <div class="mb-3">
-                    <label for="paymentAmount${i}" class="form-label fw-bold">${i}${getSuffix(i)} Payment Amount</label>
-                    <input type="text" id="paymentAmount${i}" class="form-control rounded-0 border-1" placeholder="Enter ${i}${getSuffix(i)} Payment Amount" step="0.01" required>
+                    <label for="paymentAmount${i}" class="form-label fw-bold">${labelSuffix} Payment Amount</label>
+                    <input type="text" id="paymentAmount${i}" class="form-control rounded-0 border-1" placeholder="Enter ${labelSuffix} Payment Amount" step="0.01" required>
                 </div>
             `;
 
@@ -2690,7 +2701,7 @@
             paymentDateInputs.push(document.getElementById(`paymentDate${i}`));
 
             // Reapply formatting to the new payment amount input
-            reapplyFormattingListeners(paymentInputs[i - 1]);
+            reapplyFormattingListeners(paymentInputs[i]);
         }
 
         // Event listener for the first payment input
@@ -2698,51 +2709,53 @@
             paymentInputs[0].addEventListener('input', function () {
                 const firstPaymentValue = parseFloat(this.value.replace(/,/g, '')) || 0;
 
-                if (firstPaymentValue === 0 || this.value.trim() === "") {
-                    // Clear all fields if first payment is invalid or empty
-                    paymentInputs.forEach(input => input.value = "");
+                if (firstPaymentValue === 0 || this.value.trim() === '') {
+                    paymentInputs.forEach(input => (input.value = '')); // Clear all fields
                     return;
                 }
 
                 // Ensure the first payment does not exceed the gross premium
-                if (firstPaymentValue > grossPremiumValue) {
-                    alert("First payment cannot exceed the gross premium.");
-                    this.value = ''; // Clear the value
-                    this.dataset.rawValue = ''; // Clear any stored raw value for formatting
-                    // initialPaymentInputs.value = '';
+                if (firstPaymentValue > netOfDiscountValue) {
+                    alert('First payment cannot exceed the gross premium.');
+                    this.value = '';
+                    this.dataset.rawValue = '';
                     return;
                 }
 
-
                 // Calculate the remaining amount and update other fields
-                const remainingAmount = grossPremiumValue - firstPaymentValue;
+                const remainingAmount = netOfDiscountValue - firstPaymentValue;
                 const remainingTerms = TermsValue - 1;
-                const monthlyPayment = (remainingAmount / remainingTerms).toFixed(2);
+                let monthlyPayment = remainingAmount / remainingTerms; // Calculate without rounding
 
+                // Round the monthly payment to two decimal places
+                const roundedMonthlyPayment = Math.round(monthlyPayment * 100) / 100;
+
+                // Update the payment inputs for the other terms
                 for (let i = 1; i < paymentInputs.length; i++) {
-                    paymentInputs[i].value = formatNumberWithCommas(monthlyPayment);
+                    paymentInputs[i].value = formatNumberWithCommas(roundedMonthlyPayment);
                 }
 
-                // initialPaymentInputs.value = firstPaymentValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });;
-                saveFormData();
+                // Adjust the final payment to ensure the total matches the gross premium
+                const totalPaid = firstPaymentValue + roundedMonthlyPayment * (TermsValue - 1);
+                const adjustment = netOfDiscountValue - totalPaid;
+                paymentInputs[TermsValue - 1].value = formatNumberWithCommas((roundedMonthlyPayment + adjustment).toFixed(2));
 
+                saveFormData();
             });
 
-            // Add event listeners to dynamically adjust the other payment inputs
+            // Adjust subsequent payments dynamically
             for (let i = 1; i < paymentInputs.length; i++) {
                 paymentInputs[i].addEventListener('input', function () {
                     let totalPaid = 0;
-
                     for (let j = 0; j <= i; j++) {
                         totalPaid += parseFloat(paymentInputs[j].value.replace(/,/g, '')) || 0;
                     }
-
-                    const remainingAmount = grossPremiumValue - totalPaid;
+                    const remainingAmount = netOfDiscountValue - totalPaid;
                     const remainingTerms = TermsValue - (i + 1);
 
                     if (remainingTerms > 0) {
-                        const recalculatedPayment = (remainingAmount / remainingTerms).toFixed(2);
-
+                        let recalculatedPayment = (remainingAmount / remainingTerms);
+                        recalculatedPayment = Math.round(recalculatedPayment * 100) / 100; // Round to two decimal places
                         for (let k = i + 1; k < paymentInputs.length; k++) {
                             paymentInputs[k].value = formatNumberWithCommas(recalculatedPayment);
                         }
@@ -2752,7 +2765,7 @@
             }
         }
 
-        // Add an event listener to the first payment date input
+        // Add event listener to the first payment date input
         if (paymentDateInputs.length > 0) {
             paymentDateInputs[0].addEventListener('change', function () {
                 const firstDate = new Date(this.value);
@@ -2764,16 +2777,11 @@
                     paymentDateInputs[i].value = nextDate.toISOString().split('T')[0];
                 }
                 saveFormData();
-
             });
         }
-
-
-
-
-
-
     }
+
+
 
     function getPaymentTerms() {
         const paymentTerms = [];
@@ -2810,16 +2818,6 @@
         return `${month}/${day}/${year}`;
     }
 
-    function getSuffix(i) {
-        if (i % 10 === 1 && i % 100 !== 11) {
-            return 'st';
-        } else if (i % 10 === 2 && i % 100 !== 12) {
-            return 'nd';
-        } else if (i % 10 === 3 && i % 100 !== 13) {
-            return 'rd';
-        }
-        return 'th';
-    }
 
 
     //SUBMIT FUNCTION
