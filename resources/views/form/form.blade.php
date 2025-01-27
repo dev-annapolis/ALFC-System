@@ -1593,6 +1593,8 @@
 
         paymentTermsInputs.addEventListener('change', validatePaymentTerms);
         dueDateStartInputs.addEventListener('change', calculateDueDateEnd);
+        dueDateStartInputs.addEventListener('change', calculatePaymentDates); // Added this to trigger the payment date calculation
+
         paymentTermsInputs.addEventListener('input', calculateSchedulePaymentsAmount);
         calculateDueDateEnd();
 
@@ -2613,6 +2615,32 @@
     }
 
 
+    function calculatePaymentDates() {
+        const dueDateStartValue = new Date(dueDateStartInputs.value); // Get the due date start value
+        const TermsValue = parseInt(paymentTermsInputs.value); // Get the number of terms
+
+        // Ensure we only proceed if the due date is valid and payment terms are provided
+        if (dueDateStartValue && TermsValue > 0) {
+            // Loop through all the paymentDateInputs and set their values
+            for (let i = 0; i < TermsValue; i++) {
+                const paymentDate = new Date(dueDateStartValue);
+                paymentDate.setMonth(dueDateStartValue.getMonth() + i); // Add months for each term
+
+                const paymentDateInput = document.getElementById(`paymentDate${i}`);
+                if (paymentDateInput) {
+                    // Format the date in yyyy-MM-dd format
+                    const year = paymentDate.getFullYear();
+                    const month = String(paymentDate.getMonth() + 1).padStart(2, '0');
+                    const day = String(paymentDate.getDate()).padStart(2, '0');
+
+                    paymentDateInput.value = `${year}-${month}-${day}`;
+                }
+            }
+        }
+    }
+
+
+
     function calculateSchedulePaymentsAmount() {
         const TermsValue = parseInt(paymentTermsInputs.value); // Number of payment terms
         const schedulePaymentContainer = document.getElementById('schedulePaymentTerms');
@@ -2669,7 +2697,7 @@
                 // Use "Initial" for the first payment
                 labelSuffix = 'Initial';
             } else {
-                labelSuffix = `${i}${getSuffix(i)}`
+                labelSuffix = `${i}${getSuffix(i)}`; // Get suffix for other payments
             }
 
             // Payment date input
