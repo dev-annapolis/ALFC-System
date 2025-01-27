@@ -227,7 +227,7 @@ class DataImport implements ToCollection, WithHeadingRow
                     'gross_premium' => $row['gross_premium'] ?? null,
                     'discount' => $row['discount'] ?? null,
                     'gross_premium_net_discounted' => $row['gross_premium_net_of_discounts'] ?? null,
-                    'amount_due_to_provider' => $row['amount_due_to_provider'] ?? null,
+                    'amount_due_to_provider' => $row['amount_due_to_provider'] ?? 0,
                     'full_commission' => $row['full_commission'] ?? null,
                     'total_commission' => $row['total_commission'] ?? null,
                     'vat' => $row['vat'] ?? null,
@@ -401,6 +401,23 @@ class DataImport implements ToCollection, WithHeadingRow
                     'gross_premium' => $row['gross_premium_net_of_discounts'],
                     'total_outstanding' => $row['initial_payment'] ?? 0,
                     'balance' => $balance,
+                ]);
+                $apAging = ApAging::create([
+                    'insurance_detail_id' => $InsuranceDetail->id,
+                    'assured_name' => $row['assured_name'],
+                    'provider_id' => $providerId,
+                    'remmitance_number' => null,
+                    'policy_number' => $row['policy_no'] ?? 1,
+                    'due_date_start' => $dueDateStart,
+                    'due_date_end' => $dueDateEnd,
+                    'terms' => $row['payment_terms'] ?? 0,
+                    'due_to_provider' => $row['amount_due_to_provider'] ?? 0,
+                    'total_outstanding' => null,
+                    'balance' => null,
+                    'first_payment' => null,
+                    'second_payment' => null,
+                    'total_payment' => null,
+                    'status' => 'inactive',
                 ]);
 
                 $terms = (int) $row['payment_terms'] ?? 0;
