@@ -216,6 +216,7 @@ class DataImport implements ToCollection, WithHeadingRow
                     'pid_received_date' => $row['pid_received_date'] ?? null,
                     'pid_status' => $row['pid_status'] ?? null,
                     'pid_completion_date' => $row['pid_completion_date'] ?? null,
+                    'verification_status' => !empty($row['ra_comments']) ? 'for_sps_verification' : 'for_ra_verification',
                 ]);
 
                 // Create PaymentDetail
