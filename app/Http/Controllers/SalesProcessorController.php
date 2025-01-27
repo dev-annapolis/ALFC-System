@@ -268,7 +268,7 @@ class SalesProcessorController extends Controller
                 'first_payment' => null,
                 'second_payment' => null,
                 'total_payment' => null,
-                'status' => null,
+                'status' => 'inactive',
             ]);
             // Create AR Aging Pivots
             $terms = (int) $request->paymentTermsValues;
